@@ -19,6 +19,7 @@ module.exports = {
       description: req.body.description,
       published: req.body.published ? req.body.published : false,
     };
+    console.log(tutorial);
 
     // Save Tutorial in the database
     Tutorial.create(tutorial)
@@ -33,7 +34,10 @@ module.exports = {
   },
 
   // Retrieve all Tutorials from the database.
-  findAll(req, res) {},
+  async findAll(req, res) {
+    let list = await Tutorial.findAll();
+    return res.status(200).send({ ...list });
+  },
 
   // Find a single Tutorial with an id
   findOne(req, res) {},

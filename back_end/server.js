@@ -5,8 +5,10 @@ const combineRoute = require('./routes');
 
 const app = express();
 
-var corsOptions = {
-  origin: 'http://localhost:5001',
+const corsOptions = {
+  origin: `http://localhost:${process.env.FRONT_END_PORT}`,
+  credentials: true,
+  optionSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
@@ -20,10 +22,6 @@ db.sequelize
   .catch((err) => {
     console.log('Failed to sync db: ' + err.message);
   });
-
-db.sequelize.sync({ force: true }).then(() => {
-  console.log('Drop and re-sync db.');
-});
 
 // parse requests of content-type - application/json
 app.use(express.json());

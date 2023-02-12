@@ -1,1 +1,1 @@
-module.exports = [require('./tutorial')];
+module.exports = [require('./tutorial'), require('./user')];
