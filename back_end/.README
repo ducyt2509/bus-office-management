@@ -1,7 +1,17 @@
 Setup môi trường chung cho dự án bus official (BE) 
 1 .env ( chứa các thông tin như port, db information )
-2. các thư viện hiện tại đã cài : npm install express sequelize mysql2 cors --save
+2. các thư viện hiện tại đã cài : npm install express sequelize mysql2 cors --save twilio
 3. extension để format code : prettier
 4. Ngoài ra đã setup các tutorial tại mỗi file để mọi người đọc và code theo flow có sẵn 
 
---------------------- SẼ UPDATE THÊM SAU
+5. utils sẽ là thư mục chứa các chức năng như là sendSMS, VNP_api ....
+Ngoài ra để tự render ra db thì sẽ chạy các lệnh sau: 
+
+npx sequelize-cli db:drop; //bỏ schema
+npx sequelize-cli db:create; //create lại schema
+npx sequelize-cli db:migrate; //create table theo các file trong folder "migrations". Sau này mọi người muốn tạo mới một table thì sẽ tạo trong folder này để mọi người còn có thể sử dụng 
+npx sequelize-cli db:seed:all; //cx méo biết để làm gì hình như là render theo data có sẵn nhưng chưa biết dùng :v
+
+Lệnh tạo mới file migration: "npx sequelize-cli migration:generate --name DayLaTenFile"
+
+--------------------- SẼ UPDATE THÊM SAU ---------------------
