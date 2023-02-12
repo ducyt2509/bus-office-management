@@ -28,7 +28,6 @@ export default function TestPage(props) {
   }, [email, password]);
   return (
     <div>
-      <span>123444</span>
       <span>Email</span>
       <input value={email} onChange={handleChangeEmail} />
       <span>Password</span>

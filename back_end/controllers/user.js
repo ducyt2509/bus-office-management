@@ -1,6 +1,7 @@
 const db = require('../models');
 const User = db.users;
 const Op = db.Sequelize.Op;
+const sendCode = require('../utils/sendCode');
 
 module.exports = {
   async registerUser(req, res) {
@@ -14,14 +15,13 @@ module.exports = {
         email: params.email,
         password: params.password,
       };
-      console.log(123);
       let register = await User.create(registerForm);
-      console.log(register);
       if (register) {
         result = {
           success: true,
           message: 'Register account successfully',
         };
+        sendCode();
       }
       res.send(result);
     }
