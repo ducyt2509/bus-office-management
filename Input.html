@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    .BO_input {
+            width: 100%;
+            min-width: 0px;
+            outline: transparent solid 2px;
+            outline-offset: 2px;
+            position: relative;
+            appearance: none;
+            transition-property:  background-color,border-color,color,fill,stroke,opacity,box-shadow,transform;
+            transition-duration: 200ms;
+            font-size: 0.875rem;
+            padding-inline-start: 0.75rem;
+            padding-inline-end: 0.75rem;
+            height: 2rem;
+            border-radius: 0.125rem;
+            border-width: 1px;
+            border-style: solid;
+            border-image: initial;
+            border-color: inherit;
+            background: inherit;
+            padding: 0;
+            line-height: inherit;
+            color: inherit;
+            overflow: visible;
+            font-family: inherit;
+            margin: 0;
+    }
+    .BO_input[aria-invalid="true"] {
+        border-color: rgb(252, 129, 129);
+        box-shadow: rgb(252 129 129) 0px 0px 0px 1px;
+    }
+    .BO_title_input {
+        margin-bottom: 8px;
+        border-color: #E2E8F0;
+        word-wrap: break-word;
+        border-width: 0;
+        border-style: solid;
+        box-sizing: border-box;
+    }
+    .BO_layout_input {
+        margin-top: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+    .BO_left_input {
+        font-size: 0.875rem;
+        padding-inline-start: 0.75rem;
+        padding-inline-end: 0.75rem;
+        height: 2rem;
+        margin-inline-end: -1px;
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+        border-inline-end-color: transparent;
+        width: auto;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        white-space: nowrap;
+        border-width: 1px;
+        border-style: solid;
+        border-image: initial;
+        border-color: inherit;
+        background: #EDF2F7;
+        flex: 0 0 auto;
+    }
+    .BO_right_input {
+        font-size: 0.875rem;
+        padding-inline-start: 0.75rem;
+        padding-inline-end: 0.75rem;
+        height: 2rem;
+        margin-inline-start: -1px;
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+        border-inline-start-color: transparent;
+        width: auto;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        white-space: nowrap;
+        border-width: 1px;
+        border-style: solid;
+        border-image: initial;
+        border-color: inherit;
+        background: #EDF2F7;
+        flex: 0 0 auto;
+    }
+    .BO_label_left_right_input {
+        width: 100%;
+        display: flex;
+        position: relative;
+        isolation: isolate;
+        margin-top: 1rem;
+        margin-inline: 0px;
+        margin-bottom: 0px;
+        border-color: #E2E8F0;
+        word-wrap: break-word;
+    }
+    .BO_prefix_input {
+        left: 0px;
+        width: 2.5rem;
+        height: 2.5rem;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        justify-content: center;
+        position: absolute;
+        top: 0px;
+        z-index: 2;
+        pointer-events: none;
+        color: #CBD5E0;
+        font-size: 1.2em;
+        border-color: #E2E8F0;
+        word-wrap: break-word;
+    }
+    .BO_suffix_input {
+        right: 0px;
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1rem;
+        display: flex;
+        -webkit-box-align: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        justify-content: center;
+        position: absolute;
+        top: 0px;
+        z-index: 2;
+        border-color: #E2E8F0;
+        word-wrap: break-word;
+    }
+    </style>
+</head>
+<body>
+    TH1 input thường:
+    <div class="BO_layout_input">
+        <p class="BO_title_input">Username</p>
+        <input type="text" class="BO_input">
+    </div>
+
+    Th2 input với 2 thẻ left /right:
+    <div class="BO_layout_input">
+        <p class="BO_title_input">Username</p>
+        <div class="BO_label_left_right_input">
+            <div class="BO_left_input">https//</div>
+            <input type="text" class="BO_input">
+            <div class="BO_right_input">.com</div>
+        </div>
+    </div>
+
+    Th3 input vs prefix / suffix:
+    <div class="BO_layout_input">
+        <p class="BO_title_input">Username</p>
+        <div class="BO_label_left_right_input">
+            <div class="BO_prefix_input">$</div>
+            <input type="text" class="BO_input" aria-invalid="true">
+            <div class="BO_suffix_input">.com</div>
+        </div>
+    </div>
+</body>
+</html>

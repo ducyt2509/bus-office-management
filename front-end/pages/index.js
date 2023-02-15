@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { Input } from '../components/component-custom';
 export default function TestPage(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,7 +29,7 @@ export default function TestPage(props) {
   }, [email, password]);
   return (
     <div>
-      12345
+      <Input title={'Email'} type="password" />
       <span>Email</span>
       <input value={email} onChange={handleChangeEmail} />
       <span>Password</span>
