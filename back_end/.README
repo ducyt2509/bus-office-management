@@ -10,7 +10,10 @@ Ngoài ra để tự render ra db thì sẽ chạy các lệnh sau:
 npx sequelize-cli db:drop; //bỏ schema
 npx sequelize-cli db:create; //create lại schema
 npx sequelize-cli db:migrate; //create table theo các file trong folder "migrations". Sau này mọi người muốn tạo mới một table thì sẽ tạo trong folder này để mọi người còn có thể sử dụng 
-npx sequelize-cli db:seed:all; //cx méo biết để làm gì hình như là render theo data có sẵn nhưng chưa biết dùng :v
+npx sequelize-cli db:seed:all; // trèn data có sẵn vào các table
+
+npx sequelize-cli db:seed:undo; //xoá toàn bộ dữ liệu có trong table mới nhất trong folder seeders
+npx sequelize-cli db:migrate:undo; // revert lại data thay đổi trong folder migrations
 
 Lệnh tạo mới file migration: "npx sequelize-cli migration:generate --name DayLaTenFile"
 
