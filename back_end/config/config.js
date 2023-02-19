@@ -1,8 +1,4 @@
 require('dotenv').config();
-// const host = process.env.DB_HOST || 'localhost';
-// const user = process.env.DB_USERNAME || 'root';
-// const password = process.env.DB_PASSWORD || '22042001';
-// const dbName = process.env.DB_NAME || 'testdb';
 module.exports = {
   development: {
     username: process.env.DB_USERNAME,
