@@ -1,31 +1,5 @@
 'use strict';
 
-// const dbConfig = require('../configs/config');
-
-// const Sequelize = require('sequelize');
-// const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
-//   host: dbConfig.HOST,
-//   dialect: dbConfig.dialect,
-//   operatorsAliases: false,
-
-//   pool: {
-//     max: dbConfig.pool.max,
-//     min: dbConfig.pool.min,
-//     acquire: dbConfig.pool.acquire,
-
-//     idle: dbConfig.pool.idle,
-//   },
-// });
-
-// const db = {};
-
-// db.Sequelize = Sequelize;
-// db.sequelize = sequelize;
-
-// db.tutorials = require('./tutorial')(sequelize, Sequelize);
-
-// module.exports = db;
-
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
@@ -64,7 +38,17 @@ Object.keys(db).forEach((modelName) => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-db.tutorials = require('./tutorial')(sequelize, Sequelize);
+
 db.users = require('./user')(sequelize, Sequelize);
+db.roles = require('./role')(sequelize, Sequelize);
+db.cities = require('./city')(sequelize, Sequelize);
+db.bus_types = require('./bus_type')(sequelize, Sequelize);
+db.locations = require('./location')(sequelize, Sequelize);
+db.routes = require('./route')(sequelize, Sequelize);
+db.buses = require('./bus')(sequelize, Sequelize);
+db.bus_schedules = require('./bus_schedule')(sequelize, Sequelize);
+db.offices = require('./office')(sequelize, Sequelize);
+db.transactions = require('./transaction')(sequelize, Sequelize);
+db.tickets = require('./ticket')(sequelize, Sequelize);
 
 module.exports = db;

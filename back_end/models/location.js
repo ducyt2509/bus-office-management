@@ -1,28 +1,16 @@
 module.exports = (sequelize, Sequelize) => {
-  const User = sequelize.define(
-    'user',
+  const Location = sequelize.define(
+    'location',
     {
       id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
         primaryKey: true,
         autoIncrement: true,
       },
-      user_name: {
+      location_name: {
         type: Sequelize.STRING,
       },
-      email: {
-        type: Sequelize.STRING,
-      },
-      password: {
-        type: Sequelize.STRING,
-      },
-      phone: {
-        type: Sequelize.STRING,
-      },
-      avatar: {
-        type: Sequelize.STRING,
-      },
-      role_id: {
+      city_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
     },
@@ -32,5 +20,5 @@ module.exports = (sequelize, Sequelize) => {
     }
   );
 
-  return User;
+  return Location;
 };

@@ -1,4 +1,4 @@
-const users = require('../controllers').user;
+const tickets = require('../controllers').ticket;
 var router = require('express').Router();
 
 module.exports = router;

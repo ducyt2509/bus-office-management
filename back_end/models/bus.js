@@ -1,28 +1,22 @@
 module.exports = (sequelize, Sequelize) => {
-  const User = sequelize.define(
-    'user',
+  const Bus = sequelize.define(
+    'bus',
     {
       id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
         primaryKey: true,
         autoIncrement: true,
       },
-      user_name: {
+      bus_plate: {
         type: Sequelize.STRING,
       },
-      email: {
-        type: Sequelize.STRING,
+      main_driver_id: {
+        type: Sequelize.INTEGER(20).UNSIGNED,
       },
-      password: {
-        type: Sequelize.STRING,
+      support_driver_id: {
+        type: Sequelize.INTEGER(20).UNSIGNED,
       },
-      phone: {
-        type: Sequelize.STRING,
-      },
-      avatar: {
-        type: Sequelize.STRING,
-      },
-      role_id: {
+      bus_type_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
     },
@@ -32,5 +26,5 @@ module.exports = (sequelize, Sequelize) => {
     }
   );
 
-  return User;
+  return Bus;
 };

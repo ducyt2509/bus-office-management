@@ -1,28 +1,19 @@
 module.exports = (sequelize, Sequelize) => {
-  const User = sequelize.define(
-    'user',
+  const Office = sequelize.define(
+    'office',
     {
       id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
         primaryKey: true,
         autoIncrement: true,
       },
-      user_name: {
+      office_name: {
         type: Sequelize.STRING,
       },
-      email: {
+      office_address: {
         type: Sequelize.STRING,
       },
-      password: {
-        type: Sequelize.STRING,
-      },
-      phone: {
-        type: Sequelize.STRING,
-      },
-      avatar: {
-        type: Sequelize.STRING,
-      },
-      role_id: {
+      user_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
     },
@@ -32,5 +23,5 @@ module.exports = (sequelize, Sequelize) => {
     }
   );
 
-  return User;
+  return Office;
 };
