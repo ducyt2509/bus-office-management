@@ -22,7 +22,7 @@ module.exports = {
 			});
 			responseHandler.ok(res, "Add new location successfully!");
 		} catch (error) {
-			responseHandler.badrequest(res, error.message);
+			responseHandler.badRequest(res, error.message);
 		}
 	},
 

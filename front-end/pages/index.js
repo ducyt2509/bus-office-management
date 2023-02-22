@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Input } from '../components/component-custom';
+import { Input, Text } from '@chakra-ui/react';
+
 export default function TestPage(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,7 +30,13 @@ export default function TestPage(props) {
   }, [email, password]);
   return (
     <div>
-      <Input title={'Email'} type="password" />
+      <Text mb="8px">Email: {email}</Text>
+      <Input
+        value={email}
+        onChange={handleChangeEmail}
+        placeholder="Here is a sample placeholder"
+        size="sm"
+      />
       <span>Email</span>
       <input value={email} onChange={handleChangeEmail} />
       <span>Password</span>
