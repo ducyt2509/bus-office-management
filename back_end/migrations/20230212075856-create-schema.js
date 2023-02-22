@@ -143,7 +143,7 @@ module.exports = {
             },
             avatar: {
               type: Sequelize.DataTypes.STRING,
-              allowNull: false,
+              allowNull: true,
             },
             role_id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,

@@ -20,18 +20,18 @@ module.exports = {
 			});
 			responseHandler.ok(res, "Add new bus type successfully!");
 		} catch (error) {
-			responseHandler.badrequest(res, error.message);
+			responseHandler.badRequest(res, error.message);
 		}
 	},
 
 	async deleteBusType(req, res) {
 		try {
-			let bustype = await BUS_TYPE.findAll({
+			let busType = await BUS_TYPE.findAll({
 				where: {
 					id: req.query?.id,
 				},
 			});
-			if (!bustype) return responseHandler.notfound(res);
+			if (!busType) return responseHandler.notfound(res);
 			await BUS_TYPE.destroy({
 				where: {
 					id: req.query?.id,
@@ -42,4 +42,5 @@ module.exports = {
 			responseHandler.error(res);
 		}
 	},
+	
 };
