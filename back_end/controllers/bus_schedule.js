@@ -1,5 +1,26 @@
 const db = require('../models');
-const BUS_SCHEDULE = db.bus_schedules;
+const Bus_schedule = db.bus_schedules;
 const Op = db.Sequelize.Op;
+const handler = require('../handlers/response.handler');
 
-module.exports = {};
+module.exports = {
+  async createNewBusSchedule(req, res) {
+    const params = req.body;
+    const role_id = params.role_id;
+    try {
+      if (role_id == 1) {
+        const createBusSchedule = await Bus_schedule.create(params);
+        if (createBusSchedule) {
+          console.log('12331');
+          handler.ok(res, 'Create bus schedule successful!');
+        } else {
+          handler.error(res);
+        }
+      } else {
+        handler.unauthorized(res);
+      }
+    } catch (error) {
+      handler.badRequest(res, error.message);
+    }
+  },
+};

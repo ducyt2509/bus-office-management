@@ -5,6 +5,24 @@ const OTPCode = require('../utils/OTPCode');
 const responseHandler = require('../handlers/response.handler');
 
 module.exports = {
+  async createNewUser(req, res) {
+    const params = req.body;
+    const role_id = params.role_id;
+    try {
+      if (role_id == 1) {
+        const createUser = await User.create(params);
+        if (createUser) {
+          handler.ok(res, 'Create user successful!');
+        } else {
+          handler.error(res);
+        }
+      } else {
+        handler.unauthorized(res);
+      }
+    } catch (error) {
+      handler.badRequest(res, error.message);
+    }
+  },
   async sendCodeOTP(req, res) {
     try {
       const params = req.body;

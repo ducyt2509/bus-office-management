@@ -206,6 +206,11 @@ module.exports = {
               },
               onDelete: 'cascade',
             },
+            bus_status: {
+              type: Sequelize.DataTypes.INTEGER(2),
+              allowNull: false,
+              defaultValue: 1,
+            },
           },
           { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
         ),
@@ -245,7 +250,7 @@ module.exports = {
               type: Sequelize.DataTypes.DOUBLE,
               allowNull: false,
             },
-            time_form: {
+            time_from: {
               type: Sequelize.DataTypes.DATE,
               allowNull: false,
             },
@@ -445,6 +450,6 @@ module.exports = {
       queryInterface.dropTable('office', { transaction: t }),
       queryInterface.dropTable('transaction', { transaction: t }),
       queryInterface.dropTable('ticket', { transaction: t }),
-  ])
+    ]);
   },
 };

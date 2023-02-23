@@ -18,7 +18,7 @@ module.exports = {
 			if (!req.body.name) throw { message: "Data is not null" };
 			let newLocation = await LOCATION.create({
 				location_name: req.body.name,
-				city_id: req.body.cityid,
+				city_id: req.body.city_id,
 			});
 			responseHandler.ok(res, "Add new location successfully!");
 		} catch (error) {
