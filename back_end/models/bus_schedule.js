@@ -16,7 +16,7 @@ module.exports = (sequelize, Sequelize) => {
       price: {
         type: Sequelize.DOUBLE,
       },
-      time_form: {
+      time_from: {
         type: Sequelize.DATE,
       },
       time_to: {

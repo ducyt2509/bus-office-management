@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const combineRoute = require('./routes');
+// const permission = require('./middleware/permission.middleware');
 
 const app = express();
 
@@ -12,6 +13,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+// app.use(permission.checkRole);
 
 const db = require('./models');
 db.sequelize

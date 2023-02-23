@@ -19,6 +19,9 @@ module.exports = (sequelize, Sequelize) => {
       bus_type_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
+      bus_status: {
+        type: Sequelize.INTEGER(2),
+      },
     },
     {
       timestamps: false,
