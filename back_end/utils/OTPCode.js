@@ -52,13 +52,11 @@ const verifyCodeOTP = async function (phone, otp, hash) {
   let newCalculatorHash = crypto.createHmac('sha256', smsSecretKey).update(data).digest('hex');
 
   if (newCalculatorHash === hashValue) {
-    console.log('done test');
     return {
       success: true,
       messages: 'Correct OTP Code',
     };
   } else {
-    console.log('fail test');
     return {
       success: false,
       messages: 'Incorrect OTP Code',

@@ -11,8 +11,7 @@ module.exports = {
       if (role_id == 1) {
         const createBusSchedule = await Bus_schedule.create(params);
         if (createBusSchedule) {
-          console.log('12331');
-          handler.ok(res, 'Create bus schedule successful!');
+          handler.ok(res, { message: 'Create bus schedule successful!' });
         } else {
           handler.error(res);
         }

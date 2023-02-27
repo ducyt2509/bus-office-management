@@ -1,20 +1,18 @@
 const db = require('../models');
 const CITY = db.cities;
-const Op = db.Sequelize.Op;
+const responseHandler = require('../handlers/response.handler');
 
 module.exports = {
   async getListCity(req, res) {
-    let result = {
-      success: false,
-      message: "Can't get list city",
-    };
-    let listCity = await CITY.findAll();
-    if (listCity) {
-      result = {
-        success: true,
-        list_city: listCity,
-      };
+    try {
+      let listCity = await CITY.findAll();
+      if (listCity) {
+        responseHandler.responseWithData(res, 200, listCity);
+      } else {
+        responseHandler.badRequest(res, "Can't get list city");
+      }
+    } catch (error) {
+      responseHandler.badRequest(res, { message: error.message });
     }
-    res.send(result);
   },
 };

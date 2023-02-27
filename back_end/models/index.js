@@ -51,4 +51,10 @@ db.offices = require('./office')(sequelize, Sequelize);
 db.transactions = require('./transaction')(sequelize, Sequelize);
 db.tickets = require('./ticket')(sequelize, Sequelize);
 
+db.buses.belongsTo(db.users, { foreignKey: 'main_driver_id' });
+db.users.hasMany(db.buses, { foreignKey: 'main_driver_id' });
+
+// db.buses.belongsTo(db.users, { foreignKey: 'support_driver_id' });
+// db.users.hasMany(db.buses, { foreignKey: 'support_driver_id' });
+
 module.exports = db;
