@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const combineRoute = require('./routes');
+const cookieParser = require('cookie-parser');
 // const permission = require('./middleware/permission.middleware');
 
 const app = express();
@@ -13,6 +14,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(cookieParser());
+app.use(express.json());
 
 // app.use(permission.checkRole);
 
