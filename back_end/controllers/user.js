@@ -30,49 +30,56 @@ const generateAccessToken = (user) => {
 module.exports = {
   async createNewUser(req, res) {
     const params = req.body;
-    const user_role_id = params.user_role_id;
     try {
-      if (user_role_id == 1) {
-        const salt = await bcrypt.genSalt(10);
-        const hashPassword = bcrypt.hashSync(params.password, salt);
-        const newUser = {
-          ...params,
-          password: hashPassword,
-          role_id: params.user_role_id,
-        };
-        const createUser = await User.create(newUser);
-        if (createUser) {
-          responseHandler.ok(res, 'Create user successful!');
-        } else {
-          responseHandler.responseWithData(res, 401, { message: "Can't add new user" });
-        }
+      const salt = await bcrypt.genSalt(10);
+      const hashPassword = bcrypt.hashSync(params.password, salt);
+      const newUser = {
+        ...params,
+        password: hashPassword,
+      };
+      const createUser = await User.create(newUser);
+      if (createUser) {
+        return responseHandler.ok(res, 'Create user successful!');
       } else {
-        responseHandler.unauthorized(res);
+        return responseHandler.responseWithData(res, 403, { message: "Can't add new user" });
       }
     } catch (error) {
-      responseHandler.badRequest(res, error.message);
+      return responseHandler.badRequest(res, error.message);
     }
   },
   async requestRefreshToken(req, res) {
     const refreshAccessToken = req.cookie.refreshAccessToken;
     if (!refreshAccessToken) {
-      responseHandler.unauthorized(res);
+      return responseHandler.unauthorized(res);
     } else {
-      jwt.verify(refreshAccessToken, process.env.JWT_REFRESH_SECRET_TOKEN, (error, user) => {
-        if (error) {
-          responseHandler.badRequest(res, error.message);
-        } else {
-          const newAccessToken = generateAccessToken(user);
-          const newRefreshAccessToken = generateRefreshToken(user);
-          res.cookie('refreshAccessToken', newRefreshAccessToken, {
-            httpOnly: true,
-            path: '/',
-            sameSite: 'strict',
-            secure: false,
+      try {
+        const getUser = await User.findOne({
+          where: {
+            email: req.body?.email,
+          },
+        });
+        if (getUser) {
+          jwt.verify(refreshAccessToken, process.env.JWT_REFRESH_SECRET_TOKEN, (error, user) => {
+            if (error) {
+              return responseHandler.badRequest(res, error.message);
+            } else {
+              const newAccessToken = generateAccessToken(user);
+              const newRefreshAccessToken = generateRefreshToken(user);
+              res.cookie('refreshAccessToken', newRefreshAccessToken, {
+                httpOnly: true,
+                path: '/',
+                sameSite: 'strict',
+                secure: false,
+              });
+              return responseHandler.responseWithData(res, 200, newAccessToken);
+            }
           });
-          responseHandler.responseWithData(res, 200, newAccessToken);
+        } else {
+          return responseHandler.unauthorized(res);
         }
-      });
+      } catch (error) {
+        return responseHandler.badRequest(res, error.message);
+      }
     }
   },
   async loginAccount(req, res) {
@@ -89,7 +96,7 @@ module.exports = {
         if (getUser) {
           const validPassword = bcrypt.compareSync(password, getUser.password);
           if (!validPassword) {
-            responseHandler.responseWithData(res, 401, { message: 'Password was wrong' });
+            return responseHandler.responseWithData(res, 403, { message: 'Password was wrong' });
           } else {
             const accessToken = generateAccessToken(getUser);
             const refreshAccessToken = generateRefreshToken(getUser);
@@ -101,20 +108,20 @@ module.exports = {
             });
             delete getUser.dataValues.password;
             delete getUser._previousDataValues.password;
-            responseHandler.responseWithData(res, 200, {
+            return responseHandler.responseWithData(res, 200, {
               ...getUser,
               accessToken,
               message: 'Login successful!',
             });
           }
         } else {
-          responseHandler.responseWithData(res, 401, { message: 'User not exist' });
+          return responseHandler.responseWithData(res, 403, { message: 'User not exist' });
         }
       } else {
-        responseHandler.responseWithData(res, 200, 'User and password can not empty');
+        return responseHandler.responseWithData(res, 200, 'User and password can not empty');
       }
     } catch (error) {
-      responseHandler.badRequest(res, { message: error.message });
+      return responseHandler.badRequest(res, error.message);
     }
   },
 
@@ -132,12 +139,12 @@ module.exports = {
         });
         let hashData = await OTPCode.sendCodeOTP(getUser.phone);
         let data = { ...hashData, user };
-        responseHandler.responseWithData(res, 200, data);
+        return responseHandler.responseWithData(res, 200, data);
       } else {
         throw { message: 'Data is not null' };
       }
     } catch (error) {
-      responseHandler.badRequest(res, { message: error.message });
+      return responseHandler.badRequest(res, error.message);
     }
   },
 
@@ -151,12 +158,12 @@ module.exports = {
 
       let verifyOTPCode = await OTPCode.verifyCodeOTP(phone, otpCode, hash);
       if (verifyOTPCode.success) {
-        responseHandler.responseWithData(res, 200, user);
+        return responseHandler.responseWithData(res, 200, user);
       } else {
-        responseHandler.responseWithData(res, 401, verifyOTPCode);
+        return responseHandler.responseWithData(res, 401, verifyOTPCode);
       }
     } catch (error) {
-      responseHandler.badRequest(res, { message: error.message });
+      return responseHandler.badRequest(res, error.message);
     }
   },
 
@@ -188,28 +195,30 @@ module.exports = {
                 }
               );
               if (updateUser) {
-                responseHandler.ok(res, 'Update user successful!');
+                return responseHandler.ok(res, 'Update user successful!');
               } else {
-                responseHandler.error(res);
+                return responseHandler.error(res);
               }
             } else {
-              responseHandler.responseWithData(res, 200, { message: 'User does not exist!' });
+              return responseHandler.responseWithData(res, 200, {
+                message: 'User does not exist!',
+              });
             }
           } else {
-            responseHandler.responseWithData(res, 401, {
+            return responseHandler.responseWithData(res, 401, {
               message: 'password not equal to password',
             });
           }
         } else {
-          responseHandler.responseWithData(res, 401, {
+          return responseHandler.responseWithData(res, 401, {
             message: 'password can not null',
           });
         }
       } else {
-        responseHandler.unauthorized(res);
+        return responseHandler.unauthorized(res);
       }
     } catch (error) {
-      responseHandler.badRequest(res, { message: error.message });
+      return responseHandler.badRequest(res, error.message);
     }
   },
 
@@ -255,18 +264,18 @@ module.exports = {
           }),
         ]);
         if (getUser) {
-          responseHandler.responseWithData(res, 200, {
+          return responseHandler.responseWithData(res, 200, {
             list_user: getUser,
             number_user: numberUSer,
           });
         } else {
-          responseHandler.responseWithData(res, 401, { message: "Can't get list user" });
+          return responseHandler.responseWithData(res, 403, { message: "Can't get list user" });
         }
       } else {
-        responseHandler.unauthorized(res);
+        return responseHandler.unauthorized(res);
       }
     } catch (error) {
-      responseHandler.badRequest(res, { message: error.message });
+      return responseHandler.badRequest(res, error.message);
     }
   },
   async getUserInformation(req, res) {
@@ -280,12 +289,14 @@ module.exports = {
         attributes: ['id', 'email', 'phone', 'user_name', 'avatar', 'role_id'],
       });
       if (getUserById) {
-        responseHandler.responseWithData(res, 200, getUserById);
+        return responseHandler.responseWithData(res, 200, getUserById);
       } else {
-        responseHandler.responseWithData(res, 401, { message: "Can't get user information" });
+        return responseHandler.responseWithData(res, 401, {
+          message: "Can't get user information",
+        });
       }
     } catch (error) {
-      responseHandler.badRequest(res, { message: error.message });
+      return responseHandler.badRequest(res, error.message);
     }
   },
   async updateInformationUser(req, res) {
@@ -302,12 +313,12 @@ module.exports = {
         },
       });
       if (updateUser) {
-        responseHandler.ok(res, 'Update user successful!');
+        return responseHandler.ok(res, 'Update user successful!');
       } else {
-        responseHandler.error(res);
+        return responseHandler.responseWithData(res, 403, "Can't update user information");
       }
     } catch (error) {
-      responseHandler.badRequest(res, { message: error.message });
+      return responseHandler.badRequest(res, error.message);
     }
   },
   async deleteUser(req, res) {
@@ -322,15 +333,15 @@ module.exports = {
           },
         });
         if (deleteUser) {
-          responseHandler.ok(res, 'Delete user successful!');
+          return responseHandler.ok(res, 'Delete user successful!');
         } else {
-          responseHandler.responseWithData(res, 401, { message: "Can't delete user" });
+          return responseHandler.responseWithData(res, 403, { message: "Can't delete user" });
         }
       } else {
-        responseHandler.unauthorized(res);
+        return responseHandler.unauthorized(res);
       }
     } catch (error) {
-      responseHandler.badRequest(res, { message: error.message });
+      return responseHandler.badRequest(res, error.message);
     }
   },
 };

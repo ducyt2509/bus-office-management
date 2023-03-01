@@ -25,6 +25,9 @@ module.exports = (sequelize, Sequelize) => {
       role_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
+      refresh_access_token: {
+        type: Sequelize.STRING,
+      },
     },
     {
       timestamps: false,

@@ -6,7 +6,7 @@ module.exports = {
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     dialect: 'mysql',
-    logging: true,
+    logging: false,
     seederStorage: 'sequelize',
     seederStorageTableName: 'SequelizeSeeder',
   },

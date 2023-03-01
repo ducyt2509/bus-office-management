@@ -8,13 +8,13 @@ const middleWareController = {
       const accessToken = token.split(' ')[1];
       jwt.verify(accessToken, process.env.JWT_SECRET_TOKEN, (error, user) => {
         if (error) {
-          responseHandler.unauthorized(res);
+          return responseHandler.unauthorized(res);
         }
         req.user = user;
         next();
       });
     } else {
-      responseHandler.responseWithData(res, 401, { message: 'You are not authenticated!' });
+      return responseHandler.unauthorized(res);
     }
   },
   verifyTokenForManager(req, res, next) {
@@ -22,16 +22,25 @@ const middleWareController = {
       if (req.user.role_id == 1) {
         next();
       } else {
-        responseHandler.unauthorized(res);
+        return responseHandler.unauthorized(res);
       }
     });
   },
   verifyTokenForStaff(req, res, next) {
     middleWareController.verifyToken(req, res, () => {
-      if (req.user.role_id == 2) {
+      if (req.user.role_id == 1 || req.user.role_id == 2) {
         next();
       } else {
-        responseHandler.unauthorized(res);
+        return responseHandler.unauthorized(res);
+      }
+    });
+  },
+  verifyTokenForDriver(req, res, next) {
+    middleWareController.verifyToken(req, res, () => {
+      if (req.user.role_id == 1 || req.user.role_id == 2 || req.user.role_id == 3) {
+        next();
+      } else {
+        return responseHandler.unauthorized(res);
       }
     });
   },
