@@ -1,5 +1,5 @@
 const db = require('../models');
-const BUS_TYPE = db.bus_types;
+const Bus_type = db.bus_types;
 const Op = db.Sequelize.Op;
 const responseHandler = require('../handlers/response.handler');
 
@@ -12,44 +12,62 @@ module.exports = {
     try {
       const whereCondition = {};
       bus_type_name ? (whereCondition['bus_type_name'] = { [Op.like]: `%${bus_type_name}%` }) : '';
-      const listBusType = await BUS_TYPE.findAll({
+      const listBusType = await Bus_type.findAll({
         where: whereCondition,
         offset: offset,
         limit: limit,
       });
-      responseHandler.responseWithData(res, 200, listBusType);
+      return responseHandler.responseWithData(res, 200, listBusType);
     } catch (error) {
-      responseHandler.error(res);
+      return responseHandler.error(res);
     }
   },
   async addNewBusType(req, res) {
     try {
       if (!req.body.name) throw { message: 'Data is not null' };
-      let newBusType = await BUS_TYPE.create({
+      let newBusType = await Bus_type.create({
         bus_type_name: req.body.name,
       });
-      responseHandler.ok(res, 'Add new bus type successfully!');
+      if (newBusType) {
+        return responseHandler.ok(res, 'Add new bus type successfully!');
+      } else {
+        return responseHandler.responseWithData(res, 403, { message: "Can't add new bus type" });
+      }
     } catch (error) {
-      responseHandler.badRequest(res, error.message);
+      return responseHandler.badRequest(res, error.message);
     }
   },
 
   async deleteBusType(req, res) {
     try {
-      let busType = await BUS_TYPE.findAll({
+      let busType = await Bus_type.findAll({
         where: {
           id: req.query?.id,
         },
       });
       if (!busType) return responseHandler.notfound(res);
-      await BUS_TYPE.destroy({
+      await Bus_type.destroy({
         where: {
           id: req.query?.id,
         },
       });
-      responseHandler.ok(res, 'Delete bus type successfully');
+      return responseHandler.ok(res, 'Delete bus type successfully');
     } catch (error) {
-      responseHandler.error(res);
+      return responseHandler.badRequest(res, error.message);
+    }
+  },
+
+  async updateBusType(req, res) {
+    const params = req.body;
+    try {
+      const updateBusTypes = await Bus_type.update(params);
+      if (updateBusTypes) {
+        return responseHandler.ok(res, 'Update bus type successfully');
+      } else {
+        return responseHandler.responseWithData(res, 403, { message: "Can't update bus type" });
+      }
+    } catch (error) {
+      return responseHandler.badRequest(res, error.message);
     }
   },
 };

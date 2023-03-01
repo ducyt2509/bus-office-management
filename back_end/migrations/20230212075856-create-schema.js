@@ -1,5 +1,4 @@
 'use strict';
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) => {
@@ -155,6 +154,10 @@ module.exports = {
                 key: 'id',
               },
               onDelete: 'cascade',
+            },
+            refresh_access_token: {
+              type: Sequelize.DataTypes.STRING,
+              allowNull: true,
             },
           },
           { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }

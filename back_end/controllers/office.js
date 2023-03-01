@@ -11,15 +11,15 @@ module.exports = {
       if (role_id == 1) {
         const createOffice = await Office.create(params);
         if (createOffice) {
-          responseHandler.ok(res, { message: 'Create office successful!' });
+          return responseHandler.ok(res, { message: 'Create office successful!' });
         } else {
-          responseHandler.error(res);
+          return responseHandler.error(res);
         }
       } else {
-        responseHandler.unauthorized(res);
+        return responseHandler.unauthorized(res);
       }
     } catch (error) {
-      responseHandler.badRequest(res, error.message);
+      return responseHandler.badRequest(res, error.message);
     }
   },
   async updateOfficeInformation(req, res) {
@@ -35,15 +35,15 @@ module.exports = {
           },
         });
         if (updateOffice) {
-          responseHandler.ok(res, { message: 'Update office successful!' });
+          return responseHandler.ok(res, { message: 'Update office successful!' });
         } else {
-          responseHandler.error(res);
+          return responseHandler.error(res);
         }
       } else {
-        responseHandler.unauthorized(res);
+        return responseHandler.unauthorized(res);
       }
     } catch (error) {
-      responseHandler.badRequest(res, { message: error.message });
+      return responseHandler.badRequest(res, error.message);
     }
   },
   async deleteOfficeInformation(req, res) {
@@ -57,15 +57,15 @@ module.exports = {
           },
         });
         if (deleteOffice) {
-          responseHandler.ok(res, { message: 'Delete office successful!' });
+          return responseHandler.ok(res, { message: 'Delete office successful!' });
         } else {
-          responseHandler.error(res);
+          return responseHandler.error(res);
         }
       } else {
-        responseHandler.unauthorized(res);
+        return responseHandler.unauthorized(res);
       }
     } catch (error) {
-      responseHandler.badRequest(res, { message: error.message });
+      return responseHandler.badRequest(res, error.message);
     }
   },
   async getListOffice(req, res) {
@@ -91,18 +91,18 @@ module.exports = {
           }),
         ]);
         if (listOffice) {
-          responseHandler.responseWithData(res, 200, {
+          return responseHandler.responseWithData(res, 200, {
             list_office: listOffice,
             number_office: numberOffice,
           });
         } else {
-          responseHandler.error(res);
+          return responseHandler.error(res);
         }
       } else {
-        responseHandler.unauthorized(res);
+        return responseHandler.unauthorized(res);
       }
     } catch (error) {
-      responseHandler.badRequest(res, { message: error.message });
+      return responseHandler.badRequest(res, error.message);
     }
   },
   async getOfficeInformation(req, res) {
@@ -117,15 +117,15 @@ module.exports = {
           },
         });
         if (officeInformation) {
-          responseHandler.responseWithData(res, 200, officeInformation);
+          return responseHandler.responseWithData(res, 200, officeInformation);
         } else {
-          responseHandler.error(res);
+          return responseHandler.error(res);
         }
       } else {
-        responseHandler.unauthorized(res);
+        return responseHandler.unauthorized(res);
       }
     } catch (error) {
-      responseHandler.badRequest(res, { message: error.message });
+      return responseHandler.badRequest(res, error.message);
     }
   },
 };
