@@ -3,22 +3,22 @@ var router = require('express').Router();
 const middleWare = require('../middleware/permission.middleware');
 
 router.post(
-  '/admin/create-bus-schedule',
+  '/bus-schedule/create-bus-schedule',
   middleWare.verifyTokenForManager,
   bus_schedules.createNewBusSchedule
 );
 router.put(
-  '/admin/update-bus-schedule',
+  '/bus-schedule/update-bus-schedule',
   middleWare.verifyTokenForManager,
   bus_schedules.updateBusSchedule
 );
 router.delete(
-  '/admin/delete-bus-schedule',
+  '/bus-schedule/delete-bus-schedule',
   middleWare.verifyTokenForManager,
   bus_schedules.deleteBusSchedule
 );
 router.get(
-  '/admin/list-bus-schedule',
+  '/bus-schedule/list-bus-schedule',
   middleWare.verifyTokenForManager,
   bus_schedules.getListBusSchedule
 );

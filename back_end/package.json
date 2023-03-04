@@ -24,6 +24,19 @@
     "mysql2": "^3.1.2",
     "pug": "2.0.0-beta11",
     "sequelize": "^6.28.0",
-    "twilio": "^4.7.2"
+    "twilio": "^4.7.2",
+    "await": "^0.2.6",
+    "body-parser": "~1.17.1",
+    "config": "^1.31.0",
+    "dateformat": "^2.2.0",
+    "jade": "~1.11.0",
+    "jquery": "^3.4.0",
+    "md5": "^2.2.1",
+    "node-fetch": "^2.6.9",
+    "qs": "^6.7.0",
+    "request": "^2.88.2",
+    "serve-favicon": "^2.4.5",
+    "set-tz": "^0.2.0",
+    "sha256": "^0.2.0"
   }
 }

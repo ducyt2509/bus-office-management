@@ -10,6 +10,9 @@ module.exports = (sequelize, Sequelize) => {
       office_name: {
         type: Sequelize.STRING,
       },
+      city_id: {
+        type: Sequelize.INTEGER(20).UNSIGNED,
+      },
       office_address: {
         type: Sequelize.STRING,
       },

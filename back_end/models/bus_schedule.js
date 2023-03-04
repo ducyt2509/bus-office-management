@@ -22,13 +22,13 @@ module.exports = (sequelize, Sequelize) => {
       time_to: {
         type: Sequelize.DATE,
       },
-      date_start: {
-        type: Sequelize.DATE,
-      },
       bus_schedule_status: {
         type: Sequelize.INTEGER(20),
       },
       schedule_frequency: {
+        type: Sequelize.INTEGER(20),
+      },
+      bus_schedule_expire: {
         type: Sequelize.INTEGER(20),
       },
     },

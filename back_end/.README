@@ -7,10 +7,10 @@ Setup môi trường chung cho dự án bus official (BE)
 5. utils sẽ là thư mục chứa các chức năng như là sendSMS, VNP_api ....
 Ngoài ra để tự render ra db thì sẽ chạy các lệnh sau: 
 
-npx sequelize-cli db:drop; //bỏ schema
-npx sequelize-cli db:create; //create lại schema
-npx sequelize-cli db:migrate; //create table theo các file trong folder "migrations". Sau này mọi người muốn tạo mới một table thì sẽ tạo trong folder này để mọi người còn có thể sử dụng 
-npx sequelize-cli db:seed:all; // trèn data có sẵn vào các table
+npx sequelize-cli db:drop; 
+npx sequelize-cli db:create;
+npx sequelize-cli db:migrate; 
+npx sequelize-cli db:seed:all; 
 
 npx sequelize-cli db:seed:undo; //xoá toàn bộ dữ liệu có trong table mới nhất trong folder seeders
 npx sequelize-cli db:migrate:undo; // revert lại data thay đổi trong folder migrations
