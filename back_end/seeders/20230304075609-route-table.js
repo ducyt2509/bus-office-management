@@ -5,10 +5,10 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('route', [
-      { city_fromm_id: 1, city_to_id: 2 },
-      { city_fromm_id: 2, city_to_id: 3 },
-      { city_fromm_id: 3, city_to_id: 4 },
-      { city_fromm_id: 4, city_to_id: 5 },
+      { city_from_id: 1, city_to_id: 2 },
+      { city_from_id: 2, city_to_id: 3 },
+      { city_from_id: 3, city_to_id: 4 },
+      { city_from_id: 4, city_to_id: 5 },
     ]);
   },
   down: (queryInterface, Sequelize) => {

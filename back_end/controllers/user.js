@@ -100,6 +100,16 @@ module.exports = {
           } else {
             const accessToken = generateAccessToken(getUser);
             const refreshAccessToken = generateRefreshToken(getUser);
+            await User.update(
+              {
+                refresh_access_token: refreshAccessToken,
+              },
+              {
+                where: {
+                  [Op.or]: [{ email: user }, { phone: user }],
+                },
+              }
+            );
             res.cookie('refreshAccessToken', refreshAccessToken, {
               httpOnly: true,
               path: '/',
