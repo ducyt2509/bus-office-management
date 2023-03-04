@@ -26,15 +26,7 @@ export default function TestPage(props) {
         console.log(error);
       });
   }, [email, password]);
-  return (
-    <div>
-      <span>Email</span>
-      <input value={email} onChange={handleChangeEmail} />
-      <span>Password</span>
-      <input value={password} onChange={handleChangePassword} />
-      <button onClick={submitForm}>Login</button>
-    </div>
-  );
+  return <div></div>;
 }
 export async function getStaticProps() {
   return {
