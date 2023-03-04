@@ -1,7 +1,7 @@
 const db = require('../models');
 const User = db.users;
 const Op = db.Sequelize.Op;
-const OTPCode = require('../utils/OTPCode');
+const OTPCode = require('../helper/OTPCode');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const responseHandler = require('../handlers/response.handler');
@@ -268,6 +268,7 @@ module.exports = {
             list_user: getUser,
             number_user: numberUSer,
           });
+          Q;
         } else {
           return responseHandler.responseWithData(res, 403, { message: "Can't get list user" });
         }

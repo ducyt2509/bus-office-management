@@ -11,6 +11,7 @@ module.exports = {
         phone: '+84815647388',
         avatar: null,
         role_id: 1,
+        office_id: 1,
       },
       {
         user_name: 'Trần Văn Đức',
@@ -19,6 +20,7 @@ module.exports = {
         phone: '+84944321602',
         avatar: null,
         role_id: 1,
+        office_id: 1
       },
       {
         user_name: 'Lương Việt Thắng',
@@ -27,6 +29,7 @@ module.exports = {
         phone: '+84353773551',
         avatar: null,
         role_id: 1,
+        office_id: 1,
       },
       {
         user_name: 'Nguyễn Đình Phúc',
@@ -35,6 +38,7 @@ module.exports = {
         phone: '+84985645681',
         avatar: 'null',
         role_id: 1,
+        office_id: 1,
       },
       {
         user_name: 'Trịnh Diễm Quỳnh',
@@ -43,6 +47,7 @@ module.exports = {
         phone: '+84948530996',
         avatar: null,
         role_id: 2,
+        office_id: 1,
       },
       {
         user_name: 'Nguyễn Thị Mồn Lèo',
@@ -51,6 +56,7 @@ module.exports = {
         phone: '+84123456789',
         avatar: null,
         role_id: 2,
+        office_id: 1,
       },
       {
         user_name: 'Nguyễn Tiến Cứt',
@@ -59,6 +65,7 @@ module.exports = {
         phone: '+84987654321',
         avatar: null,
         role_id: 3,
+        office_id: 1,
       },
       {
         user_name: 'Trịnh Diễm Mốc',
@@ -67,6 +74,7 @@ module.exports = {
         phone: '+84678954321',
         avatar: null,
         role_id: 3,
+        office_id: 1,
       },
     ]);
   },

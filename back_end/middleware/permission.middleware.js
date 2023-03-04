@@ -37,7 +37,7 @@ const middleWareController = {
   },
   verifyTokenForDriver(req, res, next) {
     middleWareController.verifyToken(req, res, () => {
-      if (req.user.role_id == 1 || req.user.role_id == 2 || req.user.role_id == 3) {
+      if (req.user.role_id == 1 || req.user.role_id == 3) {
         next();
       } else {
         return responseHandler.unauthorized(res);

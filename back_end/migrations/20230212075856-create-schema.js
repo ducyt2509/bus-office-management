@@ -36,9 +36,8 @@ module.exports = {
           },
           { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
         ),
-
         queryInterface.createTable(
-          'bus_type',
+          'office',
           {
             id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
@@ -46,9 +45,51 @@ module.exports = {
               autoIncrement: true,
               allowNull: false,
             },
-            bus_type_name: {
+            office_name: {
               type: Sequelize.DataTypes.STRING,
               allowNull: false,
+            },
+            city_id: {
+              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
+              allowNull: false,
+              references: {
+                model: {
+                  tableName: 'city',
+                },
+                key: 'id',
+              },
+              onDelete: 'cascade',
+            },
+            office_address: {
+              type: Sequelize.DataTypes.STRING,
+              allowNull: false,
+            },
+          },
+          { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
+        ),
+        queryInterface.createTable(
+          'vehicle',
+          {
+            id: {
+              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
+              primaryKey: true,
+              autoIncrement: true,
+              allowNull: false,
+            },
+            vehicle_name: {
+              type: Sequelize.DataTypes.STRING,
+              allowNull: false,
+            },
+            office_id: {
+              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
+              allowNull: false,
+              references: {
+                model: {
+                  tableName: 'office',
+                },
+                key: 'id',
+              },
+              onDelete: 'cascade',
             },
           },
           { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
@@ -66,6 +107,9 @@ module.exports = {
             location_name: {
               type: Sequelize.DataTypes.STRING,
               allowNull: false,
+            },
+            address: {
+              type: Sequelize.DataTypes.STRING,
             },
             city_id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
@@ -155,6 +199,17 @@ module.exports = {
               },
               onDelete: 'cascade',
             },
+            office_id: {
+              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
+              allowNull: false,
+              references: {
+                model: {
+                  tableName: 'office',
+                },
+                key: 'id',
+              },
+              onDelete: 'cascade',
+            },
             refresh_access_token: {
               type: Sequelize.DataTypes.STRING,
               allowNull: true,
@@ -198,12 +253,12 @@ module.exports = {
               },
               onDelete: 'cascade',
             },
-            bus_type_id: {
+            vehicle_id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
               allowNull: false,
               references: {
                 model: {
-                  tableName: 'bus_type',
+                  tableName: 'vehicle',
                 },
                 key: 'id',
               },
@@ -273,36 +328,8 @@ module.exports = {
               type: Sequelize.DataTypes.INTEGER(20),
               allowNull: false,
             },
-          },
-          { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
-        ),
-        queryInterface.createTable(
-          'office',
-          {
-            id: {
-              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
-              primaryKey: true,
-              autoIncrement: true,
-              allowNull: false,
-            },
-            office_name: {
-              type: Sequelize.DataTypes.STRING,
-              allowNull: false,
-            },
-            office_address: {
-              type: Sequelize.DataTypes.STRING,
-              allowNull: false,
-            },
-            user_id: {
-              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
-              allowNull: false,
-              references: {
-                model: {
-                  tableName: 'user',
-                },
-                key: 'id',
-              },
-              onDelete: 'cascade',
+            bus_schedule_expire: {
+              type: Sequelize.DataTypes.INTEGER(20),
             },
           },
           { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
@@ -316,27 +343,22 @@ module.exports = {
               autoIncrement: true,
               allowNull: false,
             },
-            bus_type_id: {
+            vehicle_id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
               allowNull: false,
               references: {
                 model: {
-                  tableName: 'bus_type',
+                  tableName: 'vehicle',
                 },
                 key: 'id',
               },
               onDelete: 'cascade',
             },
-            user_id: {
-              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
-              allowNull: false,
-              references: {
-                model: {
-                  tableName: 'user',
-                },
-                key: 'id',
-              },
-              onDelete: 'cascade',
+            passenger_name: {
+              type: Sequelize.DataTypes.STRING,
+            },
+            passenger_phone: {
+              type: Sequelize.DataTypes.STRING,
             },
             pickup_location_id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
@@ -379,15 +401,7 @@ module.exports = {
               },
               onDelete: 'cascade',
             },
-            ticket_price: {
-              type: Sequelize.DataTypes.DOUBLE,
-              allowNull: false,
-            },
-            transaction_created_at: {
-              type: Sequelize.DataTypes.DATE,
-              allowNull: false,
-            },
-            transaction_created_by: {
+            cashier: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
               allowNull: false,
               references: {
@@ -398,7 +412,26 @@ module.exports = {
               },
               onDelete: 'cascade',
             },
-            transaction_on: {
+            ticket_price: {
+              type: Sequelize.DataTypes.DOUBLE,
+              allowNull: false,
+            },
+            created_at: {
+              type: Sequelize.DataTypes.DATE,
+              allowNull: false,
+            },
+            created_by: {
+              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
+              allowNull: false,
+              references: {
+                model: {
+                  tableName: 'user',
+                },
+                key: 'id',
+              },
+              onDelete: 'cascade',
+            },
+            created_on: {
               type: Sequelize.DataTypes.DATE,
               allowNull: false,
             },
@@ -436,6 +469,25 @@ module.exports = {
           },
           { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
         ),
+        queryInterface.createTable(
+          'bus_schedule_daily',
+          {
+            id: {
+              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
+              primaryKey: true,
+              autoIncrement: true,
+              allowNull: false,
+            },
+            // tình trạng xuất bến
+            departure_status: {
+              type: Sequelize.DataTypes.INTEGER(20),
+            },
+            date: {
+              type: Sequelize.DataTypes.DATE,
+            },
+          },
+          { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
+        ),
       ]);
     });
   },
@@ -444,12 +496,13 @@ module.exports = {
     return Promise.all([
       queryInterface.dropTable('role', { transaction: t }),
       queryInterface.dropTable('city', { transaction: t }),
-      queryInterface.dropTable('bus_type', { transaction: t }),
+      queryInterface.dropTable('vehicle', { transaction: t }),
       queryInterface.dropTable('location', { transaction: t }),
       queryInterface.dropTable('route', { transaction: t }),
       queryInterface.dropTable('user', { transaction: t }),
       queryInterface.dropTable('bus', { transaction: t }),
       queryInterface.dropTable('bus_schedule', { transaction: t }),
+      queryInterface.dropTable('bus_schedule_daily', { transaction: t }),
       queryInterface.dropTable('office', { transaction: t }),
       queryInterface.dropTable('transaction', { transaction: t }),
       queryInterface.dropTable('ticket', { transaction: t }),

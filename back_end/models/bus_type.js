@@ -1,14 +1,17 @@
 module.exports = (sequelize, Sequelize) => {
   const Bus_type = sequelize.define(
-    'bus_type',
+    'vehicle',
     {
       id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
         primaryKey: true,
         autoIncrement: true,
       },
-      bus_type_name: {
+      vehicle_name: {
         type: Sequelize.STRING,
+      },
+      office_id: {
+        type: Sequelize.INTEGER(20).UNSIGNED,
       },
     },
     {
