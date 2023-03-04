@@ -160,11 +160,20 @@ module.exports = {
     process.env.TZ = 'Asia/Ho_Chi_Minh';
     let date = new Date();
     let vnp_TxnRef = req.body.order_id;
-    let vnp_TransactionDate = req.body.trans_date;
-    let vnp_Amount = req.body.amount * 100;
+    let vnp_TransactionDate = dateFormat(req.body.trans_date, "yyyyMMddHHmmss");
+    let vnp_Amount = 0
     let vnp_TransactionType = '02';
     let vnp_CreateBy = req.body.user;
 
+    const getTransactionInformation = await Transaction({
+      where: {
+        created_at: req.body.trans_date,
+        id: vnp_TxnRef
+      }
+    })
+    if (getTransactionInformation) {
+      vnp_Amount = getTransactionInformation.ticket_price
+    }
     let vnp_RequestId = dateFormat(date, 'HHmmss');
     let vnp_Version = '2.1.0';
     let vnp_Command = 'refund';
