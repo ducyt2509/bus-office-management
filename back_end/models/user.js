@@ -28,6 +28,9 @@ module.exports = (sequelize, Sequelize) => {
       refresh_access_token: {
         type: Sequelize.STRING,
       },
+      office_id: {
+        type: Sequelize.INTEGER(20).UNSIGNED,
+      },
     },
     {
       timestamps: false,
