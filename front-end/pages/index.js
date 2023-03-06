@@ -2,6 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { CloseIcon } from '@chakra-ui/icons';
 import axios from 'axios';
 
+import { Icon, Select, Input, Button } from '@chakra-ui/react'
+import { IoLocationOutline } from "react-icons/io5";
+
 import ForgetPasswordStep4 from '../components/login/ForgetPassword-step4';
 import ForgetPasswordStep3 from '../components/login/ForgetPassword-step3';
 import ForgetPasswordStep2 from '../components/login/ForgetPassword-step2';
@@ -180,8 +183,8 @@ export default function HomePage(props) {
     if (showCountdownTime) {
       setTimeout(() => {
         const inputs = document.querySelectorAll(
-            'div.bom-login > div.bom-login-left > div > div.bom-login-form > .chakra-stack input'
-          ),
+          'div.bom-login > div.bom-login-left > div > div.bom-login-form > .chakra-stack input'
+        ),
           button = document.querySelector(
             'div.bom-login > div.bom-login-left > div > div.bom-login-form > button.bom-button-verify'
           );
@@ -297,10 +300,89 @@ export default function HomePage(props) {
     </>
   );
 
+  const HomeContent = (
+    <div className="home-content">
+      <h3 className="home-title">Lorem ipsum dolor sit amet onsectetur.</h3>
+      <p className="home-desc">
+        Lorem ipsum dolor sit amet consectetur. Velit non sed lobortis fermentum volutpat dignissim.
+      </p>
+    </div>
+  );
+  const HomeDestination = (
+    <div className="home-destination">
+      <form action="">
+        <div className="group-input">
+          <label for="from">Điểm xuất phát</label>
+          <Select placeholder='Select option' size='md' p={1} w="100%" >
+            <option value='option1'>Option 1</option>
+            <option value='option2'>Option 2</option>
+            <option value='option3'>Option 3</option>
+          </Select>
+        </div>
+        <div className="group-input">
+          <label for="to">Điểm đến</label>
+          <Select placeholder='Select option' size='md' p={1} w="100%" >
+            <option value='option1'>Option 1</option>
+            <option value='option2'>Option 2</option>
+            <option value='option3'>Option 3</option>
+          </Select>
+        </div>
+        <div className="group-input">
+          <label for="date">Ngày đi</label>
+          <Input
+            placeholder="Select Date and Time"
+            size="md"
+            type="datetime-local"
+          />
+        </div>
+        <Button colorScheme='blue' >Đặt Vé</Button>
+      </form>
+    </div>
+  );
+  const PopularRoute = (
+    <div className="popular-route">
+      <div className="popular-route__title"><span>Tuyến Phổ Biến</span></div>
+      <div className="popular-route__list">
+        <div className="popular-route__item">
+          <div className="popular-route__item-content">
+            <span className="popular-route__item-title">Lorem ipsum dolor </span>
+            <p className="popular-route__item-desc" > <Icon as={IoLocationOutline} boxSize={5} /> Lorem ipsum dolor sit amet onsectetur.</p>
+          </div>
+        </div>
+
+        <div className="popular-route__item">
+          <div className="popular-route__item-content">
+            <span className="popular-route__item-title">Lorem ipsum dolor </span>
+            <p className="popular-route__item-desc" > <Icon as={IoLocationOutline} boxSize={5} /> Lorem ipsum dolor sit amet onsectetur.</p>
+          </div>
+        </div>
+        <div className="popular-route__item">
+          <div className="popular-route__item-content">
+            <span className="popular-route__item-title">Lorem ipsum dolor </span>
+            <p className="popular-route__item-desc" > <Icon as={IoLocationOutline} boxSize={5} /> Lorem ipsum dolor sit amet onsectetur.</p>
+          </div>
+        </div>
+        <div className="popular-route__item">
+          <div className="popular-route__item-content">
+            <span className="popular-route__item-title">Lorem ipsum dolor </span>
+            <p className="popular-route__item-desc" > <Icon as={IoLocationOutline} boxSize={5} /> Lorem ipsum dolor sit amet onsectetur.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <>
-      {NavBarHTML}
-      {LoginFormHTML}
+      <header>
+        {NavBarHTML}
+        {LoginFormHTML}
+        {HomeContent}
+        {HomeDestination}
+      </header>
+      <main>
+        {PopularRoute}
+      </main>
     </>
   );
 }
