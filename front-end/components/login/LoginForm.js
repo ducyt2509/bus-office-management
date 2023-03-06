@@ -1,0 +1,41 @@
+import { Input, Text, InputGroup, Button, InputRightElement, Checkbox } from '@chakra-ui/react';
+import { useCallback, useEffect, useState } from 'react';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+
+export default function ForgetLoginForm(props) {
+  return (
+    <div style={{ margin: '11% 10%' }}>
+      <h1>Đăng nhập</h1>
+      <div className="bom-login-form">
+        <p>Số Điện Thoại/Email</p>
+        <Input
+          value={props.user}
+          onChange={props.handleChangeUserValue}
+          placeholder="Số Điện Thoại/Email"
+          size="md"
+        />
+        <p>Mật khẩu</p>
+        <InputGroup size="md">
+          <Input
+            type={props.showPassword ? 'text' : 'password'}
+            value={props.password}
+            onChange={props.handleChangePasswordValue}
+            placeholder="Mật khẩu"
+          />
+          <InputRightElement width="3.5rem" onClick={props.handleShowPassword}>
+            {!props.showPassword ? <ViewIcon /> : <ViewOffIcon />}
+          </InputRightElement>
+        </InputGroup>
+        <Button variant="solid" onClick={props.handleLogin}>
+          Đăng nhập
+        </Button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5%' }}>
+          <Checkbox defaultChecked>Nhớ Mật Khẩu</Checkbox>
+          <Text fontSize="md" onClick={props.handleShowForgetPassWord}>
+            Quên mật khẩu
+          </Text>
+        </div>
+      </div>
+    </div>
+  );
+}

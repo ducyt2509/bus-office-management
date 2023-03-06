@@ -470,7 +470,7 @@ module.exports = {
           { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
         ),
         queryInterface.createTable(
-          'bus_schedule_daily',
+          'daily_bus_schedule',
           {
             id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
@@ -485,6 +485,17 @@ module.exports = {
             date: {
               type: Sequelize.DataTypes.DATE,
             },
+            bus_schedule_id: {
+              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
+              allowNull: false,
+              references: {
+                model: {
+                  tableName: 'bus_schedule',
+                },
+                key: 'id',
+              },
+              onDelete: 'cascade',
+            }
           },
           { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
         ),
@@ -502,7 +513,7 @@ module.exports = {
       queryInterface.dropTable('user', { transaction: t }),
       queryInterface.dropTable('bus', { transaction: t }),
       queryInterface.dropTable('bus_schedule', { transaction: t }),
-      queryInterface.dropTable('bus_schedule_daily', { transaction: t }),
+      queryInterface.dropTable('daily_bus_schedule', { transaction: t }),
       queryInterface.dropTable('office', { transaction: t }),
       queryInterface.dropTable('transaction', { transaction: t }),
       queryInterface.dropTable('ticket', { transaction: t }),

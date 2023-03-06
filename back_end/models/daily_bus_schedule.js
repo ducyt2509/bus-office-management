@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   const Bus_schedule = sequelize.define(
-    'bus_schedule_daily',
+    'daily_bus_schedule',
     {
       id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
@@ -12,6 +12,9 @@ module.exports = (sequelize, Sequelize) => {
       },
       date: {
         type: Sequelize.DATE,
+      },
+      bus_schedule_id: {
+        type: Sequelize.INTEGER(20).UNSIGNED,
       },
     },
     {
