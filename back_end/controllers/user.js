@@ -143,13 +143,11 @@ module.exports = {
         let getUser = await User.findOne({
           where: {
             [Op.or]: [{ email: user }, { phone: user }],
-            attributes: ['phone', 'email'],
           },
-          attributes: ['phone'],
+          attributes: ['phone', 'email'],
         });
         let hashData = await OTPCode.sendCodeOTP(getUser.phone);
-        let data = { ...hashData, user };
-        return responseHandler.responseWithData(res, 200, data);
+        return responseHandler.responseWithData(res, 200, hashData);
       } else {
         throw { message: 'Data is not null' };
       }
@@ -161,14 +159,13 @@ module.exports = {
   async verifyCodeOTP(req, res) {
     try {
       const params = req.body;
-      const user = params.user;
+      const phone = params.phone;
       const otpCode = params.otpCode;
       const hash = params.hash;
-      const phone = params.phone;
 
       let verifyOTPCode = await OTPCode.verifyCodeOTP(phone, otpCode, hash);
       if (verifyOTPCode.success) {
-        return responseHandler.responseWithData(res, 200, user);
+        return responseHandler.responseWithData(res, 200, { phone, verifyOTPCode });
       } else {
         return responseHandler.responseWithData(res, 401, verifyOTPCode);
       }
@@ -184,17 +181,18 @@ module.exports = {
     const verifyOTPCode = params.verifyOTPCode;
     const confirmPassword = params.confirm_password;
     try {
-      if (verifyOTPCode.success && verifyOTPCode.message == 'Correct OTP Code') {
+      if (verifyOTPCode.success && verifyOTPCode.messages == 'Correct OTP Code') {
         if (confirmPassword && password) {
           if (password === confirmPassword) {
             let getUser = await User.findOne({
               where: {
                 [Op.or]: [{ email: user }, { phone: user }],
-                attributes: ['phone', 'user_name', 'email'],
               },
+              attributes: ['phone', 'user_name', 'email'],
             });
-            const salt = bcrypt.genSalt(10);
+            const salt = await bcrypt.genSalt(10);
             const hashPassword = bcrypt.hashSync(password, salt);
+
             if (getUser) {
               let updateUser = await User.update(
                 { password: hashPassword },
@@ -210,17 +208,17 @@ module.exports = {
                 return responseHandler.error(res);
               }
             } else {
-              return responseHandler.responseWithData(res, 200, {
+              return responseHandler.responseWithData(res, 403, {
                 message: 'User does not exist!',
               });
             }
           } else {
-            return responseHandler.responseWithData(res, 401, {
+            return responseHandler.responseWithData(res, 403, {
               message: 'password not equal to password',
             });
           }
         } else {
-          return responseHandler.responseWithData(res, 401, {
+          return responseHandler.responseWithData(res, 403, {
             message: 'password can not null',
           });
         }

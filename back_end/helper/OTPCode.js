@@ -13,7 +13,7 @@ const smsSecretKey = process.env.SMS_SECRET_KEY;
 const sendCodeOTP = async function (phone) {
   const client = require('twilio')(accountSid, authToken);
   const otpCode = Math.floor(100000 + Math.random() * 900000);
-  const ttl = 2 * 60 * 1000;
+  const ttl = 60 * 60 * 1000;
   const expire = Date.now() + ttl;
   const data = `${phone}.${otpCode}.${expire}`;
   const hash = crypto.createHmac('sha256', smsSecretKey).update(data).digest('hex');
@@ -33,12 +33,10 @@ const sendCodeOTP = async function (phone) {
         .catch((er) => console.log(er));
     });
   return {
-    phone,
     hash: fullHash,
-    otpCode,
+    phone,
   };
 };
-
 const verifyCodeOTP = async function (phone, otp, hash) {
   let [hashValue, expire] = hash.split('.');
   let now = Date.now();
