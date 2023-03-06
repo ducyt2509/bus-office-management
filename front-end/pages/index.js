@@ -113,6 +113,7 @@ export default function HomePage(props) {
       setUser('');
       setPassword('');
       setConfirmPassword('');
+      setShowPassword(false);
     }
     if (!showForgetPassword == false || !showLogin == true) {
       step = 0;
@@ -122,6 +123,7 @@ export default function HomePage(props) {
       setUser('');
       setPassword('');
       setConfirmPassword('');
+      setShowPassword(false);
     }
     setStepForgetPassword(step);
     setShowLogin(!showLogin);
@@ -174,6 +176,7 @@ export default function HomePage(props) {
       setUser('');
       setPassword('');
       setConfirmPassword('');
+      setShowPassword(false);
       return;
     }
     switch (stepForgetPassword) {
