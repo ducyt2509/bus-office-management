@@ -74,13 +74,40 @@ div.bom-login > div.bom-login-left div.bom-login-form > button:not(.bom-button-v
 	background-color: coral;
 }
 
-div.bom-login div.bom-login-left div > input {
+/* div.bom-login div.bom-login-left div > input {
 	margin-bottom: 6%;
+} */
+div.bom-login > div.bom-login-left > div > div > div:has(.chakra-form__error-message):nth-child(1) {
+	margin-bottom: 3%;
 }
-div.bom-login > div.bom-login-left div.chakra-input__group {
+div.bom-login > div.bom-login-left > div > div > div:has(.chakra-form__error-message):nth-child(2) {
+	margin-bottom: 5%;
+}
+div.bom-login > div.bom-login-left > div > div > div {
+	margin-bottom: 5%;
+}
+div.bom-login > div.bom-login-left > div > div > div:nth-child(2) {
+	margin-bottom: 8%;
+}
+div.bom-login > div.bom-login-left > div:has(.bom-verify-otp-title) > div > div:nth-child(2) {
 	margin-bottom: 5%;
 }
 
+div.bom-login > div.bom-login-left > div:has(.bom-change-password-title)> div > div:nth-child(2) {
+	margin-bottom: 7%;
+ }
+ div.bom-login > div.bom-login-left > div:has(.bom-change-password-title):has(.chakra-form__error-message) > div > div:nth-child(2) {
+	margin-bottom: 3%;
+ }
+ div.bom-login > div.bom-login-left > div:has(.bom-change-password-title) > div > div:nth-child(1) {
+	margin-bottom: 3%;
+ }
+/* div.bom-login > div.bom-login-left div.chakra-input__group {
+	margin-bottom: 5%;
+} */
+div.bom-login > div.bom-login-left  div:has(.chakra-form__error-message)  button {
+	cursor: not-allowed;
+}
 div.bom-login div.bom-login-left div div.chakra-input__group.css-bx0blc > div {
 	top: 5px;
 	cursor: pointer;
@@ -127,7 +154,7 @@ div.bom-login > div.bom-login-left div.chakra-stack {
 	justify-content: center;
 }
 div.bom-login > div.bom-login-left > div > div > button.bom-button-send-request {
-	margin-top: 5%;
+	margin-top: 3%;
 }
 div.bom-login > div.bom-login-left > div > div.bom-login-form > button.bom-button-verify {
 	cursor: not-allowed;
@@ -184,6 +211,9 @@ div.bom-login > div.bom-login-left > div > div.bom-login-form > div:nth-child(2)
 div.bom-login > div.bom-login-left div:has(h1.bom-change-password-title) div.chakra-stack {
 	margin-top: 8%;
 }
+div.bom-login > div.bom-login-left div:has(h1.bom-change-password-title):has(.chakra-form__error-message) div.chakra-stack {
+	margin-top: 5%;
+}
 div.bom-login
 	> div.bom-login-left
 	> div:has(h1.bom-change-password-title)
@@ -204,9 +234,9 @@ div.bom-login
 div.bom-login div.bom-login-left h1.bom-change-password-title {
 	margin-bottom: 6%;
 }
-div.bom-login div.bom-login-left div:has(h1.bom-change-password-title) div > input {
+/* div.bom-login div.bom-login-left div:has(h1.bom-change-password-title) div > input {
 	margin-bottom: 3%;
-}
+} */
 div.bom-login > div.bom-login-left:has(h1.bom-forget-password-complete-title) > div > div > button {
 	width: 100px;
 	height: 100px;
