@@ -11,10 +11,12 @@ import LoginForm from '../components/login/LoginForm';
 import NavBar from '../components/login/NavBar';
 
 export default function HomePage(props) {
-  const [userData, setUserDate] = useState({});
+  const [userData, setUserData] = useState({});
+  const [otpCode, setOtpCode] = useState(new Array(6).fill(null));
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [user, setUser] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const [countdown, setCountdown] = useState(60);
   const [showCountdownTime, setShowCountdownTime] = useState(false);
@@ -24,7 +26,9 @@ export default function HomePage(props) {
   const handleChangeUserValue = (event) => setUser(event.target.value);
 
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const handleChangePasswordValue = (event) => setPassword(event.target.value);
+  const handleChangeConfirmPasswordValue = (event) => setConfirmPassword(event.target.value);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -54,11 +58,19 @@ export default function HomePage(props) {
       step = 0;
       setShowCountdownTime(false);
       setCountdown(60);
+      setUserData({});
+      setUser('');
+      setPassword('');
+      setConfirmPassword('');
     }
     if (!showForgetPassword == false || !showLogin == true) {
       step = 0;
       setShowCountdownTime(false);
       setCountdown(60);
+      setUserData({});
+      setUser('');
+      setPassword('');
+      setConfirmPassword('');
     }
     setStepForgetPassword(step);
     setShowLogin(!showLogin);
@@ -83,24 +95,20 @@ export default function HomePage(props) {
     }
   }, [user, password]);
 
-  const handleResendOTP = useCallback(() => {
-    setShowCountdownTime(true);
-    // var submitData = {
-    //   user: userData?.user,
-    //   otpCode: userData?.otpCode,
-    //   hash: userData?.hash,
-    //   phone: userData?.phone,
-    // };
-    // const verifyOTP = await axios.post(
-    //   `http://localhost:${props.BACK_END_PORT}/verify-otp`,
-    //   submitData
-    // );
-    // if (verifyOTP.data.statusCode === 200) {
-    //   setStepForgetPassword(step);
-    // } else if (verifyOTP.data.statusCode === 403) {
-    //   console.log(verifyOTP.data.data.message);
-    // }
-  }, []);
+  const handleResendOTP = useCallback(async () => {
+    var submitData = {
+      user: userData?.phone,
+    };
+    const sendOTP = await axios.post(
+      `http://localhost:${props.BACK_END_PORT}/send-otp`,
+      submitData
+    );
+    if (sendOTP.data.statusCode === 200) {
+      setShowCountdownTime(true);
+    } else if (sendOTP.data.statusCode === 403) {
+      console.log(sendOTP.data.data.message);
+    }
+  }, [userData]);
 
   const handleForgetPassword = useCallback(async () => {
     let step = stepForgetPassword + 1;
@@ -111,25 +119,30 @@ export default function HomePage(props) {
       setShowForgetPassword(false);
       setShowCountdownTime(false);
       setCountdown(60);
+      setUserData({});
+      setUser('');
+      setPassword('');
+      setConfirmPassword('');
       return;
     }
     switch (stepForgetPassword) {
       case 1:
-        setStepForgetPassword(step);
-        // var submitData = {
-        //   user,
-        // };
-        // const sendOTP = await axios.post(
-        //   `http://localhost:${props.BACK_END_PORT}/send-otp`,
-        //   submitData
-        // );
-        // if (sendOTP.data.statusCode === 200) {
-        //   setStepForgetPassword(step);
-        //   console.log('login success');
-        // } else if (sendOTP.data.statusCode === 403) {
-        //   console.log(sendOTP.data.data.message);
-        // }
+        var submitData = {
+          user,
+        };
+        setLoading(true);
+        const sendOTP = await axios.post(
+          `http://localhost:${props.BACK_END_PORT}/send-otp`,
+          submitData
+        );
+        if (sendOTP.data.statusCode === 200) {
+          setUserData(sendOTP.data.data);
+          setStepForgetPassword(step);
+        } else if (sendOTP.data.statusCode === 403) {
+          console.log(sendOTP.data.data.message);
+        }
         setShowCountdownTime(true);
+        setLoading(false);
         break;
       case 2:
         const button = document.querySelector(
@@ -137,99 +150,42 @@ export default function HomePage(props) {
         );
         if (button && button.classList.contains('active')) {
           setShowCountdownTime(false);
-          setStepForgetPassword(step);
-          // var submitData = {
-          //   user: userData?.user,
-          //   otpCode: userData?.otpCode,
-          //   hash: userData?.hash,
-          //   phone: userData?.phone,
-          // };
-          // const verifyOTP = await axios.post(
-          //   `http://localhost:${props.BACK_END_PORT}/verify-otp`,
-          //   submitData
-          // );
-          // if (verifyOTP.data.statusCode === 200) {
-          //   setStepForgetPassword(step);
-          // } else if (verifyOTP.data.statusCode === 403) {
-          //   console.log(verifyOTP.data.data.message);
-          // }
+          var submitData = {
+            otpCode: otpCode.join(''),
+            hash: userData?.hash,
+            phone: userData?.phone,
+          };
+          const verifyOTP = await axios.post(
+            `http://localhost:${props.BACK_END_PORT}/verify-otp`,
+            submitData
+          );
+          if (verifyOTP.data.statusCode === 200) {
+            setStepForgetPassword(step);
+            setUserData(verifyOTP.data.data);
+          } else if (verifyOTP.data.statusCode === 403) {
+            console.log(verifyOTP.data.data.message);
+          }
         }
         break;
       case 3:
-        setStepForgetPassword(step);
-        // var submitData = {
-        //   password: userData?.password,
-        //   user: userData?.user,
-        //   verifyOTPCode: userData?.verifyOTPCode,
-        //   confirmPassword: userData?.confirm_password,
-        // };
-        // const changePassword = await axios.post(
-        //   `http://localhost:${props.BACK_END_PORT}/change-password`,
-        //   submitData
-        // );
-        // if (changePassword.data.statusCode === 200) {
-        //   setStepForgetPassword(step);
-        // } else if (changePassword.data.statusCode === 403) {
-        //   console.log(changePassword.data.data.message);
-        // }
+        var submitData = {
+          password: password,
+          user: userData?.phone,
+          verifyOTPCode: userData?.verifyOTPCode,
+          confirm_password: confirmPassword,
+        };
+        const changePassword = await axios.put(
+          `http://localhost:${props.BACK_END_PORT}/change-password`,
+          submitData
+        );
+        if (changePassword.data.statusCode === 200) {
+          setStepForgetPassword(step);
+        } else if (changePassword.data.statusCode === 403) {
+          console.log(changePassword.data.data.message);
+        }
         break;
     }
-  }, [stepForgetPassword, countdown]);
-
-  useEffect(() => {
-    if (showCountdownTime) {
-      setTimeout(() => {
-        const inputs = document.querySelectorAll(
-            'div.bom-login > div.bom-login-left > div > div.bom-login-form > .chakra-stack input'
-          ),
-          button = document.querySelector(
-            'div.bom-login > div.bom-login-left > div > div.bom-login-form > button.bom-button-verify'
-          );
-
-        inputs.forEach((input, index1) => {
-          input.addEventListener('keyup', (e) => {
-            const currentInput = input,
-              nextInput = input.nextElementSibling,
-              prevInput = input.previousElementSibling;
-
-            if (currentInput.value.length > 1) {
-              currentInput.value = '';
-              return;
-            }
-            if (nextInput && nextInput.hasAttribute('disabled') && currentInput.value !== '') {
-              nextInput.removeAttribute('disabled');
-              nextInput.style.backgroundColor = '#fff';
-              nextInput.focus();
-            }
-            if (e.key === 'Backspace') {
-              inputs.forEach((input, index2) => {
-                if (index1 <= index2 && prevInput) {
-                  input.setAttribute('disabled', true);
-                  currentInput.style.backgroundColor = '#ededed';
-                  input.value = '';
-                  prevInput.focus();
-                }
-              });
-            }
-            if (!inputs[5].disabled && inputs[5].value !== '') {
-              button.classList.add('active');
-              return;
-            }
-            button.classList.remove('active');
-          });
-        });
-      }, 1000);
-      if (!countdown) {
-        setShowCountdownTime(false);
-        setCountdown(60);
-        return;
-      }
-      let countdownTime = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(countdownTime);
-    }
-  }, [countdown, showCountdownTime]);
+  }, [stepForgetPassword, countdown, user, otpCode, userData, password, confirmPassword]);
 
   const NavBarHTML = <NavBar handleShowLoginForm={handleShowLoginForm} />;
   const stepForgetPasswordHTML = (
@@ -259,6 +215,7 @@ export default function HomePage(props) {
           {(showForgetPassword && stepForgetPassword == 1 && (
             <ForgetPasswordStep1
               user={user}
+              loading={loading}
               handleChangeUserValue={handleChangeUserValue}
               handleForgetPassword={handleForgetPassword}
               stepForgetPasswordHTML={stepForgetPasswordHTML}
@@ -270,6 +227,11 @@ export default function HomePage(props) {
                 countdown={countdown}
                 handleResendOTP={handleResendOTP}
                 handleForgetPassword={handleForgetPassword}
+                userData={userData}
+                otpCode={otpCode}
+                setOtpCode={setOtpCode}
+                setShowCountdownTime={setShowCountdownTime}
+                setCountdown={setCountdown}
                 stepForgetPasswordHTML={stepForgetPasswordHTML}
               />
             )) ||
@@ -277,6 +239,8 @@ export default function HomePage(props) {
               <ForgetPasswordStep3
                 showPassword={showPassword}
                 password={password}
+                confirmPassword={confirmPassword}
+                handleChangeConfirmPasswordValue={handleChangeConfirmPasswordValue}
                 handleChangePasswordValue={handleChangePasswordValue}
                 handleShowPassword={handleShowPassword}
                 handleForgetPassword={handleForgetPassword}

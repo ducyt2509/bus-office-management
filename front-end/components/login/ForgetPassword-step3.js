@@ -23,8 +23,8 @@ export default function ForgetPasswordStep3(props) {
         <InputGroup size="md">
           <Input
             type={props.showPassword ? 'text' : 'password'}
-            value={props.password}
-            onChange={props.handleChangePasswordValue}
+            value={props.confirmPassword}
+            onChange={props.handleChangeConfirmPasswordValue}
             placeholder="Xác nhận mật khẩu"
           />
           <InputRightElement width="3.5rem" onClick={props.handleShowPassword}>

@@ -8,11 +8,12 @@ export default function ForgetPasswordStep1(props) {
         <p>Nhập số điện thoại/Email</p>
         <Input
           value={props.user}
-          onChange={props.InputhandleChangeUserValue}
+          onChange={props.handleChangeUserValue}
           placeholder="Nhập số điện thoại/Email"
           size="md"
         />
         <Button
+          isLoading={props.loading}
           variant="solid"
           onClick={props.handleForgetPassword}
           className="bom-button-send-request"
