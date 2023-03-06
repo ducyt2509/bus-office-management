@@ -135,7 +135,7 @@ export default function ForgetPasswordStep2(props) {
             </Text>
           )}
         </div>
-        <Button variant="solid" onClick={props.handleForgetPassword} className="bom-button-verify">
+        <Button variant="solid" onClick={props.handleForgetPassword} className="bom-button-verify" isLoading={props.loading}>
           Xác thực
         </Button>
         {props.stepForgetPasswordHTML}

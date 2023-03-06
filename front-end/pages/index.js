@@ -2,6 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { CloseIcon } from '@chakra-ui/icons';
 import axios from 'axios';
 
+import { Icon, Select, Input, Button } from '@chakra-ui/react';
+import { IoLocationOutline } from 'react-icons/io5';
+
 import ForgetPasswordStep4 from '../components/login/ForgetPassword-step4';
 import ForgetPasswordStep3 from '../components/login/ForgetPassword-step3';
 import ForgetPasswordStep2 from '../components/login/ForgetPassword-step2';
@@ -18,17 +21,65 @@ export default function HomePage(props) {
   const [user, setUser] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const [errorInput, setErrorInput] = useState({
+    user: false,
+    password: false,
+    confirm_password: false,
+  });
+
   const [countdown, setCountdown] = useState(60);
   const [showCountdownTime, setShowCountdownTime] = useState(false);
 
   const [stepForgetPassword, setStepForgetPassword] = useState(0);
 
-  const handleChangeUserValue = (event) => setUser(event.target.value);
-
+  const handleChangeUserValue = useCallback(
+    (event) => {
+      let value = event.target.value;
+      setUser(value);
+      let error = { ...errorInput };
+      let pattern = '^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})|(^[0-9]{10})+$';
+      if (value == '' || !value.toLowerCase().match(pattern)) {
+        error.user = true;
+      } else {
+        error.user = false;
+      }
+      setErrorInput(error);
+    },
+    [errorInput]
+  );
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const handleChangePasswordValue = (event) => setPassword(event.target.value);
-  const handleChangeConfirmPasswordValue = (event) => setConfirmPassword(event.target.value);
+  const handleChangePasswordValue = useCallback(
+    (event) => {
+      let value = event.target.value;
+      setPassword(value);
+      let error = { ...errorInput };
+      let pattern = '^(?=.*?[A-Z]).{8,}$';
+      if (value == '' || !value.match(pattern)) {
+        error.password = true;
+      } else {
+        error.password = false;
+      }
+      setErrorInput(error);
+    },
+    [errorInput]
+  );
+
+  const handleChangeConfirmPasswordValue = useCallback(
+    (event) => {
+      let value = event.target.value;
+      setConfirmPassword(value);
+      let error = { ...errorInput };
+      let pattern = '^(?=.*?[A-Z]).{8,}$';
+      if (value == '' || value != password || !value.match(pattern)) {
+        error.confirm_password = true;
+      } else {
+        error.confirm_password = false;
+      }
+      setErrorInput(error);
+    },
+    [errorInput, password]
+  );
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -127,6 +178,9 @@ export default function HomePage(props) {
     }
     switch (stepForgetPassword) {
       case 1:
+        if (!errorInput.user) {
+          return;
+        }
         var submitData = {
           user,
         };
@@ -149,7 +203,8 @@ export default function HomePage(props) {
           'div.bom-login > div.bom-login-left > div > div.bom-login-form > button.bom-button-verify'
         );
         if (button && button.classList.contains('active')) {
-          setShowCountdownTime(false);
+          setLoading(true);
+          // setShowCountdownTime(false);
           var submitData = {
             otpCode: otpCode.join(''),
             hash: userData?.hash,
@@ -165,9 +220,14 @@ export default function HomePage(props) {
           } else if (verifyOTP.data.statusCode === 403) {
             console.log(verifyOTP.data.data.message);
           }
+          setLoading(false);
         }
         break;
       case 3:
+        if (!errorInput.password || !errorInput.confirm_password) {
+          return;
+        }
+        setLoading(true);
         var submitData = {
           password: password,
           user: userData?.phone,
@@ -183,9 +243,19 @@ export default function HomePage(props) {
         } else if (changePassword.data.statusCode === 403) {
           console.log(changePassword.data.data.message);
         }
+        setLoading(false);
         break;
     }
-  }, [stepForgetPassword, countdown, user, otpCode, userData, password, confirmPassword]);
+  }, [
+    stepForgetPassword,
+    countdown,
+    user,
+    otpCode,
+    userData,
+    password,
+    confirmPassword,
+    errorInput,
+  ]);
 
   const NavBarHTML = <NavBar handleShowLoginForm={handleShowLoginForm} />;
   const stepForgetPasswordHTML = (
@@ -209,6 +279,7 @@ export default function HomePage(props) {
               handleChangePasswordValue={handleChangePasswordValue}
               handleShowPassword={handleShowPassword}
               handleLogin={handleLogin}
+              errorInput={errorInput}
               handleShowForgetPassWord={handleShowForgetPassWord}
             />
           )}
@@ -216,6 +287,7 @@ export default function HomePage(props) {
             <ForgetPasswordStep1
               user={user}
               loading={loading}
+              errorInput={errorInput}
               handleChangeUserValue={handleChangeUserValue}
               handleForgetPassword={handleForgetPassword}
               stepForgetPasswordHTML={stepForgetPasswordHTML}
@@ -225,6 +297,7 @@ export default function HomePage(props) {
               <ForgetPasswordStep2
                 showCountdownTime={showCountdownTime}
                 countdown={countdown}
+                loading={loading}
                 handleResendOTP={handleResendOTP}
                 handleForgetPassword={handleForgetPassword}
                 userData={userData}
@@ -239,7 +312,9 @@ export default function HomePage(props) {
               <ForgetPasswordStep3
                 showPassword={showPassword}
                 password={password}
+                loading={loading}
                 confirmPassword={confirmPassword}
+                errorInput={errorInput}
                 handleChangeConfirmPasswordValue={handleChangeConfirmPasswordValue}
                 handleChangePasswordValue={handleChangePasswordValue}
                 handleShowPassword={handleShowPassword}
@@ -261,10 +336,97 @@ export default function HomePage(props) {
     </>
   );
 
+  const HomeContent = (
+    <div className="home-content">
+      <h3 className="home-title">Lorem ipsum dolor sit amet onsectetur.</h3>
+      <p className="home-desc">
+        Lorem ipsum dolor sit amet consectetur. Velit non sed lobortis fermentum volutpat dignissim.
+      </p>
+    </div>
+  );
+  const HomeDestination = (
+    <div className="home-destination">
+      <form action="">
+        <div className="group-input">
+          <label for="from">Điểm xuất phát</label>
+          <Select placeholder="Select option" size="md" p={1} w="100%">
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+          </Select>
+        </div>
+        <div className="group-input">
+          <label for="to">Điểm đến</label>
+          <Select placeholder="Select option" size="md" p={1} w="100%">
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+          </Select>
+        </div>
+        <div className="group-input">
+          <label for="date">Ngày đi</label>
+          <Input placeholder="Select Date and Time" size="md" type="date" />
+        </div>
+        <Button colorScheme="blue">Đặt Vé</Button>
+      </form>
+    </div>
+  );
+  const PopularRoute = (
+    <div className="popular-route">
+      <div className="popular-route__title">
+        <span>Tuyến Phổ Biến</span>
+      </div>
+      <div className="popular-route__list">
+        <div className="popular-route__item">
+          <div className="popular-route__item-content">
+            <span className="popular-route__item-title">Lorem ipsum dolor </span>
+            <p className="popular-route__item-desc">
+              {' '}
+              <Icon as={IoLocationOutline} boxSize={5} /> Lorem ipsum dolor sit amet onsectetur.
+            </p>
+          </div>
+        </div>
+
+        <div className="popular-route__item">
+          <div className="popular-route__item-content">
+            <span className="popular-route__item-title">Lorem ipsum dolor </span>
+            <p className="popular-route__item-desc">
+              {' '}
+              <Icon as={IoLocationOutline} boxSize={5} /> Lorem ipsum dolor sit amet onsectetur.
+            </p>
+          </div>
+        </div>
+        <div className="popular-route__item">
+          <div className="popular-route__item-content">
+            <span className="popular-route__item-title">Lorem ipsum dolor </span>
+            <p className="popular-route__item-desc">
+              {' '}
+              <Icon as={IoLocationOutline} boxSize={5} /> Lorem ipsum dolor sit amet onsectetur.
+            </p>
+          </div>
+        </div>
+        <div className="popular-route__item">
+          <div className="popular-route__item-content">
+            <span className="popular-route__item-title">Lorem ipsum dolor </span>
+            <p className="popular-route__item-desc">
+              {' '}
+              <Icon as={IoLocationOutline} boxSize={5} /> Lorem ipsum dolor sit amet onsectetur.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <>
-      {NavBarHTML}
-      {LoginFormHTML}
+      <header>
+        {NavBarHTML}
+        {LoginFormHTML}
+        {HomeContent}
+        {HomeDestination}
+      </header>
+      <main>{PopularRoute}</main>
     </>
   );
 }

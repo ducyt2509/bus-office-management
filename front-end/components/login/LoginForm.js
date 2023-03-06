@@ -1,4 +1,14 @@
-import { Input, Text, InputGroup, Button, InputRightElement, Checkbox } from '@chakra-ui/react';
+import {
+  Input,
+  Text,
+  InputGroup,
+  Button,
+  InputRightElement,
+  Checkbox,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+} from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 
@@ -7,25 +17,39 @@ export default function ForgetLoginForm(props) {
     <div style={{ margin: '11% 10%' }}>
       <h1>Đăng nhập</h1>
       <div className="bom-login-form">
-        <p>Số Điện Thoại/Email</p>
-        <Input
-          value={props.user}
-          onChange={props.handleChangeUserValue}
-          placeholder="Số Điện Thoại/Email"
-          size="md"
-        />
-        <p>Mật khẩu</p>
-        <InputGroup size="md">
+        <FormControl isRequired isInvalid={props.errorInput.user}>
+          <FormLabel>Số Điện Thoại/Email</FormLabel>
           <Input
-            type={props.showPassword ? 'text' : 'password'}
-            value={props.password}
-            onChange={props.handleChangePasswordValue}
-            placeholder="Mật khẩu"
+            value={props.user}
+            onChange={props.handleChangeUserValue}
+            placeholder="Số Điện Thoại/Email"
+            size="md"
           />
-          <InputRightElement width="3.5rem" onClick={props.handleShowPassword}>
-            {!props.showPassword ? <ViewIcon /> : <ViewOffIcon />}
-          </InputRightElement>
-        </InputGroup>
+          <FormErrorMessage>
+            {props.user == ''
+              ? 'Số Điện Thoại/Email là bắt buộc'
+              : 'Số Điện Thoại/Email không đúng định dạng'}
+          </FormErrorMessage>
+        </FormControl>
+        <FormControl isRequired isInvalid={props.errorInput.password}>
+          <FormLabel>Mật khẩu</FormLabel>
+          <InputGroup size="md">
+            <Input
+              type={props.showPassword ? 'text' : 'password'}
+              value={props.password}
+              onChange={props.handleChangePasswordValue}
+              placeholder="Mật khẩu"
+            />
+            <InputRightElement width="3.5rem" onClick={props.handleShowPassword}>
+              {!props.showPassword ? <ViewIcon /> : <ViewOffIcon />}
+            </InputRightElement>
+          </InputGroup>
+          <FormErrorMessage>
+            {props.password == ''
+              ? 'Mật khẩu là bắt buộc'
+              : 'Mật khẩu chứa ít nhất 8 kí tự và 1 kí tự viết hoa'}
+          </FormErrorMessage>
+        </FormControl>
         <Button variant="solid" onClick={props.handleLogin}>
           Đăng nhập
         </Button>
