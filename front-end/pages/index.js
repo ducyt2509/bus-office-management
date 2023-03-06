@@ -1,16 +1,14 @@
-import {
-  Input,
-  Text,
-  InputGroup,
-  Button,
-  InputRightElement,
-  Checkbox,
-  Stack,
-  Box,
-} from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
-import { ViewIcon, ViewOffIcon, CloseIcon, ArrowBackIcon, CheckIcon } from '@chakra-ui/icons';
+import { CloseIcon } from '@chakra-ui/icons';
 import axios from 'axios';
+
+import ForgetPasswordStep4 from '../components/login/ForgetPassword-step4';
+import ForgetPasswordStep3 from '../components/login/ForgetPassword-step3';
+import ForgetPasswordStep2 from '../components/login/ForgetPassword-step2';
+import ForgetPasswordStep1 from '../components/login/ForgetPassword-step1';
+import StepForgetPassword from '../components/login/StepForgetPassword';
+import LoginForm from '../components/login/LoginForm';
+import NavBar from '../components/login/NavBar';
 
 export default function HomePage(props) {
   const [userData, setUserDate] = useState({});
@@ -233,215 +231,65 @@ export default function HomePage(props) {
     }
   }, [countdown, showCountdownTime]);
 
-  const NavBar = (
-    <div className="bom-navbar">
-      <div className="bom-navbar-bom-logo">
-        <h1>BOM</h1>
-      </div>
-      <ul className="bom-navbar-component">
-        <li>
-          <div>Trang chủ</div>
-        </li>
-        <li>
-          <div>Tra cứu vé</div>
-        </li>
-        <li>
-          <div>Về chúng tôi</div>
-        </li>
-        <li>
-          <div>Liên hệ</div>
-        </li>
-        <li>
-          <div onClick={handleShowLoginForm}>Đăng nhập</div>
-        </li>
-      </ul>
-    </div>
-  );
+  const NavBarHTML = <NavBar handleShowLoginForm={handleShowLoginForm} />;
   const stepForgetPasswordHTML = (
-    <div className="bom-return-login-form">
-      <Text fontSize="md" onClick={handleShowForgetPassWord}>
-        <ArrowBackIcon /> Quay lại đăng nhập
-      </Text>
-      <Stack direction="row" spacing={4} align="center">
-        <Button
-          colorScheme="teal"
-          variant="outline"
-          className={stepForgetPassword == 1 && 'bom-button-selected'}
-        >
-          1
-        </Button>
-        <Button
-          colorScheme="teal"
-          variant="outline"
-          className={stepForgetPassword == 2 && 'bom-button-selected'}
-        >
-          2
-        </Button>
-        <Button
-          colorScheme="teal"
-          variant="outline"
-          className={stepForgetPassword == 3 && 'bom-button-selected'}
-        >
-          3
-        </Button>
-        <Button
-          colorScheme="teal"
-          variant="outline"
-          className={stepForgetPassword == 4 && 'bom-button-selected'}
-        >
-          <CheckIcon boxSize={3} />
-        </Button>
-      </Stack>
-    </div>
+    <StepForgetPassword
+      handleShowForgetPassWord={handleShowForgetPassWord}
+      stepForgetPassword={stepForgetPassword}
+    />
   );
-  const LoginForm = showLoginForm && (
+  const LoginFormHTML = showLoginForm && (
     <>
       <div id="bom-login"></div>
       <div className="bom-login">
         <CloseIcon onClick={handleShowLoginForm} />
         <div className="bom-login-left">
           {showLogin && (
-            <div style={{ margin: '11% 10%' }}>
-              <h1>Đăng nhập</h1>
-              <div className="bom-login-form">
-                <p>Số Điện Thoại/Email</p>
-                <Input
-                  value={user}
-                  onChange={handleChangeUserValue}
-                  placeholder="Số Điện Thoại/Email"
-                  size="md"
-                />
-                <p>Mật khẩu</p>
-                <InputGroup size="md">
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={handleChangePasswordValue}
-                    placeholder="Mật khẩu"
-                  />
-                  <InputRightElement width="3.5rem" onClick={handleShowPassword}>
-                    {!showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                  </InputRightElement>
-                </InputGroup>
-                <Button variant="solid" onClick={handleLogin}>
-                  Đăng nhập
-                </Button>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5%' }}>
-                  <Checkbox defaultChecked>Nhớ Mật Khẩu</Checkbox>
-                  <Text fontSize="md" onClick={handleShowForgetPassWord}>
-                    Quên mật khẩu
-                  </Text>
-                </div>
-              </div>
-            </div>
+            <LoginForm
+              user={user}
+              handleChangeUserValue={handleChangeUserValue}
+              showPassword={showPassword}
+              password={password}
+              handleChangePasswordValue={handleChangePasswordValue}
+              handleShowPassword={handleShowPassword}
+              handleLogin={handleLogin}
+              handleShowForgetPassWord={handleShowForgetPassWord}
+            />
           )}
           {(showForgetPassword && stepForgetPassword == 1 && (
-            <div style={{ margin: '14% 10%' }}>
-              <h1 className="bom-forget-password-title">Quên mật khẩu</h1>
-              <div className="bom-login-form">
-                <p>Nhập số điện thoại/Email</p>
-                <Input
-                  value={user}
-                  onChange={handleChangeUserValue}
-                  placeholder="Nhập số điện thoại/Email"
-                  size="md"
-                />
-                <Button
-                  variant="solid"
-                  onClick={handleForgetPassword}
-                  className="bom-button-send-request"
-                >
-                  Gửi yêu cầu
-                </Button>
-                {stepForgetPasswordHTML}
-              </div>
-            </div>
+            <ForgetPasswordStep1
+              user={user}
+              handleChangeUserValue={handleChangeUserValue}
+              handleForgetPassword={handleForgetPassword}
+              stepForgetPasswordHTML={stepForgetPasswordHTML}
+            />
           )) ||
-            (stepForgetPassword == 2 && (
-              <div style={{ margin: '-4% 10%' }}>
-                <div className="bom-verify-otp-title">
-                  <h1 className="bom-verify-otp-title">Xác thực mã OTP</h1>
-                  <p>Mã xác thực đã được gửi qua SĐT: 0948****** </p>
-                </div>
-                <div className="bom-login-form">
-                  <Stack direction={['column', 'row']} spacing="5%">
-                    <input />
-                    <input disabled />
-                    <input disabled />
-                    <input disabled />
-                    <input disabled />
-                    <input disabled />
-                  </Stack>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Text fontSize="md" style={showCountdownTime ? { opacity: 1 } : { opacity: 0 }}>
-                      Yêu cầu cấp lại mã sau {countdown} giây
-                    </Text>
-                    {!showCountdownTime && (
-                      <Text fontSize="md" onClick={handleResendOTP}>
-                        Gửi lại OTP
-                      </Text>
-                    )}
-                  </div>
-                  <Button
-                    variant="solid"
-                    onClick={handleForgetPassword}
-                    className="bom-button-verify"
-                  >
-                    Xác thực
-                  </Button>
-                  {stepForgetPasswordHTML}
-                </div>
-              </div>
+            (showForgetPassword && stepForgetPassword == 2 && (
+              <ForgetPasswordStep2
+                showCountdownTime={showCountdownTime}
+                countdown={countdown}
+                handleResendOTP={handleResendOTP}
+                handleForgetPassword={handleForgetPassword}
+                stepForgetPasswordHTML={stepForgetPasswordHTML}
+              />
             )) ||
-            (stepForgetPassword == 3 && (
-              <div style={{ margin: '9% 10%' }}>
-                <h1 className="bom-change-password-title">Đặt lại mật khẩu</h1>
-                <div className="bom-login-form">
-                  <p>Nhập mật khẩu</p>
-                  <InputGroup size="md">
-                    <Input
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={handleChangePasswordValue}
-                      placeholder="Mật khẩu"
-                    />
-                    <InputRightElement width="3.5rem" onClick={handleShowPassword}>
-                      {!showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                    </InputRightElement>
-                  </InputGroup>
-                  <p>Xác nhận mật khẩu</p>
-                  <InputGroup size="md">
-                    <Input
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={handleChangePasswordValue}
-                      placeholder="Xác nhận mật khẩu"
-                    />
-                    <InputRightElement width="3.5rem" onClick={handleShowPassword}>
-                      {!showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                    </InputRightElement>
-                  </InputGroup>
-                  <Button variant="solid" onClick={handleForgetPassword}>
-                    Đặt lại mật khẩu
-                  </Button>
-                  {stepForgetPasswordHTML}
-                </div>
-              </div>
+            (showForgetPassword && stepForgetPassword == 3 && (
+              <ForgetPasswordStep3
+                showPassword={showPassword}
+                password={password}
+                handleChangePasswordValue={handleChangePasswordValue}
+                handleShowPassword={handleShowPassword}
+                handleForgetPassword={handleForgetPassword}
+                stepForgetPassword={stepForgetPassword}
+                stepForgetPasswordHTML={stepForgetPasswordHTML}
+              />
             )) ||
-            (stepForgetPassword == 4 && (
-              <div>
-                <h1 className="bom-forget-password-complete-title">Hoàn thành</h1>
-                <div className="bom-login-form" style={{ textAlign: 'center' }}>
-                  <Button
-                    colorScheme="teal"
-                    variant="outline"
-                    className={stepForgetPassword == 4 && 'bom-button-selected'}
-                  >
-                    <CheckIcon boxSize={3} />
-                  </Button>
-                  {stepForgetPasswordHTML}
-                </div>
-              </div>
+            (showForgetPassword && stepForgetPassword == 4 && (
+              <ForgetPasswordStep4
+                stepForgetPassword={stepForgetPassword}
+                handleForgetPassword={handleForgetPassword}
+                stepForgetPasswordHTML={stepForgetPasswordHTML}
+              />
             ))}
         </div>
         <div className="bom-login-right"></div>
@@ -451,8 +299,8 @@ export default function HomePage(props) {
 
   return (
     <>
-      {NavBar}
-      {LoginForm}
+      {NavBarHTML}
+      {LoginFormHTML}
     </>
   );
 }
