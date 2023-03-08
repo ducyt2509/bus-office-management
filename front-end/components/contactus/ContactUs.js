@@ -10,7 +10,8 @@ export default function ContactUs() {
                 <Input placeholder='Gmail' size='lg' mt={6} />
                 <Textarea placeholder='Ý kiến đóng góp ....' mt={6} size='lg' h='250px' />
 
-                <Button size='lg' mt={6} px={7} colorScheme="teal" >
+                <Button size='lg' mt={6} px={7} 
+                gicolorScheme="teal" >
                     Gửi ý kiến
                 </Button>
             </Container>
