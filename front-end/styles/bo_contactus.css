@@ -1,0 +1,23 @@
+.contact-us {
+	position: absolute;
+	top: 15%;
+	left: 60%;
+	width: 30%;
+	height: 70%;
+	background: #ffffff;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	border-radius: 20px;
+	padding: 60px 4%;
+}
+
+.contact-us__title {
+	font-weight: 700;
+	font-size: 30px;
+	text-align: center;
+	color: #f26a4c;
+	line-height: 39px;
+}
+
+.contact-us button {
+	background: #f26a4c;
+}
