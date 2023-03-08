@@ -19,7 +19,7 @@ router.delete(
 );
 router.get(
   '/bus-schedule/list-bus-schedule',
-  middleWare.verifyTokenForManager,
+  // middleWare.verifyTokenForManager,
   bus_schedules.getListBusSchedule
 );
 

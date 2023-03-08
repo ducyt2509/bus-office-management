@@ -1,4 +1,5 @@
 import { Select, Input, Button } from '@chakra-ui/react';
+import axios from 'axios';
 import { useCallback, useState } from 'react';
 
 export default function HomeDestination(props) {
@@ -9,8 +10,11 @@ export default function HomeDestination(props) {
   const handleChangeStartLocation = (e) => setStartLocation(e.target.value);
   const handleChangeEndLocation = (e) => setEndLocation(e.target.value);
   const handleChangeDepartureDay = (e) => setDepartureDay(e.target.value);
-  const searchBusSchedule = useCallback(() => {
-    console.log(startLocation, endLocation, departureDay);
+  const searchBusSchedule = useCallback(async () => {
+    const listBusSchedule = await axios.get(
+      `http://localhost:${props.port}/bus-schedule/list-bus-schedule`
+    );
+    console.log(listBusSchedule.data);
   }, [startLocation, endLocation, departureDay]);
   const cityOption =
     props.list_city &&

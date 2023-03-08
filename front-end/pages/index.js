@@ -132,8 +132,12 @@ export default function HomePage(props) {
 
   const handleLogin = useCallback(async () => {
     if (user && password) {
+      let value = user;
+      if (value.length >= 8 && value[0] == 0 && parseInt(value)) {
+        value = '+84' + value.substring(1);
+      }
       const submitData = {
-        user,
+        user: value,
         password,
       };
       const loginAccount = await axios.post(
@@ -345,7 +349,9 @@ export default function HomePage(props) {
   );
 
   const HomeContentHTML = <HomeContent />;
-  const HomeDestinationHTML = <HomeDestination list_city={props.list_city} />;
+  const HomeDestinationHTML = (
+    <HomeDestination list_city={props.list_city} port={props.BACK_END_PORT} />
+  );
 
   const PopularRouteHTML = <PopularRoute />;
 

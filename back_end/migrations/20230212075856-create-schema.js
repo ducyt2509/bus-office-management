@@ -316,7 +316,7 @@ module.exports = {
               type: Sequelize.DataTypes.DATE,
               allowNull: false,
             },
-            date_start: {
+            date_end: {
               type: Sequelize.DataTypes.DATE,
               allowNull: false,
             },

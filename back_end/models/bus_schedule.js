@@ -17,13 +17,25 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.DOUBLE,
       },
       time_from: {
+        // Departure time of bus schedule
+        // Format data: (giờ phút)
+        // Ex: 13.5 (bus schedule start at 13h30)
         type: Sequelize.DATE,
       },
-      time_to: {
+      travel_time: {
+        // Time need for bus to complete bus schedule
+        // Format data: int (số giờ)
+        // Ex: 10 (meaning that bus need 10 hours to travel from start location to end location)
+        type: Sequelize.DATE,
+      },
+      date_start: {
+        // The date the bus schedule start operating
+        // Format date: date (ngày tháng)
+        // Ex: September 9th (meaning that bus schedule will start working and be booked from September 9th)
         type: Sequelize.DATE,
       },
       bus_schedule_status: {
-        type: Sequelize.INTEGER(20),
+        type: Sequelize.INTEGER(2),
       },
       schedule_frequency: {
         type: Sequelize.INTEGER(20),
