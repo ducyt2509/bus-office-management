@@ -12,6 +12,8 @@ import NavBar from '../components/home/login/NavBar';
 import HomeContent from '../components/home/content/HomeContent';
 import HomeDestination from '@/components/home/book-ticket/HomeDestination';
 import PopularRoute from '@/components/home/content/PopularRoute';
+import ContactUs from '@/components/common/ContactUs';
+import ContactUsDecor from '@/components/common/ContactUsDecor';
 
 export default function HomePage(props) {
   const [userData, setUserData] = useState({});
@@ -354,14 +356,19 @@ export default function HomePage(props) {
   );
 
   const PopularRouteHTML = <PopularRoute />;
+  const ContactusHTML = <ContactUs />;
+  const ContactusDecorHTML = <ContactUsDecor />;
 
   return (
     <>
       <header>
         {NavBarHTML}
         {LoginFormHTML}
-        {HomeContentHTML}
-        {HomeDestinationHTML}
+        {/* {HomeContentHTML}
+        {HomeDestinationHTML} */}
+
+        {ContactusDecorHTML}
+        {ContactusHTML}
       </header>
       <main>{PopularRouteHTML}</main>
     </>
