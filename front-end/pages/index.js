@@ -360,6 +360,7 @@ export default function HomePage(props) {
         {LoginFormHTML}
         {/* {HomeContentHTML}
         {HomeDestinationHTML} */}
+
         {ContactusDecorHTML}
         {ContactusHTML}
       </header>
