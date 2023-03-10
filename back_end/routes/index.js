@@ -1,7 +1,7 @@
 module.exports = [
   require('./user'),
   require('./bus_schedule'),
-  require('./bus_type'),
+  require('./vehicle'),
   require('./bus'),
   require('./city'),
   require('./location'),

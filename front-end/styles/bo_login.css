@@ -1,7 +1,7 @@
-body header {
-	background-image: url("../images/home/background.png") !important;
-	background-size: cover !important;
-	background-repeat: no-repeat !important;
+body header:has(.home-destination) {
+	background-image: url("../images/home/background.png");
+	background-size: cover;
+	background-repeat: no-repeat;
 	height: 100vh;
 }
 .bom-login {

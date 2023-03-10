@@ -12,8 +12,9 @@ import {
   Flex,
   Image,
 } from '@chakra-ui/react';
+import axios from 'axios';
 
-export default function ManagementRoute(props) {
+export default function RevenueReport(props) {
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
       <Flex

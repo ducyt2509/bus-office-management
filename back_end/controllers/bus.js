@@ -1,6 +1,7 @@
 const db = require('../models');
 const Bus = db.buses;
 const User = db.users;
+const Vehicle = db.vehicles;
 const Op = db.Sequelize.Op;
 const responseHandler = require('../handlers/response.handler');
 
@@ -79,9 +80,45 @@ module.exports = {
         }),
       ]);
       if (getListBus) {
+        for (let i = 0; i < getListBus.length; i++) {
+          const [getDriverMain, getDriverSupport, getVehicle] = await Promise.all([
+            User.findOne({
+              where: {
+                id: getListBus[i].main_driver_id,
+              },
+            }),
+            User.findOne({
+              where: {
+                id: getListBus[i].support_driver_id,
+              },
+            }),
+            Vehicle.findOne({
+              where: {
+                id: getListBus[i].vehicle_id,
+              },
+            }),
+          ]);
+          if (getDriverMain) {
+            delete getDriverMain.dataValues.password;
+            delete getDriverMain._previousDataValues.password;
+            delete getDriverMain.dataValues.refresh_access_token;
+            delete getDriverMain._previousDataValues.refresh_access_token;
+            getListBus[i].dataValues.driverMain = getDriverMain;
+          }
+          if (getDriverSupport) {
+            delete getDriverSupport.dataValues.password;
+            delete getDriverSupport._previousDataValues.password;
+            delete getDriverSupport.dataValues.refresh_access_token;
+            delete getDriverSupport._previousDataValues.refresh_access_token;
+            getListBus[i].dataValues.driverSupport = getDriverSupport;
+          }
+          if (getVehicle) {
+            getListBus[i].dataValues.vehicle = getVehicle;
+          }
+        }
         return responseHandler.responseWithData(res, 200, {
-          list_user: getListBus,
-          number_user: numberBus,
+          list_bus: getListBus,
+          number_bus: numberBus,
         });
       } else {
         return responseHandler.responseWithData(res, 403, { message: "Can't get list bus" });

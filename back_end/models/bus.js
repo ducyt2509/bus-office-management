@@ -7,7 +7,7 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      bus_plate: {
+      vehicle_plate: {
         type: Sequelize.STRING,
       },
       main_driver_id: {
@@ -16,10 +16,10 @@ module.exports = (sequelize, Sequelize) => {
       support_driver_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
-      bus_type_id: {
+      vehicle_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
-      bus_status: {
+      vehicle_status: {
         type: Sequelize.INTEGER(2),
       },
     },

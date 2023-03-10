@@ -49,6 +49,5 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}. Entry at "http://localhost:${PORT}"`);
 });
 
-
-const gmail = require("./helper/Gmail")
-gmail.sendMail("vietthang1118@gmail.com", "Đây là gmail testing", "Em thang ga  =)))")
+// const gmail = require("./helper/Gmail")
+// gmail.sendMail("vietthang1118@gmail.com", "Đây là gmail testing", "Em thang ga  =)))")
