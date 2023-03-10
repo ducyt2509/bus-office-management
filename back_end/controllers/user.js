@@ -118,6 +118,8 @@ module.exports = {
             });
             delete getUser.dataValues.password;
             delete getUser._previousDataValues.password;
+            delete getUser.dataValues.refresh_access_token;
+            delete getUser._previousDataValues.refresh_access_token;
             return responseHandler.responseWithData(res, 200, {
               ...getUser,
               accessToken,
@@ -238,50 +240,48 @@ module.exports = {
     const role_id = params.role_id;
 
     try {
-      if (role_id == 1) {
-        const whereCondition = querySearch
-          ? {
-              [Op.or]: [
-                {
-                  email: {
-                    [Op.like]: `%${querySearch}%`,
-                  },
+      const whereCondition = querySearch
+        ? {
+            [Op.or]: [
+              {
+                email: {
+                  [Op.like]: `%${querySearch}%`,
                 },
-                {
-                  phone: {
-                    [Op.like]: `%${querySearch}%`,
-                  },
+              },
+              {
+                phone: {
+                  [Op.like]: `%${querySearch}%`,
                 },
-                {
-                  user_name: {
-                    [Op.like]: `%${querySearch}%`,
-                  },
+              },
+              {
+                user_name: {
+                  [Op.like]: `%${querySearch}%`,
                 },
-              ],
-            }
-          : {};
-        let [getUser, numberUSer] = await Promise.all([
-          User.findAll({
-            where: whereCondition,
-            limit: limit,
-            offset: offset,
-            attributes: ['id', 'email', 'phone', 'user_name', 'avatar', 'role_id'],
-          }),
-          User.count({
-            where: whereCondition,
-          }),
-        ]);
-        if (getUser) {
-          return responseHandler.responseWithData(res, 200, {
-            list_user: getUser,
-            number_user: numberUSer,
-          });
-          Q;
-        } else {
-          return responseHandler.responseWithData(res, 403, { message: "Can't get list user" });
-        }
+              },
+            ],
+          }
+        : {};
+      if (role_id) {
+        whereCondition.role_id = role_id;
+      }
+      let [getUser, numberUSer] = await Promise.all([
+        User.findAll({
+          where: whereCondition,
+          limit: limit,
+          offset: offset,
+          attributes: ['id', 'email', 'phone', 'user_name', 'avatar', 'role_id'],
+        }),
+        User.count({
+          where: whereCondition,
+        }),
+      ]);
+      if (getUser) {
+        return responseHandler.responseWithData(res, 200, {
+          list_user: getUser,
+          number_user: numberUSer,
+        });
       } else {
-        return responseHandler.unauthorized(res);
+        return responseHandler.responseWithData(res, 403, { message: "Can't get list user" });
       }
     } catch (error) {
       return responseHandler.badRequest(res, error.message);

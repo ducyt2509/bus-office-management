@@ -227,7 +227,7 @@ module.exports = {
               autoIncrement: true,
               allowNull: false,
             },
-            bus_plate: {
+            vehicle_plate: {
               type: Sequelize.DataTypes.STRING,
               allowNull: false,
             },
@@ -244,7 +244,6 @@ module.exports = {
             },
             support_driver_id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
-              allowNull: false,
               references: {
                 model: {
                   tableName: 'user',
@@ -264,7 +263,7 @@ module.exports = {
               },
               onDelete: 'cascade',
             },
-            bus_status: {
+            vehicle_status: {
               type: Sequelize.DataTypes.INTEGER(2),
               allowNull: false,
               defaultValue: 1,
@@ -309,11 +308,11 @@ module.exports = {
               allowNull: false,
             },
             time_from: {
-              type: Sequelize.DataTypes.DATE,
+              type: Sequelize.DataTypes.STRING,
               allowNull: false,
             },
-            time_to: {
-              type: Sequelize.DataTypes.DATE,
+            travel_time: {
+              type: Sequelize.DataTypes.INTEGER(20),
               allowNull: false,
             },
             date_start: {
@@ -495,7 +494,7 @@ module.exports = {
                 key: 'id',
               },
               onDelete: 'cascade',
-            }
+            },
           },
           { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
         ),

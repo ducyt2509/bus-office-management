@@ -1,21 +1,26 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CloseIcon } from '@chakra-ui/icons';
 import axios from 'axios';
+import { useStore, actions } from '@/src/store';
 
-import ForgetPasswordStep4 from '../components/home/login/ForgetPassword-step4';
-import ForgetPasswordStep3 from '../components/home/login/ForgetPassword-step3';
-import ForgetPasswordStep2 from '../components/home/login/ForgetPassword-step2';
-import ForgetPasswordStep1 from '../components/home/login/ForgetPassword-step1';
-import StepForgetPassword from '../components/home/login/StepForgetPassword';
-import LoginForm from '../components/home/login/LoginForm';
-import NavBar from '../components/home/login/NavBar';
+import {
+  ForgetPasswordStep4,
+  ForgetPasswordStep3,
+  ForgetPasswordStep2,
+  ForgetPasswordStep1,
+  LoginForm,
+  StepForgetPassword,
+} from '../components/home/login';
+import NavBar from '../components/common/sidebar/NavBar';
 import HomeContent from '../components/home/content/HomeContent';
 import HomeDestination from '@/components/home/book-ticket/HomeDestination';
 import PopularRoute from '@/components/home/content/PopularRoute';
-import ContactUs from '@/components/common/ContactUs';
-import ContactUsDecor from '@/components/common/ContactUsDecor';
+
+import { useRouter } from 'next/router';
 
 export default function HomePage(props) {
+  const [state, dispatch] = useStore();
+  const router = useRouter();
   const [userData, setUserData] = useState({});
   const [otpCode, setOtpCode] = useState(new Array(6).fill(null));
   const [showLoginForm, setShowLoginForm] = useState(false);
@@ -134,8 +139,12 @@ export default function HomePage(props) {
 
   const handleLogin = useCallback(async () => {
     if (user && password) {
+      let value = user;
+      if (value.length >= 8 && value[0] == 0 && parseInt(value)) {
+        value = '+84' + value.substring(1);
+      }
       const submitData = {
-        user,
+        user: value,
         password,
       };
       const loginAccount = await axios.post(
@@ -143,7 +152,15 @@ export default function HomePage(props) {
         submitData
       );
       if (loginAccount.data.statusCode === 200) {
-        console.log('login success');
+        if (loginAccount.data.data.dataValues.role_id == 1) {
+          dispatch(
+            actions.setDataUser({
+              ...loginAccount.data.data.dataValues,
+              token: loginAccount.data.data.accessToken,
+            })
+          );
+          router.push('/admin');
+        }
       } else if (loginAccount.data.statusCode === 403) {
         console.log(loginAccount.data.data.message);
       }
@@ -347,22 +364,19 @@ export default function HomePage(props) {
   );
 
   const HomeContentHTML = <HomeContent />;
-  const HomeDestinationHTML = <HomeDestination list_city={props.list_city} />;
+  const HomeDestinationHTML = (
+    <HomeDestination list_city={props.list_city} port={props.BACK_END_PORT} />
+  );
 
   const PopularRouteHTML = <PopularRoute />;
-  const ContactusHTML = <ContactUs />;
-  const ContactusDecorHTML = <ContactUsDecor />;
 
   return (
     <>
       <header>
         {NavBarHTML}
         {LoginFormHTML}
-        {/* {HomeContentHTML}
-        {HomeDestinationHTML} */}
-
-        {ContactusDecorHTML}
-        {ContactusHTML}
+        {HomeContentHTML}
+        {HomeDestinationHTML}
       </header>
       <main>{PopularRouteHTML}</main>
     </>

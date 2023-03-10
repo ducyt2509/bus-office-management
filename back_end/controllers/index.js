@@ -1,6 +1,6 @@
 const user = require('./user');
 const bus_schedule = require('./bus_schedule');
-const bus_type = require('./bus_type');
+const vehicle = require('./vehicle');
 const bus = require('./bus');
 const city = require('./city');
 const location = require('./location');
@@ -12,7 +12,7 @@ const transaction = require('./transaction');
 
 module.exports = {
   bus_schedule,
-  bus_type,
+  vehicle,
   bus,
   city,
   location,

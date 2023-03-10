@@ -1,34 +1,34 @@
 const db = require('../models');
-const Bus_type = db.bus_types;
+const Vehicle = db.vehicles;
 const Op = db.Sequelize.Op;
 const responseHandler = require('../handlers/response.handler');
 
 module.exports = {
-  async getListBusType(req, res) {
+  async getListVehicle(req, res) {
     const params = req.body;
-    const bus_type_name = params.bus_type_name;
+    const vehicle_name = params.vehicle_name;
     const offset = params.offset;
     const limit = params.limit;
     try {
       const whereCondition = {};
-      bus_type_name ? (whereCondition['bus_type_name'] = { [Op.like]: `%${bus_type_name}%` }) : '';
-      const listBusType = await Bus_type.findAll({
+      vehicle_name ? (whereCondition['vehicle_name'] = { [Op.like]: `%${vehicle_name}%` }) : '';
+      const listVehicle = await Vehicle.findAll({
         where: whereCondition,
         offset: offset,
         limit: limit,
       });
-      return responseHandler.responseWithData(res, 200, listBusType);
+      return responseHandler.responseWithData(res, 200, listVehicle);
     } catch (error) {
       return responseHandler.error(res);
     }
   },
-  async addNewBusType(req, res) {
+  async addNewVehicle(req, res) {
     try {
       if (!req.body.name) throw { message: 'Data is not null' };
-      let newBusType = await Bus_type.create({
-        bus_type_name: req.body.name,
+      let newVehicle = await Vehicle.create({
+        vehicle_name: req.body.name,
       });
-      if (newBusType) {
+      if (newVehicle) {
         return responseHandler.ok(res, 'Add new bus type successfully!');
       } else {
         return responseHandler.responseWithData(res, 403, { message: "Can't add new bus type" });
@@ -38,15 +38,15 @@ module.exports = {
     }
   },
 
-  async deleteBusType(req, res) {
+  async deleteVehicle(req, res) {
     try {
-      let busType = await Bus_type.findAll({
+      let Vehicle = await Vehicle.findAll({
         where: {
           id: req.query?.id,
         },
       });
-      if (!busType) return responseHandler.notfound(res);
-      await Bus_type.destroy({
+      if (!Vehicle) return responseHandler.notfound(res);
+      await Vehicle.destroy({
         where: {
           id: req.query?.id,
         },
@@ -57,11 +57,11 @@ module.exports = {
     }
   },
 
-  async updateBusType(req, res) {
+  async updateVehicle(req, res) {
     const params = req.body;
     try {
-      const updateBusTypes = await Bus_type.update(params);
-      if (updateBusTypes) {
+      const updateVehicles = await Vehicle.update(params, { where: { id: params.id } });
+      if (updateVehicles) {
         return responseHandler.ok(res, 'Update bus type successfully');
       } else {
         return responseHandler.responseWithData(res, 403, { message: "Can't update bus type" });
