@@ -1,62 +1,66 @@
 import {
-  Text,
-  Heading,
-  Card,
-  CardHeader,
-  CardBody,
-  Flex,
-  Image,
-  useDisclosure,
-} from '@chakra-ui/react';
-import { useCallback, useEffect, useState } from 'react';
-import { useStore } from '@/src/store';
-import axios from 'axios';
-import ActionBar from '@/components/office/ActionBar';
-import AddOffice from '@/components/office/AddOffice';
-import ListOffice from '@/components/office/ListOffice';
+	Text,
+	Heading,
+	Card,
+	CardHeader,
+	CardBody,
+	Flex,
+	Image,
+	useDisclosure,
+} from "@chakra-ui/react";
+import { useCallback, useEffect, useState } from "react";
+import { useStore } from "@/src/store";
+import axios from "axios";
+import ActionBar from "@/components/office/ActionBar";
+import AddOffice from "@/components/office/AddOffice";
+import ListOffice from "@/components/office/ListOffice";
 
 export default function ManagementOffice(props) {
-  const [state, dispath] = useStore();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+	const [state, dispath] = useStore();
+	const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [listOffice, setListOffice] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [dynamicListOffice, setDynamicListOffice] = useState([]);
-  const [querySearch, setQuerySearch] = useState('');
-  const [numberOffice, setNumberOffice] = useState('');
-  const [officeId, setOfficeId] = useState();
-  const [office, setOffice] = useState({});
+	const [listOffice, setListOffice] = useState([]);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [dynamicListOffice, setDynamicListOffice] = useState([]);
+	const [querySearch, setQuerySearch] = useState("");
+	const [numberOffice, setNumberOffice] = useState("");
+	const [officeId, setOfficeId] = useState();
+	const [office, setOffice] = useState({});
 
-  const handleGetListOffice = useCallback(
-    async (offset, limit) => {
-      const token = `Bearer ${state.dataUser.token}`;
-      offset = offset ? offset : 0;
-      limit = limit ? limit : 7;
-      const getListOffice = await axios.post(
-        `http://localhost:${props.BACK_END_PORT}/office/list-office`,
-        {
-          offset: offset,
-          limit: limit,
-        },
-        {
-          headers: {
-            token: token,
-          },
-        }
-      );
-      if (getListOffice.data.statusCode === 200) {
-        setListOffice(getListOffice.data.data.list_office);
-        setDynamicListOffice(getListOffice.data.data.list_office);
-        setCurrentPage(1);
-        setNumberOffice(getListOffice.data.data.number_office);
-      }
-    },
-    [state]
-  );
-  useEffect(() => {
-    handleGetListOffice();
-  }, []);
-  return (
+	const handleGetListOffice = useCallback(
+		async (page, limit) => {
+			limit = limit ? limit : 7;
+			page = page ? page - 1 : 0;
+			const offset = limit * page;
+			if (page) {
+				setCurrentPage(page);
+			}
+			const token = `Bearer ${state.dataUser.token}`;
+			const getListOffice = await axios.post(
+				`http://localhost:${props.BACK_END_PORT}/office/list-office`,
+				{
+					offset: page,
+					limit: limit,
+				},
+				{
+					headers: {
+						token: token,
+					},
+				},
+			);
+			if (getListOffice.data.statusCode === 200) {
+				setListOffice(getListOffice.data.data.list_office);
+				setDynamicListOffice(getListOffice.data.data.list_office);
+				setCurrentPage(1);
+				setNumberOffice(getListOffice.data.data.number_office);
+			}
+		},
+		[state],
+	);
+	useEffect(() => {
+		handleGetListOffice();
+	}, []);
+	return (
 		<div style={{ position: "relative", left: "20%", width: "80%" }}>
 			<Flex
 				alignItems={"center"}
@@ -105,12 +109,12 @@ export default function ManagementOffice(props) {
 				</Card>
 			</div>
 		</div>
-  );
+	);
 }
 export async function getStaticProps() {
-  return {
-    props: {
-      BACK_END_PORT: process.env.BACK_END_PORT,
-    },
-  };
+	return {
+		props: {
+			BACK_END_PORT: process.env.BACK_END_PORT,
+		},
+	};
 }
