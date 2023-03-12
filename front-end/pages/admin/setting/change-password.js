@@ -120,7 +120,7 @@ export default function Setting(props) {
               </FormControl>
 
               <FormControl isRequired isInvalid={errorInput.password} marginBottom={'5%'}>
-                <FormLabel marginBottom={'3%'}>Nhập Mật khẩu</FormLabel>
+                <FormLabel marginBottom={'3%'}>Mật khẩu mới</FormLabel>
                 <InputGroup size="md">
                   <Input
                     type={showPassword ? 'text' : 'password'}
