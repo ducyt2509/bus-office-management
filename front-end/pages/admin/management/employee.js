@@ -61,7 +61,6 @@ export async function getStaticProps() {
   return {
     props: {
       BACK_END_PORT: process.env.BACK_END_PORT,
-      list_city: getListCity.data.data?.listCity,
     },
   };
 }

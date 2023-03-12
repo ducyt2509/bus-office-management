@@ -55,13 +55,9 @@ export default function ManagementBusSchedule(props) {
   );
 }
 export async function getStaticProps() {
-  const getListCity = await axios.get(
-    `http://localhost:${process.env.BACK_END_PORT}/city/list-city`
-  );
   return {
     props: {
       BACK_END_PORT: process.env.BACK_END_PORT,
-      list_city: getListCity.data.data?.listCity,
     },
   };
 }

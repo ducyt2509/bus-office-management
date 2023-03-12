@@ -1,4 +1,4 @@
-import { Container, Input, Button, Textarea } from '@chakra-ui/react';
+import { Container } from '@chakra-ui/react';
 
 export default function ContactUsDecor() {
     return (
