@@ -1,10 +1,9 @@
 import { Flex, Text, Link, Menu, MenuButton } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-export default function NavElement({ navSize, active, href }) {
+export default function SideElement({ navSize, active, href, sideBarActive }) {
   const router = useRouter();
-  console.log(router.pathname);
-  return (
+  const sideElementForManagement = sideBarActive == 2 && (
     <Flex w={'100%'} flexDirection="column">
       <Flex marginTop="10px" w="100%" alignItems={navSize == 'small' ? 'center' : 'flex-start'}>
         <div style={{ width: '10%' }}></div>
@@ -133,5 +132,57 @@ export default function NavElement({ navSize, active, href }) {
         </Menu>
       </Flex>
     </Flex>
+  );
+  const sideElementForSetting = sideBarActive == 3 && (
+    <Flex w={'100%'} flexDirection="column">
+      <Flex marginTop="10px" w="100%" alignItems={navSize == 'small' ? 'center' : 'flex-start'}>
+        <div style={{ width: '10%' }}></div>
+        <Menu>
+          <Link
+            as={NextLink}
+            backgroundColor={router.pathname == '/admin/setting/personal-information' && '#686868'}
+            p={3}
+            borderRadius={8}
+            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
+            color={router.pathname == '/admin/setting/personal-information' ? '#fff' : '#686868'}
+            w={'90%'}
+            href={href.personalInformation}
+          >
+            <MenuButton w="100%">
+              <Text whiteSpace="nowrap" display={navSize == 'small' ? 'none' : 'flex'}>
+                Thông tin cá nhân
+              </Text>
+            </MenuButton>
+          </Link>
+        </Menu>
+      </Flex>
+      <Flex marginTop="10px" w="100%" alignItems={navSize == 'small' ? 'center' : 'flex-start'}>
+        <div style={{ width: '10%' }}></div>
+        <Menu>
+          <Link
+            as={NextLink}
+            backgroundColor={router.pathname == '/admin/setting/change-password' && '#686868'}
+            p={3}
+            borderRadius={8}
+            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
+            color={router.pathname == '/admin/setting/change-password' ? '#fff' : '#686868'}
+            w={'90%'}
+            href={href.changePassword}
+          >
+            <MenuButton w="100%">
+              <Text whiteSpace="nowrap" display={navSize == 'small' ? 'none' : 'flex'}>
+                Thay đổi mật khẩu
+              </Text>
+            </MenuButton>
+          </Link>
+        </Menu>
+      </Flex>
+    </Flex>
+  );
+  return (
+    <>
+      {sideElementForManagement}
+      {sideElementForSetting}
+    </>
   );
 }

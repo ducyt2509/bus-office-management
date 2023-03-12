@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 import { IoTicketOutline, IoBarChartOutline } from 'react-icons/io5';
-import { AiOutlineInbox } from 'react-icons/ai';
+import { AiOutlineInbox, AiOutlineSetting } from 'react-icons/ai';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
-import NavItem from './NavItem';
+import SideItem from './SideItem';
 import RevenueReport from '@/pages/admin/revenue-report';
 import Ticket from '@/pages/admin/ticket';
 
@@ -17,18 +17,24 @@ export default function Sidebar() {
     route: '/admin/management/route',
     revenueReport: '/admin/revenue-report',
     ticket: '/admin/ticket',
+    personalInformation: '/admin/setting/personal-information',
+    changePassword: '/admin/setting/change-password',
   };
   const [navSize, changeNavSize] = useState('large');
   const [sideBarActive, setActiveSideBar] = useState(0);
-  const handleSetAvtiveSideBar = (value) => {
-    setActiveSideBar(value);
-  };
+  const handleSetActiveSideBar = useCallback(
+    (value) => {
+      if (sideBarActive == value && value == 2) value = 4;
+      setActiveSideBar(value);
+    },
+    [sideBarActive]
+  );
   return (
     <Flex
       pos="fixed"
       h="800px"
       boxShadow="0 4px 12px 0 #888"
-      w={navSize == 'small' ? '75px' : '20%'}
+      w={navSize == 'small' ? '75px' : '17%'}
       flexDir="column"
       justifyContent="flex-start"
     >
@@ -42,34 +48,46 @@ export default function Sidebar() {
         alignItems={navSize == 'small' ? 'center' : 'flex-start'}
         as="nav"
       >
-        <NavItem
+        <SideItem
           navSize={navSize}
           icon={IoTicketOutline}
           title="Đặt Vé"
-          handleSetAvtiveSideBar={handleSetAvtiveSideBar}
+          handleSetActiveSideBar={handleSetActiveSideBar}
           active={sideBarActive == 0 ? true : false}
           value={0}
           href={path.ticket}
           component={Ticket}
         />
-        <NavItem
+        <SideItem
           navSize={navSize}
           icon={IoBarChartOutline}
           title="Báo Cáo Kinh Doanh"
-          handleSetAvtiveSideBar={handleSetAvtiveSideBar}
+          handleSetActiveSideBar={handleSetActiveSideBar}
           active={sideBarActive == 1 ? true : false}
           value={1}
           href={path.revenueReport}
           component={RevenueReport}
         />
-        <NavItem
+        <SideItem
           navSize={navSize}
           icon={AiOutlineInbox}
           suffixIcon={sideBarActive == 2 ? IoIosArrowDown : IoIosArrowUp}
-          handleSetAvtiveSideBar={handleSetAvtiveSideBar}
+          handleSetActiveSideBar={handleSetActiveSideBar}
           title="Quản Lí"
           active={sideBarActive == 2 ? true : false}
           value={2}
+          sideBarActive={sideBarActive}
+          href={path}
+        />
+        <SideItem
+          navSize={navSize}
+          icon={AiOutlineSetting}
+          suffixIcon={sideBarActive == 3 ? IoIosArrowDown : IoIosArrowUp}
+          handleSetActiveSideBar={handleSetActiveSideBar}
+          title="Cài đặt"
+          active={sideBarActive == 3 ? true : false}
+          value={3}
+          sideBarActive={sideBarActive}
           href={path}
         />
       </Flex>

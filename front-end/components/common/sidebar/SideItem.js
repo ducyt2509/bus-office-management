@@ -1,16 +1,17 @@
 import { Flex, Text, Icon, Link, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
-import NavElement from './NavElement';
+import SideElement from './SideElement';
 import NextLink from 'next/link';
 
-export default function NavItem({
+export default function SideItem({
   icon,
   title,
-  handleSetAvtiveSideBar,
+  handleSetActiveSideBar,
   active,
   navSize,
   suffixIcon,
   value,
   href,
+  sideBarActive,
 }) {
   return (
     <>
@@ -19,7 +20,7 @@ export default function NavItem({
         flexDir="column"
         w="100%"
         alignItems={navSize == 'small' ? 'center' : 'flex-start'}
-        onClick={() => handleSetAvtiveSideBar(value)}
+        onClick={() => handleSetActiveSideBar(value)}
       >
         <Menu placement="right">
           <Link
@@ -30,7 +31,7 @@ export default function NavItem({
             _hover={{ textDecor: 'none', backgroundColor: '#363636', color: '#fff' }}
             color={active ? '#fff' : '#686868'}
             w={navSize == 'large' && '100%'}
-            href={!suffixIcon ? href : ""}
+            href={!suffixIcon ? href : ''}
           >
             <MenuButton w="100%">
               <Flex justifyContent="space-between">
@@ -46,7 +47,12 @@ export default function NavItem({
           </Link>
         </Menu>
       </Flex>
-      {suffixIcon && active && <NavElement navSize={(navSize, active)} href={href} />}
+      {suffixIcon && active && sideBarActive == 2 && (
+        <SideElement navSize={(navSize, active)} href={href} sideBarActive={sideBarActive} />
+      )}
+      {suffixIcon && active && sideBarActive == 3 && (
+        <SideElement navSize={(navSize, active)} href={href} sideBarActive={sideBarActive} />
+      )}
     </>
   );
 }

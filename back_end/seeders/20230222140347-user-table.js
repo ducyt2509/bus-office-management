@@ -53,7 +53,7 @@ module.exports = {
         user_name: 'Nguyễn Thị Mồn Lèo',
         email: 'socmap220401@gmail.com',
         password: '$2b$10$XUA.3ws6AleMgBJs7ebMJ.N5987UkAFnK8NYD7J45m/bqv96EvJJG',
-        phone: '+84$2b$10$XUA.3ws6AleMgBJs7ebMJ.N5987UkAFnK8NYD7J45m/bqv96EvJJG789',
+        phone: '+84987654321',
         avatar: null,
         role_id: 2,
         office_id: 1,

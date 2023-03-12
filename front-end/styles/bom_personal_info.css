@@ -1,0 +1,21 @@
+.bom-personal-info {
+    width: 90%;
+    height: 100vh;
+    margin: 0px auto;
+    border: 1px solid;
+    margin-bottom: 5%;
+    border-radius: 20px;
+    background-color: #f5f5f5;
+}
+.bom-personal-info .chakra-card__body {
+   
+}
+.bom-personal-info .chakra-card {
+    --card-shadow: none;
+    border : 1px solid #c2c2c2;
+    border-radius: 20px;
+}
+
+.bom-personal-info input, .bom-personal-info select {
+    border: 1px solid;
+}
