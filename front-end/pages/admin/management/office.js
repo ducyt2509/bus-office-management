@@ -57,51 +57,54 @@ export default function ManagementOffice(props) {
     handleGetListOffice();
   }, []);
   return (
-    <div style={{ position: 'relative', left: '20%', width: '80%' }}>
-      <Flex
-        alignItems={'center'}
-        justifyContent="flex-end"
-        width={'84%'}
-        margin="0 auto"
-        marginBottom={'2%'}
-        paddingTop="2%"
-      >
-        <Text marginRight="1%">Dan Abramov</Text>
-        <Image
-          borderRadius="full"
-          boxSize="50px"
-          src="https://bit.ly/dan-abramov"
-          alt="Dan Abramov"
-        />
-      </Flex>
-      <div style={{ width: '90%', margin: '0 auto' }}>
-        <Card backgroundColor={'#F5F5F5'}>
-          <CardHeader>
-            <Heading size="lg">Quản lí văn phòng</Heading>
-          </CardHeader>
-          <CardBody>
-            <ActionBar onOpen={onOpen} setOfficeId={setOfficeId} />
-            <ListOffice
-              list={listOffice}
-              onOpen={onOpen}
-              setOfficeId={setOfficeId}
-              setOffice={setOffice}
-              handleGetListOffice={handleGetListOffice}
-              port={props.BACK_END_PORT}
-            />
-            <AddOffice
-              isOpen={isOpen}
-              onClose={onClose}
-              port={props.BACK_END_PORT}
-              token={`Bearer ${state.dataUser.token}`}
-              handleGetListOffice={handleGetListOffice}
-              officeId={officeId}
-              office={office}
-            />
-          </CardBody>
-        </Card>
-      </div>
-    </div>
+		<div style={{ position: "relative", left: "20%", width: "80%" }}>
+			<Flex
+				alignItems={"center"}
+				justifyContent="flex-end"
+				width={"84%"}
+				margin="0 auto"
+				marginBottom={"2%"}
+				paddingTop="2%"
+			>
+				<Text marginRight="1%">{state.dataUser.user_name}</Text>
+				<Image
+					borderRadius="full"
+					boxSize="50px"
+					src={state.dataUser.avatar ? state.dataUser.avatar : "https://bit.ly/dan-abramov"}
+					alt="Dan Abramov"
+				/>
+			</Flex>
+			<div style={{ width: "90%", margin: "0 auto" }}>
+				<Card backgroundColor={"#F5F5F5"}>
+					<CardHeader>
+						<Heading size="lg">Quản lí văn phòng</Heading>
+					</CardHeader>
+					<CardBody>
+						<ActionBar
+							onOpen={onOpen}
+							setOfficeId={setOfficeId}
+						/>
+						<ListOffice
+							list={listOffice}
+							onOpen={onOpen}
+							setOfficeId={setOfficeId}
+							setOffice={setOffice}
+							handleGetListOffice={handleGetListOffice}
+							port={props.BACK_END_PORT}
+						/>
+						<AddOffice
+							isOpen={isOpen}
+							onClose={onClose}
+							port={props.BACK_END_PORT}
+							token={`Bearer ${state.dataUser.token}`}
+							handleGetListOffice={handleGetListOffice}
+							officeId={officeId}
+							office={office}
+						/>
+					</CardBody>
+				</Card>
+			</div>
+		</div>
   );
 }
 export async function getStaticProps() {
