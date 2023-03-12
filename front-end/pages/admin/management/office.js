@@ -14,6 +14,7 @@ import axios from "axios";
 import ActionBar from "@/components/office/ActionBar";
 import AddOffice from "@/components/office/AddOffice";
 import ListOffice from "@/components/office/ListOffice";
+import Pagination from "@/components/common/Pagination";
 
 export default function ManagementOffice(props) {
 	const [state, dispath] = useStore();
@@ -95,6 +96,13 @@ export default function ManagementOffice(props) {
 							setOffice={setOffice}
 							handleGetListOffice={handleGetListOffice}
 							port={props.BACK_END_PORT}
+						/>
+						<Pagination
+							list_number={numberOffice}
+							handleGetList={handleGetListOffice}
+							setList={setListOffice}
+							list={listOffice}
+							currentPage={currentPage}
 						/>
 						<AddOffice
 							isOpen={isOpen}
