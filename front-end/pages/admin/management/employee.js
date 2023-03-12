@@ -36,11 +36,11 @@ export default function ManagementEmployees(props) {
 	const handleGetListUser = useCallback(
 		async (page, limit) => {
 			page = page ? page - 1 : 0;
+			limit = limit ? limit : 7;
 			if (page) {
 				setCurrentPage(page);
 			}
 			const token = `Bearer ${state.dataUser.token}`;
-			limit = limit ? limit : 7;
 			const offset = limit * page;
 			const getListUser = await axios.post(
 				`http://localhost:${props.BACK_END_PORT}/user/list-user`,

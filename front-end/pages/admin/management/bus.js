@@ -34,10 +34,14 @@ export default function ManagementBus(props) {
 	const [vehicle, setVehicle] = useState({});
 
 	const handleGetListBus = useCallback(
-		async (offset, limit) => {
+		async (page, limit) => {
 			const token = `Bearer ${state.dataUser.token}`;
-			offset = offset ? offset : 0;
 			limit = limit ? limit : 7;
+			page = page ? page - 1 : 0;
+			const offset = limit * page;
+			if (page) {
+				setCurrentPage(page);
+			}
 			const getListBus = await axios.post(
 				`http://localhost:${props.BACK_END_PORT}/bus/list-bus`,
 				{
