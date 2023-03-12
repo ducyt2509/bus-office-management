@@ -1,6 +1,9 @@
-import { Flex, Text, Icon, Link, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
+import { Flex, Text, Link, Menu, MenuButton } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 export default function NavElement({ navSize, active, href }) {
+  const router = useRouter();
+  console.log(router.pathname);
   return (
     <Flex w={'100%'} flexDirection="column">
       <Flex marginTop="10px" w="100%" alignItems={navSize == 'small' ? 'center' : 'flex-start'}>
@@ -8,11 +11,11 @@ export default function NavElement({ navSize, active, href }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={active && '#363636'}
+            backgroundColor={router.pathname == '/admin/management/route' && '#686868'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#363636', color: '#fff' }}
-            color={active ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
+            color={router.pathname == '/admin/management/route' ? '#fff' : '#686868'}
             w={'90%'}
             href={href.route}
           >
@@ -29,11 +32,11 @@ export default function NavElement({ navSize, active, href }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={active && '#363636'}
+            backgroundColor={router.pathname == '/admin/management/bus-schedule' && '#686868'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#363636', color: '#fff' }}
-            color={active ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
+            color={router.pathname == '/admin/management/bus-schedule' ? '#fff' : '#686868'}
             w={'90%'}
             href={href.busSchedule}
           >
@@ -50,11 +53,11 @@ export default function NavElement({ navSize, active, href }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={active && '#363636'}
+            backgroundColor={router.pathname == '/admin/management/bus' && '#686868'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#363636', color: '#fff' }}
-            color={active ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
+            color={router.pathname == '/admin/management/bus' ? '#fff' : '#686868'}
             w={'90%'}
             href={href.bus}
           >
@@ -71,11 +74,11 @@ export default function NavElement({ navSize, active, href }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={active && '#363636'}
+            backgroundColor={router.pathname == '/admin/management/location' && '#686868'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#363636', color: '#fff' }}
-            color={active ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
+            color={router.pathname == '/admin/management/location' ? '#fff' : '#686868'}
             w={'90%'}
             href={href.location}
           >
@@ -92,11 +95,11 @@ export default function NavElement({ navSize, active, href }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={active && '#363636'}
+            backgroundColor={router.pathname == '/admin/management/office' && '#686868'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#363636', color: '#fff' }}
-            color={active ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
+            color={router.pathname == '/admin/management/office' ? '#fff' : '#686868'}
             w={'90%'}
             href={href.office}
           >
@@ -113,11 +116,11 @@ export default function NavElement({ navSize, active, href }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={active && '#363636'}
+            backgroundColor={router.pathname == '/admin/management/employee' && '#686868'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#363636', color: '#fff' }}
-            color={active ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
+            color={router.pathname == '/admin/management/employee' ? '#fff' : '#686868'}
             w={'90%'}
             href={href.employee}
           >

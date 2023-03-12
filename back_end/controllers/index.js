@@ -8,6 +8,7 @@ const office = require('./office');
 const role = require('./role');
 const route = require('./route');
 const ticket = require('./ticket');
+const contact = require('./contact');
 const transaction = require('./transaction');
 
 module.exports = {
@@ -22,4 +23,5 @@ module.exports = {
   ticket,
   transaction,
   user,
+  contact,
 };

@@ -100,8 +100,8 @@ header {
 	align-items: center;
 }
 .popular-route__item {
-	width: 312px;
-	height: 512px;
+	width: 20%;
+	height: 450px;
 	background-color: red;
 	border-radius: 20px;
 	background: url(../images/home/login.png);
