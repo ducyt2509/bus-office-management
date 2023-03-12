@@ -40,7 +40,7 @@ export default function ManagementOffice(props) {
 			const getListOffice = await axios.post(
 				`http://localhost:${props.BACK_END_PORT}/office/list-office`,
 				{
-					offset: page,
+					offset: offset,
 					limit: limit,
 				},
 				{
