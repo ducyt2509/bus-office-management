@@ -35,7 +35,7 @@ export default function ManagementEmployees(props) {
 
 	const handleGetListUser = useCallback(
 		async (page, limit) => {
-			page = page ? page - 1 : 1;
+			page = page ? page - 1 : 0;
 			if (page) {
 				setCurrentPage(page);
 			}
