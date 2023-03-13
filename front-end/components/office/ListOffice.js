@@ -2,7 +2,9 @@ import { SlPencil } from 'react-icons/sl';
 import { IoTrashBinOutline, IoPersonOutline, IoCallOutline } from 'react-icons/io5';
 import { Stack, IconButton, Flex } from '@chakra-ui/react';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 export default function ListOffiice(props) {
+  const router = useRouter();
   const handleActiveModal = (officeId, office) => {
     props.setOffice(office);
     props.setOfficeId(officeId);
@@ -20,9 +22,15 @@ export default function ListOffiice(props) {
       props.handleGetListOffice();
     }
   };
+  const handleGetOfficeInformation = (id) => {
+    router.push({
+      pathname: '/admin/management/office/[id]',
+      query: { id: id },
+    });
+  };
   const ListOfficeHTML = props.list.map((office, index) => {
     return (
-      <tr>
+      <tr onClick={() => handleGetOfficeInformation(office.id)}>
         <td>{index + 1}</td>
         <td>{office.office_name}</td>
         <td>{office.city.city_name}</td>

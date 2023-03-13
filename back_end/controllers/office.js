@@ -9,13 +9,12 @@ module.exports = {
   async createNewOffice(req, res) {
     const params = req.body;
     try {
-        const createOffice = await Office.create(params);
-        if (createOffice) {
-          return responseHandler.ok(res, { message: 'Create office successful!' });
-        } else {
-          return responseHandler.error(res);
-        }
-     
+      const createOffice = await Office.create(params);
+      if (createOffice) {
+        return responseHandler.ok(res, { message: 'Create office successful!' });
+      } else {
+        return responseHandler.error(res);
+      }
     } catch (error) {
       return responseHandler.badRequest(res, error.message);
     }
@@ -23,19 +22,18 @@ module.exports = {
   async updateOfficeInformation(req, res) {
     const params = req.body;
     try {
-        const officeData = { ...params };
-        delete officeData.role_id;
-        const updateOffice = await Office.update(officeData, {
-          where: {
-            id: params.id,
-          },
-        });
-        if (updateOffice) {
-          return responseHandler.ok(res, { message: 'Update office successful!' });
-        } else {
-          return responseHandler.error(res);
-        }
-     
+      const officeData = { ...params };
+      delete officeData.role_id;
+      const updateOffice = await Office.update(officeData, {
+        where: {
+          id: params.id,
+        },
+      });
+      if (updateOffice) {
+        return responseHandler.ok(res, { message: 'Update office successful!' });
+      } else {
+        return responseHandler.error(res);
+      }
     } catch (error) {
       return responseHandler.badRequest(res, error.message);
     }
@@ -43,17 +41,16 @@ module.exports = {
   async deleteOfficeInformation(req, res) {
     const params = req.body;
     try {
-        const deleteOffice = await Office.destroy({
-          where: {
-            id: params.id,
-          },
-        });
-        if (deleteOffice) {
-          return responseHandler.ok(res, { message: 'Delete office successful!' });
-        } else {
-          return responseHandler.error(res);
-        }
-    
+      const deleteOffice = await Office.destroy({
+        where: {
+          id: params.id,
+        },
+      });
+      if (deleteOffice) {
+        return responseHandler.ok(res, { message: 'Delete office successful!' });
+      } else {
+        return responseHandler.error(res);
+      }
     } catch (error) {
       return responseHandler.badRequest(res, error.message);
     }
@@ -111,20 +108,38 @@ module.exports = {
     }
   },
   async getOfficeInformation(req, res) {
-    const params = req.params;
+    const params = req.body;
     const id = params.id;
     try {
-        const officeInformation = await Office.findOne({
-          where: {
-            id: id,
-          },
-        });
-        if (officeInformation) {
-          return responseHandler.responseWithData(res, 200, officeInformation);
-        } else {
-          return responseHandler.error(res);
+      const officeInformation = await Office.findOne({
+        where: {
+          id: id,
+        },
+      });
+      if (officeInformation) {
+        const [numberEmployee, getCity] = await Promise.all([
+          User.findAll({
+            where: {
+              office_id: officeInformation.id,
+            },
+            attributes: ['id', 'user_name'],
+          }),
+          City.findOne({
+            where: {
+              id: officeInformation.city_id,
+            },
+          }),
+        ]);
+        if (numberEmployee) {
+          officeInformation.dataValues.number_employee = numberEmployee;
         }
-     
+        if (getCity) {
+          officeInformation.dataValues.city = getCity;
+        }
+        return responseHandler.responseWithData(res, 200, officeInformation);
+      } else {
+        return responseHandler.error(res);
+      }
     } catch (error) {
       return responseHandler.badRequest(res, error.message);
     }

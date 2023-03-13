@@ -100,19 +100,21 @@ export default function AddCar(props) {
 
   useEffect(() => {
     if (props.vehicleId) {
+      console.log(1);
       setVehiclePlate(props.vehicle.vehicle_plate);
       setMainDriver(props.vehicle.main_driver_id);
       setSupportDriver(props.vehicle.support_driver_id);
       setVehicleType(props.vehicle.vehicle_id);
       setVehicleStatus(props.vehicle.vehicle_status);
     } else {
-      setVehiclePlate();
-      setMainDriver();
-      setSupportDriver();
-      setVehicleType();
-      setVehicleStatus();
+      setVehiclePlate('');
+      setMainDriver(0);
+      setSupportDriver(0);
+      setVehicleType(0);
+      setVehicleStatus(1);
     }
   }, [props.vehicleId]);
+  console.log(mainDriver);
 
   useEffect(() => {
     if (props.isOpen) {
