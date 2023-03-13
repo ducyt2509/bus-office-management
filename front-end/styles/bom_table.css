@@ -48,3 +48,9 @@ table.bom-table-bus tr td button {
 	border-radius: 10px;
 	border: 1px solid #ff5151;
 }
+.bom-table-bus tbody tr{
+ cursor: pointer;
+}
+.bom-table-bus tbody tr:hover{
+	background-color: #d9d9d9;
+}

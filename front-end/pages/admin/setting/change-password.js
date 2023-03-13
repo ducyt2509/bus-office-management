@@ -112,13 +112,6 @@ export default function Setting(props) {
                 Đổi mật khẩu
               </Heading>
 
-              <FormControl marginBottom={'5%'}>
-                <FormLabel marginBottom={'3%'}>Mật khẩu hiện tại</FormLabel>
-                <InputGroup size="md">
-                  <Input type={'password'} value={'332434242342344322343342'} />
-                </InputGroup>
-              </FormControl>
-
               <FormControl isRequired isInvalid={errorInput.password} marginBottom={'5%'}>
                 <FormLabel marginBottom={'3%'}>Mật khẩu mới</FormLabel>
                 <InputGroup size="md">

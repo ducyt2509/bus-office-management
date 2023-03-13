@@ -313,15 +313,22 @@ module.exports = {
   },
   async getUserInformation(req, res) {
     const params = req.body;
-    const user_id = params.user_id;
     try {
       const getUserById = await User.findOne({
         where: {
-          id: user_id,
+          id: params.id,
         },
-        attributes: ['id', 'email', 'phone', 'user_name', 'avatar', 'role_id'],
+        attributes: ['id', 'email', 'phone', 'user_name', 'avatar', 'role_id', 'office_id'],
       });
       if (getUserById) {
+        const getOffice = await Office.findOne({
+          where: {
+            id: getUserById.office_id,
+          },
+        });
+        if (getOffice) {
+          getUserById.dataValues.office = getOffice;
+        }
         return responseHandler.responseWithData(res, 200, getUserById);
       } else {
         return responseHandler.responseWithData(res, 401, {

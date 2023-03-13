@@ -24,7 +24,7 @@ export default function Sidebar() {
   const [sideBarActive, setActiveSideBar] = useState(0);
   const handleSetActiveSideBar = useCallback(
     (value) => {
-      if (sideBarActive == value && value == 2) value = 4;
+      if (sideBarActive == value && (value == 2 || value == 3)) value = 4;
       setActiveSideBar(value);
     },
     [sideBarActive]
@@ -32,7 +32,7 @@ export default function Sidebar() {
   return (
     <Flex
       pos="fixed"
-      h="800px"
+      h="100vh"
       boxShadow="0 4px 12px 0 #888"
       w={navSize == 'small' ? '75px' : '17%'}
       flexDir="column"

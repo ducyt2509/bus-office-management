@@ -82,9 +82,9 @@ export default function AddCar(props) {
       setCity(props.office.city.id);
       setLocation(props.office.office_address);
     } else {
-      setOfficeName();
-      setCity();
-      setLocation();
+      setOfficeName("");
+      setCity(0);
+      setLocation("");
     }
   }, [props.officeId]);
 

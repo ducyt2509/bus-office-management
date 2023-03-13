@@ -19,3 +19,24 @@
 .bom-personal-info input, .bom-personal-info select {
     border: 1px solid;
 }
+.bom-personal-info-detail .bom-personal-info-title {
+    font-size: 20px;
+    width: 30%;
+    font-weight: 500;
+}
+.bom-personal-info-detail p {
+    font-size: 18px;
+}
+.bom-personal-info-detail {
+    width: 96%;
+}
+.bom-back-management:hover {
+    color: crimson;
+}
+.bom-office-info-detail svg{
+    width: 25px;
+    height: 25px;
+}
+.bom-list-employee-office:hover {
+    color: coral;
+}
