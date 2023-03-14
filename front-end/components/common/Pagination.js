@@ -7,7 +7,7 @@ export default function Pagination(props) {
   const pageHTML = buttonArray.map((button, index) => {
     return (
       <Button
-        onClick={() => props.handleGetList(index + 1)}
+        onClick={() => { props.handleGetList(index + 1) }}
         backgroundColor="#fff"
         color={'#686868'}
         border={'1px solid'}

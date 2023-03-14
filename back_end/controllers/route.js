@@ -1,7 +1,7 @@
 const db = require('../models');
 const Route = db.routes;
 const responseHandler = require('../handlers/response.handler');
-
+const City = db.cities;
 module.exports = {
   async addNewRoute(req, res) {
     const params = req.body;
@@ -18,6 +18,7 @@ module.exports = {
   },
   async updateRoute(req, res) {
     const params = req.body;
+    console.log("[PARAMS]:", params)
     try {
       const upRoute = await Route.update(params, {
         where: {
@@ -25,6 +26,7 @@ module.exports = {
         },
       });
       if (upRoute) {
+        console.log(upRoute, "[ROUTE]")
         return responseHandler.ok(res, 'Update route successful!');
       } else {
         return responseHandler.responseWithData(res, 403, { message: "Can't update route" });
@@ -63,10 +65,32 @@ module.exports = {
         Route.count(),
       ]);
       if (listRoute) {
+        for (let index = 0; index < listRoute.length; index++) {
+          const [getCityFrom, getCityTo] = await Promise.all([
+            City.findOne(
+              {
+                where: {
+                  id: listRoute[index].city_from_id
+                }
+              }
+            ),
+            City.findOne(
+              {
+                where: {
+                  id: listRoute[index].city_to_id
+                }
+              }
+            )
+          ])
+
+          listRoute[index].dataValues.city_from = getCityFrom.dataValues.city_name
+          listRoute[index].dataValues.city_to = getCityTo.dataValues.city_name
+
+        }
         return responseHandler.responseWithData(res, 200, {
           list_route: listRoute,
           number_route: numberRoute,
-        });
+        })
       } else {
         return responseHandler.responseWithData(res, 403, {
           message: "Can't get list route",

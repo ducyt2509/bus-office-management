@@ -10,27 +10,6 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={router.pathname == '/admin/management/route' && '#686868'}
-            p={3}
-            borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
-            color={router.pathname == '/admin/management/route' ? '#fff' : '#686868'}
-            w={'90%'}
-            href={href.route}
-          >
-            <MenuButton w="100%">
-              <Text whiteSpace="nowrap" display={navSize == 'small' ? 'none' : 'flex'}>
-                Quản lý tuyến đường
-              </Text>
-            </MenuButton>
-          </Link>
-        </Menu>
-      </Flex>
-      <Flex marginTop="10px" w="100%" alignItems={navSize == 'small' ? 'center' : 'flex-start'}>
-        <div style={{ width: '10%' }}></div>
-        <Menu>
-          <Link
-            as={NextLink}
             backgroundColor={router.pathname == '/admin/management/bus-schedule' && '#686868'}
             p={3}
             borderRadius={8}
@@ -47,6 +26,8 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
           </Link>
         </Menu>
       </Flex>
+
+
       <Flex marginTop="10px" w="100%" alignItems={navSize == 'small' ? 'center' : 'flex-start'}>
         <div style={{ width: '10%' }}></div>
         <Menu>
@@ -84,6 +65,28 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
             <MenuButton w="100%">
               <Text whiteSpace="nowrap" display={navSize == 'small' ? 'none' : 'flex'}>
                 Quản lý điểm đón trả
+              </Text>
+            </MenuButton>
+          </Link>
+        </Menu>
+      </Flex>
+
+      <Flex marginTop="10px" w="100%" alignItems={navSize == 'small' ? 'center' : 'flex-start'}>
+        <div style={{ width: '10%' }}></div>
+        <Menu>
+          <Link
+            as={NextLink}
+            backgroundColor={router.pathname == '/admin/management/route' && '#686868'}
+            p={3}
+            borderRadius={8}
+            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
+            color={router.pathname == '/admin/management/route' ? '#fff' : '#686868'}
+            w={'90%'}
+            href={href.route}
+          >
+            <MenuButton w="100%">
+              <Text whiteSpace="nowrap" display={navSize == 'small' ? 'none' : 'flex'}>
+                Quản lý tuyến đường
               </Text>
             </MenuButton>
           </Link>
