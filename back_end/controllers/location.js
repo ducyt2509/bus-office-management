@@ -2,6 +2,7 @@ const db = require('../models');
 const Location = db.locations;
 const Op = db.Sequelize.Op;
 const responseHandler = require('../handlers/response.handler');
+const City = db.cities;
 
 module.exports = {
   async getListLocation(req, res) {
@@ -11,7 +12,7 @@ module.exports = {
     const location_name = params.location_name;
     try {
       let whereCondition = {};
-      if (city_name) {
+      if (location_name) {
         location_name['location_name'] = { [Op.like]: `%${location_name}%` };
       }
       const [listLocation, numberLocation] = await Promise.all([
@@ -25,10 +26,18 @@ module.exports = {
         }),
       ]);
       if (listLocation) {
-        return responseHandler.responseWithData(res, 200, { listLocation, numberLocation });
-      } else {
-        return responseHandler.responseWithData(res, 403, { message: "Can't get list location" });
+        for (let index = 0; index < listLocation.length; index++) {
+          const getCity = await City.findOne({
+            where: {
+              id: listLocation[index].city_id,
+            },
+          })
+          console.log('[CITY]', getCity);
+          listLocation[index].dataValues.city_name = getCity.dataValues.city_name;
+
+        }
       }
+      return responseHandler.responseWithData(res, 200, { listLocation, numberLocation });
     } catch (error) {
       return responseHandler.badRequest(res, error.message);
     }
@@ -64,11 +73,10 @@ module.exports = {
           id: location_id,
         },
       });
-
-      if (!location) {
+      if (!location.length) {
         return responseHandler.notfound(res);
       }
-      const destroyLocation = await LOCATION.destroy({
+      const destroyLocation = await Location.destroy({
         where: {
           id: location_id,
         },
@@ -76,7 +84,7 @@ module.exports = {
       if (destroyLocation) {
         return responseHandler.ok(res, 'Delete location successfully');
       } else {
-        return responseHandler.responseWithData(res, 403, { message: "Can't delete location" });
+        return responseHandler.responseWithData(res, 404, { message: "Can't delete location" });
       }
     } catch (error) {
       return responseHandler.error(res);
