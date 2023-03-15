@@ -2,6 +2,7 @@ const db = require('../models');
 const Office = db.offices;
 const User = db.users;
 const City = db.cities;
+const QueryTypes = db.Sequelize.QueryTypes;
 const Op = db.Sequelize.Op;
 const responseHandler = require('../handlers/response.handler');
 
@@ -57,23 +58,22 @@ module.exports = {
   },
   async getListOffice(req, res) {
     const params = req.body;
-    const office_name = params.office_name;
+    const querySearch = params.query_search;
     const offset = params.offset;
     const limit = params.limit;
     try {
-      let whereCondition = {};
-      if (office_name) {
-        whereCondition['office_name'] = { [Op.like]: `%${office_name}%` };
-      }
+      const querySQL = `select office.id, office_name, city_id, office_address from office join city c on office.city_id = c.id 
+      where (office_name like '%${querySearch}%') 
+      or (office_address like '%${querySearch}%') 
+      or (c.city_name like '%${querySearch}%') limit ${limit} offset ${offset}`;
+      const queryCount = `select count(*) from office join city c on c.id = office.city_id  
+      where (office_name like '%${querySearch}%') 
+      or (office_address like '%${querySearch}%') 
+      or (c.city_name like '%${querySearch}%')`;
+
       const [listOffice, numberOffice] = await Promise.all([
-        Office.findAll({
-          where: whereCondition,
-          offset: offset,
-          limit: limit,
-        }),
-        Office.count({
-          where: whereCondition,
-        }),
+        db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
+        db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),
       ]);
       if (listOffice) {
         for (let i = 0; i < listOffice.length; i++) {
@@ -90,15 +90,15 @@ module.exports = {
             }),
           ]);
           if (numberEmployee) {
-            listOffice[i].dataValues.number_employee = numberEmployee;
+            listOffice[i].number_employee = numberEmployee;
           }
           if (getCity) {
-            listOffice[i].dataValues.city = getCity;
+            listOffice[i].city = getCity;
           }
         }
         return responseHandler.responseWithData(res, 200, {
           list_office: listOffice,
-          number_office: numberOffice,
+          number_office: numberOffice[0]['count(*)'],
         });
       } else {
         return responseHandler.error(res);

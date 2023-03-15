@@ -185,7 +185,6 @@ export default function HomePage(props) {
   const handleForgetPassword = useCallback(async () => {
     let step = stepForgetPassword + 1;
     if (step > 4) {
-      console.log(23);
       step = 0;
       setStepForgetPassword(step);
       setShowLogin(true);

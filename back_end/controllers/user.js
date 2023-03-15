@@ -7,6 +7,7 @@ const Office = db.offices;
 const Op = db.Sequelize.Op;
 const OTPCode = require('../helper/OTPCode');
 const bcrypt = require('bcrypt');
+const QueryTypes = db.Sequelize.QueryTypes;
 const jwt = require('jsonwebtoken');
 const responseHandler = require('../handlers/response.handler');
 // require("crypto").randomBytes(64).toString('hex')
@@ -253,41 +254,29 @@ module.exports = {
     const limit = params.limit;
     const offset = params.offset;
     const querySearch = params.query_search;
-    const role_id = params.role_id;
 
     try {
-      let attributes = ['id', 'email', 'phone', 'user_name', 'avatar', 'role_id', 'office_id'];
-      const whereCondition = querySearch
-        ? {
-            [Op.or]: [
-              {
-                email: {
-                  [Op.like]: `%${querySearch}%`,
-                },
-              },
-              {
-                phone: {
-                  [Op.like]: `%${querySearch}%`,
-                },
-              },
-              {
-                user_name: {
-                  [Op.like]: `%${querySearch}%`,
-                },
-              },
-            ],
-          }
-        : {};
-      let [getUser, numberUSer] = await Promise.all([
-        User.findAll({
-          where: whereCondition,
-          limit: limit,
-          offset: offset,
-          attributes: attributes,
-        }),
-        User.count({
-          where: whereCondition,
-        }),
+      let attributes = 'user.id, email, phone ,user_name, avatar, role_id, office_id';
+      const querySQL =
+        `select ` +
+        attributes +
+        ` from user join office o on o.id = user.office_id  
+      join role r on user.role_id = r.id
+      where (user_name like '%${querySearch}%') 
+      or (email like '%${querySearch}%')
+      or (r.role_name like '%${querySearch}%') 
+      or (o.office_name like '%${querySearch}%')   
+      or (phone like '%${querySearch}%') limit ${limit} offset ${offset}`;
+      const queryCount = `select count(*) from user join office o on o.id = user.office_id  
+      join role r on user.role_id = r.id
+      where (user_name like '%${querySearch}%') 
+      or (email like '%${querySearch}%')
+      or (r.role_name like '%${querySearch}%') 
+      or (o.office_name like '%${querySearch}%')   
+      or (phone like '%${querySearch}%')`;
+      let [getUser, numberUser] = await Promise.all([
+        db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
+        db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),
       ]);
       if (getUser) {
         for (let i = 0; i < getUser.length; i++) {
@@ -297,12 +286,12 @@ module.exports = {
             },
           });
           if (getOffice) {
-            getUser[i].dataValues.office = getOffice;
+            getUser[i].office = getOffice;
           }
         }
         return responseHandler.responseWithData(res, 200, {
           list_user: getUser,
-          number_user: numberUSer,
+          number_user: numberUser[0]['count(*)'],
         });
       } else {
         return responseHandler.responseWithData(res, 403, { message: "Can't get list user" });

@@ -27,15 +27,14 @@ export default function ManagementEmployees(props) {
 
   const [listUser, setListUser] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [dynamicListBus, setDynamicListUser] = useState([]);
   const [querySearch, setQuerySearch] = useState('');
   const [numberUser, setNumberUser] = useState('');
   const [userId, setUserId] = useState();
   const [user, setUser] = useState({});
 
   const handleGetListUser = useCallback(
-    async (page, limit) => {
-      page = page ? page - 1 : 0;
+    async (page, limit, value) => {
+      page = typeof page == 'number' ? page - 1 : 0;
       limit = limit ? limit : 7;
       if (page) {
         setCurrentPage(page);
@@ -47,6 +46,7 @@ export default function ManagementEmployees(props) {
         {
           offset: offset,
           limit: limit,
+          query_search: value != undefined ? value : querySearch,
         },
         {
           headers: {
@@ -56,13 +56,19 @@ export default function ManagementEmployees(props) {
       );
       if (getListUser.data.statusCode === 200) {
         setListUser(getListUser.data.data.list_user);
-        setDynamicListUser(getListUser.data.data.list_user);
         setCurrentPage(1);
         setNumberUser(getListUser.data.data.number_user);
       }
     },
-    [state, currentPage]
+    [state, querySearch]
   );
+  const handleChangeQuerySearch = useCallback((e) => {
+    const value = e.target.value;
+    setQuerySearch(value);
+    if (!value) {
+      handleGetListUser(null, null, '');
+    }
+  });
   useEffect(() => {
     handleGetListUser();
   }, []);
@@ -90,7 +96,14 @@ export default function ManagementEmployees(props) {
             <Heading size="lg">Quản lí nhân viên</Heading>
           </CardHeader>
           <CardBody>
-            <ActionBar onOpen={onOpen} setUserId={setUserId} />
+            <ActionBar
+              onOpen={onOpen}
+              setUserId={setUserId}
+              querySearch={querySearch}
+              setQuerySearch={setQuerySearch}
+              handleGetListUser={handleGetListUser}
+              handleChangeQuerySearch={handleChangeQuerySearch}
+            />
             <ListEmployee
               list={listUser}
               onOpen={onOpen}

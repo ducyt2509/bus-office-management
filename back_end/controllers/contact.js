@@ -4,7 +4,6 @@ module.exports = {
   async send(req, res) {
     try {
       const { message, email, fullname } = req.body;
-      console.log('[DATA BODY]', message, fullname, email);
       const subject = 'Đóng góp ý kiến từ khách hàng';
       const htmlForm = `
             <p>Người gửi : ${fullname}</p>

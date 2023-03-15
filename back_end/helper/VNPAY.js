@@ -83,9 +83,6 @@ module.exports = {
 
     vnp_Params = encodeObj(vnp_Params);
 
-    // console.log(decodeObj(vnp_Params)['vnp_OrderInfo']);
-    // return;
-
     console.log(vnp_Params);
 
     let signData = querystring.stringify(vnp_Params, { encode: false });

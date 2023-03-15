@@ -14,7 +14,6 @@ export default function HomeDestination(props) {
     const listBusSchedule = await axios.get(
       `http://localhost:${props.port}/bus-schedule/list-bus-schedule`
     );
-    console.log(listBusSchedule.data);
   }, [startLocation, endLocation, departureDay]);
   const cityOption =
     props.list_city &&

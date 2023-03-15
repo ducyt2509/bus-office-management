@@ -22,16 +22,15 @@ export default function ManagementOffice(props) {
 
   const [listOffice, setListOffice] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [dynamicListOffice, setDynamicListOffice] = useState([]);
   const [querySearch, setQuerySearch] = useState('');
   const [numberOffice, setNumberOffice] = useState('');
   const [officeId, setOfficeId] = useState();
   const [office, setOffice] = useState({});
 
   const handleGetListOffice = useCallback(
-    async (page, limit) => {
+    async (page, limit, value) => {
       limit = limit ? limit : 7;
-      page = page ? page - 1 : 0;
+      page = typeof page == 'number' ? page - 1 : 0;
       const offset = limit * page;
       if (page) {
         setCurrentPage(page);
@@ -42,6 +41,7 @@ export default function ManagementOffice(props) {
         {
           offset: offset,
           limit: limit,
+          query_search: value != undefined ? value : querySearch,
         },
         {
           headers: {
@@ -51,13 +51,19 @@ export default function ManagementOffice(props) {
       );
       if (getListOffice.data.statusCode === 200) {
         setListOffice(getListOffice.data.data.list_office);
-        setDynamicListOffice(getListOffice.data.data.list_office);
         setCurrentPage(1);
         setNumberOffice(getListOffice.data.data.number_office);
       }
     },
-    [state]
+    [state, querySearch]
   );
+  const handleChangeQuerySearch = useCallback((e) => {
+    const value = e.target.value;
+    setQuerySearch(value);
+    if (!value) {
+      handleGetListOffice(null, null, '');
+    }
+  });
   useEffect(() => {
     handleGetListOffice();
   }, []);
@@ -85,7 +91,14 @@ export default function ManagementOffice(props) {
             <Heading size="lg">Quản lí văn phòng</Heading>
           </CardHeader>
           <CardBody>
-            <ActionBar onOpen={onOpen} setOfficeId={setOfficeId} />
+            <ActionBar
+              onOpen={onOpen}
+              setOfficeId={setOfficeId}
+              querySearch={querySearch}
+              setQuerySearch={setQuerySearch}
+              handleGetListOffice={handleGetListOffice}
+              handleChangeQuerySearch={handleChangeQuerySearch}
+            />
             <ListOffice
               list={listOffice}
               onOpen={onOpen}

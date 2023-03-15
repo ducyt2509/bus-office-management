@@ -40,9 +40,7 @@ export default function AddRoute(props) {
       city_from_id: cityFrom,
       city_to_id: cityTo,
     };
-    console.log("[ROUTE ID :]", props.routeId);
     if (props.routeId) {
-      console.log("[ROUTE ID GO:]")
       submitData.id = props.routeId;
       const updateRoute = await axios.put(
         `http://localhost:${props.port}/route/update-route`,

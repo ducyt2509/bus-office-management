@@ -100,7 +100,6 @@ export default function AddCar(props) {
 
   useEffect(() => {
     if (props.vehicleId) {
-      console.log(1);
       setVehiclePlate(props.vehicle.vehicle_plate);
       setMainDriver(props.vehicle.main_driver_id);
       setSupportDriver(props.vehicle.support_driver_id);
@@ -114,7 +113,6 @@ export default function AddCar(props) {
       setVehicleStatus(1);
     }
   }, [props.vehicleId]);
-  console.log(mainDriver);
 
   useEffect(() => {
     if (props.isOpen) {

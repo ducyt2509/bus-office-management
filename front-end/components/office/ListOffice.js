@@ -3,14 +3,16 @@ import { IoTrashBinOutline, IoPersonOutline, IoCallOutline } from 'react-icons/i
 import { Stack, IconButton, Flex } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-export default function ListOffiice(props) {
+export default function ListOffice(props) {
   const router = useRouter();
-  const handleActiveModal = (officeId, office) => {
+  const handleActiveModal = (officeId, office, e) => {
+    e.stopPropagation();
     props.setOffice(office);
     props.setOfficeId(officeId);
     props.onOpen();
   };
-  const handleDeleteOffice = async (officeId) => {
+  const handleDeleteOffice = async (officeId, e) => {
+    e.stopPropagation();
     const deleteOffice = await axios.delete(
       `http://localhost:${props.port}/office/delete-office`,
       { data: { id: officeId } },
@@ -38,10 +40,10 @@ export default function ListOffiice(props) {
         <td>{office.number_employee ? office.number_employee : 0}</td>
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
-            <IconButton icon={<SlPencil />} onClick={() => handleActiveModal(office?.id, office)} />
+            <IconButton icon={<SlPencil />} onClick={(e) => handleActiveModal(office?.id, office, e)} />
             <IconButton
               icon={<IoTrashBinOutline />}
-              onClick={() => handleDeleteOffice(office?.id)}
+              onClick={(e) => handleDeleteOffice(office?.id, e)}
             />
           </Stack>
         </td>

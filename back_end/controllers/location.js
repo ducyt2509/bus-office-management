@@ -3,27 +3,26 @@ const Location = db.locations;
 const Op = db.Sequelize.Op;
 const responseHandler = require('../handlers/response.handler');
 const City = db.cities;
+const QueryTypes = db.Sequelize.QueryTypes;
 
 module.exports = {
   async getListLocation(req, res) {
     const params = req.body;
     const limit = params.limit;
     const offset = params.offset;
-    const location_name = params.location_name;
+    const querySearch = params.query_search;
     try {
-      let whereCondition = {};
-      if (location_name) {
-        location_name['location_name'] = { [Op.like]: `%${location_name}%` };
-      }
+      const querySQL = `select * from location join city c on c.id = location.city_id  
+      where (location_name like '%${querySearch}%') 
+      or (address like '%${querySearch}%') 
+      or (c.city_name like '%${querySearch}%') limit ${limit} offset ${offset}`;
+      const queryCount = `select count(*) from location join city c on c.id = location.city_id  
+      where (location_name like '%${querySearch}%') 
+      or (address like '%${querySearch}%') 
+      or (c.city_name like '%${querySearch}%')`;
       const [listLocation, numberLocation] = await Promise.all([
-        Location.findAll({
-          where: whereCondition,
-          limit: limit,
-          offset: offset,
-        }),
-        Location.count({
-          where: whereCondition,
-        }),
+        db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
+        db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),
       ]);
       if (listLocation) {
         for (let index = 0; index < listLocation.length; index++) {
@@ -31,13 +30,14 @@ module.exports = {
             where: {
               id: listLocation[index].city_id,
             },
-          })
-          console.log('[CITY]', getCity);
-          listLocation[index].dataValues.city_name = getCity.dataValues.city_name;
-
+          });
+          listLocation[index].city_name = getCity.city_name;
         }
       }
-      return responseHandler.responseWithData(res, 200, { listLocation, numberLocation });
+      return responseHandler.responseWithData(res, 200, {
+        listLocation,
+        numberLocation: numberLocation[0]['count(*)'],
+      });
     } catch (error) {
       return responseHandler.badRequest(res, error.message);
     }

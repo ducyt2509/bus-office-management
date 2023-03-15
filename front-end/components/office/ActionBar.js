@@ -23,9 +23,19 @@ export default function ActionBar(props) {
           marginRight={'5%'}
         >
           <InputLeftElement pointerEvents="none" children={<CiSearch />} />
-          <Input type="tel" placeholder="Tìm kiếm" />
+          <Input
+            type="tel"
+            placeholder="Tìm kiếm"
+            value={props.querySearch}
+            onChange={props.handleChangeQuerySearch}
+          />
         </InputGroup>
-        <IconButton icon={<CiFilter />} backgroundColor={'#C2C2C2'} color={'#686868'} />
+        <IconButton
+          icon={<CiFilter />}
+          backgroundColor={'#C2C2C2'}
+          color={'#686868'}
+          onClick={props.handleGetListOffice}
+        />
       </Flex>
       <ButtonGroup>
         <IconButton

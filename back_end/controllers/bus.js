@@ -3,6 +3,7 @@ const Bus = db.buses;
 const User = db.users;
 const Vehicle = db.vehicles;
 const Op = db.Sequelize.Op;
+const QueryTypes = db.Sequelize.QueryTypes;
 const responseHandler = require('../handlers/response.handler');
 
 module.exports = {
@@ -44,41 +45,25 @@ module.exports = {
     const limit = params.limit;
     const offset = params.offset;
     const querySearch = params.query_search;
-    const bus_plate = params.bus_plate;
-    const bus_type_id = params.bus_type_id;
 
     try {
-      const include = querySearch
-        ? [
-            {
-              model: User,
-              where: {
-                user_name: {
-                  [Op.like]: `%${querySearch}%`,
-                },
-              },
-            },
-          ]
-        : [];
-      const whereCondition = {};
-      if (bus_plate) {
-        whereCondition['bus_plate'] = { [Op.like]: `%${bus_plate}%` };
-      }
-      if (bus_type_id) {
-        whereCondition['bus_type_id'] = bus_type_id;
-      }
+      const querySQL = `select * from bus 
+      join vehicle v on bus.vehicle_id = v.id 
+      join user cu on bus.main_driver_id = cu.id 
+      join user bu on bus.support_driver_id = bu.id
+      where (cu.user_name like '%${querySearch}%') or (bu.user_name like '%${querySearch}%') 
+      or (vehicle_plate like '%${querySearch}%') or (v.vehicle_name like '%${querySearch}%') limit ${limit} offset ${offset}`;
+      const queryCount = `select count(*) from bus 
+      join vehicle v on bus.vehicle_id = v.id 
+      join user cu on bus.main_driver_id = cu.id 
+      join user bu on bus.support_driver_id = bu.id
+      where (cu.user_name like '%${querySearch}%') or (bu.user_name like '%${querySearch}%') 
+      or (vehicle_plate like '%${querySearch}%') or (v.vehicle_name like '%${querySearch}%');`;
       let [getListBus, numberBus] = await Promise.all([
-        Bus.findAll({
-          include: include,
-          where: whereCondition,
-          limit: limit,
-          offset: offset,
-        }),
-        Bus.count({
-          where: whereCondition,
-          include: include,
-        }),
+        db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
+        db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),
       ]);
+
       if (getListBus) {
         for (let i = 0; i < getListBus.length; i++) {
           const [getDriverMain, getDriverSupport, getVehicle] = await Promise.all([
@@ -99,26 +84,26 @@ module.exports = {
             }),
           ]);
           if (getDriverMain) {
-            delete getDriverMain.dataValues.password;
-            delete getDriverMain._previousDataValues.password;
-            delete getDriverMain.dataValues.refresh_access_token;
-            delete getDriverMain._previousDataValues.refresh_access_token;
-            getListBus[i].dataValues.driverMain = getDriverMain;
+            delete getDriverMain.password;
+            delete getDriverMain.password;
+            delete getDriverMain.refresh_access_token;
+            delete getDriverMain.refresh_access_token;
+            getListBus[i].driverMain = getDriverMain;
           }
           if (getDriverSupport) {
-            delete getDriverSupport.dataValues.password;
-            delete getDriverSupport._previousDataValues.password;
-            delete getDriverSupport.dataValues.refresh_access_token;
-            delete getDriverSupport._previousDataValues.refresh_access_token;
-            getListBus[i].dataValues.driverSupport = getDriverSupport;
+            delete getDriverSupport.password;
+            delete getDriverSupport.password;
+            delete getDriverSupport.refresh_access_token;
+            delete getDriverSupport.refresh_access_token;
+            getListBus[i].driverSupport = getDriverSupport;
           }
           if (getVehicle) {
-            getListBus[i].dataValues.vehicle = getVehicle;
+            getListBus[i].vehicle = getVehicle;
           }
         }
         return responseHandler.responseWithData(res, 200, {
           list_bus: getListBus,
-          number_bus: numberBus,
+          number_bus: numberBus[0]['count(*)'],
         });
       } else {
         return responseHandler.responseWithData(res, 403, { message: "Can't get list bus" });

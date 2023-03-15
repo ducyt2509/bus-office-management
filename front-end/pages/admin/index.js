@@ -3,9 +3,7 @@ import { useStore } from '@/src/store';
 
 export default function AdminPage(props) {
   const [state, dispatch] = useStore();
-  console.log(state);
   const router = useRouter();
-  console.log();
   return <>Admin home</>;
 }
 export async function getServerSideProps(context) {

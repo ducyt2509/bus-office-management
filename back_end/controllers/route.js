@@ -2,6 +2,7 @@ const db = require('../models');
 const Route = db.routes;
 const responseHandler = require('../handlers/response.handler');
 const City = db.cities;
+const QueryTypes = db.Sequelize.QueryTypes;
 module.exports = {
   async addNewRoute(req, res) {
     const params = req.body;
@@ -18,7 +19,6 @@ module.exports = {
   },
   async updateRoute(req, res) {
     const params = req.body;
-    console.log("[PARAMS]:", params)
     try {
       const upRoute = await Route.update(params, {
         where: {
@@ -26,7 +26,6 @@ module.exports = {
         },
       });
       if (upRoute) {
-        console.log(upRoute, "[ROUTE]")
         return responseHandler.ok(res, 'Update route successful!');
       } else {
         return responseHandler.responseWithData(res, 403, { message: "Can't update route" });
@@ -56,41 +55,42 @@ module.exports = {
     const params = req.body;
     const offset = params.offset;
     const limit = params.limit;
+    const querySearch = params.query_search;
     try {
+      const querySQL = `select * from route join city c on c.id = route.city_from_id
+      join city cc on cc.id = route.city_to_id 
+      where (cc.city_name like '%${querySearch}%')
+      or (c.city_name like '%${querySearch}%') limit ${limit} offset ${offset}`;
+      const queryCount = `select count(*) from route join city c on c.id = route.city_from_id
+      join city cc on cc.id = route.city_to_id 
+      where (cc.city_name like '%${querySearch}%')
+      or (c.city_name like '%${querySearch}%') limit ${limit} offset ${offset}`;
       const [listRoute, numberRoute] = await Promise.all([
-        Route.findAll({
-          offset: offset,
-          limit: limit,
-        }),
-        Route.count(),
+        db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
+        db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),
       ]);
       if (listRoute) {
         for (let index = 0; index < listRoute.length; index++) {
           const [getCityFrom, getCityTo] = await Promise.all([
-            City.findOne(
-              {
-                where: {
-                  id: listRoute[index].city_from_id
-                }
-              }
-            ),
-            City.findOne(
-              {
-                where: {
-                  id: listRoute[index].city_to_id
-                }
-              }
-            )
-          ])
+            City.findOne({
+              where: {
+                id: listRoute[index].city_from_id,
+              },
+            }),
+            City.findOne({
+              where: {
+                id: listRoute[index].city_to_id,
+              },
+            }),
+          ]);
 
-          listRoute[index].dataValues.city_from = getCityFrom.dataValues.city_name
-          listRoute[index].dataValues.city_to = getCityTo.dataValues.city_name
-
+          listRoute[index].city_from = getCityFrom;
+          listRoute[index].city_to = getCityTo;
         }
         return responseHandler.responseWithData(res, 200, {
           list_route: listRoute,
-          number_route: numberRoute,
-        })
+          number_route: numberRoute[0]['count(*)'],
+        });
       } else {
         return responseHandler.responseWithData(res, 403, {
           message: "Can't get list route",

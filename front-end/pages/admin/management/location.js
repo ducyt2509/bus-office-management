@@ -7,14 +7,14 @@ import {
   Flex,
   Image,
   useDisclosure,
-} from "@chakra-ui/react";
-import { useCallback, useEffect, useState } from "react";
-import { useStore } from "@/src/store";
-import axios from "axios";
-import ActionBar from "@/components/location/ActionBar";
-import AddLocation from "@/components/location/AddLocation";
-import ListLocation from "@/components/location/ListLocation";
-import Pagination from "@/components/common/Pagination";
+} from '@chakra-ui/react';
+import { useCallback, useEffect, useState } from 'react';
+import { useStore } from '@/src/store';
+import axios from 'axios';
+import ActionBar from '@/components/location/ActionBar';
+import AddLocation from '@/components/location/AddLocation';
+import ListLocation from '@/components/location/ListLocation';
+import Pagination from '@/components/common/Pagination';
 
 export default function ManagementOffice(props) {
   const [state, dispath] = useStore();
@@ -22,17 +22,15 @@ export default function ManagementOffice(props) {
 
   const [listLocation, setListLocation] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [dynamicListLocation, setDynamicListLocation] = useState([]);
-  const [querySearch, setQuerySearch] = useState("");
-  const [numberLocation, setNumberLocation] = useState("");
+  const [querySearch, setQuerySearch] = useState('');
+  const [numberLocation, setNumberLocation] = useState('');
   const [locationId, setLocationId] = useState();
   const [location, setLocation] = useState({});
 
   const handleGetListLocation = useCallback(
-    async (page, limit) => {
-      console.log("[PAGE , LIMIT]", currentPage, page)
+    async (page, limit, value) => {
       limit = limit ? limit : 7;
-      page = page ? page - 1 : 0;
+      page = typeof page == 'number' ? page - 1 : 0;
       const offset = limit * page;
       if (page) {
         setCurrentPage(page);
@@ -43,45 +41,52 @@ export default function ManagementOffice(props) {
         {
           offset: offset,
           limit: limit,
+          query_search: value != undefined ? value : querySearch,
         },
         {
           headers: {
             token: token,
           },
-        },
+        }
       );
       if (getListLocation.data.statusCode === 200) {
         setListLocation(getListLocation.data.data.listLocation);
-        setDynamicListLocation(getListLocation.data.data.listLocation);
         setCurrentPage(page);
         setNumberLocation(getListLocation.data.data.numberLocation);
       }
     },
-    [state],
+    [state, querySearch]
   );
+  const handleChangeQuerySearch = useCallback((e) => {
+    const value = e.target.value;
+    setQuerySearch(value);
+    if (!value) {
+      handleGetListLocation(null, null, '');
+    }
+  });
   useEffect(() => {
     handleGetListLocation();
   }, []);
   return (
-    <div style={{ position: "relative", left: "20%", width: "80%" }}>
+    <div style={{ position: 'relative', left: '20%', width: '80%' }}>
       <Flex
-        alignItems={"center"}
+        alignItems={'center'}
         justifyContent="flex-end"
-        width={"84%"}
+        width={'84%'}
         margin="0 auto"
-        marginBottom={"2%"}
+        marginBottom={'2%'}
         paddingTop="2%"
       >
         <Text marginRight="1%">{state.dataUser.user_name}</Text>
         <Image
           borderRadius="full"
           boxSize="50px"
-          src={state.dataUser.avatar ? state.dataUser.avatar : "https://bit.ly/dan-abramov"}
+          src={state.dataUser.avatar ? state.dataUser.avatar : 'https://bit.ly/dan-abramov'}
           alt="Dan Abramov"
         />
       </Flex>
-      <div style={{ width: "90%", margin: "0 auto" }}>
-        <Card backgroundColor={"#F5F5F5"}>
+      <div style={{ width: '90%', margin: '0 auto' }}>
+        <Card backgroundColor={'#F5F5F5'}>
           <CardHeader>
             <Heading size="lg">Quản lí điểm đón trả</Heading>
           </CardHeader>
@@ -89,6 +94,10 @@ export default function ManagementOffice(props) {
             <ActionBar
               onOpen={onOpen}
               setLocationId={setLocationId}
+              querySearch={querySearch}
+              setQuerySearch={setQuerySearch}
+              handleGetListLocation={handleGetListLocation}
+              handleChangeQuerySearch={handleChangeQuerySearch}
             />
             <ListLocation
               list={listLocation}
