@@ -24,16 +24,13 @@ export default function ListRoute(props) {
     return (
       <tr>
         <td>{index + 1}</td>
-        <td>{route.city_from}</td>
-        <td>{route.city_to}</td>
+        <td>{route.city_from?.city_name}</td>
+        <td>{route.city_to?.city_name}</td>
 
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
             <IconButton icon={<SlPencil />} onClick={() => handleActiveModal(route?.id, route)} />
-            <IconButton
-              icon={<IoTrashBinOutline />}
-              onClick={() => handleDeleteRoute(route?.id)}
-            />
+            <IconButton icon={<IoTrashBinOutline />} onClick={() => handleDeleteRoute(route?.id)} />
           </Stack>
         </td>
       </tr>

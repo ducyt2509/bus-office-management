@@ -10,5 +10,5 @@ const middleWare = require('../middleware/permission.middleware');
 router.delete('/route/delete-route', routes.deleteRoute);
 router.post('/route/add-route', routes.addNewRoute);
 router.put('/route/update-route', routes.updateRoute);
-router.post('/route/get-list-route', routes.getListRoute);
+router.post('/route/list-route', routes.getListRoute);
 module.exports = router;

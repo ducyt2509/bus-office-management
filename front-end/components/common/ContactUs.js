@@ -47,7 +47,6 @@ export default function ContactUs() {
       } else {
         error[targetProperty] = false;
 
-        console.log(userInput);
       }
       let copyUserInput = { ...userInput };
       copyUserInput[targetProperty] = value;
@@ -58,7 +57,6 @@ export default function ContactUs() {
   );
 
   const handleSendEmail = async () => {
-    console.log(userInput);
     const sendMail = await axios.post('http://localhost:5000/contact-us/send', {
       ...userInput,
     });

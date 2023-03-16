@@ -87,7 +87,6 @@ export default function Setting(props) {
       }
     );
     if (updateUser.data.statusCode == 200) {
-      console.log('123');
     }
   }, [userEmail, userPhone, userRole, userOffice, userName, state]);
 

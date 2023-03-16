@@ -80,7 +80,6 @@ export default function Setting(props) {
       submitData
     );
     if (changePassword.data.statusCode === 200) {
-      console.log(1233);
     } else if (changePassword.data.statusCode === 403) {
       console.log(changePassword.data.data.message);
     }

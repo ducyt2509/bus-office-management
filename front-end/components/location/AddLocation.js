@@ -26,7 +26,6 @@ export default function AddCar(props) {
     setLocationName(e.target.value);
   };
   const handleChangeCity = (e) => {
-    console.log("[CITY ID ]", e.target.value)
     setCity(e.target.value);
   };
   const handleChangeLocation = (e) => {
@@ -34,8 +33,8 @@ export default function AddCar(props) {
   };
 
   const handleAddLocation = useCallback(async () => {
-    console.log("Current page : ", props.currentPage,);
     const submitData = {
+      address: location,
       location_name: locationName,
       city_id: city,
     };

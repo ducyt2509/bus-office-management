@@ -7,12 +7,14 @@ import { useRouter } from 'next/router';
 
 export default function ListEmployee(props) {
   const router = useRouter();
-  const handleActiveModal = (userId, user) => {
+  const handleActiveModal = (userId, user, e) => {
+    e.stopPropagation();
     props.setUser(user);
     props.setUserId(userId);
     props.onOpen();
   };
-  const handleDeleteUser = async (userId) => {
+  const handleDeleteUser = async (userId, e) => {
+    e.stopPropagation();
     const deleteUser = await axios.delete(
       `http://localhost:${props.port}/user/delete-user`,
       { data: { id: userId } },
@@ -66,8 +68,11 @@ export default function ListEmployee(props) {
         <td>{user.office.office_name}</td>
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
-            <IconButton icon={<SlPencil />} onClick={() => handleActiveModal(user?.id, user)} />
-            <IconButton icon={<IoTrashBinOutline />} onClick={() => handleDeleteUser(user?.id)} />
+            <IconButton icon={<SlPencil />} onClick={(e) => handleActiveModal(user?.id, user, e)} />
+            <IconButton
+              icon={<IoTrashBinOutline />}
+              onClick={(e) => handleDeleteUser(user?.id, e)}
+            />
           </Stack>
         </td>
       </tr>

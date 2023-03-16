@@ -9,7 +9,6 @@ export default function ListLocation(props) {
     props.onOpen();
   };
   const handleDeleteLocation = async (locationId) => {
-    console.log(locationId, "[LOCATION DELETE]")
     const deleteLocation = await axios.post(
       `http://localhost:${props.port}/location/delete-location`,
       { id: locationId },
@@ -27,6 +26,7 @@ export default function ListLocation(props) {
         <td>{index + 1}</td>
         <td>{location.location_name}</td>
         <td>{location.city_name}</td>
+        <td>{location.address}</td>
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
             <IconButton icon={<SlPencil />} onClick={() => handleActiveModal(location?.id, location)} />
@@ -46,6 +46,7 @@ export default function ListLocation(props) {
           <td>STT</td>
           <td>Tên</td>
           <td>Thành Phố</td>
+          <td>Địa chỉ</td>
           <td>Thao tác</td>
         </tr>
       </thead>

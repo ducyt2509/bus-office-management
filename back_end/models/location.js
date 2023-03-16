@@ -10,6 +10,9 @@ module.exports = (sequelize, Sequelize) => {
       location_name: {
         type: Sequelize.STRING,
       },
+      address: {
+        type: Sequelize.STRING,
+      },
       city_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
