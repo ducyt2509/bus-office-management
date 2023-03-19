@@ -1,0 +1,155 @@
+.bom-bus-schedule-detail .chakra-card__body div > span{
+    width: 60%;
+}
+.bom-bus-schedule-detail .chakra-card__body > div {
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 3%;
+    margin-top:3%
+}
+.bom-bus-schedule-detail .chakra-card__body > div input {
+    width: 97%;
+}
+.bom-bus-schedule-detail .wrapper {
+    width: 100%
+}
+.bom-bus-schedule-detail .select-btn {
+    padding: 0 20px;
+    height: 40px;
+    display: flex;
+    border-radius: 5px;
+    border: 1px solid #b3b3b3;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+.bom-bus-schedule-detail .content {
+    border: 1px solid #b3b3b3;
+    padding: 20px;
+    display: none;
+}
+.bom-bus-schedule-detail .wrapper.active .content{
+    display: block;
+    z-index: 99;
+    display: block;
+    position: absolute;
+    width: 48%;
+    background-color: #fff;
+}
+.bom-bus-schedule-detail .content .search {
+    position: relative;
+}
+.bom-bus-schedule-detail .content .search svg {
+    position: absolute;
+    line-height: 53px;
+    top: 8px;
+    left: 15px
+}
+.bom-bus-schedule-detail .content .search input {
+    height: 30px;
+    width: 100%;
+    border: 1px solid #b3b3b3;
+    padding: 0 15px 0 43px;
+}
+.bom-bus-schedule-detail .content .options {
+   margin-top: 10px;
+   max-height: 80px;
+   overflow-y: auto;
+}
+.bom-bus-schedule-detail .content .options li{
+    height: 40px;
+    border-radius: 5px;
+    display: flex;
+    padding: 0 13px;
+    cursor: pointer;
+    align-items: center;
+ }
+ .bom-bus-schedule-detail .content .options li:hover{
+    background-color: #f2f2f2;
+ }
+ .bom-location-bus-schedule {
+    font-size: 12px;
+    border: 1px solid;
+    padding: 3px 6px;
+    border-radius: 5px;
+    background-color: #EDF2F7;
+    margin-bottom: 4%;
+    font-weight: 500;
+    margin-left: 8px;
+ }
+ div:nth-child(2) > div > div > div:nth-child(8) > span {
+    width: 38%
+ }
+ div:nth-child(2) > div > div > div:nth-child(8) > div {
+    width: 62%;
+    display: flex;
+    justify-content:flex-end;
+    flex-wrap: wrap;
+ }
+
+ div:nth-child(2) > div > div > div:nth-child(9) > span {
+    width: 38%
+ }
+ div:nth-child(2) > div > div > div:nth-child(9) > div {
+    width: 62%;
+    display: flex;
+    justify-content:flex-end;
+    flex-wrap: wrap;
+ }
+ div:nth-child(2) > div > div > div:nth-child(9) > div svg{
+    width: 8px;
+    height: 8px;
+    position: relative;
+    bottom: 2px;
+    cursor: pointer;
+ }
+
+ div:nth-child(2) > div > div > div:nth-child(8) > div svg{
+    width: 8px;
+    height: 8px;
+    position: relative;
+    bottom: 2px;
+    cursor: pointer;
+ }
+
+div.bom-location-bus-schedule.add-location-bus-schedule {
+    border: 1px dashed;
+    font-weight: 400;
+    cursor: pointer;
+ }
+ .bom-add-location-pickup {
+    position: absolute;
+    left: 12%;
+    margin-top: 4%;
+    background-color: #f2f2f2;
+    width: 50%;
+    z-index: 999;
+    padding: 13px;
+    opacity: 0;
+    visibility: hidden;
+ }
+ .bom-add-location-pickup > div {
+    display: flex;
+ }
+ .bom-add-location-pickup.active {
+    opacity: 1;
+    visibility: visible;
+ }
+ .bom-add-location-pickup::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 1%;
+    margin-left: -5px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: #f2f2f2 transparent transparent transparent ;
+    transform:  rotate(180deg);
+    rotate: 180%;
+  }
+ .bom-add-location-pickup .select-btn {
+    font-size: 13px;
+ }
+ .bom-add-location-pickup .options li {
+    font-size: 11px;
+ }

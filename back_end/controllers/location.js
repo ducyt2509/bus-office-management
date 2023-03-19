@@ -12,7 +12,7 @@ module.exports = {
     const offset = params.offset;
     const querySearch = params.query_search;
     try {
-      const querySQL = `select * from location join city c on c.id = location.city_id  
+      const querySQL = `select location.id, location.location_name, location.address, location.city_id from location join city c on c.id = location.city_id  
       where (location_name like '%${querySearch}%') 
       or (address like '%${querySearch}%') 
       or (c.city_name like '%${querySearch}%') limit ${limit} offset ${offset}`;

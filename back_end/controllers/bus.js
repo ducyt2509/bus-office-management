@@ -47,7 +47,7 @@ module.exports = {
     const querySearch = params.query_search;
 
     try {
-      const querySQL = `select * from bus 
+      const querySQL = `select bus.id, bus.vehicle_plate, bus.main_driver_id, bus.support_driver_id, bus.vehicle_id, bus.vehicle_status from bus 
       join vehicle v on bus.vehicle_id = v.id 
       join user cu on bus.main_driver_id = cu.id 
       join user bu on bus.support_driver_id = bu.id

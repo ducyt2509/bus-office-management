@@ -1,0 +1,94 @@
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import axios from 'axios';
+import { useCallback, useEffect, useState } from 'react';
+import { AiOutlineSearch } from 'react-icons/ai';
+
+export default function ListRouteOnBusSchedule(props) {
+  const [listRoute, setListRoute] = useState([]);
+  const [routeName, setRouteName] = useState();
+  const [querySearch, setQuerySearch] = useState('');
+
+  const handleGetListRoute = useCallback(
+    async (page, limit, value) => {
+      limit = limit ? limit : 7;
+      page = typeof page == 'number' ? page - 1 : 0;
+      const offset = limit * page;
+      const token = `Bearer ${props.state.dataUser.token}`;
+      const getListRoute = await axios.post(
+        `http://localhost:${props.BACK_END_PORT}/route/list-route`,
+        {
+          offset: offset,
+          limit: limit,
+          query_search: value != undefined ? value : querySearch,
+        },
+        {
+          headers: {
+            token: token,
+          },
+        }
+      );
+      if (getListRoute.data.statusCode === 200) {
+        setListRoute(getListRoute.data.data.list_route);
+      }
+    },
+    [props.state, querySearch]
+  );
+  const handleChangeQuerySearch = useCallback((e) => {
+    const value = e.target.value;
+    setQuerySearch(value);
+    if (!value) {
+      handleGetListRoute(null, null, '');
+    } else {
+      handleGetListRoute(null, null, value);
+    }
+  });
+  const handleSelectRoute = (id, value) => {
+    setRouteName(value);
+    props.setRoute(id);
+    handleOpenSelect();
+  };
+  const ListRouteHTML = listRoute.map((route) => {
+    return (
+      <li
+        onClick={() =>
+          handleSelectRoute(route.id, `${route.city_from.city_name} - ${route.city_to.city_name}`)
+        }
+      >
+        {route.city_from.city_name} - {route.city_to.city_name}
+      </li>
+    );
+  });
+  const handleOpenSelect = () => {
+    const wrapper = document.querySelector('.bom-bus-schedule-detail .wrapper.wrapper1');
+    wrapper.classList.toggle('active');
+  };
+  useEffect(() => {
+    handleGetListRoute();
+  }, []);
+  useEffect(() => {
+    const filterRoute = listRoute.filter((route) => {
+      return route.id == props.route;
+    });
+    let name = `${filterRoute[0]?.city_from?.city_name} - ${filterRoute[0]?.city_to?.city_name}`;
+    if (name.indexOf('undefined') != -1) {
+      setRouteName('Chọn tuyến đường');
+    } else {
+      setRouteName(name);
+    }
+  }, [props.route, listRoute]);
+  return (
+    <div className="wrapper wrapper1">
+      <div className="select-btn" onClick={handleOpenSelect}>
+        <p>{routeName ? routeName : 'Chọn tuyến đường'}</p>
+        <IoIosArrowDown />
+      </div>
+      <div className="content">
+        <div className="search">
+          <AiOutlineSearch />
+          <input onChange={handleChangeQuerySearch} value={querySearch} />
+        </div>
+        <ul className="options">{ListRouteHTML}</ul>
+      </div>
+    </div>
+  );
+}
