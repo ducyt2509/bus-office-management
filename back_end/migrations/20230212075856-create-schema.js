@@ -303,16 +303,38 @@ module.exports = {
               },
               onDelete: 'cascade',
             },
+            location_start_id: {
+              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
+              allowNull: false,
+              references: {
+                model: {
+                  tableName: 'location',
+                },
+                key: 'id',
+              },
+              onDelete: 'cascade',
+            },
+            location_finish_id: {
+              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
+              allowNull: false,
+              references: {
+                model: {
+                  tableName: 'location',
+                },
+                key: 'id',
+              },
+              onDelete: 'cascade',
+            },
             price: {
               type: Sequelize.DataTypes.DOUBLE,
               allowNull: false,
             },
             time_from: {
-              type: Sequelize.DataTypes.STRING,
+              type: Sequelize.DataTypes.DOUBLE,
               allowNull: false,
             },
             travel_time: {
-              type: Sequelize.DataTypes.INTEGER(20),
+              type: Sequelize.DataTypes.DOUBLE,
               allowNull: false,
             },
             date_start: {
@@ -334,7 +356,7 @@ module.exports = {
           { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
         ),
         queryInterface.createTable(
-          'transaction',
+          'daily_bus_schedule',
           {
             id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
@@ -342,16 +364,35 @@ module.exports = {
               autoIncrement: true,
               allowNull: false,
             },
-            vehicle_id: {
+            // tình trạng xuất bến
+            departure_status: {
+              type: Sequelize.DataTypes.INTEGER(20),
+            },
+            date: {
+              type: Sequelize.DataTypes.DATE,
+            },
+            bus_schedule_id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
               allowNull: false,
               references: {
                 model: {
-                  tableName: 'vehicle',
+                  tableName: 'bus_schedule',
                 },
                 key: 'id',
               },
               onDelete: 'cascade',
+            },
+          },
+          { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
+        ),
+        queryInterface.createTable(
+          'transaction',
+          {
+            id: {
+              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
+              primaryKey: true,
+              autoIncrement: true,
+              allowNull: false,
             },
             passenger_name: {
               type: Sequelize.DataTypes.STRING,
@@ -389,17 +430,6 @@ module.exports = {
               type: Sequelize.DataTypes.STRING,
               allowNull: false,
             },
-            route_id: {
-              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
-              allowNull: false,
-              references: {
-                model: {
-                  tableName: 'route',
-                },
-                key: 'id',
-              },
-              onDelete: 'cascade',
-            },
             cashier: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
               allowNull: false,
@@ -421,18 +451,7 @@ module.exports = {
             },
             created_by: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
-              allowNull: false,
-              references: {
-                model: {
-                  tableName: 'user',
-                },
-                key: 'id',
-              },
-              onDelete: 'cascade',
-            },
-            created_on: {
-              type: Sequelize.DataTypes.DATE,
-              allowNull: false,
+              allowNull: true,
             },
             payment_status: {
               type: Sequelize.DataTypes.INTEGER,
@@ -441,6 +460,16 @@ module.exports = {
             seat: {
               type: Sequelize.DataTypes.STRING,
               allowNull: false,
+            },
+            daily_bus_schedule_id: {
+              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
+              references: {
+                model: {
+                  tableName: 'daily_bus_schedule',
+                },
+                key: 'id',
+              },
+              onDelete: 'cascade',
             },
           },
           { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
@@ -469,7 +498,7 @@ module.exports = {
           { transaction: t, charset: 'utf8mb4', collate: 'utf8mb4_unicode_ci' }
         ),
         queryInterface.createTable(
-          'daily_bus_schedule',
+          'location_on_bus_schedule',
           {
             id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
@@ -477,16 +506,14 @@ module.exports = {
               autoIncrement: true,
               allowNull: false,
             },
-            // tình trạng xuất bến
-            departure_status: {
-              type: Sequelize.DataTypes.INTEGER(20),
+            bus_detail: {
+              type: Sequelize.DataTypes.STRING,
             },
-            date: {
-              type: Sequelize.DataTypes.DATE,
-            },
+            bus_location_type: {
+              type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
+            }, 
             bus_schedule_id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
-              allowNull: false,
               references: {
                 model: {
                   tableName: 'bus_schedule',
@@ -516,6 +543,7 @@ module.exports = {
       queryInterface.dropTable('office', { transaction: t }),
       queryInterface.dropTable('transaction', { transaction: t }),
       queryInterface.dropTable('ticket', { transaction: t }),
+      queryInterface.dropTable('location_on_bus_schedule', { transaction: t }),
     ]);
   },
 };

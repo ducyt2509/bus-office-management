@@ -8,36 +8,34 @@ import {
   Image,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useCallback, useEffect, useState } from 'react';
-import { useStore } from '@/src/store';
 import axios from 'axios';
-import ActionBar from '@/components/route/ActionBar';
-import AddRoute from '@/components/route/AddRoute';
-import ListRoute from '@/components/route/ListRoute';
+import ActionBar from '@/components/bus-schedule/ActionBar';
+import ListBusSchedule from '@/components/bus-schedule/ListBusSchedule';
 import Pagination from '@/components/common/Pagination';
+import { useStore } from '@/src/store';
+import { useState, useCallback, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
-export default function ManagementRoute(props) {
+export default function ManagementBusSchedule(props) {
+  const router = useRouter();
   const [state, dispath] = useStore();
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [listRoute, setListRoute] = useState([]);
+  const [listBusSchedule, setListBusSchedule] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [querySearch, setQuerySearch] = useState('');
-  const [numberRoute, setNumberRoute] = useState('');
-  const [routeId, setRouteId] = useState();
-  const [route, setRoute] = useState({});
+  const [numberBusSchedule, setNumberBusSchedule] = useState('');
 
-  const handleGetListRoute = useCallback(
+  const handleGetListBusSchedule = useCallback(
     async (page, limit, value) => {
-      limit = limit ? limit : 7;
       page = typeof page == 'number' ? page - 1 : 0;
-      const offset = limit * page;
+      limit = limit ? limit : 7;
       if (page) {
         setCurrentPage(page);
       }
       const token = `Bearer ${state.dataUser.token}`;
-      const getListRoute = await axios.post(
-        `http://localhost:${props.BACK_END_PORT}/route/list-route`,
+      const offset = limit * page;
+      const getListBusSchedule = await axios.post(
+        `http://localhost:${props.BACK_END_PORT}/bus-schedule/list-bus-schedule`,
         {
           offset: offset,
           limit: limit,
@@ -49,10 +47,10 @@ export default function ManagementRoute(props) {
           },
         }
       );
-      if (getListRoute.data.statusCode === 200) {
-        setListRoute(getListRoute.data.data.list_route);
+      if (getListBusSchedule.data.statusCode === 200) {
+        setListBusSchedule(getListBusSchedule.data.data.list_bus_schedule);
         setCurrentPage(1);
-        setNumberRoute(getListRoute.data.data.number_route);
+        setNumberBusSchedule(getListBusSchedule.data.data.number_bus_schedule);
       }
     },
     [state, querySearch]
@@ -61,11 +59,17 @@ export default function ManagementRoute(props) {
     const value = e.target.value;
     setQuerySearch(value);
     if (!value) {
-      handleGetListRoute(null, null, '');
+      handleGetListBusSchedule(null, null, '');
     }
   });
+  const handleGetBusScheduleInformation = useCallback((id) => {
+    router.push({
+      pathname: '/admin/management/bus-schedule/[id]',
+      query: { id: id },
+    });
+  });
   useEffect(() => {
-    handleGetListRoute();
+    handleGetListBusSchedule();
   }, []);
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
@@ -77,52 +81,39 @@ export default function ManagementRoute(props) {
         marginBottom={'2%'}
         paddingTop="2%"
       >
-        <Text marginRight="1%">{state.dataUser.user_name}</Text>
+        <Text marginRight="1%">Dan Abramov</Text>
         <Image
           borderRadius="full"
           boxSize="50px"
-          src={state.dataUser.avatar ? state.dataUser.avatar : 'https://bit.ly/dan-abramov'}
+          src="https://bit.ly/dan-abramov"
           alt="Dan Abramov"
         />
       </Flex>
       <div style={{ width: '90%', margin: '0 auto' }}>
         <Card backgroundColor={'#F5F5F5'}>
           <CardHeader>
-            <Heading size="lg">Quản lí văn phòng</Heading>
+            <Heading size="lg">Quản lí xe</Heading>
           </CardHeader>
           <CardBody>
             <ActionBar
-              onOpen={onOpen}
-              setRouteId={setRouteId}
               querySearch={querySearch}
               setQuerySearch={setQuerySearch}
-              handleGetListRoute={handleGetListRoute}
+              handleGetListBusSchedule={handleGetListBusSchedule}
               handleChangeQuerySearch={handleChangeQuerySearch}
+              handleGetBusScheduleInformation={handleGetBusScheduleInformation}
             />
-            <ListRoute
-              list={listRoute}
-              onOpen={onOpen}
-              setRouteId={setRouteId}
-              setRoute={setRoute}
-              handleGetListRoute={handleGetListRoute}
+            <ListBusSchedule
+              list={listBusSchedule}
+              handleGetListBusSchedule={handleGetListBusSchedule}
               port={props.BACK_END_PORT}
-              page={'route'}
+              handleGetBusScheduleInformation={handleGetBusScheduleInformation}
             />
             <Pagination
-              list_number={numberRoute}
-              handleGetList={handleGetListRoute}
-              setList={setListRoute}
-              list={listRoute}
+              list_number={numberBusSchedule}
+              handleGetList={handleGetListBusSchedule}
+              setList={setListBusSchedule}
+              list={listBusSchedule}
               currentPage={currentPage}
-            />
-            <AddRoute
-              isOpen={isOpen}
-              onClose={onClose}
-              port={props.BACK_END_PORT}
-              token={`Bearer ${state.dataUser.token}`}
-              handleGetListRoute={handleGetListRoute}
-              routeId={routeId}
-              route={route}
             />
           </CardBody>
         </Card>

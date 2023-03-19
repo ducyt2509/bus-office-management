@@ -16,7 +16,7 @@ import {
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 
-export default function AddCar(props) {
+export default function AddLocation(props) {
   const [listCity, setListCity] = useState([]);
   const [locationName, setLocationName] = useState('');
   const [city, setCity] = useState();
@@ -48,7 +48,7 @@ export default function AddCar(props) {
         }
       );
       if (updateLocation.data.statusCode == 200) {
-        props.handleGetListLocation(props.currentPage,);
+        props.handleGetListLocation(props.currentPage);
         props.onClose();
       }
     } else {

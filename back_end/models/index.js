@@ -50,6 +50,8 @@ db.bus_schedules = require('./bus_schedule')(sequelize, Sequelize);
 db.offices = require('./office')(sequelize, Sequelize);
 db.transactions = require('./transaction')(sequelize, Sequelize);
 db.tickets = require('./ticket')(sequelize, Sequelize);
+db.daily_bus_schedules = require('./daily_bus_schedule')(sequelize, Sequelize);
+db.location_on_bus_schedules = require('./location_on_bus_schedule')(sequelize, Sequelize);
 
 db.buses.belongsTo(db.users, { foreignKey: 'main_driver_id' });
 db.users.hasMany(db.buses, { foreignKey: 'main_driver_id' });

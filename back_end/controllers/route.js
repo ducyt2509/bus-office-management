@@ -57,7 +57,7 @@ module.exports = {
     const limit = params.limit;
     const querySearch = params.query_search;
     try {
-      const querySQL = `select * from route join city c on c.id = route.city_from_id
+      const querySQL = `select route.id, route.city_from_id, route.city_to_id from route join city c on c.id = route.city_from_id
       join city cc on cc.id = route.city_to_id 
       where (cc.city_name like '%${querySearch}%')
       or (c.city_name like '%${querySearch}%') limit ${limit} offset ${offset}`;

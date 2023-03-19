@@ -7,9 +7,6 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      vehicle_id: {
-        type: Sequelize.INTEGER(20).UNSIGNED,
-      },
       passenger_name: {
         type: Sequelize.STRING,
       },
@@ -31,9 +28,6 @@ module.exports = (sequelize, Sequelize) => {
       date_detail: {
         type: Sequelize.STRING,
       },
-      route_id: {
-        type: Sequelize.INTEGER(20).UNSIGNED,
-      },
       ticket_price: {
         type: Sequelize.DOUBLE,
       },
@@ -43,14 +37,14 @@ module.exports = (sequelize, Sequelize) => {
       created_by: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
-      created_on: {
-        type: Sequelize.DATE,
-      },
       payment_status: {
         type: Sequelize.INTEGER,
       },
       seat: {
         type: Sequelize.STRING,
+      },
+      daily_bus_schedule_id: {
+        type: Sequelize.INTEGER(20).UNSIGNED,
       },
     },
     {

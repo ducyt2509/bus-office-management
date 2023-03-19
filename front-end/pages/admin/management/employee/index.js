@@ -1,9 +1,4 @@
 import {
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
   Text,
   Heading,
   Card,

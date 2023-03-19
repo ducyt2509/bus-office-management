@@ -4,6 +4,7 @@ import '@/styles/bom_login.css';
 import '@/styles/bom_home.css';
 import '@/styles/bom_contactus.css';
 import '@/styles/bom_table.css';
+import '@/styles/bom_bus_schedule.css';
 import '@/styles/bom_personal_info.css';
 import { ChakraProvider } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
