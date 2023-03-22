@@ -8,10 +8,12 @@ module.exports = {
       {
         bus_detail: '["Văn Phòng Mĩ Đình: 10:30","Văn Phòng Giáp Bát: 11:00"]',
         bus_location_type: 0,
+        bus_location_address: '["Mỹ Đình Hà Nội", "Giáp Bát Hà Nội"]',
         bus_schedule_id: 1,
       },
       {
         bus_detail: '["Văn Phòng Giáp Bát: 14:00", "Văn Phòng Mĩ Đình: 14:30"]',
+        bus_location_address: '["Giáp Bát Hà Nội", "Mỹ Đình Hà Nội"]',
         bus_location_type: 1,
         bus_schedule_id: 1,
       },

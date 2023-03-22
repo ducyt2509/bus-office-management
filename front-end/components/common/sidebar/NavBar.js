@@ -3,35 +3,33 @@ import Link from 'next/link';
 export default function NavBar(props) {
   const router = useRouter();
   return (
-    <div className="bom-navbar">
+    <div className="bom-navbar" style={router.pathname != '/' ? { borderBottom: "2px solid #d9d9d9" } : {}}>
       <div className="bom-navbar-bom-logo">
-        <h1>BOM</h1>
+        <h1 style={router.pathname != '/' ? { color: '#F26A4C' } : {}}>BOM</h1>
       </div>
       <ul className="bom-navbar-component">
         <li>
           <Link href={'/'}>
-            <div>Trang chủ</div>
+            <div style={router.pathname != '/' ? { color: '#F26A4C' } : {}}>Trang chủ</div>
           </Link>
         </li>
         <li>
           <Link href={'/ticket'}>
-            <div>Tra cứu vé</div>
+            <div style={router.pathname != '/' ? { color: '#F26A4C' } : {}}>Tra cứu vé</div>
           </Link>
         </li>
         <li>
           <Link href={'/about-us'}>
-            <div>Về chúng tôi</div>
+            <div style={router.pathname != '/' ? { color: '#F26A4C' } : {}}>Về chúng tôi</div>
           </Link>
         </li>
         <li>
           <Link href={'/contact-us'}>
-            <div>Liên hệ</div>
+            <div style={router.pathname != '/' ? { color: '#F26A4C' } : {}}>Liên hệ</div>
           </Link>
         </li>
         <li>
-          <Link href={''}>
-            <div onClick={props.handleShowLoginForm}>Đăng nhập</div>
-          </Link>
+          <div onClick={props.handleShowLoginForm}>Đăng nhập</div>
         </li>
       </ul>
     </div>

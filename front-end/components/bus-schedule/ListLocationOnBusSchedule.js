@@ -42,14 +42,19 @@ export default function ListLocationOnBusSchedule(props) {
       handleGetListLocation(null, null, value);
     }
   });
-  const handleSelectLocation = (id, value) => {
+  const handleSelectLocation = (id, value, address) => {
     setLocationName(value);
     props.setLocation(props.type == 'pickup/drop' ? value : id);
+    if (props.type == 'pickup/drop') {
+      props.setAddress(address);
+    }
     handleOpenSelect();
   };
   const ListLocationHTML = listLocation.map((location) => {
     return (
-      <li onClick={() => handleSelectLocation(location.id, location.location_name)}>
+      <li
+        onClick={() => handleSelectLocation(location.id, location.location_name, location.address)}
+      >
         {location.location_name}
       </li>
     );
@@ -63,7 +68,9 @@ export default function ListLocationOnBusSchedule(props) {
   }, []);
   useEffect(() => {
     if (props.data && props.data.length) {
-      setLocationName(props.id == 3 ? props.data[0]?.location_start : props.data[0]?.location_finish)
+      setLocationName(
+        props.id == 3 ? props.data[0]?.location_start : props.data[0]?.location_finish
+      );
     }
   }, [props.data]);
   return (

@@ -20,7 +20,12 @@ router.delete(
 router.post(
   '/bus-schedule/list-bus-schedule',
   // middleWare.verifyTokenForManager,
-  bus_schedules.getListBusSchedule
+  bus_schedules.getListBusScheduleForManager
+);
+router.post(
+  '/bus-schedule/list-bus-schedule-all',
+  // middleWare.verifyTokenForManager,
+  bus_schedules.getListBusScheduleForUser
 );
 router.post(
   '/bus-schedule/bus-schedule-by-id',

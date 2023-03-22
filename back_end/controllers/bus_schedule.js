@@ -67,7 +67,97 @@ module.exports = {
       return responseHandler.badRequest(res, error.message);
     }
   },
-  async getListBusSchedule(req, res) {
+  async getListBusScheduleForUser(req, res) {
+    const params = req.body;
+    const offset = params.offset;
+    const limit = params.limit;
+    const locationStartId = params.location_start_id;
+    const locationFinishId = params.location_finish_id;
+    const dateStart = params.date_start;
+    try {
+      const querySQL = `select bs.id, b.vehicle_plate, c.city_name as city_from, bs.route_id, cc.city_name as city_to, v.vehicle_name, 
+      l.location_name as location_start, ll.location_name as location_finish, bs.price, bs.time_from, bs.bus_id, bs.location_start_id,
+      bs.location_finish_id, bs.travel_time, bs.date_start, bs.bus_schedule_status, bs.schedule_frequency, bs.bus_schedule_expire,
+      v.vehicle_number_seat, b.vehicle_id
+      from bus_schedule bs
+      join route r on r.id = bs.route_id 
+      join city c on c.id = r.city_from_id
+      join city cc on cc.id = r.city_to_id
+      join bus b on b.id = bs.bus_id
+      join vehicle v on v.id = b.vehicle_id
+      join location l on l.id = bs.location_start_id
+      join location ll on ll.id = bs.location_finish_id 
+      where bs.location_start_id = ${locationStartId} and bs.location_finish_id = ${locationFinishId} and bs.date_start = '${dateStart}'
+      limit ${limit} offset ${offset}`;
+      const queryCount = `select count(*) from bus_schedule bs
+      where bs.location_start_id = ${locationStartId} and bs.location_finish_id = ${locationFinishId} and bs.date_start = '${dateStart}'`;
+      const [listBusSchedule, numberBusSchedule] = await Promise.all([
+        db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
+        db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),
+      ]);
+      if (listBusSchedule) {
+        for (let i = 0; i < listBusSchedule.length; i++) {
+          const [
+            getListLocationBusSchedule,
+            getDailyBusSchedule,
+            getInformationRoute,
+            numberSeatSelected,
+          ] = await Promise.all([
+            Location_Bus_Schedule.findAll({
+              where: {
+                bus_schedule_id: listBusSchedule[i].id,
+              },
+            }),
+            Daily_Bus_Schedule.findAll({
+              where: {
+                bus_schedule_id: listBusSchedule[i].id,
+              },
+            }),
+            db.sequelize.query(
+              `select c.city_name as city_from, cc.city_name as city_to from route r 
+              join city c on c.id = r.city_from_id 
+              join city cc on cc.id = r.city_to_id where r.id = ${listBusSchedule[i].route_id}`,
+              {
+                type: QueryTypes.SELECT,
+              }
+            ),
+            db.sequelize.query(
+              `select t.seat from transaction t
+                join daily_bus_schedule dbs on dbs.id = t.daily_bus_schedule_id
+                join bus_schedule bs on dbs.bus_schedule_id = bs.id
+                where bs.id = ${listBusSchedule[i].id}`,
+              {
+                type: QueryTypes.SELECT,
+              }
+            ),
+          ]);
+          if (getListLocationBusSchedule) {
+            listBusSchedule[i].location_bus_schedule = getListLocationBusSchedule;
+          }
+          if (getDailyBusSchedule) {
+            listBusSchedule[i].daily_bus_schedules = getDailyBusSchedule;
+          }
+          if (getInformationRoute) {
+            listBusSchedule[i].route = getInformationRoute;
+          }
+          if (numberSeatSelected) {
+            listBusSchedule[i].number_seat_selected = numberSeatSelected;
+          }
+        }
+        return responseHandler.responseWithData(res, 200, {
+          list_bus_schedule: listBusSchedule,
+          number_bus_schedule: numberBusSchedule[0]['count(*)'],
+        });
+      } else {
+        return responseHandler.responseWithData(res, 403, {
+          message: "Can't get list bus schedule",
+        });
+      }
+    } catch (error) {
+      return responseHandler.badRequest(res, error.message);
+    }
+  },
+  async getListBusScheduleForManager(req, res) {
     const params = req.body;
     const offset = params.offset;
     const limit = params.limit;

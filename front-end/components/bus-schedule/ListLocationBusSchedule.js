@@ -15,6 +15,7 @@ import {
 export default function ListLocationBusSchedule(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [location, setLocation] = useState();
+  const [address, setAddress] = useState();
   const [time, setTime] = useState();
   useEffect(() => {
     let filterList = [];
@@ -30,22 +31,32 @@ export default function ListLocationBusSchedule(props) {
     if (filterList[0]?.bus_detail && typeof filterList[0]?.bus_detail == 'string') {
       props.setListLocation(JSON.parse(filterList[0]?.bus_detail));
     }
+    if (
+      filterList[0]?.bus_location_address &&
+      typeof filterList[0]?.bus_location_address == 'string'
+    ) {
+      props.setListAddress(JSON.parse(filterList[0]?.bus_location_address));
+    }
   }, [props.list, props.data]);
   const html =
-    props.listLocation &&
-    props.listLocation.length ?
-    props.listLocation.map((element, index) => {
-      return (
-        <div className="bom-location-bus-schedule">
-          {element} <CloseIcon onClick={() => deleteLocationBusSchedule(index)} />
-        </div>
-      );
-    }) : null;
+    props.listLocation && props.listLocation.length
+      ? props.listLocation.map((element, index) => {
+          return (
+            <div className="bom-location-bus-schedule">
+              {element} <CloseIcon onClick={() => deleteLocationBusSchedule(index)} />
+            </div>
+          );
+        })
+      : null;
   const deleteLocationBusSchedule = useCallback(
     (index) => {
-      const oldList = [...props.listLocation];
-      oldList.splice(index, 1);
-      props.setListLocation(oldList);
+      const oldListLocation = [...props.listLocation];
+      oldListLocation.splice(index, 1);
+      props.setListLocation(oldListLocation);
+
+      const oldListAddress = [...props.listAddress];
+      oldListAddress.splice(index, 1);
+      props.setListAddress(oldListAddress);
     },
     [props.listLocation]
   );
@@ -62,8 +73,14 @@ export default function ListLocationBusSchedule(props) {
     let newLocation = location + ': ' + time;
     oldList.push(newLocation);
     props.setListLocation(oldList);
+
+    let oldListAddress = [...props.listAddress];
+    let newAddress = address;
+    oldListAddress.push(newAddress);
+    props.setListAddress(oldListAddress);
+
     handleDisplayAddLocation();
-  }, [props.listLocation, location, time]);
+  }, [props.listLocation, location, time, address]);
   return (
     <div>
       <div
@@ -79,6 +96,8 @@ export default function ListLocationBusSchedule(props) {
             BACK_END_PORT={props.BACK_END_PORT}
             location={location}
             setLocation={setLocation}
+            address={address}
+            setAddress={setAddress}
             id={props.id}
             type={'pickup/drop'}
           />

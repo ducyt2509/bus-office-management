@@ -10,6 +10,9 @@ module.exports = (sequelize, Sequelize) => {
       vehicle_name: {
         type: Sequelize.STRING,
       },
+      vehicle_number_seat: {
+        type: Sequelize.INTEGER(20)
+      },
       office_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },

@@ -3,7 +3,6 @@ import {
   Flex,
   Text,
   Image,
-  useDisclosure,
   Heading,
   Select,
   CardBody,
@@ -21,28 +20,9 @@ import ListRouteOnBusSchedule from '@/components/bus-schedule/ListRouteOnBusSche
 import ListBusOnBusSchedule from '@/components/bus-schedule/ListBusOnBusSchedule';
 import ListLocationOnBusSchedule from '@/components/bus-schedule/ListLocationOnBusSchedule';
 import ListLocationBusSchedule from '@/components/bus-schedule/ListLocationBusSchedule';
+import { convertInt, convertTime } from '@/helper';
 
-const convertTime = (time, plus) => {
-  const result = (time + plus) % 24;
-  const string = result.toString().split('.');
-  let hour = string[0];
-  let minute = (parseFloat('0.' + string[1]).toFixed(2) * 60).toFixed(0);
-  if (hour.length == 1) {
-    hour = '0' + hour;
-  }
-  if (minute.length == 1) {
-    minute = '0' + minute;
-  }
-  return hour + ':' + minute;
-};
-const convertInt = (time) => {
-  const string = time.split(':');
-  const hour = parseInt(string[0]);
-  const minute = parseFloat(string[1]) / 60;
-  return hour + minute;
-};
 export default function BusScheduleDetail(props) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
   const [state, dispath] = useStore();
   const [data, setData] = useState();
@@ -62,8 +42,11 @@ export default function BusScheduleDetail(props) {
   const [scheduleFrequency, setScheduleFrequency] = useState();
 
   const [locationPickup, setLocationPickup] = useState([]);
+  const [addressPickup, setAddressPickup] = useState([]);
+
   const [locationDropOff, setLocationDropOff] = useState([]);
-  console.log(timeFrom);
+  const [addressDropOff, setAddressDropOff] = useState([]);
+
   const handleSubmitData = useCallback(async () => {
     const submitData = {
       bus_schedule: {
@@ -81,8 +64,16 @@ export default function BusScheduleDetail(props) {
       },
 
       location_bus_schedule: [
-        { bus_detail: JSON.stringify(locationPickup), bus_location_type: 1 },
-        { bus_detail: JSON.stringify(locationDropOff), bus_location_type: 0 },
+        {
+          bus_detail: JSON.stringify(locationPickup),
+          bus_location_type: 1,
+          bus_location_address: JSON.stringify(addressPickup),
+        },
+        {
+          bus_detail: JSON.stringify(locationDropOff),
+          bus_location_type: 0,
+          bus_location_address: JSON.stringify(addressDropOff),
+        },
       ],
     };
     if (BusSchedule[0] && BusSchedule[0].id) {
@@ -120,6 +111,8 @@ export default function BusScheduleDetail(props) {
     scheduleFrequency,
     locationPickup,
     locationDropOff,
+    addressDropOff,
+    addressPickup,
   ]);
 
   const getBusScheduleById = useCallback(
@@ -189,7 +182,7 @@ export default function BusScheduleDetail(props) {
       </Flex>
       <div style={{ width: '90%', margin: '0 auto' }}>
         <Heading size="lg" marginBottom={'3%'} textAlign={'center'}>
-          {'Chỉnh sửa thông tin lịch trình'}
+          {router.query.id == 'add' ? 'Thêm lịch trình' : 'Chỉnh sửa thông tin lịch trình'}
         </Heading>
         {}
         <Card
@@ -265,6 +258,8 @@ export default function BusScheduleDetail(props) {
               <ListLocationBusSchedule
                 list={BusSchedule[0]?.location_bus_schedule}
                 listLocation={locationPickup}
+                listAddress={addressPickup}
+                setListAddress={setAddressPickup}
                 setListLocation={setLocationPickup}
                 id={5}
                 state={state}
@@ -277,6 +272,8 @@ export default function BusScheduleDetail(props) {
                 list={BusSchedule[0]?.location_bus_schedule}
                 id={6}
                 listLocation={locationDropOff}
+                listAddress={addressDropOff}
+                setListAddress={setAddressDropOff}
                 setListLocation={setLocationDropOff}
                 state={state}
                 BACK_END_PORT={props.BACK_END_PORT}

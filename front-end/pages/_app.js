@@ -5,10 +5,12 @@ import '@/styles/bom_home.css';
 import '@/styles/bom_contactus.css';
 import '@/styles/bom_table.css';
 import '@/styles/bom_bus_schedule.css';
+import '@/styles/bom_vehicle_type.css';
 import '@/styles/bom_personal_info.css';
 import { ChakraProvider } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import Sidebar from '@/components/common/sidebar/SideBar';
+import NavBar from '@/components/home/login';
 import { StoreProvider } from '@/src/store';
 
 export default function App({ Component, pageProps }) {
@@ -17,6 +19,7 @@ export default function App({ Component, pageProps }) {
     <ChakraProvider>
       <StoreProvider>
         {router.pathname.includes('/admin') && <Sidebar />}
+        {router.pathname != '/' && !router.pathname.includes('/admin') && <NavBar />}
         <Component {...pageProps} />
       </StoreProvider>
     </ChakraProvider>

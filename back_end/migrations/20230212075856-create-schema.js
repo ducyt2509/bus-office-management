@@ -80,6 +80,9 @@ module.exports = {
               type: Sequelize.DataTypes.STRING,
               allowNull: false,
             },
+            vehicle_number_seat: {
+              type: Sequelize.INTEGER(20),
+            },
             office_id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
               allowNull: false,
@@ -424,7 +427,6 @@ module.exports = {
             },
             tranship_address: {
               type: Sequelize.DataTypes.TEXT,
-              allowNull: false,
             },
             date_detail: {
               type: Sequelize.DataTypes.STRING,
@@ -509,9 +511,12 @@ module.exports = {
             bus_detail: {
               type: Sequelize.DataTypes.STRING,
             },
+            bus_location_address: {
+              type: Sequelize.DataTypes.STRING,
+            },
             bus_location_type: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
-            }, 
+            },
             bus_schedule_id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
               references: {
