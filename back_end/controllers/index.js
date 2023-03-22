@@ -10,6 +10,7 @@ const route = require('./route');
 const ticket = require('./ticket');
 const contact = require('./contact');
 const transaction = require('./transaction');
+const transport = require('./transport');
 
 module.exports = {
   bus_schedule,
@@ -24,4 +25,5 @@ module.exports = {
   transaction,
   user,
   contact,
+  transport,
 };
