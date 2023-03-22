@@ -34,7 +34,7 @@ module.exports = (sequelize, Sequelize) => {
         // Ex: 10 (meaning that bus need 10 hours to travel from start location to end location)
         type: Sequelize.DOUBLE,
       },
-      date_start: {
+      effective_start_date: {
         // The date the bus schedule start operating
         // Format date: date (ngày tháng)
         // Ex: September 9th (meaning that bus schedule will start working and be booked from September 9th)

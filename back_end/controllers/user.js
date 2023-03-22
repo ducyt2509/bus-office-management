@@ -251,9 +251,9 @@ module.exports = {
 
   async getListUser(req, res) {
     const params = req.body;
-    const limit = params.limit;
-    const offset = params.offset;
-    const querySearch = params.query_search;
+    const limit = !params.limit ? 7 : params.limit;
+    const offset = !params.offset ? 0 : params.offset;
+    const querySearch = !params.query_search ? '' : params.query_search;
 
     try {
       let attributes = 'user.id, email, phone ,user_name, avatar, role_id, office_id';
@@ -297,6 +297,7 @@ module.exports = {
         return responseHandler.responseWithData(res, 403, { message: "Can't get list user" });
       }
     } catch (error) {
+      console.log(error);
       return responseHandler.badRequest(res, error.message);
     }
   },
