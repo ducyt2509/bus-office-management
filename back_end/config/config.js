@@ -6,9 +6,10 @@ module.exports = {
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     dialect: 'mysql',
-    logging: true,
+    logging: false,
     seederStorage: 'sequelize',
     seederStorageTableName: 'SequelizeSeeder',
+    // timezone: '+07:00'
   },
   test: {
     username: process.env.DB_USERNAME,
@@ -19,6 +20,7 @@ module.exports = {
     logging: false,
     seederStorage: 'sequelize',
     seederStorageTableName: 'SequelizeSeeder',
+    // timezone: '+07:00'
   },
   production: {
     username: process.env.DB_USERNAME,
@@ -29,5 +31,6 @@ module.exports = {
     logging: false,
     seederStorage: 'sequelize',
     seederStorageTableName: 'SequelizeSeeder',
+    // timezone: '+07:00'
   },
 };

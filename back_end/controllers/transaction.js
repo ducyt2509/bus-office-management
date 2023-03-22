@@ -2,6 +2,13 @@ require('dotenv').config();
 let dateFormat = require('dateformat');
 let crypto = require('crypto');
 let querystring = require('qs');
+const Location = require('../models').locations;
+
+let express = require('express');
+let router = express.Router();
+let $ = require('jquery');
+const request = require('request');
+const moment = require('moment');
 
 const Transaction = require('../models').transactions;
 const responseHandler = require('../handlers/response.handler');
@@ -10,7 +17,7 @@ const secretKey = process.env.VNPAY_HASH_SECRET;
 let vnpUrl = process.env.VNPAY_URL;
 let returnUrl = process.env.VNPAY_RETURN_URL;
 
-function encodeObj(obj) {
+function sortObject(obj) {
   let sorted = {};
   let str = [];
   let key;
@@ -31,37 +38,43 @@ module.exports = {
     const params = req.body;
     try {
       process.env.TZ = 'Asia/Ho_Chi_Minh';
+
       let date = new Date();
+      let createDate = moment(date).format('YYYYMMDDHHmmss');
       let ipAddr =
         req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress ||
         req.socket.remoteAddress ||
         req.connection.socket.remoteAddress;
 
-      let createDate = dateFormat(date, 'yyyymmddHHmmss');
-      let orderId = dateFormat(date, 'HHmmss');
-      let amount = req.body.amount;
+      let tmnCode = process.env.VNPAY_TMNCODE;
+      let secretKey = process.env.VNPAY_HASH_SECRET;
+      let vnpUrl = process.env.VNPAY_URL;
+      let returnUrl = process.env.VNPAY_RETURN_URL;
+      let orderId = moment(date).format('DDHHmmss');
+      let amount = parseFloat(req.body.ticket_price);
       let bankCode = req.body.bankCode;
-
       let locale = req.body.language;
       if (locale === null || locale === '') {
         locale = 'vn';
       }
+
+      const [getLocationPickup, getLocationDropOff] = await Promise.all([
+        Location.findOne({ where: { location_name: params.pickup_location.split(' - ')[2] } }),
+        Location.findOne({ where: { location_name: params.drop_off_location.split(' - ')[2] } }),
+      ]);
       const dataTransaction = {
         id: orderId,
-        vehicle_id: params.vehicle_id,
         passenger_name: params.passenger_name,
         passenger_phone: params.passenger_phone,
         cashier: params.cashier,
-        pickup_location_id: params.pickup_location_id,
-        drop_off_location_id: params.drop_off_location_id,
+        pickup_location_id: getLocationPickup.id,
+        drop_off_location_id: getLocationDropOff.id,
         tranship_address: params.tranship_address,
         date_detail: params.date_detail,
-        route_id: params.route_id,
         ticket_price: params.ticket_price,
         created_at: date,
         created_by: params.created_by,
-        created_on: params.created_on,
         payment_status: 0,
         seat: params.seat,
       };
@@ -70,7 +83,7 @@ module.exports = {
       vnp_Params['vnp_Version'] = '2.1.0';
       vnp_Params['vnp_Command'] = 'pay';
       vnp_Params['vnp_TmnCode'] = tmnCode;
-      vnp_Params['vnp_Locale'] = locale;
+      vnp_Params['vnp_Locale'] = 'vn';
       vnp_Params['vnp_CurrCode'] = currCode;
       vnp_Params['vnp_TxnRef'] = orderId;
       vnp_Params['vnp_OrderInfo'] = 'Thanh toan cho ma GD:' + orderId;
@@ -82,17 +95,19 @@ module.exports = {
       if (bankCode !== null && bankCode !== '') {
         vnp_Params['vnp_BankCode'] = bankCode;
       }
+      console.log(vnp_Params);
+      vnp_Params = sortObject(vnp_Params);
 
-      vnp_Params = encodeObj(vnp_Params);
-
+      let querystring = require('qs');
       let signData = querystring.stringify(vnp_Params, { encode: false });
+      let crypto = require('crypto');
       let hmac = crypto.createHmac('sha512', secretKey);
       let signed = hmac.update(new Buffer(signData, 'utf-8')).digest('hex');
       vnp_Params['vnp_SecureHash'] = signed;
       vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
+      Transaction.create(dataTransaction);
       console.log(vnpUrl);
-      await Transaction.create(dataTransaction);
-      res.redirect(vnpUrl);
+      responseHandler.responseWithData(res, 200, { link_payment: vnpUrl });
     } catch (error) {
       responseHandler.badRequest(res, error.message);
     }
@@ -106,7 +121,7 @@ module.exports = {
     delete vnp_Params['vnp_SecureHash'];
     delete vnp_Params['vnp_SecureHashType'];
 
-    vnp_Params = encodeObj(vnp_Params);
+    vnp_Params = sortObject(vnp_Params);
 
     let signData = querystring.stringify(vnp_Params, { encode: false });
     let hmac = crypto.createHmac('sha512', secretKey);
@@ -118,7 +133,8 @@ module.exports = {
         { where: { id: vnp_Params['vnp_TxnRef'] } }
       );
       if (updateTransaction) {
-        res.json({ code: vnp_Params['vnp_ResponseCode'] });
+        // responseHandler.responseWithData(res, 200 , {result : vnp_Params})
+        res.redirect('https://www.google.com/');
       } else {
         res.json({ code: '97' });
       }
@@ -160,19 +176,19 @@ module.exports = {
     process.env.TZ = 'Asia/Ho_Chi_Minh';
     let date = new Date();
     let vnp_TxnRef = req.body.order_id;
-    let vnp_TransactionDate = dateFormat(req.body.trans_date, "yyyyMMddHHmmss");
-    let vnp_Amount = 0
+    let vnp_TransactionDate = dateFormat(req.body.trans_date, 'yyyyMMddHHmmss');
+    let vnp_Amount = 0;
     let vnp_TransactionType = '02';
     let vnp_CreateBy = req.body.user;
 
     const getTransactionInformation = await Transaction({
       where: {
         created_at: req.body.trans_date,
-        id: vnp_TxnRef
-      }
-    })
+        id: vnp_TxnRef,
+      },
+    });
     if (getTransactionInformation) {
-      vnp_Amount = getTransactionInformation.ticket_price
+      vnp_Amount = getTransactionInformation.ticket_price;
     }
     let vnp_RequestId = dateFormat(date, 'HHmmss');
     let vnp_Version = '2.1.0';

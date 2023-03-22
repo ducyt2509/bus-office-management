@@ -11,6 +11,9 @@ module.exports = (sequelize, Sequelize) => {
       bus_detail: {
         type: Sequelize.STRING,
       },
+      bus_location_address: {
+        type: Sequelize.STRING,
+      },
       bus_location_type: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },

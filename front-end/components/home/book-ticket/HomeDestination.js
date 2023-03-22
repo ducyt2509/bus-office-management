@@ -1,8 +1,10 @@
 import { Select, Input, Button } from '@chakra-ui/react';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 
 export default function HomeDestination(props) {
+  const router = useRouter();
   const [startLocation, setStartLocation] = useState();
   const [endLocation, setEndLocation] = useState();
   const [departureDay, setDepartureDay] = useState();
@@ -11,9 +13,15 @@ export default function HomeDestination(props) {
   const handleChangeEndLocation = (e) => setEndLocation(e.target.value);
   const handleChangeDepartureDay = (e) => setDepartureDay(e.target.value);
   const searchBusSchedule = useCallback(async () => {
-    const listBusSchedule = await axios.get(
-      `http://localhost:${props.port}/bus-schedule/list-bus-schedule`
-    );
+    const submitData = {
+      location_start_id: startLocation,
+      location_finish_id: endLocation,
+      date_start: departureDay,
+    };
+    router.push({
+      pathname: '/bus-schedule',
+      query: submitData,
+    });
   }, [startLocation, endLocation, departureDay]);
   const cityOption =
     props.list_city &&
@@ -55,6 +63,7 @@ export default function HomeDestination(props) {
             type="date"
             onChange={handleChangeDepartureDay}
             value={departureDay}
+            min={new Date().toISOString().split('T')[0]}
           />
         </div>
         <Button colorScheme="blue" onClick={searchBusSchedule}>
