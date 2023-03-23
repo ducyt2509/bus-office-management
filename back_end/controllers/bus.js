@@ -42,10 +42,9 @@ module.exports = {
 
   async getListBus(req, res) {
     const params = req.body;
-    const limit = params.limit;
-    const offset = params.offset;
-    const querySearch = params.query_search;
-
+    const limit = !params?.limit ? 7 : params.limit;
+    const offset = !params?.offset ? 0 : params.offset;
+    const querySearch = !params?.query_search ? '' : params.query_search;
     try {
       const querySQL = `select bus.id, bus.vehicle_plate, bus.main_driver_id, bus.support_driver_id, bus.vehicle_id, bus.vehicle_status from bus 
       join vehicle v on bus.vehicle_id = v.id 

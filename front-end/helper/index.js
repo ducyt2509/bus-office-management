@@ -45,9 +45,10 @@ const calcDate = (time, n) => {
 
 
 const formatDateFromDB = (time) => {
-  console.log(time, "BEAN")
+  if (!time) return
   const arr = time.split('-')
   const [year, day, month] = [...arr]
+  console.log(1, `${year}-${day}-${month}`)
   return `${month}-${day}-${year}`
 }
 

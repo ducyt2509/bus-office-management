@@ -27,6 +27,27 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
         </Menu>
       </Flex>
 
+      <Flex marginTop="10px" w="100%" alignItems={navSize == 'small' ? 'center' : 'flex-start'}>
+        <div style={{ width: '10%' }}></div>
+        <Menu>
+          <Link
+            as={NextLink}
+            backgroundColor={router.pathname == '/admin/management/transport' && '#686868'}
+            p={3}
+            borderRadius={8}
+            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
+            color={router.pathname == '/admin/management/transport' ? '#fff' : '#686868'}
+            w={'90%'}
+            href={href.transport}
+          >
+            <MenuButton w="100%">
+              <Text whiteSpace="nowrap" display={navSize == 'small' ? 'none' : 'flex'}>
+                Quản lý hành trình xe
+              </Text>
+            </MenuButton>
+          </Link>
+        </Menu>
+      </Flex>
 
       <Flex marginTop="10px" w="100%" alignItems={navSize == 'small' ? 'center' : 'flex-start'}>
         <div style={{ width: '10%' }}></div>

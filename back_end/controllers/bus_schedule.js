@@ -30,7 +30,7 @@ module.exports = {
     try {
       const updateBC = await Bus_schedule.update(params.bus_schedule, {
         where: {
-          id: params.id,
+          id: params.bus_schedule.id,
         },
       });
       for (let i = 0; i < params.location_bus_schedule.length; i++) {
@@ -38,7 +38,7 @@ module.exports = {
         await Location_Bus_Schedule.update(data, {
           where: {
             bus_location_type: params.location_bus_schedule[i].bus_location_type == 1 ? 1 : 0,
-            bus_schedule_id: params.id,
+            bus_schedule_id: params.bus_schedule.id,
           },
         });
       }
@@ -176,6 +176,9 @@ from bus_schedule bs
 join route r on bs.route_id = r.id 
 join city c on r.city_from_id = c.id
  join city cc on r.city_to_id = cc.id
+  where (c.city_name like '%${querySearch}%') 
+      or (cc.city_name like '%${querySearch}%') 
+      limit ${limit} offset ${offset}
 ` ;
       const queryCount = `select count(*) from bus_schedule bs
       join route r on bs.route_id = r.id 

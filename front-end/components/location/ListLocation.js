@@ -44,9 +44,9 @@ export default function ListLocation(props) {
       <thead>
         <tr>
           <td>STT</td>
-          <td>Tên</td>
-          <td>Thành Phố</td>
-          <td>Địa chỉ</td>
+          <td>Tên tuyến </td>
+          <td>xe </td>
+          <td>thời gian xuất bến</td>
           <td>Thao tác</td>
         </tr>
       </thead>
