@@ -6,7 +6,7 @@ import { convertTime } from '@/helper';
 export default function ListBusSchedule(props) {
   const handleDeleteBusSchedule = async (busScheduleId, e) => {
     e.stopPropagation();
-    const deleteBusSchedule = await axios.deleteSchedule(
+    const deleteBusSchedule = await axios.delete(
       `http://localhost:${props.port}/bus-schedule/delete-bus-schedule`,
       { data: { id: busScheduleId } },
       {

@@ -48,7 +48,7 @@ export default function BusScheduleDetail(props) {
 
   const [locationDropOff, setLocationDropOff] = useState([]);
   const [addressDropOff, setAddressDropOff] = useState([]);
-
+  console.log(BusSchedule)
   const handleSubmitData = useCallback(async () => {
     const submitData = {
       bus_schedule: {
@@ -80,10 +80,9 @@ export default function BusScheduleDetail(props) {
         },
       ],
     };
-    if (BusSchedule && BusSchedule.id) {
-      submitData.bus_schedule.id = BusSchedule.id;
+    if (BusSchedule && BusSchedule.length && BusSchedule[0].id) {
+      submitData.bus_schedule.id = BusSchedule[0].id;
       submitData.bus_schedule.refresh_date = calcDate(refreshDate, scheduleFrequency);
-      console.log(submitData, "SUBMIT DATA")
       const updateBusSchedule = await axios.put(
         `http://localhost:${props.BACK_END_PORT}/bus-schedule/update-bus-schedule`,
         submitData,
@@ -135,34 +134,25 @@ export default function BusScheduleDetail(props) {
         }
       );
       if (getBusScheduleById) {
-        const time_from = convertTime(getBusScheduleById.data.data.bus_schedule[0].time_from, 0);
-        let date_start = new Date(getBusScheduleById.data.data.bus_schedule[0].effective_date);
-        date_start = date_start.toLocaleDateString().split('/').reverse();
-        date_start = date_start.map((element) => {
-          if (element.length == 1) {
-            element = '0' + element;
-          }
-          return element;
-        });
-        date_start = date_start.join('-');
-        console.log(date_start)
+        const dataBusSchedule = getBusScheduleById.data.data.bus_schedule[0]
+        const time_from = convertTime(dataBusSchedule.time_from, 0);
+        let date_start = new Date(dataBusSchedule.effective_date).toISOString().split("T")[0]
         setBusSchedule(getBusScheduleById.data.data.bus_schedule);
-        setRoute(getBusScheduleById.data.data.bus_schedule[0].route_id);
-        setPrice(getBusScheduleById.data.data.bus_schedule[0].price);
+        setRoute(dataBusSchedule.route_id);
+        setPrice(dataBusSchedule.price);
         setTimeFrom(time_from);
-        setTravelTime(getBusScheduleById.data.data.bus_schedule[0].travel_time);
-        setDepartureLocationId(getBusScheduleById.data.data.bus_schedule[0].location_start_id);
-        setArriveLocationId(getBusScheduleById.data.data.bus_schedule[0].location_finish_id);
+        setTravelTime(dataBusSchedule.travel_time);
+        setDepartureLocationId(dataBusSchedule.departure_location_id);
+        setArriveLocationId(dataBusSchedule.arrive_location_id);
         setEffectiveDate(date_start);
-        setScheduleStatus(getBusScheduleById.data.data.bus_schedule[0].bus_schedule_status);
-        setScheduleExpire(getBusScheduleById.data.data.bus_schedule[0].bus_schedule_expire);
-        setScheduleFrequency(getBusScheduleById.data.data.bus_schedule[0].schedule_frequency);
-        setRefreshDate(getBusScheduleById.data.data.bus_schedule[0].refresh_date)
+        setScheduleStatus(dataBusSchedule.bus_schedule_status);
+        setScheduleExpire(dataBusSchedule.bus_schedule_expire);
+        setScheduleFrequency(dataBusSchedule.schedule_frequency);
+        setRefreshDate(dataBusSchedule.refresh_date)
       }
     },
     [state]
   );
-  console.log(BusSchedule)
   useEffect(() => {
     const id = router.query.id;
     const data = {};
@@ -247,8 +237,8 @@ export default function BusScheduleDetail(props) {
             </Flex>
             <Flex>
               <span>Điểm đón:</span>
-              {/* <ListLocationBusSchedule
-                list={BusSchedule?.location_bus_schedule}
+              <ListLocationBusSchedule
+                list={BusSchedule[0]?.location_bus_schedule}
                 listLocation={locationPickup}
                 listAddress={addressPickup}
                 setListAddress={setAddressPickup}
@@ -256,12 +246,12 @@ export default function BusScheduleDetail(props) {
                 id={5}
                 state={state}
                 BACK_END_PORT={props.BACK_END_PORT}
-              /> */}
+              />
             </Flex>
             <Flex>
               <span>Điểm trả:</span>
-              {/* <ListLocationBusSchedule
-                list={BusSchedule?.location_bus_schedule}
+              <ListLocationBusSchedule
+                list={BusSchedule[0]?.location_bus_schedule}
                 id={6}
                 listLocation={locationDropOff}
                 listAddress={addressDropOff}
@@ -269,7 +259,7 @@ export default function BusScheduleDetail(props) {
                 setListLocation={setLocationDropOff}
                 state={state}
                 BACK_END_PORT={props.BACK_END_PORT}
-              /> */}
+              />
             </Flex>
             <Flex>
               <span>Giá vé:</span>
@@ -299,16 +289,17 @@ export default function BusScheduleDetail(props) {
                 <InputRightAddon children="ngày" />
               </InputGroup>
             </Flex>
-            {effectiveDate}
-            {calcDate(effectiveDate, 0)}
+
             <Flex>
               <span>Ngày lịch trình có hiệu lực:</span>
               <Input
                 type={'date'}
                 value={effectiveDate}
                 min={new Date().toISOString().split("T")[0]}
-                onChange={(e) =>
+                onChange={(e) => {
                   setEffectiveDate(e.target.value)
+                }
+
                 }
               />
             </Flex>

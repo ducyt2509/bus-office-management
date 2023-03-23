@@ -19,6 +19,7 @@ export default function Sidebar() {
     ticket: '/admin/ticket',
     personalInformation: '/admin/setting/personal-information',
     changePassword: '/admin/setting/change-password',
+    transport: '/admin/management/transport',
   };
   const [navSize, changeNavSize] = useState('large');
   const [sideBarActive, setActiveSideBar] = useState(0);
