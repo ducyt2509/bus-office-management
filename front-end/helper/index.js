@@ -34,4 +34,21 @@ const formatMoney = (value) => {
       .join('') + 'đ';
   return value;
 };
-export { convertInt, convertTime, formatMoney };
+
+const calcDate = (time, n) => {
+  var time = new Date(time);
+  var newDate = new Date(time.getTime() + n * 24 * 60 * 60 * 1000);
+  var d = new Date(newDate)
+  var formatDate = `${d.getFullYear()}-${d.getMonth() + 1 < 10 ? `0${d.getMonth() + 1}` : d.getMonth()}-${d.getDate()}`
+  return formatDate
+}
+
+
+const formatDateFromDB = (time) => {
+  console.log(time, "BEAN")
+  const arr = time.split('-')
+  const [year, day, month] = [...arr]
+  return `${month}-${day}-${year}`
+}
+
+export { convertInt, convertTime, formatMoney, calcDate, formatDateFromDB };

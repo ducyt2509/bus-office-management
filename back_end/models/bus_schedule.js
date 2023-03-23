@@ -7,9 +7,7 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      bus_id: {
-        type: Sequelize.INTEGER(20).UNSIGNED,
-      },
+  
       route_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
@@ -22,10 +20,10 @@ module.exports = (sequelize, Sequelize) => {
         // Ex: 13.5 (bus schedule start at 13h30)
         type: Sequelize.DOUBLE,
       },
-      location_start_id: {
+      departure_location_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
-      location_finish_id: {
+      arrive_location_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
       travel_time: {
@@ -34,10 +32,20 @@ module.exports = (sequelize, Sequelize) => {
         // Ex: 10 (meaning that bus need 10 hours to travel from start location to end location)
         type: Sequelize.DOUBLE,
       },
-      effective_start_date: {
+      // effective_start_date: {
+      //   // The date the bus schedule start operating
+      //   // Format date: date (ngày tháng)
+      //   // Ex: September 9th (meaning that bus schedule will start working and be booked from September 9th)
+      //   type: Sequelize.DATE,
+      // },
+     
+      effective_date: {
         // The date the bus schedule start operating
         // Format date: date (ngày tháng)
         // Ex: September 9th (meaning that bus schedule will start working and be booked from September 9th)
+        type: Sequelize.DATE,
+      },
+      refresh_date: {
         type: Sequelize.DATE,
       },
       bus_schedule_status: {

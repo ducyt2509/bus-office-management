@@ -92,7 +92,7 @@ export default function ManagementBusSchedule(props) {
       <div style={{ width: '90%', margin: '0 auto' }}>
         <Card backgroundColor={'#F5F5F5'}>
           <CardHeader>
-            <Heading size="lg">Quản lí xe</Heading>
+            <Heading size="lg">Quản lí lịch trình</Heading>
           </CardHeader>
           <CardBody>
             <ActionBar

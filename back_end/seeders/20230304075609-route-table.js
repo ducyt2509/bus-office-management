@@ -9,6 +9,7 @@ module.exports = {
       { city_from_id: 2, city_to_id: 3 },
       { city_from_id: 3, city_to_id: 4 },
       { city_from_id: 4, city_to_id: 5 },
+      { city_from_id: 14, city_to_id: 47 },
     ]);
   },
   down: (queryInterface, Sequelize) => {

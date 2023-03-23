@@ -10,5 +10,6 @@ module.exports = [
   require('./route'),
   require('./ticket'),
   require('./transaction'),
-  require("./contact")
+  require('./contact'),
+  require('./transport'),
 ];

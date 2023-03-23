@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node dev",
     "build": "node build",
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -31,6 +31,7 @@
     "mysql2": "^3.1.2",
     "node-fetch": "^2.6.9",
     "nodemailer": "^6.9.1",
+    "nodemon": "^2.0.22",
     "pug": "2.0.0-beta11",
     "qs": "^6.7.0",
     "request": "^2.88.2",
