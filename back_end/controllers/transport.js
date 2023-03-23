@@ -51,13 +51,13 @@ join city cc on r.city_to_id = cc.id
         }
     },
 
-    async deleteLocation(req, res) {
+    async deleteTransport(req, res) {
         const params = req.body;
-        const location_id = params.id;
+        const transport_id = params.id;
         try {
-            let location = await Location.findAll({
+            let X = await Location.findAll({
                 where: {
-                    id: location_id,
+                    id: transport_id,
                 },
             });
             if (!location.length) {
