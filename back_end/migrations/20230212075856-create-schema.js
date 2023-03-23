@@ -284,17 +284,6 @@ module.exports = {
               autoIncrement: true,
               allowNull: false,
             },
-            // bus_id: {
-            //   type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
-            //   allowNull: false,
-            //   references: {
-            //     model: {
-            //       tableName: 'bus',
-            //     },
-            //     key: 'id',
-            //   },
-            //   onDelete: 'cascade',
-            // },
             route_id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
               allowNull: false,
@@ -306,7 +295,7 @@ module.exports = {
               },
               onDelete: 'cascade',
             },
-            location_start_id: {
+            departure_location_id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
               allowNull: false,
               references: {
@@ -317,7 +306,7 @@ module.exports = {
               },
               onDelete: 'cascade',
             },
-            location_finish_id: {
+            arrive_location_id: {
               type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
               allowNull: false,
               references: {
@@ -344,7 +333,12 @@ module.exports = {
             //   type: Sequelize.DataTypes.DATE,
             //   allowNull: false,
             // },
-            update_date: {
+
+            effective_date: {
+              type: Sequelize.DataTypes.DATE,
+              allowNull: false,
+            },
+            refresh_date: {
               type: Sequelize.DataTypes.DATE,
               allowNull: false,
             },

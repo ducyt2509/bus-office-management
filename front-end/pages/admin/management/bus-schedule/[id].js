@@ -20,7 +20,7 @@ import ListRouteOnBusSchedule from '@/components/bus-schedule/ListRouteOnBusSche
 import ListBusOnBusSchedule from '@/components/bus-schedule/ListBusOnBusSchedule';
 import ListLocationOnBusSchedule from '@/components/bus-schedule/ListLocationOnBusSchedule';
 import ListLocationBusSchedule from '@/components/bus-schedule/ListLocationBusSchedule';
-import { convertInt, convertTime } from '@/helper';
+import { convertInt, convertTime, calcDate, formatDateFromDB } from '@/helper';
 
 export default function BusScheduleDetail(props) {
   const router = useRouter();
@@ -30,16 +30,18 @@ export default function BusScheduleDetail(props) {
   const [BusSchedule, setBusSchedule] = useState([]);
 
   const [route, setRoute] = useState();
-  const [bus, setBus] = useState();
   const [price, setPrice] = useState();
   const [timeFrom, setTimeFrom] = useState();
-  const [locationStartId, setLocationStartId] = useState();
-  const [locationFinishId, setLocationFinishId] = useState();
+  const [departureLocationId, setDepartureLocationId] = useState();
+  const [arriveLocation, setArriveLocationId] = useState();
   const [travelTime, setTravelTime] = useState();
-  const [dateStart, setDateStart] = useState();
+  const [effectiveDate, setEffectiveDate] = useState();
   const [scheduleStatus, setScheduleStatus] = useState();
   const [scheduleExpire, setScheduleExpire] = useState();
   const [scheduleFrequency, setScheduleFrequency] = useState();
+  const [refreshDate, setRefreshDate] = useState();
+
+
 
   const [locationPickup, setLocationPickup] = useState([]);
   const [addressPickup, setAddressPickup] = useState([]);
@@ -51,17 +53,19 @@ export default function BusScheduleDetail(props) {
     const submitData = {
       bus_schedule: {
         route_id: route,
-        bus_id: bus,
         price: price,
-        time_from: convertInt(timeFrom),
-        location_start_id: locationStartId,
-        location_finish_id: locationFinishId,
         travel_time: travelTime,
-        date_start: dateStart,
+        time_from: convertInt(timeFrom),
+        departure_location_id: departureLocationId,
+        arrive_location_id: arriveLocation,
         bus_schedule_status: scheduleStatus,
         schedule_frequency: scheduleFrequency,
         bus_schedule_expire: scheduleExpire,
-      },
+        effective_date: effectiveDate,
+
+      }
+
+      ,
 
       location_bus_schedule: [
         {
@@ -76,8 +80,10 @@ export default function BusScheduleDetail(props) {
         },
       ],
     };
-    if (BusSchedule[0] && BusSchedule[0].id) {
-      submitData.id = BusSchedule[0].id;
+    if (BusSchedule && BusSchedule.id) {
+      submitData.bus_schedule.id = BusSchedule.id;
+      submitData.bus_schedule.refresh_date = calcDate(refreshDate, scheduleFrequency);
+      console.log(submitData, "SUBMIT DATA")
       const updateBusSchedule = await axios.put(
         `http://localhost:${props.BACK_END_PORT}/bus-schedule/update-bus-schedule`,
         submitData,
@@ -87,6 +93,7 @@ export default function BusScheduleDetail(props) {
         console.log('update success');
       }
     } else {
+      submitData.bus_schedule.refresh_date = calcDate(new Date, scheduleFrequency);
       const createBusSchedule = await axios.post(
         `http://localhost:${props.BACK_END_PORT}/bus-schedule/create-bus-schedule`,
         submitData,
@@ -99,13 +106,12 @@ export default function BusScheduleDetail(props) {
   }, [
     BusSchedule,
     route,
-    bus,
     price,
     timeFrom,
-    locationStartId,
-    locationFinishId,
+    departureLocationId,
+    arriveLocation,
     travelTime,
-    dateStart,
+    effectiveDate,
     scheduleStatus,
     scheduleExpire,
     scheduleFrequency,
@@ -130,7 +136,7 @@ export default function BusScheduleDetail(props) {
       );
       if (getBusScheduleById) {
         const time_from = convertTime(getBusScheduleById.data.data.bus_schedule[0].time_from, 0);
-        let date_start = new Date(getBusScheduleById.data.data.bus_schedule[0].date_start);
+        let date_start = new Date(getBusScheduleById.data.data.bus_schedule[0].effective_date);
         date_start = date_start.toLocaleDateString().split('/').reverse();
         date_start = date_start.map((element) => {
           if (element.length == 1) {
@@ -139,22 +145,24 @@ export default function BusScheduleDetail(props) {
           return element;
         });
         date_start = date_start.join('-');
+        console.log(date_start)
         setBusSchedule(getBusScheduleById.data.data.bus_schedule);
         setRoute(getBusScheduleById.data.data.bus_schedule[0].route_id);
-        setBus(getBusScheduleById.data.data.bus_schedule[0].bus_id);
         setPrice(getBusScheduleById.data.data.bus_schedule[0].price);
         setTimeFrom(time_from);
         setTravelTime(getBusScheduleById.data.data.bus_schedule[0].travel_time);
-        setLocationStartId(getBusScheduleById.data.data.bus_schedule[0].location_start_id);
-        setLocationFinishId(getBusScheduleById.data.data.bus_schedule[0].location_finish_id);
-        setDateStart(date_start);
+        setDepartureLocationId(getBusScheduleById.data.data.bus_schedule[0].location_start_id);
+        setArriveLocationId(getBusScheduleById.data.data.bus_schedule[0].location_finish_id);
+        setEffectiveDate(date_start);
         setScheduleStatus(getBusScheduleById.data.data.bus_schedule[0].bus_schedule_status);
         setScheduleExpire(getBusScheduleById.data.data.bus_schedule[0].bus_schedule_expire);
         setScheduleFrequency(getBusScheduleById.data.data.bus_schedule[0].schedule_frequency);
+        setRefreshDate(getBusScheduleById.data.data.bus_schedule[0].refresh_date)
       }
     },
     [state]
   );
+  console.log(BusSchedule)
   useEffect(() => {
     const id = router.query.id;
     const data = {};
@@ -184,7 +192,7 @@ export default function BusScheduleDetail(props) {
         <Heading size="lg" marginBottom={'3%'} textAlign={'center'}>
           {router.query.id == 'add' ? 'Thêm lịch trình' : 'Chỉnh sửa thông tin lịch trình'}
         </Heading>
-        {}
+        { }
         <Card
           margin={'0 auto'}
           border={'1px solid'}
@@ -203,23 +211,7 @@ export default function BusScheduleDetail(props) {
                 setRoute={setRoute}
               />
             </Flex>
-            <Flex>
-              <span>Biển số xe:</span>
-              <ListBusOnBusSchedule
-                state={state}
-                BACK_END_PORT={props.BACK_END_PORT}
-                bus={bus}
-                setBus={setBus}
-              />
-            </Flex>
-            <Flex>
-              <span>Ngày khởi hành:</span>
-              <Input
-                type={'date'}
-                value={dateStart}
-                onChange={(e) => setDateStart(e.target.value)}
-              />
-            </Flex>
+
             <Flex>
               <span>Giờ khởi hành:</span>
               <Input type={'time'} value={timeFrom} onChange={(e) => setTimeFrom(e.target.value)} />
@@ -236,9 +228,9 @@ export default function BusScheduleDetail(props) {
               <ListLocationOnBusSchedule
                 state={state}
                 BACK_END_PORT={props.BACK_END_PORT}
-                location={locationStartId}
+                location={departureLocationId}
                 data={BusSchedule}
-                setLocation={setLocationStartId}
+                setLocation={setDepartureLocationId}
                 id={3}
               />
             </Flex>
@@ -248,15 +240,15 @@ export default function BusScheduleDetail(props) {
                 state={state}
                 data={BusSchedule}
                 BACK_END_PORT={props.BACK_END_PORT}
-                location={locationFinishId}
-                setLocation={setLocationFinishId}
+                location={arriveLocation}
+                setLocation={setArriveLocationId}
                 id={4}
               />
             </Flex>
             <Flex>
               <span>Điểm đón:</span>
-              <ListLocationBusSchedule
-                list={BusSchedule[0]?.location_bus_schedule}
+              {/* <ListLocationBusSchedule
+                list={BusSchedule?.location_bus_schedule}
                 listLocation={locationPickup}
                 listAddress={addressPickup}
                 setListAddress={setAddressPickup}
@@ -264,12 +256,12 @@ export default function BusScheduleDetail(props) {
                 id={5}
                 state={state}
                 BACK_END_PORT={props.BACK_END_PORT}
-              />
+              /> */}
             </Flex>
             <Flex>
               <span>Điểm trả:</span>
-              <ListLocationBusSchedule
-                list={BusSchedule[0]?.location_bus_schedule}
+              {/* <ListLocationBusSchedule
+                list={BusSchedule?.location_bus_schedule}
                 id={6}
                 listLocation={locationDropOff}
                 listAddress={addressDropOff}
@@ -277,7 +269,7 @@ export default function BusScheduleDetail(props) {
                 setListLocation={setLocationDropOff}
                 state={state}
                 BACK_END_PORT={props.BACK_END_PORT}
-              />
+              /> */}
             </Flex>
             <Flex>
               <span>Giá vé:</span>
@@ -307,6 +299,20 @@ export default function BusScheduleDetail(props) {
                 <InputRightAddon children="ngày" />
               </InputGroup>
             </Flex>
+            {effectiveDate}
+            {calcDate(effectiveDate, 0)}
+            <Flex>
+              <span>Ngày lịch trình có hiệu lực:</span>
+              <Input
+                type={'date'}
+                value={effectiveDate}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) =>
+                  setEffectiveDate(e.target.value)
+                }
+              />
+            </Flex>
+
           </CardBody>
           <CardFooter justifyContent={'center'}>
             <Button onClick={handleSubmitData} colorScheme="linkedin">
