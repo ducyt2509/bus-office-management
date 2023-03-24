@@ -6,7 +6,7 @@ import { convertTime } from '@/helper';
 export default function ListBusSchedule(props) {
   const handleDeleteBusSchedule = async (busScheduleId, e) => {
     e.stopPropagation();
-    const deleteBusSchedule = await axios.deleteSchedule(
+    const deleteBusSchedule = await axios.delete(
       `http://localhost:${props.port}/bus-schedule/delete-bus-schedule`,
       { data: { id: busScheduleId } },
       {
@@ -19,6 +19,7 @@ export default function ListBusSchedule(props) {
   };
 
   const ListBusScheduleHTML = props.list.map((busSchedule, index) => {
+    console.log("[BUS SCHEDULE ]", busSchedule)
     const city_from_to = busSchedule.route[0]?.city_from + ' - ' + busSchedule.route[0]?.city_to;
     const time_from = convertTime(busSchedule.time_from, 0);
     const time_to = convertTime(busSchedule.time_from, busSchedule.travel_time);
