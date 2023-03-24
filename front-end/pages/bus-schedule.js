@@ -5,7 +5,6 @@ import { BsCalendar } from 'react-icons/bs';
 import { MdOutlineSwapHorizontalCircle } from 'react-icons/md';
 import ListBusSchedule from '@/components/bus-schedule/bus-schedule-ticket';
 export default function BusScheduleAll(props) {
-  console.log()
   const listBusScheduleHTML =
     props.list_bus_schedule &&
     props.list_bus_schedule.map((busSchedule, index) => {
