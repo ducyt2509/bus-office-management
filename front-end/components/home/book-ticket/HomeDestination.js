@@ -14,9 +14,9 @@ export default function HomeDestination(props) {
   const handleChangeDepartureDay = (e) => setDepartureDay(e.target.value);
   const searchBusSchedule = useCallback(async () => {
     const submitData = {
-      location_start_id: startLocation,
-      location_finish_id: endLocation,
-      date_start: departureDay,
+      departure_location_id: startLocation,
+      arrive_location_id: endLocation,
+      effective_date: departureDay,
     };
     router.push({
       pathname: '/bus-schedule',

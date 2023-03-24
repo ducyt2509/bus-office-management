@@ -72,13 +72,13 @@ module.exports = {
     const params = req.body;
     const offset = params.offset;
     const limit = params.limit;
-    const locationStartId = params.location_start_id;
-    const locationFinishId = params.location_finish_id;
-    const dateStart = params.date_start;
+    const locationStartId = params.departure_location_id;
+    const locationFinishId = params.arrive_location_id;
+    const dateStart = params.effective_date;
     try {
       const querySQL = `select bs.id, b.vehicle_plate, c.city_name as city_from, bs.route_id, cc.city_name as city_to, v.vehicle_name, 
-      l.location_name as location_start, ll.location_name as location_finish, bs.price, bs.time_from, bs.bus_id, bs.location_start_id,
-      bs.location_finish_id, bs.travel_time, bs.date_start, bs.bus_schedule_status, bs.schedule_frequency, bs.bus_schedule_expire,
+      l.location_name as location_start, ll.location_name as location_finish, bs.price, bs.time_from, bs.departure_location_id,
+      bs.arrive_location_id, bs.travel_time, bs.effective_date, bs.bus_schedule_status, bs.schedule_frequency, bs.bus_schedule_expire,
       v.vehicle_number_seat, b.vehicle_id
       from bus_schedule bs
       join route r on r.id = bs.route_id 
@@ -86,12 +86,12 @@ module.exports = {
       join city cc on cc.id = r.city_to_id
       join bus b on b.id = bs.bus_id
       join vehicle v on v.id = b.vehicle_id
-      join location l on l.id = bs.location_start_id
-      join location ll on ll.id = bs.location_finish_id 
-      where bs.location_start_id = ${locationStartId} and bs.location_finish_id = ${locationFinishId} and bs.date_start = '${dateStart}'
+      join location l on l.id = bs.departure_location_id
+      join location ll on ll.id = bs.arrive_location_id 
+      where bs.departure_location_id = ${locationStartId} and bs.arrive_location_id = ${locationFinishId} and bs.effective_date = '${dateStart}'
       limit ${limit} offset ${offset}`;
       const queryCount = `select count(*) from bus_schedule bs
-      where bs.location_start_id = ${locationStartId} and bs.location_finish_id = ${locationFinishId} and bs.date_start = '${dateStart}'`;
+      where bs.departure_location_id = ${locationStartId} and bs.arrive_location_id = ${locationFinishId} and bs.effective_date = '${dateStart}'`;
       const [listBusSchedule, numberBusSchedule] = await Promise.all([
         db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
         db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),
@@ -155,6 +155,7 @@ module.exports = {
         });
       }
     } catch (error) {
+      console.log(error)
       return responseHandler.badRequest(res, error.message);
     }
   },
