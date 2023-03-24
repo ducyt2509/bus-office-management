@@ -357,20 +357,13 @@ module.exports = {
 					{ transaction: t, charset: "utf8mb4", collate: "utf8mb4_unicode_ci" },
 				),
 				queryInterface.createTable(
-					"daily_bus_schedule",
+					"transport",
 					{
 						id: {
 							type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
 							primaryKey: true,
 							autoIncrement: true,
 							allowNull: false,
-						},
-						// tình trạng xuất bến
-						departure_status: {
-							type: Sequelize.DataTypes.INTEGER(20),
-						},
-						date: {
-							type: Sequelize.DataTypes.DATE,
 						},
 						bus_schedule_id: {
 							type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
@@ -382,6 +375,20 @@ module.exports = {
 								key: "id",
 							},
 							onDelete: "cascade",
+						},
+						bus_id: {
+							type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
+							allowNull: false,
+							references: {
+								model: {
+									tableName: "bus",
+								},
+								key: "id",
+							},
+							onDelete: "cascade",
+						},
+						departure_date: {
+							type: Sequelize.DataTypes.DATE,
 						},
 					},
 					{ transaction: t, charset: "utf8mb4", collate: "utf8mb4_unicode_ci" },
@@ -461,11 +468,11 @@ module.exports = {
 							type: Sequelize.DataTypes.STRING,
 							allowNull: false,
 						},
-						daily_bus_schedule_id: {
+						transport_id: {
 							type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
 							references: {
 								model: {
-									tableName: "daily_bus_schedule",
+									tableName: "transport",
 								},
 								key: "id",
 							},
@@ -493,43 +500,6 @@ module.exports = {
 								key: "id",
 							},
 							onDelete: "cascade",
-						},
-					},
-					{ transaction: t, charset: "utf8mb4", collate: "utf8mb4_unicode_ci" },
-				),
-				queryInterface.createTable(
-					"transport",
-					{
-						id: {
-							type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
-							primaryKey: true,
-							autoIncrement: true,
-							allowNull: false,
-						},
-						bus_schedule_id: {
-							type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
-							allowNull: false,
-							references: {
-								model: {
-									tableName: "bus_schedule",
-								},
-								key: "id",
-							},
-							onDelete: "cascade",
-						},
-						bus_id: {
-							type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
-							allowNull: false,
-							references: {
-								model: {
-									tableName: "bus",
-								},
-								key: "id",
-							},
-							onDelete: "cascade",
-						},
-						departure_date: {
-							type: Sequelize.DataTypes.DATE,
 						},
 					},
 					{ transaction: t, charset: "utf8mb4", collate: "utf8mb4_unicode_ci" },
