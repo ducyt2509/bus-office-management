@@ -34,6 +34,7 @@ export default function BusSchedulesList(props) {
           .split(',').length
       : 0;
   const number_seat_unselected = props.data.vehicle_number_seat - number_seat_selected;
+  console.log(number_seat_unselected)
   const remain_seat = number_seat_unselected ? number_seat_unselected + ' chỗ online' : 'Hết chỗ';
 
   const handleActiveBusScheduleDetails = useCallback(() => {
@@ -46,9 +47,9 @@ export default function BusSchedulesList(props) {
     <Card className={'bom-schedule-detail'}>
       <CardHeader display="flex" justifyContent="space-between" paddingBottom={0}>
         <Text display={'flex'} fontWeight={'700'} fontSize={'20px'} alignItems={'center'}>
-          {props.data.location_start}&ensp;
+          {props.data.city_from}&ensp;
           <HiArrowNarrowRight />
-          &ensp;{props.data.location_finish}
+          &ensp;{props.data.city_to}
         </Text>
         <Text fontWeight={'700'} fontSize={'25px'} color={'#F26A4C'}>
           {format_money}

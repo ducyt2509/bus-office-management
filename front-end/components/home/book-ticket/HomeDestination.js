@@ -16,7 +16,7 @@ export default function HomeDestination(props) {
     const submitData = {
       departure_location_id: startLocation,
       arrive_location_id: endLocation,
-      effective_date: departureDay,
+      refresh_date: departureDay,
     };
     router.push({
       pathname: '/bus-schedule',

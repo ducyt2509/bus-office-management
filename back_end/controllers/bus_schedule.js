@@ -101,7 +101,7 @@ module.exports = {
             getListLocationBusSchedule,
             getTransport,
             // getInformationRoute,
-            numberSeatSelected,
+            // numberSeatSelected,
           ] = await Promise.all([
             Location_Bus_Schedule.findAll({
               where: {
@@ -121,27 +121,48 @@ module.exports = {
             //     type: QueryTypes.SELECT,
             //   }
             // ),
-            db.sequelize.query(
-              `select t.seat from transaction t
-                join daily_bus_schedule dbs on dbs.id = t.daily_bus_schedule_id
-                join bus_schedule bs on dbs.bus_schedule_id = bs.id
-                where bs.id = ${listBusSchedule[i].id}`,
-              {
-                type: QueryTypes.SELECT,
-              }
-            ),
+            // db.sequelize.query(
+            //   `select t.seat from transaction t
+            //     join daily_bus_schedule dbs on dbs.id = t.daily_bus_schedule_id
+            //     join bus_schedule bs on dbs.bus_schedule_id = bs.id
+            //     where bs.id = ${listBusSchedule[i].id}`,
+            //   {
+            //     type: QueryTypes.SELECT,
+            //   }
+            // ),
           ]);
           if (getListLocationBusSchedule) {
             listBusSchedule[i].location_bus_schedule = getListLocationBusSchedule;
           }
           if (getTransport) {
             for (let j = 0; j < getTransport.length; j++) {
-              console.log(j, getTransport[j].d);
-              const getBus = await Bus.findOne({
-                where: {
-                  id: getTransport[j].bus_id,
-                },
-              });
+              // const getBus = await Bus.findOne({
+              //   where: {
+              //     id: getTransport[j].bus_id,
+              //   },
+              // });
+              const [getBus, numberSeatSelected] = await Promise.all([
+                db.sequelize.query(
+                  `select b.* , v.vehicle_name from bus b 
+                  join transport t on t.bus_id = b.id
+                  join vehicle v on b.vehicle_id = v.id
+                    where t.bus_schedule_id = ${listBusSchedule[i].id}`,
+                  {
+                    type: QueryTypes.SELECT,
+                  }
+                ),
+                db.sequelize.query(
+                  `select count(*) from transaction 
+                  join t
+                    join daily_bus_schedule dbs on dbs.id = t.daily_bus_schedule_id
+                    join bus_schedule bs on dbs.bus_schedule_id = bs.id
+                    where bs.id = ${listBusSchedule[i].id}`,
+                  {
+                    type: QueryTypes.SELECT,
+                  }
+                )
+              ])
+            
               if (getBus) {
                 getTransport[j].dataValues.bus = getBus;
               }
