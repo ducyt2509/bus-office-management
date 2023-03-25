@@ -77,6 +77,7 @@ module.exports = {
         created_by: params.created_by,
         payment_status: 0,
         seat: params.seat,
+        transport_id: params.transport_id,
       };
       let currCode = 'VND';
       let vnp_Params = {};

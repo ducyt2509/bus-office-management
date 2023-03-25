@@ -7,8 +7,8 @@ import ListBusSchedule from '@/components/bus-schedule/bus-schedule-ticket';
 export default function BusScheduleAll(props) {
   const listBusScheduleHTML =
     props.list_bus_schedule &&
-    props.list_bus_schedule.map((busSchedule, index) => {
-      return <ListBusSchedule data={busSchedule} index={index} />;
+    props.list_bus_schedule.map((busSchedule) => {
+      return <ListBusSchedule data={busSchedule} />;
     });
   return (
     <>
@@ -42,8 +42,8 @@ export default function BusScheduleAll(props) {
 }
 export async function getServerSideProps(context) {
   const data = context.query;
-  data.offset = 0
-  data.limit = 5
+  data.offset = 0;
+  data.limit = 5;
   const port = process.env.BACK_END_PORT;
   let list_bus_schedule = [];
   const listBusSchedule = await axios.post(

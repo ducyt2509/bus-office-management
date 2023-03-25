@@ -103,7 +103,7 @@ export default function ManagementTransport(props) {
               list={listTransport}
               onOpen={onOpen}
               setTransportId={setTransportId}
-              setLocation={setTransport}
+              setTransport={setTransport}
               handleGetListTransport={handleGetListTransport}
               port={props.BACK_END_PORT}
             />
@@ -121,8 +121,8 @@ export default function ManagementTransport(props) {
               port={props.BACK_END_PORT}
               token={`Bearer ${state.dataUser.token}`}
               handleGetListTransport={handleGetListTransport}
-              locationId={transportId}
-              location={transport}
+              transportId={transportId}
+              transport={transport}
               currentPage={currentPage}
             />
           </CardBody>
