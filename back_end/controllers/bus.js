@@ -46,18 +46,18 @@ module.exports = {
     const offset = !params?.offset ? 0 : params.offset;
     const querySearch = !params?.query_search ? '' : params.query_search;
     try {
-      const querySQL = `select bus.id, bus.vehicle_plate, bus.main_driver_id, bus.support_driver_id, bus.vehicle_id, bus.vehicle_status from bus 
-      join vehicle v on bus.vehicle_id = v.id 
+      const querySQL = `select bus.id, bus.vehicle_plate, bus.main_driver_id, bus.support_driver_id, bus.vehicle_type_id, bus.vehicle_status from bus 
+      join vehicle_type v on bus.vehicle_type_id = v.id 
       join user cu on bus.main_driver_id = cu.id 
       join user bu on bus.support_driver_id = bu.id
       where (cu.user_name like '%${querySearch}%') or (bu.user_name like '%${querySearch}%') 
-      or (vehicle_plate like '%${querySearch}%') or (v.vehicle_name like '%${querySearch}%') limit ${limit} offset ${offset}`;
+      or (vehicle_plate like '%${querySearch}%') or (v.vehicle_type_name like '%${querySearch}%') limit ${limit} offset ${offset}`;
       const queryCount = `select count(*) from bus 
-      join vehicle v on bus.vehicle_id = v.id 
+      join vehicle_type v on bus.vehicle_type_id = v.id 
       join user cu on bus.main_driver_id = cu.id 
       join user bu on bus.support_driver_id = bu.id
       where (cu.user_name like '%${querySearch}%') or (bu.user_name like '%${querySearch}%') 
-      or (vehicle_plate like '%${querySearch}%') or (v.vehicle_name like '%${querySearch}%');`;
+      or (vehicle_plate like '%${querySearch}%') or (v.vehicle_type_name like '%${querySearch}%');`;
       let [getListBus, numberBus] = await Promise.all([
         db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
         db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),

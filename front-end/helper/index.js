@@ -52,6 +52,7 @@ const formatDate = (time) => {
 const validate = {
   min_date: new Date().toISOString().split('T')[0],
   email: '',
+  email_and_password: '',
   password: '',
 };
 export { convertInt, convertTime, formatMoney, calcDate, formatDate, validate };
