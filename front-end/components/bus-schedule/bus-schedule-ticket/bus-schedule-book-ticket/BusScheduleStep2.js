@@ -33,12 +33,13 @@ export default function BusScheduleStep2(props) {
   addressPickup = addressPickup && addressPickup.length ? JSON.parse(addressPickup) : addressPickup;
   addressDropOff =
     addressDropOff && addressDropOff.length ? JSON.parse(addressDropOff) : addressDropOff;
+    console.log(locationPickup)
   const locationPickupHTML = locationPickup ? (
     locationPickup.map((location, index) => {
       const information = location.split(': ');
       const time = information[1];
       const position = information[0];
-      const date = new Date(router.query?.date_start);
+      const date = new Date(router.query?.refresh_date);
       const value = time + ' - ' + date.toLocaleDateString() + ' - ' + position;
       return (
         <Stack>
@@ -72,7 +73,7 @@ export default function BusScheduleStep2(props) {
       const information = location.split(': ');
       const time = information[1];
       const position = information[0];
-      const date = new Date(router.query?.date_start);
+      const date = new Date(router.query?.refresh_date);
       const value = time + ' - ' + date.toLocaleDateString() + ' - ' + position;
       return (
         <Stack>

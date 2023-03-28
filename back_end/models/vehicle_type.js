@@ -7,14 +7,11 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      vehicle_name: {
+      vehicle_type_name: {
         type: Sequelize.STRING,
       },
-      vehicle_number_seat: {
-        type: Sequelize.INTEGER(20)
-      },
-      office_id: {
-        type: Sequelize.INTEGER(20).UNSIGNED,
+      number_seat: {
+        type: Sequelize.INTEGER(20),
       },
     },
     {

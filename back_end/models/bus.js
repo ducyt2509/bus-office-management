@@ -16,7 +16,7 @@ module.exports = (sequelize, Sequelize) => {
       support_driver_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
-      vehicle_id: {
+      vehicle_type_id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
       },
       vehicle_status: {

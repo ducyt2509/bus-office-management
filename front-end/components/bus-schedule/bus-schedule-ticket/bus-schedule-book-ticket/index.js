@@ -49,11 +49,11 @@ export default function BusScheduleBookTicket(props) {
           convertTime(props.data.time_from, 0) +
           '-' +
           convertTime(props.data.time_from, props.data.travel_time),
-        ticket_price: seatSelected.length * props.data.price,
+        ticket_price: seatSelected.length * props.busScheduleInformation?.price,
         // created_by: null,
         email: email,
         seat: seatSelected.join(', '),
-        daily_bus_schedule_id: props.data.daily_bus_schedules[0]?.id,
+        transport: props.data?.id,
       };
       if (seatSelected.length) {
         if (step == 3) {
@@ -83,7 +83,7 @@ export default function BusScheduleBookTicket(props) {
       )}
       {step == 2 && (
         <BusScheduleStep2
-          data={props.data}
+          data={props.busScheduleInformation}
           locationPickup={locationPickup}
           locationDropOff={locationDropOff}
           addressDropOff={addressDropOff}
@@ -135,7 +135,7 @@ export default function BusScheduleBookTicket(props) {
           <Flex alignItems={'center'}>
             <Text>Tổng cộng:&ensp;</Text>
             <Text fontWeight={'700'} fontSize={'20px'} color={'#F26A4C'}>
-              {formatMoney(seatSelected.length * props.data.price)}&emsp;
+              {formatMoney(seatSelected.length * props.busScheduleInformation?.price)}&emsp;
             </Text>
             <Button
               color={'#fff'}

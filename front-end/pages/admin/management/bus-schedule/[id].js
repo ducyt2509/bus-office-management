@@ -20,7 +20,7 @@ import ListRouteOnBusSchedule from '@/components/bus-schedule/ListRouteOnBusSche
 import ListBusOnBusSchedule from '@/components/bus-schedule/ListBusOnBusSchedule';
 import ListLocationOnBusSchedule from '@/components/bus-schedule/ListLocationOnBusSchedule';
 import ListLocationBusSchedule from '@/components/bus-schedule/ListLocationBusSchedule';
-import { convertInt, convertTime, calcDate, formatDateFromDB } from '@/helper';
+import { convertInt, convertTime, calcDate } from '@/helper';
 
 export default function BusScheduleDetail(props) {
   const router = useRouter();

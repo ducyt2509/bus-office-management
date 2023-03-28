@@ -3,10 +3,10 @@ import { IoTrashBinOutline, IoPersonOutline, IoCallOutline } from 'react-icons/i
 import { Stack, IconButton, Flex } from '@chakra-ui/react';
 import axios from 'axios';
 import { convertTime } from '@/helper';
-export default function ListLocation(props) {
+export default function ListTransport(props) {
   const handleActiveModal = (transportId, transport) => {
-    props.setLocation(transport);
-    props.setLocationId(transportId);
+    props.setTransport(transport);
+    props.setTransportId(transportId);
     props.onOpen();
   };
   const handleDeleteTransport = async (transportId) => {
@@ -21,7 +21,6 @@ export default function ListLocation(props) {
       props.handleGetListLocation();
     }
   };
-  console.log(props.list)
   const ListTransportHTML = props.list.map((transport, index) => {
     return (
       <tr key={index}>

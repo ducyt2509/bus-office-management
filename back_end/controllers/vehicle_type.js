@@ -1,10 +1,10 @@
 const db = require('../models');
-const Vehicle = db.vehicles;
+const VehicleType = db.vehicle_types;
 const Op = db.Sequelize.Op;
 const responseHandler = require('../handlers/response.handler');
 
 module.exports = {
-  async getListVehicle(req, res) {
+  async getListVehicleType(req, res) {
     const params = req.body;
     const vehicle_name = params.vehicle_name;
     const offset = params.offset;
@@ -12,7 +12,7 @@ module.exports = {
     try {
       const whereCondition = {};
       vehicle_name ? (whereCondition['vehicle_name'] = { [Op.like]: `%${vehicle_name}%` }) : '';
-      const listVehicle = await Vehicle.findAll({
+      const listVehicle = await VehicleType.findAll({
         where: whereCondition,
         offset: offset,
         limit: limit,
@@ -22,10 +22,10 @@ module.exports = {
       return responseHandler.error(res);
     }
   },
-  async addNewVehicle(req, res) {
+  async addNewVehicleType(req, res) {
     try {
       if (!req.body.name) throw { message: 'Data is not null' };
-      let newVehicle = await Vehicle.create({
+      let newVehicle = await VehicleType.create({
         vehicle_name: req.body.name,
       });
       if (newVehicle) {
@@ -38,15 +38,15 @@ module.exports = {
     }
   },
 
-  async deleteVehicle(req, res) {
+  async deleteVehicleType(req, res) {
     try {
-      let Vehicle = await Vehicle.findAll({
+      let VehicleType = await VehicleType.findAll({
         where: {
           id: req.query?.id,
         },
       });
-      if (!Vehicle) return responseHandler.notfound(res);
-      await Vehicle.destroy({
+      if (!VehicleType) return responseHandler.notfound(res);
+      await VehicleType.destroy({
         where: {
           id: req.query?.id,
         },
@@ -57,10 +57,10 @@ module.exports = {
     }
   },
 
-  async updateVehicle(req, res) {
+  async updateVehicleType(req, res) {
     const params = req.body;
     try {
-      const updateVehicles = await Vehicle.update(params, { where: { id: params.id } });
+      const updateVehicles = await VehicleType.update(params, { where: { id: params.id } });
       if (updateVehicles) {
         return responseHandler.ok(res, 'Update bus type successfully');
       } else {

@@ -38,18 +38,21 @@ const formatMoney = (value) => {
 const calcDate = (time, n) => {
   var time = new Date(time);
   var newDate = new Date(time.getTime() + n * 24 * 60 * 60 * 1000);
-  var d = new Date(newDate)
-  var formatDate = `${d.getFullYear()}-${d.getMonth() + 1 < 10 ? `0${d.getMonth() + 1}` : d.getMonth()}-${d.getDate()}`
-  return formatDate
-}
+  var d = new Date(newDate);
+  var formatDate = `${d.getFullYear()}-${
+    d.getMonth() + 1 < 10 ? `0${d.getMonth() + 1}` : d.getMonth()
+  }-${d.getDate()}`;
+  return formatDate;
+};
 
-
-const formatDateFromDB = (time) => {
-  if (!time) return
-  const arr = time.split('-')
-  const [year, day, month] = [...arr]
-  console.log(1, `${year}-${day}-${month}`)
-  return `${month}-${day}-${year}`
-}
-
-export { convertInt, convertTime, formatMoney, calcDate, formatDateFromDB };
+const formatDate = (time) => {
+  if (!time) return;
+  return new Date(time).toISOString().split('T')[0]
+};
+const validate = {
+  min_date: new Date().toISOString().split('T')[0],
+  email: '',
+  email_and_password: '',
+  password: '',
+};
+export { convertInt, convertTime, formatMoney, calcDate, formatDate, validate };

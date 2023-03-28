@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
-import { convertTime } from '@/helper';
+import { convertTime, formatDate, validate } from '@/helper';
 
 export default function AddTransport(props) {
   const [state, dispatch] = useStore()
@@ -54,7 +54,7 @@ export default function AddTransport(props) {
         }
       );
       if (updateLocation.data.statusCode == 200) {
-        props.handleGetListLocation(props.currentPage);
+        props.handleGetListTransport(props.currentPage);
         props.onClose();
       }
     } else {
@@ -128,8 +128,9 @@ export default function AddTransport(props) {
   );
 
   useEffect(() => {
-    if (props.locationId) {
-      setTime(props.transport.departure_time);
+    console.log(props.transport)
+    if (props.transportId) {
+      setTime(formatDate(props.transport.departure_date));
       setBusPlate(props.transport.bus_id);
       setBusSchedule(props.transport.bus_schedule_id)
     } else {
@@ -152,7 +153,7 @@ export default function AddTransport(props) {
         <ModalContent p={3}>
           <ModalHeader>
             <Text fontSize={'3xl'} textAlign="center">
-              {!props.locationId ? 'Tạo Hành Trình Xe' : 'Chỉnh Sửa Hành Trình Xe'}
+              {!props.transportId ? 'Tạo Hành Trình Xe' : 'Chỉnh Sửa Hành Trình Xe'}
             </Text>
           </ModalHeader>
           <ModalCloseButton />
@@ -181,7 +182,7 @@ export default function AddTransport(props) {
               <Text width={'51.5%'} fontWeight={'500'}>
                 Ngày khởi hành
               </Text>
-              <Input value={time} onChange={handleChangeTime} type="date" />
+              <Input value={time} onChange={handleChangeTime} type="date" min={validate.min_date}/>
             </Flex>
           </ModalBody>
 

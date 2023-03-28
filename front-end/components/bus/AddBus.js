@@ -92,7 +92,7 @@ export default function AddCar(props) {
     }
   };
   const handleGetListVehicle = async () => {
-    const getListVehicle = await axios.get(`http://localhost:${props.port}/vehicle/list-vehicle`);
+    const getListVehicle = await axios.get(`http://localhost:${props.port}/vehicle-type/list-vehicle-type`);
     if (getListVehicle.data.statusCode == 200) {
       setListVehicle(getListVehicle.data.data);
     }

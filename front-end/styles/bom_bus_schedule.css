@@ -77,26 +77,26 @@
     font-weight: 500;
     margin-left: 8px;
  }
- div:nth-child(2) > div > div > div:nth-child(8) > span {
+ div:nth-child(2) > div > div > div:nth-child(6) > span {
     width: 38%
  }
- div:nth-child(2) > div > div > div:nth-child(8) > div {
+ div:nth-child(2) > div > div > div:nth-child(6) > div {
     width: 62%;
     display: flex;
     justify-content:flex-end;
     flex-wrap: wrap;
  }
 
- div:nth-child(2) > div > div > div:nth-child(9) > span {
+ div:nth-child(2) > div > div > div:nth-child(7) > span {
     width: 38%
  }
- div:nth-child(2) > div > div > div:nth-child(9) > div {
+ div:nth-child(2) > div > div > div:nth-child(7) > div {
     width: 62%;
     display: flex;
     justify-content:flex-end;
     flex-wrap: wrap;
  }
- div:nth-child(2) > div > div > div:nth-child(9) > div svg{
+ div:nth-child(2) > div > div > div:nth-child(7) > div svg{
     width: 8px;
     height: 8px;
     position: relative;
@@ -104,7 +104,7 @@
     cursor: pointer;
  }
 
- div:nth-child(2) > div > div > div:nth-child(8) > div svg{
+ div:nth-child(2) > div > div > div:nth-child(6) > div svg{
     width: 8px;
     height: 8px;
     position: relative;
