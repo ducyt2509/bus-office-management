@@ -11,15 +11,29 @@ module.exports = {
     const limit = params.limit;
     const offset = params.offset;
     const querySearch = params.query_search;
+    const route = params.route;
     try {
-      const querySQL = `select location.id, location.location_name, location.address, location.city_id from location join city c on c.id = location.city_id  
+      let querySQL = `select location.id, location.location_name, location.address, location.city_id from location join city c on c.id = location.city_id  
       where (location_name like '%${querySearch}%') 
       or (address like '%${querySearch}%') 
       or (c.city_name like '%${querySearch}%') limit ${limit} offset ${offset}`;
-      const queryCount = `select count(*) from location join city c on c.id = location.city_id  
+      let queryCount = `select count(*) from location join city c on c.id = location.city_id  
       where (location_name like '%${querySearch}%') 
       or (address like '%${querySearch}%') 
       or (c.city_name like '%${querySearch}%')`;
+      if (route) {
+        querySQL = `select location.id, location.location_name, location.address, location.city_id from location join city c on c.id = location.city_id  
+      where (location_name like '%${querySearch}%') 
+      or (address like '%${querySearch}%') 
+      or (c.city_name like '%${querySearch}%') 
+      and (location.city_id = ${route?.city_from_id} or location.city_id = ${route?.city_to_id})
+      limit ${limit} offset ${offset}`;
+        queryCount = `select count(*) from location l join city c on c.id = l.city_id  
+      where (location_name like '%${querySearch}%') 
+      or (address like '%${querySearch}%') 
+      or (c.city_name like '%${querySearch}%')
+      and (l.city_id = ${route?.city_from_id} or l.city_id = ${route?.city_to_id})`;
+      }
       const [listLocation, numberLocation] = await Promise.all([
         db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
         db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),

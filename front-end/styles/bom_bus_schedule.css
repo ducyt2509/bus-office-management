@@ -1,4 +1,4 @@
-.bom-bus-schedule-detail .chakra-card__body div > span{
+.bom-bus-schedule-detail .chakra-card__body div > label{
     width: 60%;
 }
 .bom-bus-schedule-detail .chakra-card__body > div {
@@ -33,7 +33,6 @@
     z-index: 99;
     display: block;
     position: absolute;
-    width: 48%;
     background-color: #fff;
 }
 .bom-bus-schedule-detail .content .search {

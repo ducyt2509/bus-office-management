@@ -71,6 +71,7 @@ export default function BusScheduleBookTicket(props) {
     },
     [seatSelected, step, locationPickup, locationDropOff, userName, phone, email, notice]
   );
+  console.log(props.data);
   return (
     <>
       <BusScheduleBookTicketStep step={step} />

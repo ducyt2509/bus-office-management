@@ -9,6 +9,7 @@ import ForgetPasswordStep3 from './ForgetPassword-step3';
 import ForgetPasswordStep4 from './ForgetPassword-step4';
 import StepForgetPassword from './StepForgetPassword';
 import LoginForm from './LoginForm';
+import { validate } from '@/helper';
 import NavBar from '@/components/common/sidebar/NavBar';
 
 export default function Login(props) {
@@ -43,7 +44,7 @@ export default function Login(props) {
       let value = event.target.value;
       setUser(value);
       let error = { ...errorInput };
-      let pattern = '^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})|(^[0-9]{10})+$';
+      let pattern = validate.email_and_password;
       if (value == '' || !value.toLowerCase().match(pattern)) {
         error.user = true;
       } else {
@@ -59,7 +60,7 @@ export default function Login(props) {
       let value = event.target.value;
       setPassword(value);
       let error = { ...errorInput };
-      let pattern = '^(?=.*?[A-Z]).{8,}$';
+      let pattern = validate.password;
       if (value == '' || !value.match(pattern)) {
         error.password = true;
       } else {

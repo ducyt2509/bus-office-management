@@ -2,6 +2,7 @@ import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
+import { FormErrorMessage } from '@chakra-ui/react';
 
 export default function ListRouteOnBusSchedule(props) {
   const [listRoute, setListRoute] = useState([]);
@@ -43,6 +44,21 @@ export default function ListRouteOnBusSchedule(props) {
     }
   });
   const handleSelectRoute = (id, value) => {
+    let oldError = { ...props.error };
+    if (!value) {
+      oldError.route = true;
+    } else {
+      oldError.route = false;
+    }
+    props.setError(oldError);
+    if (props.route != id) {
+      props.setLocationPickup([]);
+      props.setAddressPickup([]);
+      props.setLocationDropOff([]);
+      props.setAddressDropOff([]);
+      props.setDepartureLocationId(0);
+      props.setArriveLocationId(0);
+    }
     setRouteName(value);
     props.setRoute(id);
     handleOpenSelect();
@@ -78,7 +94,11 @@ export default function ListRouteOnBusSchedule(props) {
   }, [props.route, listRoute]);
   return (
     <div className="wrapper wrapper1">
-      <div className="select-btn" onClick={handleOpenSelect}>
+      <div
+        className="select-btn"
+        onClick={handleOpenSelect}
+        style={props.error?.route ? { borderColor: '#E53E3E', boxShadow: '0 0 0 1px #E53E3E' } : {}}
+      >
         <p>{routeName ? routeName : 'Chọn tuyến đường'}</p>
         <IoIosArrowDown />
       </div>

@@ -1,3 +1,4 @@
+import { validate } from '@/helper';
 import {
   Container,
   Input,
@@ -13,18 +14,18 @@ export default function ContactUs() {
   const [errorForm, setErrorForm] = useState({
     email: false,
     message: false,
-    fullname: false,
+    fullName: false,
   });
   const [userInput, setUserInput] = useState({
     email: '',
     message: '',
-    fullname: '',
+    fullName: '',
   });
   const handleChangeEmail = useCallback(
     (event) => {
       let email = event.target.value;
       let error = { ...errorForm };
-      let pattern = '^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+$';
+      let pattern = validate.email;
       if (email == '' || !email.toLowerCase().match(pattern)) {
         error.email = true;
       } else {
@@ -71,30 +72,30 @@ export default function ContactUs() {
   return (
     <div className="contact-us">
       <Container centerContent>
-        <div className="contact-us__title">Liên Hệ Với Chúng Tôi {errorForm.fullname}</div>
-        <FormControl isRequired isInvalid={errorForm.fullname}>
+        <div className="contact-us__title">Liên Hệ Với Chúng Tôi {errorForm.fullName}</div>
+        <FormControl isRequired isInvalid={errorForm.fullName}>
           <Input
-            name="fullname"
+            name="fullName"
             placeholder="Họ và tên"
             size="lg"
             mt={6}
             onChange={handleChangeUserValue}
             autoComplete="off"
           />
-          <FormErrorMessage>{errorForm.fullname ? 'Họ và tên là bắt buộc' : ''}</FormErrorMessage>
+          <FormErrorMessage>{errorForm.fullName ? 'Họ và tên là bắt buộc' : ''}</FormErrorMessage>
         </FormControl>
 
         <FormControl isInvalid={errorForm.email} isRequired>
           <Input
-            placeholder="email"
+            placeholder="Email"
             size="lg"
             mt={6}
             onChange={handleChangeEmail}
-            name="email"
+            name="Email"
             autoComplete="off"
           />
           <FormErrorMessage>
-            {userInput.email == '' ? 'email là bắt buộc!' : 'email không đúng định dạng'}
+            {userInput.email == '' ? 'Email là bắt buộc!' : 'Email không đúng định dạng'}
           </FormErrorMessage>
         </FormControl>
         <FormControl isInvalid={errorForm.message} isRequired>
@@ -113,9 +114,11 @@ export default function ContactUs() {
           mt={6}
           px={7}
           onClick={handleSendEmail}
+          color="#fff"
+          backgroundColor={"#"}
           isDisabled={
-            errorForm.fullname == true ||
-            userInput.fullname == '' ||
+            errorForm.fullName == true ||
+            userInput.fullName == '' ||
             errorForm.message == true ||
             userInput.message == '' ||
             errorForm.email == true ||

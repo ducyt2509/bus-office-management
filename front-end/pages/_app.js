@@ -7,6 +7,7 @@ import '@/styles/bom_table.css';
 import '@/styles/bom_bus_schedule.css';
 import '@/styles/bom_vehicle_type.css';
 import '@/styles/bom_personal_info.css';
+import '@/styles/bom_toast_position.css';
 import { ChakraProvider } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import Sidebar from '@/components/common/sidebar/SideBar';
@@ -19,7 +20,9 @@ export default function App({ Component, pageProps }) {
     <ChakraProvider>
       <StoreProvider>
         {router.pathname.includes('/admin') && <Sidebar />}
-        {router.pathname != '/' && !router.pathname.includes('/admin') && <NavBar />}
+        {router.pathname != '/contact-us' &&
+          router.pathname != '/' &&
+          !router.pathname.includes('/admin') && <NavBar />}
         <Component {...pageProps} />
       </StoreProvider>
     </ChakraProvider>

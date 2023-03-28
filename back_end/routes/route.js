@@ -11,4 +11,5 @@ router.delete('/route/delete-route', routes.deleteRoute);
 router.post('/route/add-route', routes.addNewRoute);
 router.put('/route/update-route', routes.updateRoute);
 router.post('/route/list-route', routes.getListRoute);
+router.post('/route/route-by-id', routes.getRouteById);
 module.exports = router;

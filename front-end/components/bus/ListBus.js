@@ -41,7 +41,7 @@ export default function ListBus(props) {
       <tr>
         <td>{index + 1}</td>
         <td>{bus.vehicle_plate}</td>
-        <td>{bus.vehicle.vehicle_name}</td>
+        <td>{bus.vehicle?.vehicle_type_name}</td>
         <td>
           <Stack>
             <Flex alignItems={'center'} justifyContent={'center'}>
