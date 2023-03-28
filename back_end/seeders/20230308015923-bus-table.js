@@ -9,7 +9,7 @@ module.exports = {
         vehicle_plate: '29B-07994',
         main_driver_id: 10,
         support_driver_id: 11,
-        vehicle_type_id: 4,
+        vehicle_type_id: 1,
         vehicle_status: 1,
       },
       {

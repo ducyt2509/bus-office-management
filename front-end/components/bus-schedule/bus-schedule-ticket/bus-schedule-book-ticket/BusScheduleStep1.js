@@ -32,7 +32,7 @@ export default function BusScheduleStep1(props) {
               </Text>
             </Flex>
           </Stack>
-          {props.data?.bus[0]?.vehicle_id == 1 && (
+          {props.data?.bus[0]?.vehicle_type_id == 1 && (
             <Seat12 seatSelected={props.seatSelected} setSeatSelected={props.setSeatSelected} />
           )}
         </Flex>

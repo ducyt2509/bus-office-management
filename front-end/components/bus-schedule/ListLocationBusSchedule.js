@@ -4,8 +4,9 @@ import ListLocationOnBusSchedule from '@/components/bus-schedule/ListLocationOnB
 import AddLocation from '../location/AddLocation';
 import {
   Input,
-  InputGroup,
-  InputRightAddon,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
   Button,
   Text,
   useDisclosure,
@@ -17,6 +18,20 @@ export default function ListLocationBusSchedule(props) {
   const [location, setLocation] = useState();
   const [address, setAddress] = useState();
   const [time, setTime] = useState();
+  const [error, setError] = useState({ location: false, time: false });
+
+  const handleChangeTime = useCallback((e) => {
+    let value = e.target.value;
+    let oldError = { ...error };
+    if (!value) {
+      oldError.time = true;
+    } else {
+      oldError.time = false;
+    }
+    setError(oldError);
+    setTime(value);
+  });
+
   useEffect(() => {
     let filterList = [];
     if (props.list && props.list.length && props.id == 5) {
@@ -69,6 +84,17 @@ export default function ListLocationBusSchedule(props) {
     }
   };
   const addNewLocationBusSchedule = useCallback(() => {
+    let oldError = { ...error };
+    if (!location) {
+      oldError.location = true;
+    }
+    if (!time) {
+      oldError.time = true;
+    }
+    if (oldError.location || oldError.time) {
+      setError(oldError);
+      return;
+    }
     let oldList = [...props.listLocation];
     let newLocation = location + ': ' + time;
     oldList.push(newLocation);
@@ -80,7 +106,7 @@ export default function ListLocationBusSchedule(props) {
     props.setListAddress(oldListAddress);
 
     handleDisplayAddLocation();
-  }, [props.listLocation, location, time, address]);
+  }, [props.listLocation, location, time, address, error]);
   return (
     <div>
       <div
@@ -91,23 +117,26 @@ export default function ListLocationBusSchedule(props) {
       </div>
       <div className={`bom-add-location-pickup bom-add-location-pickup${props.id}`}>
         <div>
-          <ListLocationOnBusSchedule
-            state={props.state}
-            BACK_END_PORT={props.BACK_END_PORT}
-            location={location}
-            setLocation={setLocation}
-            address={address}
-            setAddress={setAddress}
-            id={props.id}
-            type={'pickup/drop'}
-          />
-          <Input
-            type={'time'}
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            border={'1px solid '}
-            margin={'0 3%'}
-          />
+          <FormControl isInvalid={error.location}>
+            <ListLocationOnBusSchedule
+              state={props.state}
+              BACK_END_PORT={props.BACK_END_PORT}
+              location={location}
+              setLocation={setLocation}
+              address={address}
+              setAddress={setAddress}
+              id={props.id}
+              type={'pickup/drop'}
+              error={error}
+              setError={setError}
+            />
+          </FormControl>
+          <FormControl isInvalid={error.time} w="97%" margin={'0 3%'}>
+            <Input type={'time'} value={time} onChange={handleChangeTime} border={'1px solid '} />
+            <FormErrorMessage fontSize={'12px'}>
+              {!time ? 'Thời gian là bắt buộc' : ''}
+            </FormErrorMessage>
+          </FormControl>
           <Button colorScheme="linkedin" onClick={addNewLocationBusSchedule}>
             Add
           </Button>

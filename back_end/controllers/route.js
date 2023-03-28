@@ -51,6 +51,24 @@ module.exports = {
       return responseHandler.badRequest(res, error.message);
     }
   },
+  async getRouteById(req, res) {
+    const params = req.body;
+    const id = params.id;
+    if (!id) return responseHandler.responseWithData(res, 200, { route: null });
+    try {
+      const getRoute = await Route.findOne({
+        where: {
+          id: id,
+        },
+      });
+      if (getRoute) {
+        return responseHandler.responseWithData(res, 200, { route: getRoute });
+      }
+    } catch (error) {
+      return responseHandler.badRequest(res, error.message);
+    }
+  },
+
   async getListRoute(req, res) {
     const params = req.body;
     const offset = params.offset;

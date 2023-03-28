@@ -11,8 +11,13 @@ import {
   Input,
   InputGroup,
   InputRightAddon,
+  Box,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  useToast,
 } from '@chakra-ui/react';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { useStore } from '@/src/store';
 import axios from 'axios';
@@ -20,12 +25,27 @@ import ListRouteOnBusSchedule from '@/components/bus-schedule/ListRouteOnBusSche
 import ListBusOnBusSchedule from '@/components/bus-schedule/ListBusOnBusSchedule';
 import ListLocationOnBusSchedule from '@/components/bus-schedule/ListLocationOnBusSchedule';
 import ListLocationBusSchedule from '@/components/bus-schedule/ListLocationBusSchedule';
-import { convertInt, convertTime, calcDate } from '@/helper';
+import { convertInt, convertTime, calcDate, validate } from '@/helper';
 
 export default function BusScheduleDetail(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const router = useRouter();
   const [state, dispath] = useStore();
   const [data, setData] = useState();
+  const [error, setError] = useState({
+    route: false,
+    price: false,
+    timeFrom: false,
+    departureLocationId: false,
+    arriveLocationId: false,
+    travelTime: false,
+    effectiveDate: false,
+    scheduleStatus: false,
+    scheduleExpire: false,
+    scheduleFrequency: false,
+    refreshDate: false,
+  });
 
   const [BusSchedule, setBusSchedule] = useState([]);
 
@@ -33,23 +53,150 @@ export default function BusScheduleDetail(props) {
   const [price, setPrice] = useState();
   const [timeFrom, setTimeFrom] = useState();
   const [departureLocationId, setDepartureLocationId] = useState();
-  const [arriveLocation, setArriveLocationId] = useState();
+  const [arriveLocationId, setArriveLocationId] = useState();
   const [travelTime, setTravelTime] = useState();
   const [effectiveDate, setEffectiveDate] = useState();
-  const [scheduleStatus, setScheduleStatus] = useState();
+  const [scheduleStatus, setScheduleStatus] = useState('1');
   const [scheduleExpire, setScheduleExpire] = useState();
   const [scheduleFrequency, setScheduleFrequency] = useState();
   const [refreshDate, setRefreshDate] = useState();
-
-
 
   const [locationPickup, setLocationPickup] = useState([]);
   const [addressPickup, setAddressPickup] = useState([]);
 
   const [locationDropOff, setLocationDropOff] = useState([]);
   const [addressDropOff, setAddressDropOff] = useState([]);
-  console.log(BusSchedule)
+
+  const handleChangeTimeForm = (e) => {
+    let value = e.target.value;
+    let oldError = { ...error };
+    if (!value) {
+      oldError.timeFrom = true;
+    } else {
+      oldError.timeFrom = false;
+    }
+    setError(oldError);
+    setTimeFrom(value);
+  };
+
+  const handleChangeTravelTime = (e) => {
+    let value = e.target.value;
+    let oldError = { ...error };
+    if (!value || !value.match(validate.float)) {
+      oldError.travelTime = true;
+    } else {
+      oldError.travelTime = false;
+    }
+    setError(oldError);
+    setTravelTime(value);
+  };
+
+  const handleChangePrice = (e) => {
+    let value = e.target.value;
+    let oldError = { ...error };
+    if (!value || !value.match(validate.float)) {
+      oldError.price = true;
+    } else {
+      oldError.price = false;
+    }
+    setError(oldError);
+    setPrice(value);
+  };
+
+  const handleChangeScheduleStatus = (e) => {
+    let value = e.target.value;
+    let oldError = { ...error };
+    if (!value) {
+      oldError.scheduleStatus = true;
+    } else {
+      oldError.scheduleStatus = false;
+    }
+    setError(oldError);
+    setScheduleStatus(value);
+  };
+
+  const handleChangeScheduleFrequency = (e) => {
+    let value = e.target.value;
+    let oldError = { ...error };
+    if (!value || !value.match(validate.number)) {
+      oldError.scheduleFrequency = true;
+    } else {
+      oldError.scheduleFrequency = false;
+    }
+    setError(oldError);
+    setScheduleFrequency(value);
+  };
+
+  const handleChangeScheduleExpire = (e) => {
+    let value = e.target.value;
+    let oldError = { ...error };
+    if (!value || !value.match(validate.number)) {
+      oldError.scheduleExpire = true;
+    } else {
+      oldError.scheduleExpire = false;
+    }
+    setError(oldError);
+    setScheduleExpire(value);
+  };
+  const handleChangeEffectiveDate = (e) => {
+    let value = e.target.value;
+    let oldError = { ...error };
+    if (!value) {
+      oldError.effectiveDate = true;
+    } else {
+      oldError.effectiveDate = false;
+    }
+    setError(oldError);
+    setEffectiveDate(value);
+  };
+
   const handleSubmitData = useCallback(async () => {
+    let oldError = { ...error };
+    if (!route) {
+      oldError.route = true;
+    }
+    if (!price) {
+      oldError.price = true;
+    }
+    if (!timeFrom) {
+      oldError.timeFrom = true;
+    }
+    if (!departureLocationId) {
+      oldError.departureLocationId = true;
+    }
+    if (!arriveLocationId) {
+      oldError.arriveLocationId = true;
+    }
+    if (!travelTime) {
+      oldError.travelTime = true;
+    }
+    if (!effectiveDate) {
+      oldError.effectiveDate = true;
+    }
+    if (!scheduleStatus) {
+      oldError.scheduleStatus = true;
+    }
+    if (!scheduleExpire) {
+      oldError.scheduleExpire = true;
+    }
+    if (!scheduleFrequency) {
+      oldError.scheduleFrequency = true;
+    }
+    if (
+      oldError.route ||
+      oldError.price ||
+      oldError.timeFrom ||
+      oldError.departureLocationId ||
+      oldError.arriveLocationId ||
+      oldError.travelTime ||
+      oldError.effectiveDate ||
+      oldError.scheduleStatus ||
+      oldError.scheduleExpire ||
+      oldError.scheduleFrequency
+    ) {
+      setError(oldError);
+      return;
+    }
     const submitData = {
       bus_schedule: {
         route_id: route,
@@ -57,15 +204,12 @@ export default function BusScheduleDetail(props) {
         travel_time: travelTime,
         time_from: convertInt(timeFrom),
         departure_location_id: departureLocationId,
-        arrive_location_id: arriveLocation,
+        arrive_location_id: arriveLocationId,
         bus_schedule_status: scheduleStatus,
         schedule_frequency: scheduleFrequency,
         bus_schedule_expire: scheduleExpire,
         effective_date: effectiveDate,
-
-      }
-
-      ,
+      },
 
       location_bus_schedule: [
         {
@@ -89,26 +233,65 @@ export default function BusScheduleDetail(props) {
         { headers: state.accessToken }
       );
       if (updateBusSchedule.data.statusCode == 200) {
-        console.log('update success');
+        toastIdRef.current = toast({
+          title: 'Bus schedule updated.',
+          description: "We've updated bus schedule for you.",
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+        setTimeout(() => {
+          router.push('/admin/management/bus-schedule');
+        }, 2000);
+      } else {
+        toastIdRef.current = toast({
+          title: 'Bus schedule cant updated.',
+          description: 'Having some error when update bus schedule. PLease try again',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
       }
     } else {
-      submitData.bus_schedule.refresh_date = calcDate(new Date, scheduleFrequency);
+      submitData.bus_schedule.refresh_date = calcDate(new Date(), scheduleFrequency);
       const createBusSchedule = await axios.post(
         `http://localhost:${props.BACK_END_PORT}/bus-schedule/create-bus-schedule`,
         submitData,
         { headers: state.accessToken }
       );
       if (createBusSchedule.data.statusCode == 200) {
-        console.log('create success');
+        toastIdRef.current = toast({
+          title: 'Bus schedule created.',
+          description: "We've created bus schedule for you.",
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+        setTimeout(() => {
+          router.push('/admin/management/bus-schedule');
+        }, 2000);
+      } else {
+        toastIdRef.current = toast({
+          title: 'Bus schedule cant created.',
+          description: 'Having some error when create bus schedule. PLease try again',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
       }
     }
   }, [
     BusSchedule,
     route,
     price,
+    error,
     timeFrom,
     departureLocationId,
-    arriveLocation,
+    arriveLocationId,
     travelTime,
     effectiveDate,
     scheduleStatus,
@@ -134,9 +317,9 @@ export default function BusScheduleDetail(props) {
         }
       );
       if (getBusScheduleById) {
-        const dataBusSchedule = getBusScheduleById.data.data.bus_schedule[0]
+        const dataBusSchedule = getBusScheduleById.data.data.bus_schedule[0];
         const time_from = convertTime(dataBusSchedule.time_from, 0);
-        let date_start = new Date(dataBusSchedule.effective_date).toISOString().split("T")[0]
+        let date_start = new Date(dataBusSchedule.effective_date).toISOString().split('T')[0];
         setBusSchedule(getBusScheduleById.data.data.bus_schedule);
         setRoute(dataBusSchedule.route_id);
         setPrice(dataBusSchedule.price);
@@ -148,7 +331,7 @@ export default function BusScheduleDetail(props) {
         setScheduleStatus(dataBusSchedule.bus_schedule_status);
         setScheduleExpire(dataBusSchedule.bus_schedule_expire);
         setScheduleFrequency(dataBusSchedule.schedule_frequency);
-        setRefreshDate(dataBusSchedule.refresh_date)
+        setRefreshDate(dataBusSchedule.refresh_date);
       }
     },
     [state]
@@ -182,7 +365,7 @@ export default function BusScheduleDetail(props) {
         <Heading size="lg" marginBottom={'3%'} textAlign={'center'}>
           {router.query.id == 'add' ? 'Thêm lịch trình' : 'Chỉnh sửa thông tin lịch trình'}
         </Heading>
-        { }
+        {}
         <Card
           margin={'0 auto'}
           border={'1px solid'}
@@ -192,51 +375,103 @@ export default function BusScheduleDetail(props) {
           width={'80%'}
         >
           <CardBody>
-            <Flex marginTop={'8%'}>
-              <span>Tuyến đường:</span>
-              <ListRouteOnBusSchedule
-                state={state}
-                BACK_END_PORT={props.BACK_END_PORT}
-                route={route}
-                setRoute={setRoute}
-              />
-            </Flex>
+            <Box marginTop={'8%'}>
+              <FormControl isInvalid={error.route} isRequired>
+                <Box display={'flex'}>
+                  <FormLabel>Tuyến đường:</FormLabel>
+                  <ListRouteOnBusSchedule
+                    state={state}
+                    BACK_END_PORT={props.BACK_END_PORT}
+                    route={route}
+                    setRoute={setRoute}
+                    error={error}
+                    setError={setError}
+                    setLocationPickup={setLocationPickup}
+                    setAddressPickup={setAddressPickup}
+                    setLocationDropOff={setLocationDropOff}
+                    setAddressDropOff={setAddressDropOff}
+                    setDepartureLocationId={setDepartureLocationId}
+                    setArriveLocationId={setArriveLocationId}
+                  />
+                </Box>
+                <FormErrorMessage justifyContent={'flex-end'}>
+                  Tuyến đường là bắt buộc
+                </FormErrorMessage>
+              </FormControl>
+            </Box>
+
+            <Box>
+              <FormControl isInvalid={error.timeFrom} isRequired>
+                <Box display={'flex'}>
+                  <FormLabel>Giờ khởi hành:</FormLabel>
+                  <Input type={'time'} value={timeFrom} onChange={handleChangeTimeForm} />
+                </Box>
+                <FormErrorMessage justifyContent={'flex-end'}>
+                  Giờ khởi hành là bắt buộc
+                </FormErrorMessage>
+              </FormControl>
+            </Box>
+            <Box>
+              <FormControl isInvalid={error.travelTime} isRequired>
+                <Box display={'flex'}>
+                  <FormLabel>Thời gian di chuyển:</FormLabel>
+                  <InputGroup>
+                    <Input value={travelTime} onChange={handleChangeTravelTime} />
+                    <InputRightAddon children="giờ" />
+                  </InputGroup>
+                </Box>
+                <FormErrorMessage justifyContent={'flex-end'}>
+                  {travelTime
+                    ? 'Thời gian di chuyển sai định dạng'
+                    : 'Thời gian di chuyển là bắt buộc'}
+                </FormErrorMessage>
+              </FormControl>
+            </Box>
+            <Box>
+              <FormControl isInvalid={error.departureLocationId} isRequired>
+                <Box display={'flex'}>
+                  <FormLabel>Điểm xuất phát:</FormLabel>
+                  <ListLocationOnBusSchedule
+                    state={state}
+                    BACK_END_PORT={props.BACK_END_PORT}
+                    location={departureLocationId}
+                    data={BusSchedule}
+                    error={error}
+                    route={route}
+                    setError={setError}
+                    setLocation={setDepartureLocationId}
+                    id={3}
+                  />
+                </Box>
+                <FormErrorMessage justifyContent={'flex-end'}>
+                  Điểm xuất phát là bắt buộc
+                </FormErrorMessage>
+              </FormControl>
+            </Box>
+            <Box>
+              <FormControl isInvalid={error.arriveLocationId} isRequired>
+                <Box display={'flex'}>
+                  <FormLabel>Điểm kết thúc:</FormLabel>
+                  <ListLocationOnBusSchedule
+                    state={state}
+                    route={route}
+                    data={BusSchedule}
+                    BACK_END_PORT={props.BACK_END_PORT}
+                    error={error}
+                    setError={setError}
+                    location={arriveLocationId}
+                    setLocation={setArriveLocationId}
+                    id={4}
+                  />
+                </Box>
+                <FormErrorMessage justifyContent={'flex-end'}>
+                  Điểm kết thúc là bắt buộc
+                </FormErrorMessage>
+              </FormControl>
+            </Box>
 
             <Flex>
-              <span>Giờ khởi hành:</span>
-              <Input type={'time'} value={timeFrom} onChange={(e) => setTimeFrom(e.target.value)} />
-            </Flex>
-            <Flex>
-              <span>Thời gian di chuyển:</span>
-              <InputGroup>
-                <Input value={travelTime} onChange={(e) => setTravelTime(e.target.value)} />
-                <InputRightAddon children="giờ" />
-              </InputGroup>
-            </Flex>
-            <Flex>
-              <span>Điểm xuất phát:</span>
-              <ListLocationOnBusSchedule
-                state={state}
-                BACK_END_PORT={props.BACK_END_PORT}
-                location={departureLocationId}
-                data={BusSchedule}
-                setLocation={setDepartureLocationId}
-                id={3}
-              />
-            </Flex>
-            <Flex>
-              <span>Điểm kết thúc:</span>
-              <ListLocationOnBusSchedule
-                state={state}
-                data={BusSchedule}
-                BACK_END_PORT={props.BACK_END_PORT}
-                location={arriveLocation}
-                setLocation={setArriveLocationId}
-                id={4}
-              />
-            </Flex>
-            <Flex>
-              <span>Điểm đón:</span>
+              <FormLabel>Điểm đón:</FormLabel>
               <ListLocationBusSchedule
                 list={BusSchedule[0]?.location_bus_schedule}
                 listLocation={locationPickup}
@@ -249,7 +484,7 @@ export default function BusScheduleDetail(props) {
               />
             </Flex>
             <Flex>
-              <span>Điểm trả:</span>
+              <FormLabel>Điểm trả:</FormLabel>
               <ListLocationBusSchedule
                 list={BusSchedule[0]?.location_bus_schedule}
                 id={6}
@@ -261,49 +496,81 @@ export default function BusScheduleDetail(props) {
                 BACK_END_PORT={props.BACK_END_PORT}
               />
             </Flex>
-            <Flex>
-              <span>Giá vé:</span>
-              <Input value={price} onChange={(e) => setPrice(e.target.value)} />
-            </Flex>
-            <Flex>
-              <span>Trạng thái lịch trình hoạt động:</span>
-              <Select value={scheduleStatus} onChange={(e) => setScheduleStatus(e.target.value)}>
-                <option value={'0'}>Không hoạt động</option>
-                <option value={'1'}>Hoạt động</option>
-              </Select>
-            </Flex>
-            <Flex>
-              <span>Tần suất xe hoạt động:</span>
-              <InputGroup>
-                <Input
-                  value={scheduleFrequency}
-                  onChange={(e) => setScheduleFrequency(e.target.value)}
-                />
-                <InputRightAddon children="ngày mỗi một chuyến" />
-              </InputGroup>
-            </Flex>
-            <Flex>
-              <span>Kỳ hạn cho phép khách đặt trước:</span>
-              <InputGroup>
-                <Input value={scheduleExpire} onChange={(e) => setScheduleExpire(e.target.value)} />
-                <InputRightAddon children="ngày" />
-              </InputGroup>
-            </Flex>
 
-            <Flex>
-              <span>Ngày lịch trình có hiệu lực:</span>
-              <Input
-                type={'date'}
-                value={effectiveDate}
-                min={new Date().toISOString().split("T")[0]}
-                onChange={(e) => {
-                  setEffectiveDate(e.target.value)
-                }
+            <Box>
+              <FormControl isInvalid={error.price} isRequired>
+                <Box display={'flex'}>
+                  <FormLabel>Giá vé:</FormLabel>
+                  <Input value={price} onChange={handleChangePrice} />
+                </Box>
+                <FormErrorMessage justifyContent={'flex-end'}>
+                  {price ? 'Giá vé sai định dạng' : 'Giá vé là bắt buộc'}
+                </FormErrorMessage>
+              </FormControl>
+            </Box>
 
-                }
-              />
-            </Flex>
+            <Box>
+              <FormControl isRequired>
+                <Box display={'flex'}>
+                  <FormLabel>Trạng thái lịch trình hoạt động:</FormLabel>
+                  <Select value={scheduleStatus} onChange={handleChangeScheduleStatus}>
+                    <option value={'0'}>Không hoạt động</option>
+                    <option value={'1'}>Hoạt động</option>
+                  </Select>
+                </Box>
+              </FormControl>
+            </Box>
 
+            <Box>
+              <FormControl isInvalid={error.scheduleFrequency} isRequired>
+                <Box display={'flex'}>
+                  <FormLabel marginBottom="0">Tần suất xe hoạt động:</FormLabel>
+                  <InputGroup>
+                    <Input value={scheduleFrequency} onChange={handleChangeScheduleFrequency} />
+                    <InputRightAddon children="ngày mỗi một chuyến" />
+                  </InputGroup>
+                </Box>
+                <FormErrorMessage justifyContent={'flex-end'}>
+                  {scheduleFrequency
+                    ? 'Tần suất xe hoạt động sai định dạng'
+                    : 'Tần suất xe hoạt động là bắt buộc'}
+                </FormErrorMessage>
+              </FormControl>
+            </Box>
+
+            <Box>
+              <FormControl isInvalid={error.scheduleExpire} isRequired>
+                <Box display={'flex'}>
+                  <FormLabel marginBottom="0">Kỳ hạn cho phép khách đặt trước:</FormLabel>
+                  <InputGroup>
+                    <Input value={scheduleExpire} onChange={handleChangeScheduleExpire} />
+                    <InputRightAddon children="ngày" />
+                  </InputGroup>
+                </Box>
+                <FormErrorMessage justifyContent={'flex-end'}>
+                  {scheduleExpire
+                    ? 'Kỳ hạn cho phép khách đặt trước sai định dạng'
+                    : 'Kỳ hạn cho phép khách đặt trước là bắt buộc'}
+                </FormErrorMessage>
+              </FormControl>
+            </Box>
+
+            <Box>
+              <FormControl isInvalid={error.effectiveDate} isRequired>
+                <Box display={'flex'}>
+                  <FormLabel marginBottom="0">Ngày lịch trình có hiệu lực:</FormLabel>
+                  <Input
+                    type={'date'}
+                    value={effectiveDate}
+                    min={new Date().toISOString().split('T')[0]}
+                    onChange={handleChangeEffectiveDate}
+                  />
+                </Box>
+                <FormErrorMessage justifyContent={'flex-end'}>
+                  Ngày lịch trình có hiệu lực là bắt buộc
+                </FormErrorMessage>
+              </FormControl>
+            </Box>
           </CardBody>
           <CardFooter justifyContent={'center'}>
             <Button onClick={handleSubmitData} colorScheme="linkedin">

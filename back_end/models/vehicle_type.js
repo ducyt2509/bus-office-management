@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
-  const Bus_type = sequelize.define(
-    'vehicle',
+  const Vehicle_Type = sequelize.define(
+    'vehicle_type',
     {
       id: {
         type: Sequelize.INTEGER(20).UNSIGNED,
@@ -20,5 +20,5 @@ module.exports = (sequelize, Sequelize) => {
     }
   );
 
-  return Bus_type;
+  return Vehicle_Type;
 };

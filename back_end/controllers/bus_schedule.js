@@ -87,10 +87,11 @@ module.exports = {
       join route r on bs.route_id = r.id
       join city c on r.city_from_id = c.id
       join city cc on r.city_to_id = cc.id
-      where bs.departure_location_id = ${locationStartId} and bs.arrive_location_id = ${locationFinishId} and '${dateStart}' >= '${dateNow}' and  '${dateStart}' <= bs.refresh_date
+      where r.city_from_id = ${locationStartId} and r.city_to_id = ${locationFinishId} and '${dateStart}' >= '${dateNow}' and  '${dateStart}' <= bs.refresh_date
       limit ${limit} offset ${offset}`;
       const queryCount = `select count(*) from bus_schedule bs
-      where bs.departure_location_id = ${locationStartId} and bs.arrive_location_id = ${locationFinishId} and '${dateStart}' >= '${dateNow}' and  '${dateStart}' <= bs.refresh_date`;
+      join route r on bs.route_id = r.id
+      where r.city_from_id = ${locationStartId} and r.city_to_id = ${locationFinishId} and '${dateStart}' >= '${dateNow}' and  '${dateStart}' <= bs.refresh_date`;
       const [listBusSchedule, numberBusSchedule] = await Promise.all([
         db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
         db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),
@@ -116,10 +117,10 @@ module.exports = {
             for (let j = 0; j < getTransport.length; j++) {
               const [getBus, numberSeatSelected] = await Promise.all([
                 db.sequelize.query(
-                  `select b.* , v.vehicle_name from transport t  
+                  `select b.* , v.vehicle_type_name from transport t  
                   join bus b  on t.bus_id = b.id
-                  join vehicle v on b.vehicle_id = v.id
-                    where t.bus_schedule_id = ${getTransport[i].bus_schedule_id} and t.bus_id = ${getTransport[j].bus_id}`,
+                  join vehicle_type v on b.vehicle_type_id = v.id
+                    where t.bus_schedule_id = ${getTransport[j].bus_schedule_id} and t.bus_id = ${getTransport[j].bus_id}`,
                   {
                     type: QueryTypes.SELECT,
                   }
@@ -127,13 +128,12 @@ module.exports = {
                 db.sequelize.query(
                   `select count(*) from transaction t
                   join transport tr on tr.id = t.transport_id
-                  where tr.bus_schedule_id = ${getTransport[i].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id}`,
+                  where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id}`,
                   {
                     type: QueryTypes.SELECT,
                   }
                 ),
               ]);
-
               if (getBus) {
                 getTransport[j].dataValues.bus = getBus;
               }
@@ -154,7 +154,6 @@ module.exports = {
         });
       }
     } catch (error) {
-      console.log(error);
       return responseHandler.badRequest(res, error.message);
     }
   },
@@ -164,21 +163,14 @@ module.exports = {
     const limit = !params.limit ? 5 : params.limit;
     const querySearch = !params.query_search ? '' : params.query_search;
     try {
-      // const querySQL = `select * from bus_schedule bs
-      // join route r on bs.route_id = r.id
-      // join city c on r.city_from_id = c.id
-      // join city cc on r.city_to_id = cc.id
-      // where (c.city_name like '%${querySearch}%')
-      // or (cc.city_name like '%${querySearch}%')
-      // limit ${limit} offset ${offset}`;
       const querySQL = `select bs.id ,bs.route_id, departure_location_id , arrive_location_id , price , time_from , travel_time , effective_date , refresh_date , bus_schedule_status , bus_schedule_expire , city_from_id , city_to_id 
-from bus_schedule bs
-join route r on bs.route_id = r.id 
-join city c on r.city_from_id = c.id
- join city cc on r.city_to_id = cc.id
-  where (c.city_name like '%${querySearch}%') 
-      or (cc.city_name like '%${querySearch}%') 
-      limit ${limit} offset ${offset}
+      from bus_schedule bs
+      join route r on bs.route_id = r.id 
+      join city c on r.city_from_id = c.id
+      join city cc on r.city_to_id = cc.id
+        where (c.city_name like '%${querySearch}%') 
+            or (cc.city_name like '%${querySearch}%') 
+            limit ${limit} offset ${offset}
 `;
       const queryCount = `select count(*) from bus_schedule bs
       join route r on bs.route_id = r.id 
@@ -223,7 +215,7 @@ join city c on r.city_from_id = c.id
     const id = params.id;
     try {
       const querySQL = `select bs.id ,c.city_name as city_from, bs.route_id, cc.city_name as city_to, 
-l.location_name as location_start, ll.location_name as location_finish, bs.price, bs.time_from,  bs.arrive_location_id,
+      l.location_name as location_start, ll.location_name as location_finish, bs.price, bs.time_from,  bs.arrive_location_id,
       bs.departure_location_id, bs.travel_time, bs.effective_date, bs.bus_schedule_status, bs.schedule_frequency, bs.bus_schedule_expire , bs.refresh_date
       from bus_schedule bs
       join route r on r.id = bs.route_id 
@@ -234,7 +226,6 @@ l.location_name as location_start, ll.location_name as location_finish, bs.price
       where bs.id =${id}
       `;
       const busSchedule = await db.sequelize.query(querySQL, { type: QueryTypes.SELECT });
-      console.log('LOG', busSchedule);
       if (busSchedule) {
         const getListLocationBusSchedule = await Location_Bus_Schedule.findAll({
           where: {
@@ -242,7 +233,6 @@ l.location_name as location_start, ll.location_name as location_finish, bs.price
           },
         });
 
-        console.log(getListLocationBusSchedule, 'BENA');
         if (getListLocationBusSchedule) {
           busSchedule[0].location_bus_schedule = getListLocationBusSchedule;
         }
@@ -256,7 +246,6 @@ l.location_name as location_start, ll.location_name as location_finish, bs.price
         });
       }
     } catch (error) {
-      console.log(error);
       return responseHandler.badRequest(res, error.message);
     }
   },

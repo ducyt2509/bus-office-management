@@ -47,12 +47,15 @@ const calcDate = (time, n) => {
 
 const formatDate = (time) => {
   if (!time) return;
-  return new Date(time).toISOString().split('T')[0]
+  return new Date(time).toISOString().split('T')[0];
 };
 const validate = {
   min_date: new Date().toISOString().split('T')[0],
-  email: '',
-  email_and_password: '',
-  password: '',
+  email: /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/,
+  email_and_password:
+    /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$|^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im,
+  password: /^(?=.*?[A-Z]).{8,}$/,
+  float: /^-?\d*(\.\d+)?$/,
+  number: /^\d+$/,
 };
 export { convertInt, convertTime, formatMoney, calcDate, formatDate, validate };

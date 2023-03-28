@@ -1,7 +1,7 @@
 const db = require('../models');
 const Bus = db.buses;
 const User = db.users;
-const Vehicle = db.vehicles;
+const Vehicle_Type = db.vehicle_types;
 const Op = db.Sequelize.Op;
 const QueryTypes = db.Sequelize.QueryTypes;
 const responseHandler = require('../handlers/response.handler');
@@ -76,9 +76,9 @@ module.exports = {
                 id: getListBus[i].support_driver_id,
               },
             }),
-            Vehicle.findOne({
+            Vehicle_Type.findOne({
               where: {
-                id: getListBus[i].vehicle_id,
+                id: getListBus[i].vehicle_type_id,
               },
             }),
           ]);
