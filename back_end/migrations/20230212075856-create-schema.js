@@ -68,7 +68,7 @@ module.exports = {
 					{ transaction: t, charset: "utf8mb4", collate: "utf8mb4_unicode_ci" },
 				),
 				queryInterface.createTable(
-					"vehicle",
+					"vehicle_type",
 					{
 						id: {
 							type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
@@ -76,23 +76,12 @@ module.exports = {
 							autoIncrement: true,
 							allowNull: false,
 						},
-						vehicle_name: {
+						vehicle_type_name: {
 							type: Sequelize.DataTypes.STRING,
 							allowNull: false,
 						},
-						vehicle_number_seat: {
+						number_seat: {
 							type: Sequelize.INTEGER(20),
-						},
-						office_id: {
-							type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
-							allowNull: true,
-							references: {
-								model: {
-									tableName: "office",
-								},
-								key: "id",
-							},
-							onDelete: "cascade",
 						},
 					},
 					{ transaction: t, charset: "utf8mb4", collate: "utf8mb4_unicode_ci" },
@@ -255,12 +244,12 @@ module.exports = {
 							},
 							onDelete: "cascade",
 						},
-						vehicle_id: {
+						vehicle_type_id: {
 							type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
 							allowNull: false,
 							references: {
 								model: {
-									tableName: "vehicle",
+									tableName: "vehicle_type",
 								},
 								key: "id",
 							},
@@ -543,13 +532,13 @@ module.exports = {
 		return Promise.all([
 			queryInterface.dropTable("role", { transaction: t }),
 			queryInterface.dropTable("city", { transaction: t }),
-			queryInterface.dropTable("vehicle", { transaction: t }),
+			queryInterface.dropTable("vehicle_type", { transaction: t }),
 			queryInterface.dropTable("location", { transaction: t }),
 			queryInterface.dropTable("route", { transaction: t }),
 			queryInterface.dropTable("user", { transaction: t }),
 			queryInterface.dropTable("bus", { transaction: t }),
 			queryInterface.dropTable("bus_schedule", { transaction: t }),
-			queryInterface.dropTable("daily_bus_schedule", { transaction: t }),
+			queryInterface.dropTable("transport", { transaction: t }),
 			queryInterface.dropTable("office", { transaction: t }),
 			queryInterface.dropTable("transaction", { transaction: t }),
 			queryInterface.dropTable("ticket", { transaction: t }),
