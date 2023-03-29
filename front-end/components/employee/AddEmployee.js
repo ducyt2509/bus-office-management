@@ -137,7 +137,11 @@ export default function AddEmployee(props) {
     if (!employeeRole) {
       oldError.employeeRole = true;
     }
-    let condition = oldError.employeeName || oldError.employeePhone || oldError.employeeRole;
+    let condition =
+      oldError.employeeName ||
+      oldError.employeePhone ||
+      oldError.employeeRole ||
+      oldError.employeeMail;
     if (!props.userId) {
       if (!employeePassword) {
         oldError.employeePassword = true;
