@@ -52,8 +52,9 @@ const formatDate = (time) => {
 const validate = {
   min_date: new Date().toISOString().split('T')[0],
   email: /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/,
-  email_and_password:
+  email_and_phone:
     /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$|^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im,
+  phone: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im,
   password: /^(?=.*?[A-Z]).{8,}$/,
   float: /^-?\d*(\.\d+)?$/,
   number: /^\d+$/,

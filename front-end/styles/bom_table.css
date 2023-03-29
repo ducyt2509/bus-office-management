@@ -9,7 +9,7 @@
 }
 
 .bom-table-bus thead td {
-	background-color: #686868;
+	background-color: #F26A4C;
 	color: #fff;
 	padding: 6px;
 }
@@ -52,5 +52,5 @@ table.bom-table-bus tr td button {
  cursor: pointer;
 }
 .bom-table-bus tbody tr:hover{
-	background-color: #d9d9d9;
+	background-color: #F2CAC2;
 }

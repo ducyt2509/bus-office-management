@@ -12,7 +12,7 @@ export default function ListBusOnBusSchedule(props) {
     async (page, limit, value) => {
       limit = limit ? limit : 7;
       page = typeof page == 'number' ? page - 1 : 0;
-      const offset = limit * page;
+      const offset = limit * (page - 1);
       const token = `Bearer ${props.state.dataUser.token}`;
       const getListBus = await axios.post(
         `http://localhost:${props.BACK_END_PORT}/bus/list-bus`,
@@ -57,10 +57,12 @@ export default function ListBusOnBusSchedule(props) {
   useEffect(() => {
     handleGetListBus();
   }, []);
-  useEffect(()=>{
-    const filterList = listBus.filter((bus)=>{return bus.id == props.bus})
-    setBusPlate(filterList[0]?.vehicle_plate)
-  },[listBus, props.bus])
+  useEffect(() => {
+    const filterList = listBus.filter((bus) => {
+      return bus.id == props.bus;
+    });
+    setBusPlate(filterList[0]?.vehicle_plate);
+  }, [listBus, props.bus]);
   return (
     <div className="wrapper wrapper2">
       <div className="select-btn" onClick={handleOpenSelect}>
