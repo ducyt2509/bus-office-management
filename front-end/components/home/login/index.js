@@ -44,7 +44,7 @@ export default function Login(props) {
       let value = event.target.value;
       setUser(value);
       let error = { ...errorInput };
-      let pattern = validate.email_and_password;
+      let pattern = validate.email_and_phone;
       if (value == '' || !value.toLowerCase().match(pattern)) {
         error.user = true;
       } else {

@@ -13,7 +13,7 @@ export default function ListLocationOnBusSchedule(props) {
     async (page, limit, value) => {
       limit = limit ? limit : 7;
       page = typeof page == 'number' ? page - 1 : 0;
-      const offset = limit * page;
+      const offset = limit * (page - 1);
       const token = `Bearer ${props.state.dataUser.token}`;
       const route = await axios.post(
         `http://localhost:${props.BACK_END_PORT}/route/route-by-id`,

@@ -1,11 +1,14 @@
 import { SlPencil } from 'react-icons/sl';
 import { IoTrashBinOutline, IoPersonOutline, IoCallOutline } from 'react-icons/io5';
-import { Stack, IconButton, Flex } from '@chakra-ui/react';
+import { Stack, IconButton, Flex, useToast } from '@chakra-ui/react';
 import axios from 'axios';
 import { useCallback } from 'react';
+import { useRef } from 'react';
 import { useRouter } from 'next/router';
 
 export default function ListEmployee(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const router = useRouter();
   const handleActiveModal = (userId, user, e) => {
     e.stopPropagation();
@@ -23,7 +26,24 @@ export default function ListEmployee(props) {
       }
     );
     if (deleteUser.data.statusCode == 200) {
+      toastIdRef.current = toast({
+        title: 'Thông tin nhân viên đã được xoá.',
+        description: 'Chúng tôi đã xoá thông tin nhân viên cho bạn',
+        status: 'success',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
       props.handleGetListUser();
+    } else {
+      toastIdRef.current = toast({
+        title: 'Thông tin nhân viên không thể xoá',
+        description: 'Xảy ra lỗi khi xoá thông tin nhân viên. Làm ơn hãy thử lại.',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
     }
   };
   const handleGetEmployeeInformation = useCallback((id) => {

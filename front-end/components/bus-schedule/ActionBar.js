@@ -13,7 +13,7 @@ export default function ActionBar(props) {
     <Flex marginTop={'2%'} marginBottom={'3%'} justifyContent={'space-between'}>
       <Flex width={'40%'}>
         <InputGroup
-          backgroundColor={'#C2C2C2'}
+          backgroundColor={'#D6D6D6'}
           color={'#686868'}
           borderRadius="8px"
           marginRight={'5%'}
@@ -28,7 +28,7 @@ export default function ActionBar(props) {
         </InputGroup>
         <IconButton
           icon={<CiFilter />}
-          backgroundColor={'#C2C2C2'}
+          backgroundColor={'#D6D6D6'}
           color={'#686868'}
           onClick={props.handleGetListBusSchedule}
         />
@@ -36,12 +36,12 @@ export default function ActionBar(props) {
       <ButtonGroup>
         <IconButton
           icon={<AiOutlinePlus />}
-          backgroundColor={'#C2C2C2'}
+          backgroundColor={'#D6D6D6'}
           color={'#686868'}
           onClick={() => props.handleGetBusScheduleInformation('add')}
         />
-        <IconButton icon={<CiExport />} backgroundColor={'#C2C2C2'} color={'#686868'} />
-        <IconButton icon={<CiImport />} backgroundColor={'#C2C2C2'} color={'#686868'} />
+        <IconButton icon={<CiExport />} backgroundColor={'#D6D6D6'} color={'#686868'} />
+        <IconButton icon={<CiImport />} backgroundColor={'#D6D6D6'} color={'#686868'} />
       </ButtonGroup>
     </Flex>
   );

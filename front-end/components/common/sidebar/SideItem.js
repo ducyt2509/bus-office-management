@@ -25,10 +25,10 @@ export default function SideItem({
         <Menu placement="right">
           <Link
             as={!suffixIcon && NextLink}
-            backgroundColor={active && '#363636'}
+            backgroundColor={active && '#F26A4C'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#363636', color: '#fff' }}
+            _hover={{ textDecor: 'none', backgroundColor: '#F26A4C', color: '#fff' }}
             color={active ? '#fff' : '#686868'}
             w={navSize == 'large' && '100%'}
             href={!suffixIcon ? href : '#'}

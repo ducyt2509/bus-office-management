@@ -28,14 +28,14 @@ export default function ManagementEmployees(props) {
   const [user, setUser] = useState({});
 
   const handleGetListUser = useCallback(
-    async (page, limit, value) => {
-      page = typeof page == 'number' ? page - 1 : 0;
+    async (type, page, limit, value) => {
+      page = typeof page == 'number' ? page : 1;
       limit = limit ? limit : 7;
-      if (page) {
+      if (typeof page == 'number') {
         setCurrentPage(page);
       }
       const token = `Bearer ${state.dataUser.token}`;
-      const offset = limit * page;
+      const offset = limit * (page - 1);
       const getListUser = await axios.post(
         `http://localhost:${props.BACK_END_PORT}/user/list-user`,
         {
@@ -51,7 +51,9 @@ export default function ManagementEmployees(props) {
       );
       if (getListUser.data.statusCode === 200) {
         setListUser(getListUser.data.data.list_user);
-        setCurrentPage(1);
+        if (type == 'search') {
+          setCurrentPage(1);
+        }
         setNumberUser(getListUser.data.data.number_user);
       }
     },
@@ -61,7 +63,7 @@ export default function ManagementEmployees(props) {
     const value = e.target.value;
     setQuerySearch(value);
     if (!value) {
-      handleGetListUser(null, null, '');
+      handleGetListUser('search', null, null, '');
     }
   });
   useEffect(() => {

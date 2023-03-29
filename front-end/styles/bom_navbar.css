@@ -29,3 +29,18 @@ ul.bom-navbar-component li div {
     background-color: #F26A4C;
     border-radius: 5px;
 }
+#bom-side-bar {
+    max-height: 100vh;
+    overflow-y: auto;
+}
+#bom-side-bar::-webkit-scrollbar {
+    width: 6px;
+    background-color: #FFF;
+} 
+#bom-side-bar::-webkit-scrollbar-thumb {
+    background-color: #FFF;
+}
+#bom-side-bar::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px #FFF;
+    background-color: #FFF;
+}

@@ -33,12 +33,12 @@ export default function ManagementBus(props) {
   const [vehicle, setVehicle] = useState({});
 
   const handleGetListBus = useCallback(
-    async (page, limit, value) => {
+    async (type, page, limit, value) => {
       const token = `Bearer ${state.dataUser.token}`;
       limit = limit ? limit : 7;
-      page = typeof page == 'number' ? page - 1 : 0;
-      const offset = limit * page;
-      if (page) {
+      page = typeof page == 'number' ? page : 1;
+      const offset = limit * (page - 1);
+      if (typeof page == 'number') {
         setCurrentPage(page);
       }
       const getListBus = await axios.post(
@@ -56,7 +56,9 @@ export default function ManagementBus(props) {
       );
       if (getListBus.data.statusCode === 200) {
         setListBus(getListBus.data.data.list_bus);
-        setCurrentPage(1);
+        if (type == 'search') {
+          setCurrentPage(1);
+        }
         setNumberBus(getListBus.data.data.number_bus);
       }
     },
@@ -66,7 +68,7 @@ export default function ManagementBus(props) {
     const value = e.target.value;
     setQuerySearch(value);
     if (!value) {
-      handleGetListBus(null, null, '');
+      handleGetListBus('search', null, null, '');
     }
   });
   useEffect(() => {

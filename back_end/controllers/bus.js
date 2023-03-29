@@ -49,13 +49,13 @@ module.exports = {
       const querySQL = `select bus.id, bus.vehicle_plate, bus.main_driver_id, bus.support_driver_id, bus.vehicle_type_id, bus.vehicle_status from bus 
       join vehicle_type v on bus.vehicle_type_id = v.id 
       join user cu on bus.main_driver_id = cu.id 
-      join user bu on bus.support_driver_id = bu.id
+      left join user bu on bus.support_driver_id = bu.id
       where (cu.user_name like '%${querySearch}%') or (bu.user_name like '%${querySearch}%') 
       or (vehicle_plate like '%${querySearch}%') or (v.vehicle_type_name like '%${querySearch}%') limit ${limit} offset ${offset}`;
       const queryCount = `select count(*) from bus 
       join vehicle_type v on bus.vehicle_type_id = v.id 
       join user cu on bus.main_driver_id = cu.id 
-      join user bu on bus.support_driver_id = bu.id
+      left join user bu on bus.support_driver_id = bu.id
       where (cu.user_name like '%${querySearch}%') or (bu.user_name like '%${querySearch}%') 
       or (vehicle_plate like '%${querySearch}%') or (v.vehicle_type_name like '%${querySearch}%');`;
       let [getListBus, numberBus] = await Promise.all([

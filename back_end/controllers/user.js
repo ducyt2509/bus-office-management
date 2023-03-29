@@ -253,11 +253,12 @@ module.exports = {
     const params = req.body;
     const limit = !params.limit ? 7 : params.limit;
     const offset = !params.offset ? 0 : params.offset;
+    const role_id = params.role_id;
     const querySearch = !params.query_search ? '' : params.query_search;
 
     try {
       let attributes = 'user.id, email, phone ,user_name, avatar, role_id, office_id';
-      const querySQL =
+      let querySQL =
         `select ` +
         attributes +
         ` from user join office o on o.id = user.office_id  
@@ -267,13 +268,33 @@ module.exports = {
       or (r.role_name like '%${querySearch}%') 
       or (o.office_name like '%${querySearch}%')   
       or (phone like '%${querySearch}%') limit ${limit} offset ${offset}`;
-      const queryCount = `select count(*) from user join office o on o.id = user.office_id  
+      let queryCount = `select count(*) from user join office o on o.id = user.office_id  
       join role r on user.role_id = r.id
       where (user_name like '%${querySearch}%') 
       or (email like '%${querySearch}%')
       or (r.role_name like '%${querySearch}%') 
       or (o.office_name like '%${querySearch}%')   
       or (phone like '%${querySearch}%')`;
+      if (role_id) {
+        querySQL =
+          `select ` +
+          attributes +
+          ` from user 
+        join role r on user.role_id = r.id
+        where ((user_name like '%${querySearch}%') 
+        or (email like '%${querySearch}%')
+        or (r.role_name like '%${querySearch}%') 
+        or (phone like '%${querySearch}%')) 
+        and user.role_id = ${role_id}`;
+
+        queryCount = `select count(*) from user
+        join role r on user.role_id = r.id
+        where ((user_name like '%${querySearch}%') 
+        or (email like '%${querySearch}%')
+        or (r.role_name like '%${querySearch}%') 
+        or (phone like '%${querySearch}%')) 
+        and user.role_id = ${role_id}`;
+      }
       let [getUser, numberUser] = await Promise.all([
         db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
         db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),

@@ -10,11 +10,11 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={router.pathname == '/admin/management/bus-schedule' && '#686868'}
+            backgroundColor={router.pathname == '/admin/management/bus-schedule' && '#F2CAC2'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
-            color={router.pathname == '/admin/management/bus-schedule' ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#F2CAC2', color: '#000' }}
+            color={router.pathname == '/admin/management/bus-schedule' ? '#000' : '#686868'}
             w={'90%'}
             href={href.busSchedule}
           >
@@ -32,11 +32,11 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={router.pathname == '/admin/management/transport' && '#686868'}
+            backgroundColor={router.pathname == '/admin/management/transport' && '#F2CAC2'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
-            color={router.pathname == '/admin/management/transport' ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#F2CAC2', color: '#000' }}
+            color={router.pathname == '/admin/management/transport' ? '#000' : '#686868'}
             w={'90%'}
             href={href.transport}
           >
@@ -54,11 +54,11 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={router.pathname == '/admin/management/bus' && '#686868'}
+            backgroundColor={router.pathname == '/admin/management/bus' && '#F2CAC2'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
-            color={router.pathname == '/admin/management/bus' ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#F2CAC2', color: '#000' }}
+            color={router.pathname == '/admin/management/bus' ? '#000' : '#686868'}
             w={'90%'}
             href={href.bus}
           >
@@ -75,11 +75,11 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={router.pathname == '/admin/management/location' && '#686868'}
+            backgroundColor={router.pathname == '/admin/management/location' && '#F2CAC2'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
-            color={router.pathname == '/admin/management/location' ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#F2CAC2', color: '#000' }}
+            color={router.pathname == '/admin/management/location' ? '#000' : '#686868'}
             w={'90%'}
             href={href.location}
           >
@@ -97,11 +97,11 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={router.pathname == '/admin/management/route' && '#686868'}
+            backgroundColor={router.pathname == '/admin/management/route' && '#F2CAC2'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
-            color={router.pathname == '/admin/management/route' ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#F2CAC2', color: '#000' }}
+            color={router.pathname == '/admin/management/route' ? '#000' : '#686868'}
             w={'90%'}
             href={href.route}
           >
@@ -118,11 +118,11 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={router.pathname == '/admin/management/office' && '#686868'}
+            backgroundColor={router.pathname == '/admin/management/office' && '#F2CAC2'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
-            color={router.pathname == '/admin/management/office' ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#F2CAC2', color: '#000' }}
+            color={router.pathname == '/admin/management/office' ? '#000' : '#686868'}
             w={'90%'}
             href={href.office}
           >
@@ -139,11 +139,11 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={router.pathname == '/admin/management/employee' && '#686868'}
+            backgroundColor={router.pathname == '/admin/management/employee' && '#F2CAC2'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
-            color={router.pathname == '/admin/management/employee' ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#F2CAC2', color: '#000' }}
+            color={router.pathname == '/admin/management/employee' ? '#000' : '#686868'}
             w={'90%'}
             href={href.employee}
           >
@@ -164,11 +164,11 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={router.pathname == '/admin/setting/personal-information' && '#686868'}
+            backgroundColor={router.pathname == '/admin/setting/personal-information' && '#F2CAC2'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
-            color={router.pathname == '/admin/setting/personal-information' ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#F2CAC2', color: '#000' }}
+            color={router.pathname == '/admin/setting/personal-information' ? '#000' : '#686868'}
             w={'90%'}
             href={href.personalInformation}
           >
@@ -185,11 +185,11 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
         <Menu>
           <Link
             as={NextLink}
-            backgroundColor={router.pathname == '/admin/setting/change-password' && '#686868'}
+            backgroundColor={router.pathname == '/admin/setting/change-password' && '#F2CAC2'}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: '#686868', color: '#fff' }}
-            color={router.pathname == '/admin/setting/change-password' ? '#fff' : '#686868'}
+            _hover={{ textDecor: 'none', backgroundColor: '#F2CAC2', color: '#000' }}
+            color={router.pathname == '/admin/setting/change-password' ? '#000' : '#686868'}
             w={'90%'}
             href={href.changePassword}
           >
