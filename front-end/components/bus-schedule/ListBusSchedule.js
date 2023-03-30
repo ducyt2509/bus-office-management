@@ -39,7 +39,6 @@ export default function ListBusSchedule(props) {
   };
 
   const ListBusScheduleHTML = props.list.map((busSchedule, index) => {
-    console.log('[BUS SCHEDULE ]', busSchedule);
     const city_from_to = busSchedule.route[0]?.city_from + ' - ' + busSchedule.route[0]?.city_to;
     const time_from = convertTime(busSchedule.time_from, 0);
     const time_to = convertTime(busSchedule.time_from, busSchedule.travel_time);
