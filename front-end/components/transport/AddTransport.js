@@ -168,7 +168,7 @@ export default function AddTransport(props) {
 
   const handleGetListBusSchedule = useCallback(
     async (page, limit, value) => {
-      page = typeof page == 'number' ? page - 1 : 0;
+      page = typeof page == 'number' ? page - 1 : 1;
       limit = limit ? limit : 7;
       const token = `Bearer ${state.dataUser.token}`;
       const offset = limit * (page - 1);
@@ -195,7 +195,7 @@ export default function AddTransport(props) {
     async (page, limit, value) => {
       const token = `Bearer ${state.dataUser.token}`;
       limit = limit ? limit : 7;
-      page = typeof page == 'number' ? page - 1 : 0;
+      page = typeof page == 'number' ? page - 1 : 1;
       const offset = limit * (page - 1);
       const getListBus = await axios.post(
         `http://localhost:${props.port}/bus/list-bus`,
