@@ -1,8 +1,12 @@
 import { SlPencil } from 'react-icons/sl';
-import { IoTrashBinOutline, IoPersonOutline, IoCallOutline } from 'react-icons/io5';
-import { Stack, IconButton, Flex } from '@chakra-ui/react';
+import { IoTrashBinOutline } from 'react-icons/io5';
+import { Stack, IconButton, useToast } from '@chakra-ui/react';
 import axios from 'axios';
+import { useRef } from 'react';
+
 export default function ListLocation(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const handleActiveModal = (locationId, location) => {
     props.setLocation(location);
     props.setLocationId(locationId);
@@ -17,19 +21,39 @@ export default function ListLocation(props) {
       }
     );
     if (deleteLocation.data.statusCode == 200) {
+      toastIdRef.current = toast({
+        title: 'Điểm đón trả đã được xoá.',
+        description: 'Chúng tôi đã xoá điểm đón trả cho bạn',
+        status: 'success',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
       props.handleGetListLocation();
+    } else {
+      toastIdRef.current = toast({
+        title: 'Điểm đón trả không thể xoá',
+        description: 'Xảy ra lỗi khi xoá điểm đón trả. Làm ơn hãy thử lại.',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
     }
   };
   const ListLocationHTML = props.list.map((location, index) => {
     return (
-      <tr >
+      <tr>
         <td>{index + 1}</td>
         <td>{location.location_name}</td>
         <td>{location.city_name}</td>
         <td>{location.address}</td>
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
-            <IconButton icon={<SlPencil />} onClick={() => handleActiveModal(location?.id, location)} />
+            <IconButton
+              icon={<SlPencil />}
+              onClick={() => handleActiveModal(location?.id, location)}
+            />
             <IconButton
               icon={<IoTrashBinOutline />}
               onClick={() => handleDeleteLocation(location?.id)}
@@ -44,9 +68,9 @@ export default function ListLocation(props) {
       <thead>
         <tr>
           <td>STT</td>
-          <td>Tên tuyến </td>
-          <td>xe </td>
-          <td>thời gian xuất bến</td>
+          <td>Tên địa điểm</td>
+          <td>Tên thành phố</td>
+          <td>Địa chỉ</td>
           <td>Thao tác</td>
         </tr>
       </thead>

@@ -38,6 +38,7 @@ export default function Sidebar() {
       w={navSize == 'small' ? '75px' : '17%'}
       flexDir="column"
       justifyContent="flex-start"
+      id='bom-side-bar'
     >
       <Text fontSize={'2.2rem'} p="15% 10% 5%" fontFamily={'Gugi'}>
         BOM

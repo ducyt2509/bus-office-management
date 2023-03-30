@@ -1,13 +1,4 @@
-import {
-  Text,
-  Heading,
-  Card,
-  CardHeader,
-  CardBody,
-  Flex,
-  Image,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Text, Heading, Card, CardHeader, CardBody, Flex, Image } from '@chakra-ui/react';
 import axios from 'axios';
 import ActionBar from '@/components/bus-schedule/ActionBar';
 import ListBusSchedule from '@/components/bus-schedule/ListBusSchedule';
@@ -26,14 +17,14 @@ export default function ManagementBusSchedule(props) {
   const [numberBusSchedule, setNumberBusSchedule] = useState('');
 
   const handleGetListBusSchedule = useCallback(
-    async (page, limit, value) => {
-      page = typeof page == 'number' ? page - 1 : 0;
+    async (type, page, limit, value) => {
+      page = typeof page == 'number' ? page : 1;
       limit = limit ? limit : 7;
-      if (page) {
+      if (typeof page == 'number') {
         setCurrentPage(page);
       }
       const token = `Bearer ${state.dataUser.token}`;
-      const offset = limit * page;
+      const offset = limit * (page - 1);
       const getListBusSchedule = await axios.post(
         `http://localhost:${props.BACK_END_PORT}/bus-schedule/list-bus-schedule`,
         {
@@ -49,8 +40,10 @@ export default function ManagementBusSchedule(props) {
       );
       if (getListBusSchedule.data.statusCode === 200) {
         setListBusSchedule(getListBusSchedule.data.data.list_bus_schedule);
-        setCurrentPage(1);
         setNumberBusSchedule(getListBusSchedule.data.data.number_bus_schedule);
+        if (type == 'search') {
+          setCurrentPage(1);
+        }
       }
     },
     [state, querySearch]
@@ -59,7 +52,7 @@ export default function ManagementBusSchedule(props) {
     const value = e.target.value;
     setQuerySearch(value);
     if (!value) {
-      handleGetListBusSchedule(null, null, '');
+      handleGetListBusSchedule('search', null, null, '');
     }
   });
   const handleGetBusScheduleInformation = useCallback((id) => {

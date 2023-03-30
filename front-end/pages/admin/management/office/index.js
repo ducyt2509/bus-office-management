@@ -28,11 +28,11 @@ export default function ManagementOffice(props) {
   const [office, setOffice] = useState({});
 
   const handleGetListOffice = useCallback(
-    async (page, limit, value) => {
+    async (type, page, limit, value) => {
       limit = limit ? limit : 7;
-      page = typeof page == 'number' ? page - 1 : 0;
-      const offset = limit * page;
-      if (page) {
+      page = typeof page == 'number' ? page : 1;
+      const offset = limit * (page - 1);
+      if (typeof page == 'number') {
         setCurrentPage(page);
       }
       const token = `Bearer ${state.dataUser.token}`;
@@ -51,7 +51,9 @@ export default function ManagementOffice(props) {
       );
       if (getListOffice.data.statusCode === 200) {
         setListOffice(getListOffice.data.data.list_office);
-        setCurrentPage(1);
+        if (type == 'search') {
+          setCurrentPage(1);
+        }
         setNumberOffice(getListOffice.data.data.number_office);
       }
     },
@@ -61,7 +63,7 @@ export default function ManagementOffice(props) {
     const value = e.target.value;
     setQuerySearch(value);
     if (!value) {
-      handleGetListOffice(null, null, '');
+      handleGetListOffice('search', null, null, '');
     }
   });
   useEffect(() => {

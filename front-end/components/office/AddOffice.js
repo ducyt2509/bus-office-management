@@ -12,28 +12,89 @@ import {
   Select,
   Text,
   Textarea,
+  useToast,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
+import { useRef } from 'react';
 
 export default function AddCar(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
+
   const [listCity, setListCity] = useState([]);
 
   const [officeName, setOfficeName] = useState('');
   const [city, setCity] = useState();
   const [location, setLocation] = useState();
 
-  const handleChangeOfficeName = (e) => {
-    setOfficeName(e.target.value);
-  };
-  const handleChangeCity = (e) => {
-    setCity(e.target.value);
-  };
-  const handleChangeLocation = (e) => {
-    setLocation(e.target.value);
-  };
+  const [error, setError] = useState({
+    officeName: false,
+    city: false,
+    location: false,
+  });
+
+  const handleChangeOfficeName = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value) {
+        oldError.officeName = true;
+      } else {
+        oldError.officeName = false;
+      }
+      setError(oldError);
+      setOfficeName(e.target.value);
+    },
+    [error]
+  );
+  const handleChangeCity = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value) {
+        oldError.city = true;
+      } else {
+        oldError.city = false;
+      }
+      setError(oldError);
+      setCity(e.target.value);
+    },
+    [error]
+  );
+  const handleChangeLocation = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value) {
+        oldError.location = true;
+      } else {
+        oldError.location = false;
+      }
+      setError(oldError);
+      setLocation(e.target.value);
+    },
+    [error]
+  );
 
   const handleAddVehicle = useCallback(async () => {
+    let oldError = { ...error };
+    if (!officeName) {
+      oldError.officeName = true;
+    }
+    if (!city) {
+      oldError.city = true;
+    }
+    if (!location) {
+      oldError.location = true;
+    }
+    if (oldError.officeName || oldError.city || oldError.location) {
+      setError(oldError);
+      return;
+    }
     const submitData = {
       office_name: officeName,
       city_id: city,
@@ -49,8 +110,25 @@ export default function AddCar(props) {
         }
       );
       if (updateOffice.data.statusCode == 200) {
+        toastIdRef.current = toast({
+          title: 'Thông tin văn phòng đã được cập nhật.',
+          description: 'Chúng tôi đã cập nhật thông tin văn phòng cho bạn.',
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
         props.handleGetListOffice();
         props.onClose();
+      } else {
+        toastIdRef.current = toast({
+          title: 'Thông tin văn phòng không thể cập nhật.',
+          description: 'Xảy ra lỗi khi cập nhật thông tin văn phòng. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
       }
     } else {
       const addOffice = await axios.post(
@@ -61,11 +139,28 @@ export default function AddCar(props) {
         }
       );
       if (addOffice.data.statusCode == 200) {
+        toastIdRef.current = toast({
+          title: 'Thông tin văn phòng đã được thêm.',
+          description: 'Chúng tôi đã thêm thông tin văn phòng cho bạn.',
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
         props.handleGetListOffice();
         props.onClose();
+      } else {
+        toastIdRef.current = toast({
+          title: 'Không thể thêm mới Thông tin văn phòng.',
+          description: 'Xảy ra lỗi khi thêm thông tin văn phòng. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
       }
     }
-  }, [location, city, officeName]);
+  }, [location, city, officeName, error]);
 
   const handleGetListCity = async () => {
     const getListCity = await axios.get(`http://localhost:${props.port}/city/list-city`, {
@@ -81,10 +176,15 @@ export default function AddCar(props) {
       setOfficeName(props.office.office_name);
       setCity(props.office.city.id);
       setLocation(props.office.office_address);
+      setError({
+        officeName: false,
+        city: false,
+        location: false,
+      });
     } else {
-      setOfficeName("");
+      setOfficeName('');
       setCity(0);
-      setLocation("");
+      setLocation('');
     }
   }, [props.officeId]);
 
@@ -105,28 +205,43 @@ export default function AddCar(props) {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Flex marginBottom={'5%'}>
-              <Text width={'51.5%'} fontWeight={'500'}>
-                Tên văn phòng
-              </Text>
-              <Input value={officeName} onChange={handleChangeOfficeName} />
-            </Flex>
-            <Flex marginBottom={'5%'}>
-              <Text width={'50%'} fontWeight={'500'}>
-                Tỉnh/Thành phố
-              </Text>
-              <Select placeholder="Select option" value={city} onChange={handleChangeCity}>
-                {listCity.map((city) => {
-                  return <option value={city?.id}>{city?.city_name}</option>;
-                })}
-              </Select>
-            </Flex>
-            <Flex marginBottom={'5%'}>
-              <Text width={'51.5%'} fontWeight={'500'}>
-                Địa chỉ
-              </Text>
-              <Textarea value={location} onChange={handleChangeLocation} />
-            </Flex>
+            <FormControl marginBottom={'5%'} isRequired isInvalid={error.officeName}>
+              <Flex>
+                <FormLabel marginBottom="0" width={'51.5%'} fontWeight={'500'}>
+                  Tên văn phòng
+                </FormLabel>
+                <Input value={officeName} onChange={handleChangeOfficeName} />
+              </Flex>
+              <FormErrorMessage justifyContent={'flex-end'}>
+                Tên văn phòng là bắt buộc
+              </FormErrorMessage>
+            </FormControl>
+
+            <FormControl marginBottom={'5%'} isRequired isInvalid={error.city}>
+              <Flex>
+                <FormLabel marginBottom="0" width={'50%'} fontWeight={'500'}>
+                  Tỉnh/Thành phố
+                </FormLabel>
+                <Select placeholder="Select option" value={city} onChange={handleChangeCity}>
+                  {listCity.map((city) => {
+                    return <option value={city?.id}>{city?.city_name}</option>;
+                  })}
+                </Select>
+              </Flex>
+              <FormErrorMessage justifyContent={'flex-end'}>
+                Tỉnh/Thành phố là bắt buộc
+              </FormErrorMessage>
+            </FormControl>
+
+            <FormControl marginBottom={'5%'} isRequired isInvalid={error.location}>
+              <Flex>
+                <FormLabel width={'51.5%'} fontWeight={'500'}>
+                  Địa chỉ
+                </FormLabel>
+                <Textarea value={location} onChange={handleChangeLocation} />
+              </Flex>
+              <FormErrorMessage justifyContent={'flex-end'}>Địa chỉ là bắt buộc</FormErrorMessage>
+            </FormControl>
           </ModalBody>
 
           <ModalFooter justifyContent={'space-around'}>

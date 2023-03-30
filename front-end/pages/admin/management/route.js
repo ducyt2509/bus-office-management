@@ -28,11 +28,11 @@ export default function ManagementRoute(props) {
   const [route, setRoute] = useState({});
 
   const handleGetListRoute = useCallback(
-    async (page, limit, value) => {
+    async (type, page, limit, value) => {
       limit = limit ? limit : 7;
-      page = typeof page == 'number' ? page - 1 : 0;
-      const offset = limit * page;
-      if (page) {
+      page = typeof page == 'number' ? page : 1;
+      const offset = limit * (page - 1);
+      if (typeof page == 'number') {
         setCurrentPage(page);
       }
       const token = `Bearer ${state.dataUser.token}`;
@@ -51,7 +51,9 @@ export default function ManagementRoute(props) {
       );
       if (getListRoute.data.statusCode === 200) {
         setListRoute(getListRoute.data.data.list_route);
-        setCurrentPage(1);
+        if (type == 'search') {
+          setCurrentPage(1);
+        }
         setNumberRoute(getListRoute.data.data.number_route);
       }
     },
@@ -61,7 +63,7 @@ export default function ManagementRoute(props) {
     const value = e.target.value;
     setQuerySearch(value);
     if (!value) {
-      handleGetListRoute(null, null, '');
+      handleGetListRoute('search', null, null, '');
     }
   });
   useEffect(() => {
@@ -88,7 +90,7 @@ export default function ManagementRoute(props) {
       <div style={{ width: '90%', margin: '0 auto' }}>
         <Card backgroundColor={'#F5F5F5'}>
           <CardHeader>
-            <Heading size="lg">Quản lí văn phòng</Heading>
+            <Heading size="lg">Quản lí tuyến đường</Heading>
           </CardHeader>
           <CardBody>
             <ActionBar

@@ -28,11 +28,11 @@ export default function ManagementTransport(props) {
   const [transport, setTransport] = useState({});
 
   const handleGetListTransport = useCallback(
-    async (page, limit, value) => {
+    async (type, page, limit, value) => {
       limit = limit ? limit : 7;
-      page = typeof page == 'number' ? page - 1 : 0;
-      const offset = limit * page;
-      if (page) {
+      page = typeof page == 'number' ? page : 1;
+      const offset = limit * (page - 1);
+      if (typeof page == 'number') {
         setCurrentPage(page);
       }
       const token = `Bearer ${state.dataUser.token}`;
@@ -51,7 +51,9 @@ export default function ManagementTransport(props) {
       );
       if (getListTransport.data.statusCode === 200) {
         setListTransport(getListTransport.data.data.list_transport);
-        setCurrentPage(page);
+        if (type == 'search') {
+          setCurrentPage(1);
+        }
         setNumberTransport(getListTransport.data.data.number_transport);
       }
     },
@@ -61,7 +63,7 @@ export default function ManagementTransport(props) {
     const value = e.target.value;
     setQuerySearch(value);
     if (!value) {
-      handleGetListTransport(null, null, '');
+      handleGetListTransport('search', null, null, '');
     }
   });
   useEffect(() => {
@@ -107,14 +109,14 @@ export default function ManagementTransport(props) {
               handleGetListTransport={handleGetListTransport}
               port={props.BACK_END_PORT}
             />
-            {/* <Pagination
+            <Pagination
               list_number={numberTransport}
               handleGetList={handleGetListTransport}
               setList={setListTransport}
               list={listTransport}
               setCurrentPage={setCurrentPage}
               currentPage={currentPage}
-            /> */}
+            />
             <AddTransport
               isOpen={isOpen}
               onClose={onClose}

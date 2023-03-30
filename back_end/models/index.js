@@ -54,8 +54,8 @@ db.tickets = require('./ticket')(sequelize, Sequelize);
 db.daily_bus_schedules = require('./daily_bus_schedule')(sequelize, Sequelize);
 db.location_on_bus_schedules = require('./location_on_bus_schedule')(sequelize, Sequelize);
 
-db.buses.belongsTo(db.users, { foreignKey: 'main_driver_id' });
-db.users.hasMany(db.buses, { foreignKey: 'main_driver_id' });
+// db.buses.belongsTo(db.users, { foreignKey: 'main_driver_id' });
+// db.users.hasMany(db.buses, { foreignKey: 'main_driver_id' });
 
 // db.buses.belongsTo(db.users, { foreignKey: 'support_driver_id' });
 // db.users.hasMany(db.buses, { foreignKey: 'support_driver_id' });

@@ -2,7 +2,6 @@ import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { FormErrorMessage } from '@chakra-ui/react';
 
 export default function ListRouteOnBusSchedule(props) {
   const [listRoute, setListRoute] = useState([]);
@@ -12,8 +11,8 @@ export default function ListRouteOnBusSchedule(props) {
   const handleGetListRoute = useCallback(
     async (page, limit, value) => {
       limit = limit ? limit : 7;
-      page = typeof page == 'number' ? page - 1 : 0;
-      const offset = limit * page;
+      page = typeof page == 'number' ? page - 1 : 1;
+      const offset = limit * (page - 1);
       const token = `Bearer ${props.state.dataUser.token}`;
       const getListRoute = await axios.post(
         `http://localhost:${props.BACK_END_PORT}/route/list-route`,

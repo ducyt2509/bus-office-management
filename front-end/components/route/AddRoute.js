@@ -8,34 +8,73 @@ import {
 	ModalBody,
 	ModalFooter,
 	Flex,
-	Input,
 	Select,
 	Text,
-	Textarea,
+	useToast,
+	FormControl,
+	FormLabel,
+	FormErrorMessage,
+	Box,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
+import { useRef } from "react";
 
 export default function AddRoute(props) {
+	const toast = useToast();
+	const toastIdRef = useRef();
 	const [listCity, setListCity] = useState([]);
 
 	const [cityFrom, setCityFrom] = useState("");
 	const [cityTo, setCityTo] = useState("");
-	const [route, setRoute] = useState();
+	const [error, setError] = useState({
+		cityFrom: false,
+		cityTo: false,
+	});
 
-	const handleChangeCityFrom = (e) => {
-		setCityFrom(e.target.value);
-	};
+	const handleChangeCityFrom = useCallback(
+		(e) => {
+			let value = e.target.value;
+			let oldError = { ...error };
+			if (!value) {
+				oldError.cityFrom = true;
+			} else {
+				oldError.cityFrom = false;
+			}
+			setError(oldError);
+			setCityFrom(value);
+		},
+		[error],
+	);
 
-	const handleChangeCityTo = (e) => {
-		setCityTo(e.target.value);
-	};
-
-	const handleChangeRoute = (e) => {
-		setRoute(e.target.value);
-	};
+	const handleChangeCityTo = useCallback(
+		(e) => {
+			let value = e.target.value;
+			let oldError = { ...error };
+			if (!value) {
+				oldError.cityTo = true;
+			} else {
+				oldError.cityTo = false;
+			}
+			setError(oldError);
+			setCityTo(value);
+		},
+		[error],
+	);
 
 	const handleAddRoute = useCallback(async () => {
+		let oldError = { ...error };
+		if (!cityFrom) {
+			oldError.cityFrom = true;
+		}
+		if (!cityTo) {
+			oldError.cityTo = true;
+		}
+
+		if (oldError.cityFrom || oldError.cityTo) {
+			setError(oldError);
+			return;
+		}
 		const submitData = {
 			city_from_id: cityFrom,
 			city_to_id: cityTo,
@@ -50,8 +89,25 @@ export default function AddRoute(props) {
 				},
 			);
 			if (updateRoute.data.statusCode == 200) {
+				toastIdRef.current = toast({
+					title: "Thông tin tuyến đường đã được cập nhật.",
+					description: "Chúng tôi đã cập nhật thông tin tuyến đường cho bạn.",
+					status: "success",
+					isClosable: true,
+					position: "top",
+					duration: 2000,
+				});
 				props.handleGetListRoute();
 				props.onClose();
+			} else {
+				toastIdRef.current = toast({
+					title: "Thông tin tuyến đường không thể cập nhật.",
+					description: "Xảy ra lỗi khi cập nhật thông tin tuyến đường. Làm ơn hãy thử lại.",
+					status: "error",
+					isClosable: true,
+					position: "top",
+					duration: 2000,
+				});
 			}
 		} else {
 			const addRoute = await axios.post(
@@ -62,11 +118,28 @@ export default function AddRoute(props) {
 				},
 			);
 			if (addRoute.data.statusCode == 200) {
+				toastIdRef.current = toast({
+					title: "Thông tin tuyến đường đã được thêm.",
+					description: "Chúng tôi đã thêm thông tin tuyến đường cho bạn.",
+					status: "success",
+					isClosable: true,
+					position: "top",
+					duration: 2000,
+				});
 				props.handleGetListRoute();
 				props.onClose();
+			} else {
+				toastIdRef.current = toast({
+					title: "Không thể thêm mới thông tin tuyến đường.",
+					description: "Xảy ra lỗi khi thêm thông tin tuyến đường. Làm ơn hãy thử lại.",
+					status: "error",
+					isClosable: true,
+					position: "top",
+					duration: 2000,
+				});
 			}
 		}
-	}, [route, cityFrom, cityTo]);
+	}, [cityFrom, cityTo, error]);
 
 	const handleGetListCity = async () => {
 		const getListCity = await axios.get(`http://localhost:${props.port}/city/list-city`, {
@@ -81,11 +154,13 @@ export default function AddRoute(props) {
 		if (props.routeId) {
 			setCityFrom(props.route.city_from_id);
 			setCityTo(props.route.city_to_id);
-			setRoute(props.route);
+			setError({
+				cityFrom: false,
+				cityTo: false,
+			});
 		} else {
 			setCityFrom(0);
 			setCityTo(0);
-			setRoute();
 		}
 	}, [props.routeId]);
 
@@ -99,7 +174,7 @@ export default function AddRoute(props) {
 			<Modal
 				isOpen={props.isOpen}
 				onClose={props.onClose}
-				size="xl"
+				size="sm"
 			>
 				<ModalOverlay />
 				<ModalContent>
@@ -113,43 +188,75 @@ export default function AddRoute(props) {
 					</ModalHeader>
 					<ModalCloseButton />
 					<ModalBody>
-						<Flex marginBottom={"5%"}>
-							<Text
-								width={"50%"}
-								fontWeight={"500"}
-								mt={"10px"}
-							>
-								Tỉnh/Thành phố đi :
-							</Text>
-							<Select
-								placeholder="Chọn tỉnh/thành phố"
-								value={cityFrom}
-								onChange={handleChangeCityFrom}
-							>
-								{listCity.map((city) => {
-									return <option value={city?.id}>{city?.city_name}</option>;
-								})}
-							</Select>
-						</Flex>
+						<FormControl
+							marginBottom={"5%"}
+							isRequired
+							isInvalid={error.cityFrom}
+						>
+							<Flex>
+								<FormLabel
+									width={"50%"}
+									fontWeight={"500"}
+									marginBottom="0"
+								>
+									Tỉnh/Thành phố đi :
+								</FormLabel>
+								<Select
+									placeholder="Select option"
+									value={cityFrom}
+									onChange={handleChangeCityFrom}
+								>
+									{listCity.map((city) => {
+										return (
+											<option
+												value={city?.id}
+												disabled={cityTo == city?.id ? true : false}
+											>
+												{city?.city_name}
+											</option>
+										);
+									})}
+								</Select>
+							</Flex>
+							<FormErrorMessage justifyContent={"flex-end"}>
+								Tỉnh/Thành phố đi là bắt buộc
+							</FormErrorMessage>
+						</FormControl>
 
-						<Flex marginBottom={"5%"}>
-							<Text
-								width={"50%"}
-								fontWeight={"500"}
-								mt={"10px"}
-							>
-								Tỉnh/Thành phố đến :
-							</Text>
-							<Select
-								placeholder="Chọn tỉnh/thành phố"
-								value={cityTo}
-								onChange={handleChangeCityTo}
-							>
-								{listCity.map((city) => {
-									return <option value={city?.id}>{city?.city_name}</option>;
-								})}
-							</Select>
-						</Flex>
+						<FormControl
+							marginBottom={"5%"}
+							isRequired
+							isInvalid={error.cityTo}
+						>
+							<Flex>
+								<FormLabel
+									width={"50%"}
+									fontWeight={"500"}
+									marginBottom="0"
+								>
+									Tỉnh/Thành phố đến :
+								</FormLabel>
+								<Select
+									placeholder="Select option"
+									value={cityTo}
+									onChange={handleChangeCityTo}
+								>
+									{listCity.map((city) => {
+										return (
+											<option
+												value={city?.id}
+												disabled={cityFrom == city?.id ? true : false}
+											>
+												{city?.city_name}
+											</option>
+										);
+									})}
+								</Select>
+							</Flex>
+							<FormErrorMessage justifyContent={"flex-end"}>
+								Tỉnh/Thành phố đến là bắt buộc
+							</FormErrorMessage>
+						</FormControl>
 					</ModalBody>
 
 					<ModalFooter justifyContent={"space-around"}>

@@ -8,12 +8,19 @@ import {
   Button,
   ButtonGroup,
   Select,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  useToast,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useStore } from '@/src/store';
+import { validate } from '@/helper';
 
 export default function Setting(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const [state, dispath] = useStore();
   const [listOffice, setListOffice] = useState([]);
 
@@ -24,14 +31,41 @@ export default function Setting(props) {
   const [userOffice, setUserOffice] = useState(state.dataUser?.office_id);
   const [userAddress, setUserAddress] = useState(state.dataUser?.office?.office_address);
 
-  const handleChangeUserName = (e) => {
-    setUserName(e.target.value);
-  };
+  const [error, setError] = useState({
+    userName: false,
+    userPhone: false,
+  });
+
+  const handleChangeUserName = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value) {
+        oldError.userName = true;
+      } else {
+        oldError.userName = false;
+      }
+      setError(oldError);
+      setUserName(value);
+    },
+    [error]
+  );
+  const handleChangeUserPhone = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value || !value.match(validate.phone)) {
+        oldError.userPhone = true;
+      } else {
+        oldError.userPhone = false;
+      }
+      setError(oldError);
+      setUserPhone(value);
+    },
+    [error]
+  );
   const handleChangeUserEmail = (e) => {
     setUserEmail(e.target.value);
-  };
-  const handleChangeUserPhone = (e) => {
-    setUserPhone(e.target.value);
   };
   const handleChangeUserRole = (e) => {
     setUserRole(e.target.value);
@@ -63,6 +97,17 @@ export default function Setting(props) {
     setUserOffice(state.dataUser.office.office_name);
   };
   const handleUpdateUser = useCallback(async () => {
+    let oldError = { ...error };
+    if (!userName) {
+      oldError.userName = true;
+    }
+    if (!userPhone) {
+      oldError.userPhone = true;
+    }
+    if (oldError.userName || oldError.userPhone) {
+      setError(oldError);
+      return;
+    }
     let phone = userPhone;
     if (userPhone && userPhone[0] == 0) {
       phone = '+841' + userPhone.substring(1);
@@ -88,7 +133,7 @@ export default function Setting(props) {
     );
     if (updateUser.data.statusCode == 200) {
     }
-  }, [userEmail, userPhone, userRole, userOffice, userName, state]);
+  }, [userEmail, userPhone, userRole, userOffice, userName, state, error]);
 
   useEffect(() => {
     handleGetListOffice();
@@ -112,7 +157,7 @@ export default function Setting(props) {
           alt="Dan Abramov"
         />
       </Flex>
-      <div className={'bom-personal-info'} style={{ height: '120vh' }}>
+      <div className={'bom-personal-info'} style={{ height: '130vh' }}>
         <Flex padding={'3%'} justifyContent="space-between" height={'100vh'}>
           <div style={{ width: '48%' }}>
             <Heading fontSize={'25px'} marginBottom="5%">
@@ -130,16 +175,24 @@ export default function Setting(props) {
                 Thay đổi
               </Button>
             </Flex>
-            <Text marginBottom={'3%'}>Họ và tên</Text>
-            <Input marginBottom={'4%'} value={userName} onChange={handleChangeUserName} />
+            <FormControl marginBottom={'4%'} isRequired isInvalid={error.userName}>
+              <FormLabel marginBottom={'3%'}>Họ và tên</FormLabel>
+              <Input value={userName} onChange={handleChangeUserName} />
+              <FormErrorMessage>Họ và tên là bắt buộc</FormErrorMessage>
+            </FormControl>
             <Flex marginBottom={'4%'} justifyContent={'space-between'}>
+              <Stack width={'48%'} justifyContent="flex-end">
+                <FormControl isRequired isInvalid={error.userPhone}>
+                  <FormLabel marginBottom={'6%'}>Số điện thoại</FormLabel>
+                  <Input value={userPhone} onChange={handleChangeUserPhone} />
+                  <FormErrorMessage>
+                    {!userPhone ? 'Số điện thoại là bắt buộc' : 'Số điện thoại sai định dạng'}
+                  </FormErrorMessage>
+                </FormControl>
+              </Stack>
               <Stack width={'48%'}>
                 <Text marginBottom={'3%'}>Email</Text>
                 <Input value={userEmail} onChange={handleChangeUserEmail} />
-              </Stack>
-              <Stack width={'48%'}>
-                <Text marginBottom={'3%'}>Số diện thoại</Text>
-                <Input value={userPhone} onChange={handleChangeUserPhone} />
               </Stack>
             </Flex>
             <Text marginBottom={'3%'}>Chức vụ</Text>

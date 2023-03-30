@@ -1,8 +1,12 @@
 import { SlPencil } from 'react-icons/sl';
-import { IoTrashBinOutline, IoPersonOutline, IoCallOutline } from 'react-icons/io5';
-import { Stack, IconButton, Flex } from '@chakra-ui/react';
+import { IoTrashBinOutline } from 'react-icons/io5';
+import { Stack, IconButton, useToast } from '@chakra-ui/react';
 import axios from 'axios';
+import { useRef } from 'react';
+
 export default function ListRoute(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const handleActiveModal = (routeId, route) => {
     props.setRoute(route);
     props.setRouteId(routeId);
@@ -17,7 +21,24 @@ export default function ListRoute(props) {
       }
     );
     if (deleteRoute.data.statusCode == 200) {
+      toastIdRef.current = toast({
+        title: 'Thông tin tuyến đường đã được xoá.',
+        description: 'Chúng tôi đã xoá thông tin tuyến đường cho bạn',
+        status: 'success',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
       props.handleGetListRoute();
+    } else {
+      toastIdRef.current = toast({
+        title: 'Thông tin tuyến đường không thể xoá',
+        description: 'Xảy ra lỗi khi xoá thông tin tuyến đường. Làm ơn hãy thử lại.',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
     }
   };
   const ListRouteHTML = props.list.map((route, index) => {

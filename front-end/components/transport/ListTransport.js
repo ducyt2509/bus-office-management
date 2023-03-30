@@ -1,9 +1,13 @@
 import { SlPencil } from 'react-icons/sl';
-import { IoTrashBinOutline, IoPersonOutline, IoCallOutline } from 'react-icons/io5';
-import { Stack, IconButton, Flex } from '@chakra-ui/react';
+import { IoTrashBinOutline } from 'react-icons/io5';
+import { Stack, IconButton, useToast } from '@chakra-ui/react';
 import axios from 'axios';
+import { useRef } from 'react';
 import { convertTime } from '@/helper';
+
 export default function ListTransport(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const handleActiveModal = (transportId, transport) => {
     props.setTransport(transport);
     props.setTransportId(transportId);
@@ -18,20 +22,42 @@ export default function ListTransport(props) {
       }
     );
     if (deleteTransport.data.statusCode == 200) {
+      toastIdRef.current = toast({
+        title: 'Hành trình xe đã được xoá.',
+        description: 'Chúng tôi đã xoá hành trình xe cho bạn',
+        status: 'success',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
       props.handleGetListLocation();
+    } else {
+      toastIdRef.current = toast({
+        title: 'Hành trình xe không thể xoá',
+        description: 'Xảy ra lỗi khi xoá hành trình xe. Làm ơn hãy thử lại.',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
     }
   };
   const ListTransportHTML = props.list.map((transport, index) => {
     return (
       <tr key={index}>
         <td>{index + 1}</td>
-        <td>{transport.departure_city}-{transport.arrive_city}</td>
+        <td>
+          {transport.departure_city}-{transport.arrive_city}
+        </td>
         <td>{convertTime(transport.time_from, 0)}</td>
         <td>{transport.vehicle_plate}</td>
-        <td>{new Date(transport.departure_date).toISOString().split("T")[0]}</td>
+        <td>{new Date(transport.departure_date).toISOString().split('T')[0]}</td>
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
-            <IconButton icon={<SlPencil />} onClick={() => handleActiveModal(transport?.id, transport)} />
+            <IconButton
+              icon={<SlPencil />}
+              onClick={() => handleActiveModal(transport?.id, transport)}
+            />
             <IconButton
               icon={<IoTrashBinOutline />}
               onClick={() => handleDeleteTransport(transport?.id)}

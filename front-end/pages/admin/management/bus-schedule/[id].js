@@ -67,89 +67,104 @@ export default function BusScheduleDetail(props) {
   const [locationDropOff, setLocationDropOff] = useState([]);
   const [addressDropOff, setAddressDropOff] = useState([]);
 
-  const handleChangeTimeForm = (e) => {
-    let value = e.target.value;
-    let oldError = { ...error };
-    if (!value) {
-      oldError.timeFrom = true;
-    } else {
-      oldError.timeFrom = false;
-    }
-    setError(oldError);
-    setTimeFrom(value);
-  };
-
-  const handleChangeTravelTime = (e) => {
-    let value = e.target.value;
-    let oldError = { ...error };
-    if (!value || !value.match(validate.float)) {
-      oldError.travelTime = true;
-    } else {
-      oldError.travelTime = false;
-    }
-    setError(oldError);
-    setTravelTime(value);
-  };
-
-  const handleChangePrice = (e) => {
-    let value = e.target.value;
-    let oldError = { ...error };
-    if (!value || !value.match(validate.float)) {
-      oldError.price = true;
-    } else {
-      oldError.price = false;
-    }
-    setError(oldError);
-    setPrice(value);
-  };
-
-  const handleChangeScheduleStatus = (e) => {
-    let value = e.target.value;
-    let oldError = { ...error };
-    if (!value) {
-      oldError.scheduleStatus = true;
-    } else {
-      oldError.scheduleStatus = false;
-    }
-    setError(oldError);
-    setScheduleStatus(value);
-  };
-
-  const handleChangeScheduleFrequency = (e) => {
-    let value = e.target.value;
-    let oldError = { ...error };
-    if (!value || !value.match(validate.number)) {
-      oldError.scheduleFrequency = true;
-    } else {
-      oldError.scheduleFrequency = false;
-    }
-    setError(oldError);
-    setScheduleFrequency(value);
-  };
-
-  const handleChangeScheduleExpire = (e) => {
-    let value = e.target.value;
-    let oldError = { ...error };
-    if (!value || !value.match(validate.number)) {
-      oldError.scheduleExpire = true;
-    } else {
-      oldError.scheduleExpire = false;
-    }
-    setError(oldError);
-    setScheduleExpire(value);
-  };
-  const handleChangeEffectiveDate = (e) => {
-    let value = e.target.value;
-    let oldError = { ...error };
-    if (!value) {
-      oldError.effectiveDate = true;
-    } else {
-      oldError.effectiveDate = false;
-    }
-    setError(oldError);
-    setEffectiveDate(value);
-  };
-
+  const handleChangeTimeForm = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value) {
+        oldError.timeFrom = true;
+      } else {
+        oldError.timeFrom = false;
+      }
+      setError(oldError);
+      setTimeFrom(value);
+    },
+    [error]
+  );
+  const handleChangeTravelTime = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value || !value.match(validate.float)) {
+        oldError.travelTime = true;
+      } else {
+        oldError.travelTime = false;
+      }
+      setError(oldError);
+      setTravelTime(value);
+    },
+    [error]
+  );
+  const handleChangePrice = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value || !value.match(validate.float)) {
+        oldError.price = true;
+      } else {
+        oldError.price = false;
+      }
+      setError(oldError);
+      setPrice(value);
+    },
+    [error]
+  );
+  const handleChangeScheduleStatus = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value) {
+        oldError.scheduleStatus = true;
+      } else {
+        oldError.scheduleStatus = false;
+      }
+      setError(oldError);
+      setScheduleStatus(value);
+    },
+    [error]
+  );
+  const handleChangeScheduleFrequency = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value || !value.match(validate.number)) {
+        oldError.scheduleFrequency = true;
+      } else {
+        oldError.scheduleFrequency = false;
+      }
+      setError(oldError);
+      setScheduleFrequency(value);
+    },
+    [error]
+  );
+  const handleChangeScheduleExpire = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value || !value.match(validate.number)) {
+        oldError.scheduleExpire = true;
+      } else {
+        oldError.scheduleExpire = false;
+      }
+      setError(oldError);
+      setScheduleExpire(value);
+    },
+    [error]
+  );
+  const handleChangeEffectiveDate = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value) {
+        oldError.effectiveDate = true;
+      } else {
+        oldError.effectiveDate = false;
+      }
+      setError(oldError);
+      setEffectiveDate(value);
+    },
+    [error]
+  );
   const handleSubmitData = useCallback(async () => {
     let oldError = { ...error };
     if (!route) {
@@ -234,8 +249,8 @@ export default function BusScheduleDetail(props) {
       );
       if (updateBusSchedule.data.statusCode == 200) {
         toastIdRef.current = toast({
-          title: 'Bus schedule updated.',
-          description: "We've updated bus schedule for you.",
+          title: 'Lịch trình đã được cập nhật.',
+          description: 'Chúng tôi đã cập nhật lịch trình cho bạn.',
           status: 'success',
           isClosable: true,
           position: 'top',
@@ -246,8 +261,8 @@ export default function BusScheduleDetail(props) {
         }, 2000);
       } else {
         toastIdRef.current = toast({
-          title: 'Bus schedule cant updated.',
-          description: 'Having some error when update bus schedule. PLease try again',
+          title: 'Lịch trình không thể cập nhật.',
+          description: 'Xảy ra lỗi khi cập nhật lịch trình. Làm ơn hãy thử lại.',
           status: 'error',
           isClosable: true,
           position: 'top',
@@ -263,8 +278,8 @@ export default function BusScheduleDetail(props) {
       );
       if (createBusSchedule.data.statusCode == 200) {
         toastIdRef.current = toast({
-          title: 'Bus schedule created.',
-          description: "We've created bus schedule for you.",
+          title: 'Lịch trình đã được thêm.',
+          description: 'Chúng tôi đã thêm lịch trình cho bạn.',
           status: 'success',
           isClosable: true,
           position: 'top',
@@ -275,8 +290,8 @@ export default function BusScheduleDetail(props) {
         }, 2000);
       } else {
         toastIdRef.current = toast({
-          title: 'Bus schedule cant created.',
-          description: 'Having some error when create bus schedule. PLease try again',
+          title: 'Không thể thêm mới lịch trình.',
+          description: 'Xảy ra lỗi khi thêm lịch trình. Làm ơn hãy thử lại.',
           status: 'error',
           isClosable: true,
           position: 'top',

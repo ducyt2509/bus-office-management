@@ -8,37 +8,94 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  Flex,
   Input,
   Select,
   Text,
-  Textarea,
+  useToast,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  Box,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { convertTime, formatDate, validate } from '@/helper';
+import { useRef } from 'react';
 
 export default function AddTransport(props) {
-  const [state, dispatch] = useStore()
-  const [listBusSchedule, setListBusSchedule] = useState([])
-  const [listBus, setListBus] = useState([])
+  const toast = useToast();
+  const toastIdRef = useRef();
+  const [state, dispatch] = useStore();
+  const [listBusSchedule, setListBusSchedule] = useState([]);
+  const [listBus, setListBus] = useState([]);
 
-  const [busPlate, setBusPlate] = useState()
-  const [busSchedule, setBusSchedule] = useState()
-  const [time, setTime] = useState()
+  const [busPlate, setBusPlate] = useState();
+  const [busSchedule, setBusSchedule] = useState();
+  const [time, setTime] = useState();
 
+  const [error, setError] = useState({
+    busPlate: false,
+    busSchedule: false,
+    time: false,
+  });
 
-  const handleChangeBusPlate = (e) => {
-    setBusPlate(e.target.value);
-  };
-  const handleChangeBusSchedule = (e) => {
-    setBusSchedule(e.target.value);
-  };
-  const handleChangeTime = (e) => {
-    setTime(e.target.value);
-  };
-
+  const handleChangeBusPlate = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value) {
+        oldError.busPlate = true;
+      } else {
+        oldError.busPlate = false;
+      }
+      setError(oldError);
+      setBusPlate(value);
+    },
+    [error]
+  );
+  const handleChangeBusSchedule = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value) {
+        oldError.busSchedule = true;
+      } else {
+        oldError.busSchedule = false;
+      }
+      setError(oldError);
+      setBusSchedule(value);
+    },
+    [error]
+  );
+  const handleChangeTime = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value) {
+        oldError.time = true;
+      } else {
+        oldError.time = false;
+      }
+      setError(oldError);
+      setTime(value);
+    },
+    [error]
+  );
   const handleAddTransport = useCallback(async () => {
+    let oldError = { ...error };
+    if (!time) {
+      oldError.time = true;
+    }
+    if (!busPlate) {
+      oldError.busPlate = true;
+    }
+    if (!busSchedule) {
+      oldError.busSchedule = true;
+    }
+    if (oldError.time || oldError.busPlate || oldError.busSchedule) {
+      setError(oldError);
+      return;
+    }
     const submitData = {
       bus_schedule_id: busSchedule,
       bus_id: busPlate,
@@ -54,8 +111,25 @@ export default function AddTransport(props) {
         }
       );
       if (updateLocation.data.statusCode == 200) {
+        toastIdRef.current = toast({
+          title: 'Hành trình xe đã được cập nhật.',
+          description: 'Chúng tôi đã cập nhật hành trình xe cho bạn.',
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
         props.handleGetListTransport(props.currentPage);
         props.onClose();
+      } else {
+        toastIdRef.current = toast({
+          title: 'Hành trình xe không thể cập nhật.',
+          description: 'Xảy ra lỗi khi cập nhật hành trình xe. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
       }
     } else {
       const addLocation = await axios.post(
@@ -66,22 +140,38 @@ export default function AddTransport(props) {
         }
       );
       if (addLocation.data.statusCode == 200) {
-        props.handleGetListTransport(props.currentPage,);
+        toastIdRef.current = toast({
+          title: 'Hành trình xe đã được thêm.',
+          description: 'Chúng tôi đã thêm hành trình xe cho bạn.',
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+        props.handleGetListTransport(props.currentPage);
         props.onClose();
+      } else {
+        toastIdRef.current = toast({
+          title: 'Không thể thêm mới Hành trình xe.',
+          description: 'Xảy ra lỗi khi thêm hành trình xe. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
       }
     }
     setBusPlate(0);
     setBusSchedule(0);
-    setTime("")
-
-  }, [time, busPlate, busSchedule]);
+    setTime('');
+  }, [time, busPlate, busSchedule, error]);
 
   const handleGetListBusSchedule = useCallback(
     async (page, limit, value) => {
-      page = typeof page == 'number' ? page - 1 : 0;
+      page = typeof page == 'number' ? page - 1 : 1;
       limit = limit ? limit : 7;
       const token = `Bearer ${state.dataUser.token}`;
-      const offset = limit * page;
+      const offset = limit * (page - 1);
       const getListBusSchedule = await axios.post(
         `http://localhost:${props.port}/bus-schedule/list-bus-schedule`,
         {
@@ -105,8 +195,8 @@ export default function AddTransport(props) {
     async (page, limit, value) => {
       const token = `Bearer ${state.dataUser.token}`;
       limit = limit ? limit : 7;
-      page = typeof page == 'number' ? page - 1 : 0;
-      const offset = limit * page;
+      page = typeof page == 'number' ? page - 1 : 1;
+      const offset = limit * (page - 1);
       const getListBus = await axios.post(
         `http://localhost:${props.port}/bus/list-bus`,
         {
@@ -128,27 +218,31 @@ export default function AddTransport(props) {
   );
 
   useEffect(() => {
-    console.log(props.transport)
     if (props.transportId) {
       setTime(formatDate(props.transport.departure_date));
       setBusPlate(props.transport.bus_id);
-      setBusSchedule(props.transport.bus_schedule_id)
+      setBusSchedule(props.transport.bus_schedule_id);
+      setError({
+        busPlate: false,
+        busSchedule: false,
+        time: false,
+      });
     } else {
       setBusPlate(0);
       setBusSchedule(0);
-      setTime("")
+      setTime('');
     }
   }, [props.transportId]);
 
   useEffect(() => {
     if (props.isOpen) {
       handleGetListBus();
-      handleGetListBusSchedule()
+      handleGetListBusSchedule();
     }
   }, [props.isOpen]);
   return (
     <>
-      <Modal isOpen={props.isOpen} onClose={props.onClose} size="lg" >
+      <Modal isOpen={props.isOpen} onClose={props.onClose} size="lg">
         <ModalOverlay />
         <ModalContent p={3}>
           <ModalHeader>
@@ -158,32 +252,65 @@ export default function AddTransport(props) {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Flex marginBottom={'5%'}>
-              <Text width={'51.5%'} fontWeight={'500'}>
-                Lịch trình xe
-              </Text>
-              <Select placeholder="Select option" value={busSchedule} onChange={handleChangeBusSchedule}>
-                {listBusSchedule.map((bs) => {
-                  return <option value={bs?.id}>{bs?.route[0].city_from} - {bs?.route[0].city_to} | {convertTime(bs.time_from, 0)} - {convertTime(bs.time_from, bs.travel_time)}</option>;
-                })}
-              </Select>
-            </Flex>
-            <Flex marginBottom={'5%'}>
-              <Text width={'50%'} fontWeight={'500'}>
-                Biển số xe
-              </Text>
-              <Select placeholder="Select option" value={busPlate} onChange={handleChangeBusPlate}>
-                {listBus.map((bus) => {
-                  return <option value={bus?.id}>{bus?.vehicle_plate}</option>;
-                })}
-              </Select>
-            </Flex>
-            <Flex marginBottom={'5%'}>
-              <Text width={'51.5%'} fontWeight={'500'}>
-                Ngày khởi hành
-              </Text>
-              <Input value={time} onChange={handleChangeTime} type="date" min={validate.min_date}/>
-            </Flex>
+            <FormControl isInvalid={error.busSchedule} isRequired marginBottom={'5%'}>
+              <Box display={'flex'}>
+                <FormLabel width={'51.5%'} fontWeight={'500'}>
+                  Lịch trình xe
+                </FormLabel>
+                <Select
+                  placeholder="Select option"
+                  value={busSchedule}
+                  onChange={handleChangeBusSchedule}
+                >
+                  {listBusSchedule.map((bs) => {
+                    return (
+                      <option value={bs?.id}>
+                        {bs?.route[0].city_from} - {bs?.route[0].city_to} |{' '}
+                        {convertTime(bs.time_from, 0)} - {convertTime(bs.time_from, bs.travel_time)}
+                      </option>
+                    );
+                  })}
+                </Select>
+              </Box>
+              <FormErrorMessage justifyContent={'flex-end'}>
+                Lịch trình xe là bắt buộc
+              </FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={error.busPlate} isRequired marginBottom={'5%'}>
+              <Box display={'flex'}>
+                <FormLabel width={'50%'} fontWeight={'500'}>
+                  Biển số xe
+                </FormLabel>
+                <Select
+                  placeholder="Select option"
+                  value={busPlate}
+                  onChange={handleChangeBusPlate}
+                >
+                  {listBus.map((bus) => {
+                    return <option value={bus?.id}>{bus?.vehicle_plate}</option>;
+                  })}
+                </Select>
+              </Box>
+              <FormErrorMessage justifyContent={'flex-end'}>
+                Biển số xe là bắt buộc
+              </FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={error.time} isRequired marginBottom={'5%'}>
+              <Box display={'flex'}>
+                <FormLabel width={'51.5%'} fontWeight={'500'}>
+                  Ngày khởi hành
+                </FormLabel>
+                <Input
+                  value={time}
+                  onChange={handleChangeTime}
+                  type="date"
+                  min={validate.min_date}
+                />
+              </Box>
+              <FormErrorMessage justifyContent={'flex-end'}>
+                Ngày khởi hành là bắt buộc
+              </FormErrorMessage>
+            </FormControl>
           </ModalBody>
 
           <ModalFooter justifyContent={'space-around'}>
@@ -198,7 +325,7 @@ export default function AddTransport(props) {
               Huỷ
             </Button>
             <Button backgroundColor="#686868" color="#fff" onClick={handleAddTransport}>
-              {!props.locationId ? 'Tạo Điểm Đón Trả' : 'Chỉnh Sửa Điểm Đón Trả'}
+              {!props.transportId ? 'Tạo Điểm Đón Trả' : 'Chỉnh Sửa Điểm Đón Trả'}
             </Button>
           </ModalFooter>
         </ModalContent>

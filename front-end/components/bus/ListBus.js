@@ -1,8 +1,11 @@
 import { SlPencil } from 'react-icons/sl';
 import { IoTrashBinOutline, IoPersonOutline, IoCallOutline } from 'react-icons/io5';
-import { Stack, IconButton, Flex } from '@chakra-ui/react';
+import { Stack, IconButton, Flex, useToast } from '@chakra-ui/react';
+import { useRef } from 'react';
 import axios from 'axios';
 export default function ListBus(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const handleActiveModal = (busId, bus) => {
     props.setVehicle(bus);
     props.setVehicleId(busId);
@@ -17,14 +20,31 @@ export default function ListBus(props) {
       }
     );
     if (deleteVehicle.data.statusCode == 200) {
+      toastIdRef.current = toast({
+        title: 'Thông tin xe đã được xoá.',
+        description: 'Chúng tôi đã xoá thông tin xe cho bạn',
+        status: 'success',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
       props.handleGetListBus();
+    } else {
+      toastIdRef.current = toast({
+        title: 'Thông tin xe không thể xoá',
+        description: 'Xảy ra lỗi khi xoá thông tin xe. Làm ơn hãy thử lại.',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
     }
   };
   const ListBusHTML = props.list.map((bus, index) => {
     let mainPhone = bus.driverMain.phone.replace('+84', '0');
     mainPhone =
       mainPhone.substring(0, 4) + ' ' + mainPhone.substring(4, 7) + ' ' + mainPhone.substring(7);
-    let supportPhone = bus.driverSupport.phone.replace('+84', '0');
+    let supportPhone = bus.driverSupport ? bus.driverSupport.phone.replace('+84', '0') : '';
     supportPhone =
       supportPhone.substring(0, 4) +
       ' ' +
@@ -57,12 +77,20 @@ export default function ListBus(props) {
         <td>
           <Stack>
             <Flex alignItems={'center'} justifyContent={'center'}>
-              <IoPersonOutline style={{ width: '15%' }} />
-              <p style={{ width: '56%' }}>{bus.driverSupport.user_name}</p>
+              {bus.driverSupport?.user_name && (
+                <>
+                  <IoPersonOutline style={{ width: '15%' }} />
+                  <p style={{ width: '56%' }}>{bus.driverSupport?.user_name}</p>
+                </>
+              )}
             </Flex>
             <Flex alignItems={'center'} justifyContent={'center'}>
-              <IoCallOutline style={{ width: '15%' }} />
-              <p style={{ width: '56%' }}>{supportPhone}</p>
+              {bus.driverSupport?.phone && (
+                <>
+                  <IoCallOutline style={{ width: '15%' }} />
+                  <p style={{ width: '56%' }}>{supportPhone}</p>
+                </>
+              )}
             </Flex>
           </Stack>
         </td>
