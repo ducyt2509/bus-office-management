@@ -1,5 +1,4 @@
 const users = require('../controllers').user;
-const vn_pay = require('../helper/VNPAY');
 const middleWare = require('../middleware/permission.middleware');
 var router = require('express').Router();
 

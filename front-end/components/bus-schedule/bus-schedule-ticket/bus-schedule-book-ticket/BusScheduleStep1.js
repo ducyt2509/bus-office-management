@@ -1,11 +1,9 @@
 import { Box, Flex, Text, Stack, Button } from '@chakra-ui/react';
-import { useState } from 'react';
 import Image from 'next/image';
 import EmptyChair from '@/images/icons/empty-chair.png';
 import SoldChair from '@/images/icons/sold-chair.png';
 import SelectChair from '@/images/icons/select-chair.png';
 import { Seat12 } from '@/components/vehicle';
-import { formatMoney } from '@/helper';
 
 export default function BusScheduleStep1(props) {
   return (
