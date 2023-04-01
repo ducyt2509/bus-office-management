@@ -174,7 +174,7 @@ export default function AddRoute(props) {
 			<Modal
 				isOpen={props.isOpen}
 				onClose={props.onClose}
-				size="sm"
+				size="xl"
 			>
 				<ModalOverlay />
 				<ModalContent>
@@ -198,6 +198,7 @@ export default function AddRoute(props) {
 									width={"50%"}
 									fontWeight={"500"}
 									marginBottom="0"
+									mt={"2"}
 								>
 									Tỉnh/Thành phố đi :
 								</FormLabel>
@@ -233,6 +234,7 @@ export default function AddRoute(props) {
 									width={"50%"}
 									fontWeight={"500"}
 									marginBottom="0"
+									mt={"2"}
 								>
 									Tỉnh/Thành phố đến :
 								</FormLabel>

@@ -293,7 +293,7 @@ export default function AddEmployee(props) {
 			<Modal
 				isOpen={props.isOpen}
 				onClose={props.onClose}
-				size="sm"
+				size="md"
 			>
 				<ModalOverlay />
 				<ModalContent>
@@ -316,6 +316,7 @@ export default function AddEmployee(props) {
 								<FormLabel
 									width={"51.5%"}
 									fontWeight={"500"}
+									mt="2"
 								>
 									Tên nhân viên
 								</FormLabel>
@@ -337,6 +338,7 @@ export default function AddEmployee(props) {
 								<Text
 									width={"51.5%"}
 									fontWeight={"500"}
+									mt="2"
 								>
 									Email
 								</Text>
@@ -359,8 +361,9 @@ export default function AddEmployee(props) {
 								<FormLabel
 									width={"51.5%"}
 									fontWeight={"500"}
+									mt="2"
 								>
-									Phone
+									Số điện thoại
 								</FormLabel>
 								<Input
 									value={employeePhone}
@@ -381,6 +384,7 @@ export default function AddEmployee(props) {
 								<FormLabel
 									width={"51.5%"}
 									fontWeight={"500"}
+									mt="2"
 								>
 									Mật khẩu
 								</FormLabel>
@@ -404,6 +408,7 @@ export default function AddEmployee(props) {
 								<FormLabel
 									width={"50%"}
 									fontWeight={"500"}
+									mt={"2"}
 								>
 									Chức vụ
 								</FormLabel>
@@ -412,9 +417,9 @@ export default function AddEmployee(props) {
 									value={employeeRole}
 									onChange={handleChangeEmployeeRole}
 								>
-									<option value="1">Manager</option>
-									<option value="2">Customer Service Staff</option>
-									<option value="3">Driver</option>
+									<option value="1">Quản lý</option>
+									<option value="2">Nhân viên hỗ trợ khách hàng</option>
+									<option value="3">Tài xế</option>
 								</Select>
 							</Flex>
 							<FormErrorMessage justifyContent={"flex-end"}>
@@ -426,6 +431,7 @@ export default function AddEmployee(props) {
 							<Text
 								width={"50%"}
 								fontWeight={"500"}
+								mt={"2"}
 							>
 								Văn phòng
 							</Text>
