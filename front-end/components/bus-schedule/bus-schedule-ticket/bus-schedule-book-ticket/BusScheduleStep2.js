@@ -33,7 +33,6 @@ export default function BusScheduleStep2(props) {
   addressPickup = addressPickup && addressPickup.length ? JSON.parse(addressPickup) : addressPickup;
   addressDropOff =
     addressDropOff && addressDropOff.length ? JSON.parse(addressDropOff) : addressDropOff;
-    console.log(locationPickup)
   const locationPickupHTML = locationPickup ? (
     locationPickup.map((location, index) => {
       const information = location.split(': ');

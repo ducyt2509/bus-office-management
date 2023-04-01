@@ -117,7 +117,7 @@ module.exports = {
             for (let j = 0; j < getTransport.length; j++) {
               const [getBus, numberSeatSelected] = await Promise.all([
                 db.sequelize.query(
-                  `select b.* , v.vehicle_type_name from transport t  
+                  `select b.* , v.vehicle_type_name, v.number_seat from transport t  
                   join bus b  on t.bus_id = b.id
                   join vehicle_type v on b.vehicle_type_id = v.id
                     where t.bus_schedule_id = ${getTransport[j].bus_schedule_id} and t.bus_id = ${getTransport[j].bus_id}`,

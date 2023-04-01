@@ -318,7 +318,6 @@ module.exports = {
         return responseHandler.responseWithData(res, 403, { message: "Can't get list user" });
       }
     } catch (error) {
-      console.log(error);
       return responseHandler.badRequest(res, error.message);
     }
   },

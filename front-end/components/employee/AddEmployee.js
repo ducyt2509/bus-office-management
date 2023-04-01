@@ -24,7 +24,6 @@ import { useCallback, useEffect, useState } from "react";
 export default function AddEmployee(props) {
 	const toast = useToast();
 	const toastIdRef = useRef();
-	const [listRole, setListRole] = useState([]);
 	const [listOffice, setListOffice] = useState([]);
 
 	const [showPassword, setShowPassword] = useState(false);
@@ -251,12 +250,6 @@ export default function AddEmployee(props) {
 			setListOffice(getListOffice.data.data.list_office);
 		}
 	};
-	const handleGetListRole = async () => {
-		const getListRole = await axios.get(`http://localhost:${props.port}/role/list-role`);
-		if (getListRole.data.statusCode == 200) {
-			setListRole(getListRole.data.data.list_role);
-		}
-	};
 
 	useEffect(() => {
 		if (props.userId) {
@@ -285,7 +278,7 @@ export default function AddEmployee(props) {
 
 	useEffect(() => {
 		if (props.isOpen) {
-			Promise.all([handleGetListOffice(), handleGetListRole()]);
+			Promise.all([handleGetListOffice()]);
 		}
 	}, [props.isOpen]);
 	return (
@@ -316,7 +309,7 @@ export default function AddEmployee(props) {
 								<FormLabel
 									width={"51.5%"}
 									fontWeight={"500"}
-									mt="2"
+									mt={"2"}
 								>
 									Tên nhân viên
 								</FormLabel>
@@ -361,7 +354,7 @@ export default function AddEmployee(props) {
 								<FormLabel
 									width={"51.5%"}
 									fontWeight={"500"}
-									mt="2"
+									mt={"2"}
 								>
 									Số điện thoại
 								</FormLabel>
@@ -371,7 +364,9 @@ export default function AddEmployee(props) {
 								/>
 							</Flex>
 							<FormErrorMessage justifyContent={"flex-end"}>
-								Số điện thoại là bắt buộc
+								{employeePhone == ""
+									? "Số điện thoại là bắt buộc"
+									: "Số điện thoại sai định dạng"}
 							</FormErrorMessage>
 						</FormControl>
 
