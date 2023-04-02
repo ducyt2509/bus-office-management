@@ -200,10 +200,10 @@ export default function AddRoute(props) {
 									marginBottom="0"
 									mt={"2"}
 								>
-									Tỉnh/Thành phố đi :
+									Tỉnh/Thành phố đi:
 								</FormLabel>
 								<Select
-									placeholder="Select option"
+									placeholder="Chọn tỉnh/thành phố đi"
 									value={cityFrom}
 									onChange={handleChangeCityFrom}
 								>
@@ -236,10 +236,10 @@ export default function AddRoute(props) {
 									marginBottom="0"
 									mt={"2"}
 								>
-									Tỉnh/Thành phố đến :
+									Tỉnh/Thành phố đến:
 								</FormLabel>
 								<Select
-									placeholder="Select option"
+									placeholder="Chọn tỉnh/thành phố đến:"
 									value={cityTo}
 									onChange={handleChangeCityTo}
 								>

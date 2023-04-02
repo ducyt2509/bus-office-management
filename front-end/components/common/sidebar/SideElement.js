@@ -59,7 +59,7 @@ export default function SideElement({ navSize, active, href, sideBarActive }) {
 								whiteSpace="nowrap"
 								display={navSize == "small" ? "none" : "flex"}
 							>
-								Quản lý chuyến
+								Quản lý hành trình
 							</Text>
 						</MenuButton>
 					</Link>

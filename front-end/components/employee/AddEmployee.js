@@ -408,7 +408,7 @@ export default function AddEmployee(props) {
 									Chức vụ
 								</FormLabel>
 								<Select
-									placeholder="Select option"
+									placeholder="Chọn chức vụ"
 									value={employeeRole}
 									onChange={handleChangeEmployeeRole}
 								>
@@ -431,7 +431,7 @@ export default function AddEmployee(props) {
 								Văn phòng
 							</Text>
 							<Select
-								placeholder="Select option"
+								placeholder="Chọn văn phòng"
 								value={employeeOffice}
 								onChange={handleChangeEmployeeOffice}
 							>

@@ -304,7 +304,7 @@ export default function AddCar(props) {
 									Loại xe
 								</FormLabel>
 								<Select
-									placeholder="Select option"
+									placeholder="Chọn loại xe"
 									value={vehicleType}
 									onChange={handleChangeVehicleType}
 								>
@@ -333,7 +333,7 @@ export default function AddCar(props) {
 									Tài xế chính
 								</FormLabel>
 								<Select
-									placeholder="Select option"
+									placeholder="Chọn tài xế chính"
 									value={mainDriver}
 									onChange={handleChangeMainDriver}
 								>
@@ -356,7 +356,7 @@ export default function AddCar(props) {
 									Tài xế phụ
 								</FormLabel>
 								<Select
-									placeholder="Select option"
+									placeholder="Chọn tài xế phụ"
 									value={supportDriver}
 									onChange={handleChangeSupportDriver}
 								>

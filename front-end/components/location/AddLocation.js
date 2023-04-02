@@ -248,7 +248,7 @@ export default function AddLocation(props) {
 									Tỉnh/Thành phố
 								</FormLabel>
 								<Select
-									placeholder="Select option"
+									placeholder="Chọn tỉnh/thành phố"
 									value={city}
 									onChange={handleChangeCity}
 								>
