@@ -2,7 +2,6 @@ require("dotenv").config();
 let dateFormat = require("dateformat");
 let crypto = require("crypto");
 let querystring = require("qs");
-const Location = require("../models").locations;
 
 let express = require("express");
 let router = express.Router();
@@ -10,7 +9,9 @@ let $ = require("jquery");
 const request = require("request");
 const moment = require("moment");
 
-const Transaction = require("../models").transactions;
+const db = require("../models");
+const Transaction = db.transactions;
+const QueryTypes = db.Sequelize.QueryTypes;
 const responseHandler = require("../handlers/response.handler");
 const tmnCode = process.env.VNPAY_TMNCODE;
 const secretKey = process.env.VNPAY_HASH_SECRET;
@@ -63,6 +64,7 @@ module.exports = {
 				id: orderId,
 				passenger_name: params.passenger_name,
 				passenger_phone: params.passenger_phone,
+				passenger_email: params.email,
 				cashier: params.cashier,
 				pickup_location: params.pickup_location,
 				drop_off_location: params.drop_off_location,
@@ -71,9 +73,9 @@ module.exports = {
 				ticket_price: params.ticket_price,
 				created_at: date,
 				created_by: params.created_by,
-				payment_status: 0,
+				payment_status: params.payment_status,
 				seat: params.seat,
-				transport_id: params.transport_id,
+				transport_id: params.transport,
 			};
 			let currCode = "VND";
 			let vnp_Params = {};
@@ -128,10 +130,7 @@ module.exports = {
 
 		if (secureHash === signed) {
 			const [updateTransaction, getTransactionInfo] = await Promise.all([
-				Transaction.update(
-					{ payment_status: vnp_Params["vnp_ResponseCode"] },
-					{ where: { id: vnp_Params["vnp_TxnRef"] } },
-				),
+				Transaction.update({ payment_status: 1 }, { where: { id: vnp_Params["vnp_TxnRef"] } }),
 				Transaction.findOne({ where: { id: vnp_Params["vnp_TxnRef"] } }),
 			]);
 			if (updateTransaction) {
@@ -139,39 +138,49 @@ module.exports = {
 					`http://localhost:${process.env.FRONT_END_PORT}/payment?passenger_name=${getTransactionInfo.passenger_name}&passenger_phone=${getTransactionInfo.passenger_phone}&pickup_location=${getTransactionInfo.pickup_location}&drop_off_location=${getTransactionInfo.drop_off_location}&tranship_address=${getTransactionInfo.tranship_address}&date_detail=${getTransactionInfo.date_detail}&ticket_price=${getTransactionInfo.ticket_price}&email=${getTransactionInfo.email}&seat=${getTransactionInfo.seat}&transport=${getTransactionInfo.transport}&paymentStatus=1`,
 				);
 			} else {
-				res.json({ code: "97" });
+				res.redirect(
+					`http://localhost:${process.env.FRONT_END_PORT}/payment?passenger_name=${getTransactionInfo.passenger_name}&passenger_phone=${getTransactionInfo.passenger_phone}&pickup_location=${getTransactionInfo.pickup_location}&drop_off_location=${getTransactionInfo.drop_off_location}&tranship_address=${getTransactionInfo.tranship_address}&date_detail=${getTransactionInfo.date_detail}&ticket_price=${getTransactionInfo.ticket_price}&email=${getTransactionInfo.email}&seat=${getTransactionInfo.seat}&transport=${getTransactionInfo.transport}&paymentStatus=${vnp_Params["vnp_ResponseCode"]}`,
+				);
 			}
 		} else {
 			await Transaction.destroy({ where: { id: vnp_Params["vnp_TxnRef"] } });
-			res.json({ code: 95 });
+			res.redirect(
+				`http://localhost:${process.env.FRONT_END_PORT}/payment?passenger_name=${getTransactionInfo.passenger_name}&passenger_phone=${getTransactionInfo.passenger_phone}&pickup_location=${getTransactionInfo.pickup_location}&drop_off_location=${getTransactionInfo.drop_off_location}&tranship_address=${getTransactionInfo.tranship_address}&date_detail=${getTransactionInfo.date_detail}&ticket_price=${getTransactionInfo.ticket_price}&email=${getTransactionInfo.email}&seat=${getTransactionInfo.seat}&transport=${getTransactionInfo.transport}&paymentStatus=${vnp_Params["vnp_ResponseCode"]}`,
+			);
 		}
 	},
 	async getListPayment(req, res) {
 		const params = req.body;
-		const limit = params.limit;
-		const offset = params.offset;
-		const orderId = params.order_id;
-		const transaction_at = params.transaction_at;
+		const limit = params.limit ? params.limit : 7;
+		const offset = params.offset ? params.offset : 0;
+		const phone = params.phone;
 		try {
-			let whereCondition = {};
-			if (orderId && transaction_at) {
-				whereCondition["id"] = orderId;
-				transaction_at = dateFormat(transaction_at, "yyyyMMddHHmmss");
-				whereCondition["created_at"] = transaction_at;
-				const listTransaction = await Transaction.findAll({
-					where: whereCondition,
-					limit: limit,
-					offset: offset,
+			const querySQL = `select t.*, b.vehicle_plate, c.city_name as city_from, cc.city_name as city_to  from transaction t 
+			join transport ts on t.transport_id = ts.id
+			join bus b on b.id = ts.bus_id
+			join bus_schedule bs on ts.bus_schedule_id = bs.id
+			join route r on r.id = bs.route_id
+            join city c on r.city_from_id = c.id
+            join city cc on r.city_to_id = cc.id
+			where t.passenger_phone = '${phone}'
+			limit ${limit} offset ${offset} 
+			`;
+			let [listTransaction, numberTransaction] = await Promise.all([
+				db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
+				Transaction.count({
+					where: { passenger_phone: phone },
+				}),
+			]);
+
+			if (listTransaction) {
+				responseHandler.responseWithData(res, 200, {
+					list_transaction: listTransaction,
+					number_transaction: numberTransaction,
 				});
-				if (listTransaction) {
-					responseHandler.responseWithData(res, 200, listTransaction);
-				} else {
-					responseHandler.responseWithData(res, 403, {
-						message: "Can't get list transaction!",
-					});
-				}
 			} else {
-				responseHandler.responseWithData(res, 403, { message: "Params required!" });
+				responseHandler.responseWithData(res, 403, {
+					message: "Can't get list transaction!",
+				});
 			}
 		} catch (error) {
 			responseHandler.badRequest(res, error.message);

@@ -38,7 +38,6 @@ export default function BusScheduleStep3(props) {
               Số điện thoại
             </FormLabel>
             <InputGroup border={'1px solid #000'} borderRadius="7px">
-              <InputLeftAddon children="+84" />
               <Input
                 type="tel"
                 placeholder="Số điện thoại"

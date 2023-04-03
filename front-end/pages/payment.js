@@ -41,10 +41,12 @@ export default function Payment(props) {
 			props.data.bankCode = "";
 			props.data.created_by = null;
 			props.data.paymentStatusType = 1;
+			props.data.payment_status = 2;
 		} else {
 			props.data.cashier = 8;
 			props.data.bankCode = "";
 			props.data.created_by = null;
+			props.data.payment_status = 0;
 		}
 		const bookTicket = await axios.post(
 			`http://localhost:${props.port}/transaction/create-payment`,
@@ -62,7 +64,7 @@ export default function Payment(props) {
 	const handleTicketDetail = () => {
 		const id = 1;
 		router.push({
-			pathname: "/ticket-detail",
+			pathname: "/ticket/ticket-detail",
 			query: props.data,
 		});
 	};
