@@ -296,7 +296,7 @@ export default function AddLocation(props) {
 							Huỷ
 						</Button>
 						<Button
-							backgroundColor="#686868"
+							backgroundColor="#F26A4C"
 							color="#fff"
 							onClick={handleAddLocation}
 						>
