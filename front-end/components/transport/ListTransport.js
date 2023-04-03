@@ -14,9 +14,9 @@ export default function ListTransport(props) {
 		props.onOpen();
 	};
 	const handleDeleteTransport = async (transportId) => {
-		const deleteTransport = await axios.post(
+		const deleteTransport = await axios.delete(
 			`http://localhost:${props.port}/transport/delete-transport`,
-			{ id: transportId },
+			{ data: { id: transportId } },
 			{
 				headers: { token: props.token },
 			},
@@ -30,7 +30,7 @@ export default function ListTransport(props) {
 				position: "top",
 				duration: 2000,
 			});
-			props.handleGetListLocation();
+			props.handleGetListTransport();
 		} else {
 			toastIdRef.current = toast({
 				title: "Hành trình xe không thể xoá",
@@ -51,7 +51,6 @@ export default function ListTransport(props) {
 				</td>
 				<td>{convertTime(transport.time_from, 0)}</td>
 				<td>{transport.vehicle_plate}</td>
-				{/* <td>{new Date(transport.departure_date).toISOString().split('T')[0]}</td> */}
 				<td>
 					<Stack
 						spacing={2}

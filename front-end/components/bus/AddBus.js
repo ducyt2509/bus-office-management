@@ -380,7 +380,7 @@ export default function AddCar(props) {
 							Huỷ
 						</Button>
 						<Button
-							backgroundColor="#686868"
+							backgroundColor="#F26A4C"
 							color="#fff"
 							onClick={handleAddVehicle}
 						>
