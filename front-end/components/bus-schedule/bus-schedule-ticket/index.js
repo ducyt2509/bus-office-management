@@ -153,8 +153,9 @@ export default function BusSchedulesList(props) {
 											textAlign="end"
 											marginBottom={"3%"}
 										>
-											{vehicle?.bus[0]?.vehicle_type_name} -{" "}
-											{vehicle?.bus[0]?.vehicle_plate}
+											{vehicle?.bus[0]?.vehicle_type_name +
+												" - " +
+												vehicle?.bus[0]?.vehicle_plate}
 										</Text>
 										<Flex alignItems={"flex-end"}>
 											<Text
@@ -182,6 +183,8 @@ export default function BusSchedulesList(props) {
 								<BusScheduleBookTicket
 									data={vehicle}
 									busScheduleInformation={props.data}
+									route_name={props.data.city_from + " - " + props.data.city_to}
+									vehicle_plate={vehicle?.bus[0]?.vehicle_plate}
 								/>
 							)}
 						</Stack>

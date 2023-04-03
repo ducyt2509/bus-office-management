@@ -34,7 +34,6 @@ export default function BusScheduleBookTicket(props) {
 	const [phone, setPhone] = useState("");
 	const [email, setEmail] = useState("");
 	const [notice, setNotice] = useState("");
-	console.log(locationPickup);
 	const [error, setError] = useState({
 		userName: false,
 		userPhone: false,
@@ -114,6 +113,8 @@ export default function BusScheduleBookTicket(props) {
 				email: email,
 				seat: seatSelected.join(", "),
 				transport: props.data?.id,
+				route_name: props.route_name,
+				vehicle_plate: props.vehicle_plate,
 			};
 			if (seatSelected.length) {
 				if (step == 3) {
@@ -149,7 +150,18 @@ export default function BusScheduleBookTicket(props) {
 				onOpen();
 			}
 		},
-		[seatSelected, step, locationPickup, locationDropOff, userName, phone, email, notice],
+		[
+			seatSelected,
+			step,
+			locationPickup,
+			locationDropOff,
+			userName,
+			phone,
+			email,
+			notice,
+			props.vehicle_plate,
+			props.route_name,
+		],
 	);
 	const ModalHTML = (
 		<Modal

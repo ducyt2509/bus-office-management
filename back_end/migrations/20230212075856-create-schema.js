@@ -397,6 +397,9 @@ module.exports = {
 						passenger_phone: {
 							type: Sequelize.DataTypes.STRING,
 						},
+						passenger_email: {
+							type: Sequelize.DataTypes.STRING,
+						},
 						pickup_location: {
 							type: Sequelize.DataTypes.STRING,
 							allowNull: true,

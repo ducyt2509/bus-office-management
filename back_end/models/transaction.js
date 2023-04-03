@@ -13,6 +13,9 @@ module.exports = (sequelize, Sequelize) => {
 			passenger_phone: {
 				type: Sequelize.STRING,
 			},
+			passenger_email: {
+				type: Sequelize.STRING,
+			},
 			cashier: {
 				type: Sequelize.INTEGER(20).UNSIGNED,
 			},
