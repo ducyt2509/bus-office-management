@@ -23,10 +23,12 @@ const db = require('./models');
 db.sequelize
   .sync()
   .then(() => {
-    console.log('Synced db.');
+    // comment line 27 when testing
+    // console.log('Synced db.');
   })
   .catch((err) => {
-    console.log('Failed to sync db: ' + err.message);
+    // comment line 30 when testing
+    // console.log('Failed to sync db: ' + err.message);
   });
 
 // parse requests of content-type - application/json
@@ -49,3 +51,4 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}. Entry at "http://localhost:${PORT}"`);
 });
 
+module.exports = app
