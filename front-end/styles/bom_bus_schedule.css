@@ -1,181 +1,209 @@
-.bom-bus-schedule-detail .chakra-card__body div > label{
-    width: 60%;
+.bom-bus-schedule-detail .chakra-card__body div > label {
+	width: 60%;
 }
 .bom-bus-schedule-detail .chakra-card__body > div {
-    width: 80%;
-    margin: 0 auto;
-    margin-bottom: 3%;
-    margin-top:3%
+	width: 80%;
+	margin: 0 auto;
+	margin-bottom: 3%;
+	margin-top: 3%;
 }
 .bom-bus-schedule-detail .chakra-card__body > div input {
-    width: 97%;
+	width: 97%;
 }
 .bom-bus-schedule-detail .wrapper {
-    width: 100%
+	width: 100%;
 }
 .bom-bus-schedule-detail .select-btn {
-    padding: 0 20px;
-    height: 40px;
-    display: flex;
-    border-radius: 5px;
-    border: 1px solid #b3b3b3;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
+	padding: 0 20px;
+	height: 40px;
+	display: flex;
+	border-radius: 5px;
+	border: 1px solid #b3b3b3;
+	align-items: center;
+	justify-content: space-between;
+	cursor: pointer;
 }
 .bom-bus-schedule-detail .content {
-    border: 1px solid #b3b3b3;
-    padding: 20px;
-    display: none;
+	border: 1px solid #b3b3b3;
+	padding: 20px;
+	display: none;
 }
-.bom-bus-schedule-detail .wrapper.active .content{
-    display: block;
-    z-index: 99;
-    display: block;
-    position: absolute;
-    background-color: #fff;
+.bom-bus-schedule-detail .wrapper.active .content {
+	display: block;
+	z-index: 99;
+	display: block;
+	position: absolute;
+	background-color: #fff;
 }
 .bom-bus-schedule-detail .content .search {
-    position: relative;
+	position: relative;
 }
 .bom-bus-schedule-detail .content .search svg {
-    position: absolute;
-    line-height: 53px;
-    top: 8px;
-    left: 15px
+	position: absolute;
+	line-height: 53px;
+	top: 8px;
+	left: 15px;
 }
 .bom-bus-schedule-detail .content .search input {
-    height: 30px;
-    width: 100%;
-    border: 1px solid #b3b3b3;
-    padding: 0 15px 0 43px;
+	height: 30px;
+	width: 100%;
+	border: 1px solid #b3b3b3;
+	padding: 0 15px 0 43px;
 }
 .bom-bus-schedule-detail .content .options {
-   margin-top: 10px;
-   max-height: 80px;
-   overflow-y: auto;
+	margin-top: 10px;
+	max-height: 80px;
+	overflow-y: auto;
 }
-.bom-bus-schedule-detail .content .options li{
-    height: 40px;
-    border-radius: 5px;
-    display: flex;
-    padding: 0 13px;
-    cursor: pointer;
-    align-items: center;
- }
- .bom-bus-schedule-detail .content .options li:hover{
-    background-color: #f2f2f2;
- }
- .bom-location-bus-schedule {
-    font-size: 12px;
-    border: 1px solid;
-    padding: 3px 6px;
-    border-radius: 5px;
-    background-color: #EDF2F7;
-    margin-bottom: 4%;
-    font-weight: 500;
-    margin-left: 8px;
- }
- div:nth-child(2) > div > div > div:nth-child(6) > span {
-    width: 38%
- }
- div:nth-child(2) > div > div > div:nth-child(6) > div {
-    width: 62%;
-    display: flex;
-    justify-content:flex-end;
-    flex-wrap: wrap;
- }
+.bom-bus-schedule-detail .content .options li {
+	height: 40px;
+	border-radius: 5px;
+	display: flex;
+	padding: 0 13px;
+	cursor: pointer;
+	align-items: center;
+}
+.bom-bus-schedule-detail .content .options li:hover {
+	background-color: #f2f2f2;
+}
+.bom-location-bus-schedule {
+	font-size: 12px;
+	border: 1px solid;
+	padding: 3px 6px;
+	border-radius: 5px;
+	background-color: #edf2f7;
+	margin-bottom: 4%;
+	font-weight: 500;
+	margin-left: 8px;
+}
+div:nth-child(2) > div > div > div:nth-child(6) > span {
+	width: 38%;
+}
+div:nth-child(2) > div > div > div:nth-child(6) > div {
+	width: 62%;
+	display: flex;
+	justify-content: flex-end;
+	flex-wrap: wrap;
+}
 
- div:nth-child(2) > div > div > div:nth-child(7) > span {
-    width: 38%
- }
- div:nth-child(2) > div > div > div:nth-child(7) > div {
-    width: 62%;
-    display: flex;
-    justify-content:flex-end;
-    flex-wrap: wrap;
- }
- div:nth-child(2) > div > div > div:nth-child(7) > div svg{
-    width: 8px;
-    height: 8px;
-    position: relative;
-    bottom: 2px;
-    cursor: pointer;
- }
+div:nth-child(2) > div > div > div:nth-child(7) > span {
+	width: 38%;
+}
+div:nth-child(2) > div > div > div:nth-child(7) > div {
+	width: 62%;
+	display: flex;
+	justify-content: flex-end;
+	flex-wrap: wrap;
+}
+div:nth-child(2) > div > div > div:nth-child(7) > div svg {
+	width: 8px;
+	height: 8px;
+	position: relative;
+	bottom: 2px;
+	cursor: pointer;
+}
 
- div:nth-child(2) > div > div > div:nth-child(6) > div svg{
-    width: 8px;
-    height: 8px;
-    position: relative;
-    bottom: 2px;
-    cursor: pointer;
- }
+div:nth-child(2) > div > div > div:nth-child(6) > div svg {
+	width: 8px;
+	height: 8px;
+	position: relative;
+	bottom: 2px;
+	cursor: pointer;
+}
 
 div.bom-location-bus-schedule.add-location-bus-schedule {
-    border: 1px dashed;
-    font-weight: 400;
-    cursor: pointer;
- }
- .bom-add-location-pickup {
-    position: absolute;
-    left: 12%;
-    margin-top: 4%;
-    background-color: #f2f2f2;
-    width: 50%;
-    z-index: 999;
-    padding: 13px;
-    opacity: 0;
-    visibility: hidden;
- }
- .bom-add-location-pickup > div {
-    display: flex;
- }
- .bom-add-location-pickup.active {
-    opacity: 1;
-    visibility: visible;
- }
- .bom-add-location-pickup::after {
-    content: "";
-    position: absolute;
-    bottom: 100%;
-    left: 1%;
-    margin-left: -5px;
-    border-width: 10px;
-    border-style: solid;
-    border-color: #f2f2f2 transparent transparent transparent ;
-    transform:  rotate(180deg);
-    rotate: 180%;
-  }
- .bom-add-location-pickup .select-btn {
-    font-size: 13px;
- }
- .bom-add-location-pickup .options li {
-    font-size: 11px;
- }
+	border: 1px dashed;
+	font-weight: 400;
+	cursor: pointer;
+}
+.bom-add-location-pickup {
+	position: absolute;
+	left: 12%;
+	margin-top: 4%;
+	background-color: #f2f2f2;
+	width: 50%;
+	z-index: 999;
+	padding: 13px;
+	opacity: 0;
+	visibility: hidden;
+}
+.bom-add-location-pickup > div {
+	display: flex;
+}
+.bom-add-location-pickup.active {
+	opacity: 1;
+	visibility: visible;
+}
+.bom-add-location-pickup::after {
+	content: "";
+	position: absolute;
+	bottom: 100%;
+	left: 1%;
+	margin-left: -5px;
+	border-width: 10px;
+	border-style: solid;
+	border-color: #f2f2f2 transparent transparent transparent;
+	transform: rotate(180deg);
+	rotate: 180%;
+}
+.bom-add-location-pickup .select-btn {
+	font-size: 13px;
+}
+.bom-add-location-pickup .options li {
+	font-size: 11px;
+}
 
- .bom-schedule-book-ticket .bom-element {
+.bom-schedule-book-ticket .bom-element {
 	width: 20%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	font-size: 17px;
 }
-.bom-schedule-book-ticket .bom-element:nth-child(4), .bom-schedule-book-ticket .bom-element:nth-child(2) {
+.bom-schedule-book-ticket .bom-element select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+   outline: none;
+   text-align: center;
+}
+.bom-element input[type="date"] {
+   outline: none;
+   border: none;
+}
+.bom-element input[type="date"]::-webkit-calendar-picker-indicator {
+   position: absolute;
+}
+.bom-element input[type="date"]::-webkit-datetime-edit {
+   position: relative;
+   left: 30px;
+}
+
+.bom-schedule-book-ticket .bom-element:nth-child(4),
+.bom-schedule-book-ticket .bom-element:nth-child(2) {
 	width: 5%;
 }
 .bom-schedule-book-ticket .bom-element:nth-child(2) {
-	height:25px;
+	height: 25px;
 	margin-top: 8px;
 }
 .bom-schedule-book-ticket {
 	display: flex;
-    border: 1px solid;
-    width: 90%;
-    margin: 0 auto;
+	border: 1px solid;
+	width: 90%;
+	margin: 0 auto;
 	justify-content: space-between;
 	border-radius: 7px;
 	margin-top: 4%;
 	margin-bottom: 3%;
+}
+.bom-schedule-book-ticket.admin {
+	display: flex;
+	border: 1px solid;
+	justify-content: space-between;
+	border-radius: 7px;
+	margin: 0;
+	padding: 5px 0;
+	width: 85%;
 }
 .bom-schedule-detail {
 	width: 90%;
@@ -183,48 +211,61 @@ div.bom-location-bus-schedule.add-location-bus-schedule {
 	margin: 0 auto;
 	padding: 0 3%;
 	border-radius: 20px;
-	margin-bottom: 3%	
+	margin-bottom: 3%;
 }
 .bom-content-details {
 	cursor: pointer;
 	display: flex;
-	font-size:13px;
-	color: #F26A4C;
+	font-size: 13px;
+	color: #f26a4c;
 	white-space: nowrap;
 	font-weight: 500;
 	margin-right: 30px;
 }
-.bom-content-details button{
+.bom-content-details button {
 	padding: 0 40px;
 }
-.bom-content-details svg{
+.bom-content-details svg {
 	position: relative;
 	top: 5px;
 }
-.bom-schedule-detail .chakra-tabs__tablist button[aria-selected=true] {
-	--tabs-color: #F26A4C !important;
+.bom-schedule-detail .chakra-tabs__tablist button[aria-selected="true"] {
+	--tabs-color: #f26a4c !important;
 }
 
 .bom-book-ticket-steps {
-   margin: 0 auto;
-   width: 80%;
-   justify-content: space-evenly;
+	margin: 0 auto;
+	width: 80%;
+	justify-content: space-evenly;
 }
-.bom-book-ticket-steps .bom-step{
-   height: 25px;
-    border: 1px solid;
-    width: 25px;
-    border-radius: 50%;
-    text-align: center;
-    background-color: #7D7D7D;
-    color: #fff;
-    margin-right: 10px;
+.bom-book-ticket-steps .bom-step {
+	height: 25px;
+	border: 1px solid;
+	width: 25px;
+	border-radius: 50%;
+	text-align: center;
+	background-color: #7d7d7d;
+	color: #fff;
+	margin-right: 10px;
 }
-.bom-book-ticket-steps .bom-step.active{
-    background-color: #F26A4C;
-    color: #fff;
+.bom-book-ticket-steps .bom-step.active {
+	background-color: #f26a4c;
+	color: #fff;
 }
-.bom-book-ticket-steps .bom-step svg{
-   position: relative;
-   bottom: 2px
+.bom-book-ticket-steps .bom-step svg {
+	position: relative;
+	bottom: 2px;
+}
+.bom-schedule-book-ticket .bom-element.admin {
+	width: 33%;
+}
+.bom-schedule-book-ticket .bom-element.admin:nth-child(2) {
+	margin-top: 0;
+}
+.bom-schedule-book-ticket .bom-element.admin:nth-child(4),
+.bom-schedule-book-ticket .bom-element.admin:nth-child(2) {
+	width: 5%;
+}
+.bom-schedule-book-ticket.admin {
+	
 }

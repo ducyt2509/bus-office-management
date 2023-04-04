@@ -52,6 +52,9 @@ module.exports = (sequelize, Sequelize) => {
 			seat: {
 				type: Sequelize.STRING,
 			},
+			transport_id: {
+				type: Sequelize.INTEGER(20),
+			},
 		},
 		{
 			timestamps: false,
