@@ -134,14 +134,16 @@ export default function Ticket(props) {
 									: 0;
 							const number_seat_unselected =
 								vehicle.bus[0].number_seat - number_seat_selected;
-							const remain_seat = number_seat_unselected ? number_seat_unselected : 0;
 							return (
 								<Box
 									border={"1px solid"}
 									borderRadius={"10px"}
 									padding={"0 1%"}
 									marginRight={"1%"}
-									minW={"93px"}
+									minW={"80px"}
+									fontSize={"13px"}
+									fontWeight={"600"}
+									color={"#363636"}
 									cursor={"pointer"}
 									backgroundColor={
 										position + "" + index == scheduleSelected ? "#f5f5f5" : "#fff"
@@ -349,8 +351,11 @@ export default function Ticket(props) {
 		</Flex>
 	);
 
-	const VehicleHTML = (
-		<Card backgroundColor={"#F5F5F5"} margin="3% 0">
+	const VehicleHTML = scheduleData && transportData && (
+		<Card
+			backgroundColor={"#F5F5F5"}
+			margin="3% 0"
+		>
 			<CardBody></CardBody>
 		</Card>
 	);
@@ -417,6 +422,7 @@ export default function Ticket(props) {
 								placeholder="Phone number"
 								onChange={handleChangeDepartureDay}
 								value={departureDay}
+								min = {validate.min_date}
 							/>
 						</InputGroup>
 					</Flex>
