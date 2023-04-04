@@ -1,42 +1,42 @@
 .bom-personal-info {
-    width: 90%;
-    height: 100vh;
-    margin: 0px auto;
-    border: 1px solid;
-    margin-bottom: 5%;
-    border-radius: 20px;
-    background-color: #f5f5f5;
+	width: 90%;
+	height: 100vh;
+	margin: 0px auto;
+	border: 1px solid;
+	margin-bottom: 5%;
+	border-radius: 20px;
+	background-color: #f5f5f5;
 }
 .bom-personal-info .chakra-card__body {
-   
 }
 .bom-personal-info .chakra-card {
-    --card-shadow: none;
-    border : 1px solid #c2c2c2;
-    border-radius: 20px;
+	--card-shadow: none;
+	border: 1px solid #c2c2c2;
+	border-radius: 20px;
 }
 
-.bom-personal-info input, .bom-personal-info select {
-    border: 1px solid;
+.bom-personal-info input,
+.bom-personal-info select {
+	border: 1px solid;
 }
 .bom-personal-info-detail .bom-personal-info-title {
-    font-size: 20px;
-    width: 30%;
-    font-weight: 500;
+	font-size: 18px;
+	width: 30%;
+	font-weight: 500;
 }
 .bom-personal-info-detail p {
-    font-size: 18px;
+	font-size: 18px;
 }
 .bom-personal-info-detail {
-    width: 96%;
+	width: 96%;
 }
 .bom-back-management:hover {
-    color: crimson;
+	color: crimson;
 }
-.bom-office-info-detail svg{
-    width: 25px;
-    height: 25px;
+.bom-office-info-detail svg {
+	width: 25px;
+	height: 25px;
 }
 .bom-list-employee-office:hover {
-    color: coral;
+	color: coral;
 }
