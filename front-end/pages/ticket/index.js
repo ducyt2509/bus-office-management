@@ -78,7 +78,7 @@ export default function searchTicket(props) {
 				border={"1px solid"}
 				width={"70%"}
 				margin={"0 auto"}
-				marginTop="3%"
+				marginTop="2%"
 				cursor={"pointer"}
 				onClick={() => getTicketDetails(ticket)}
 			>

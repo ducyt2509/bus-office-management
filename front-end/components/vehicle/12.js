@@ -23,27 +23,24 @@ export default function Seat12(props) {
 	const ChairHTML = (id) => {
 		return (
 			<Image
-				src={props.seatSelected && props.seatSelected.includes(id) ? SelectChair : EmptyChair}
-				style={{ cursor: "pointer", width: "43%", height: "100%" }}
+				src={
+					props.seatSelected && props.seatSelected.includes(id)
+						? SelectChair
+						: props.seatCustomerSelected && props.seatCustomerSelected.includes(id)
+						? SoldChair
+						: EmptyChair
+				}
+				style={
+					props.seatCustomerSelected && props.seatCustomerSelected.includes(id)
+						? { cursor: "not-allowed", width: "43%", height: "100%" }
+						: { cursor: "pointer", width: "43%", height: "100%" }
+				}
 				onClick={() => {
 					props.page != "ticket detail" && handleSeatSelected(id);
 				}}
 			/>
 		);
 	};
-
-	const SoldChairHTML = (
-		<Image
-			src={SoldChair}
-			style={{ cursor: "not-allowed", width: "43%", height: "100%" }}
-		/>
-	);
-	const SelectChairHTML = (
-		<Image
-			src={SelectChair}
-			style={{ cursor: "pointer", width: "43%", height: "100%" }}
-		/>
-	);
 	const SteeringHTML = (
 		<Image
 			src={Steering}

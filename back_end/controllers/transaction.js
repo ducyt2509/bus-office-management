@@ -11,6 +11,7 @@ const moment = require("moment");
 
 const db = require("../models");
 const Transaction = db.transactions;
+const Ticket = db.tickets;
 const QueryTypes = db.Sequelize.QueryTypes;
 const responseHandler = require("../handlers/response.handler");
 const tmnCode = process.env.VNPAY_TMNCODE;
@@ -75,7 +76,7 @@ module.exports = {
 				created_by: params.created_by,
 				payment_status: params.payment_status,
 				seat: params.seat,
-				transport_id: params.transport,
+				transport_id: parseInt(params.transport),
 			};
 			let currCode = "VND";
 			let vnp_Params = {};
@@ -129,23 +130,75 @@ module.exports = {
 		let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
 
 		if (secureHash === signed) {
-			const [updateTransaction, getTransactionInfo] = await Promise.all([
+			const querySQL = `select t.*, b.vehicle_plate, b.vehicle_type_id, c.city_name as city_from, cc.city_name as city_to  from transaction t
+                  join transport tr on tr.id = t.transport_id
+                  join bus b on b.id = tr.bus_id
+                  join bus_schedule bs on bs.id = tr.bus_schedule_id
+                  join route r on r.id = bs.route_id
+                  join city c on c.id = r.city_from_id
+                  join city cc on cc.id = r.city_to_id where t.id = ${vnp_Params["vnp_TxnRef"]}`;
+			const [updateTransaction, getTransactionInfo, createTicket] = await Promise.all([
 				Transaction.update({ payment_status: 1 }, { where: { id: vnp_Params["vnp_TxnRef"] } }),
-				Transaction.findOne({ where: { id: vnp_Params["vnp_TxnRef"] } }),
+				db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
+				Ticket.create({ transaction_id: vnp_Params["vnp_TxnRef"] }),
 			]);
-			if (updateTransaction) {
+			if (updateTransaction && createTicket) {
 				res.redirect(
-					`http://localhost:${process.env.FRONT_END_PORT}/payment?passenger_name=${getTransactionInfo.passenger_name}&passenger_phone=${getTransactionInfo.passenger_phone}&pickup_location=${getTransactionInfo.pickup_location}&drop_off_location=${getTransactionInfo.drop_off_location}&tranship_address=${getTransactionInfo.tranship_address}&date_detail=${getTransactionInfo.date_detail}&ticket_price=${getTransactionInfo.ticket_price}&email=${getTransactionInfo.email}&seat=${getTransactionInfo.seat}&transport=${getTransactionInfo.transport}&paymentStatus=1`,
+					`http://localhost:${process.env.FRONT_END_PORT}/payment?passenger_name=${
+						getTransactionInfo[0].passenger_name
+					}&passenger_phone=${getTransactionInfo[0].passenger_phone}&pickup_location=${
+						getTransactionInfo[0].pickup_location
+					}&drop_off_location=${getTransactionInfo[0].drop_off_location}&tranship_address=${
+						getTransactionInfo[0].tranship_address
+					}&date_detail=${getTransactionInfo[0].date_detail}&ticket_price=${
+						getTransactionInfo[0].ticket_price
+					}&email=${getTransactionInfo[0].email}&seat=${
+						getTransactionInfo[0].seat
+					}&transport=${getTransactionInfo[0].transport_id}&paymentStatus=1&route_name=${
+						getTransactionInfo[0].city_from + " - " + getTransactionInfo[0].city_to
+					}&vehicle_plate=${getTransactionInfo[0].vehicle_plate}&vehicle_type_id=${
+						getTransactionInfo[0].vehicle_type_id
+					}`,
 				);
 			} else {
 				res.redirect(
-					`http://localhost:${process.env.FRONT_END_PORT}/payment?passenger_name=${getTransactionInfo.passenger_name}&passenger_phone=${getTransactionInfo.passenger_phone}&pickup_location=${getTransactionInfo.pickup_location}&drop_off_location=${getTransactionInfo.drop_off_location}&tranship_address=${getTransactionInfo.tranship_address}&date_detail=${getTransactionInfo.date_detail}&ticket_price=${getTransactionInfo.ticket_price}&email=${getTransactionInfo.email}&seat=${getTransactionInfo.seat}&transport=${getTransactionInfo.transport}&paymentStatus=${vnp_Params["vnp_ResponseCode"]}`,
+					`http://localhost:${process.env.FRONT_END_PORT}/payment?passenger_name=${
+						getTransactionInfo[0].passenger_name
+					}&passenger_phone=${getTransactionInfo[0].passenger_phone}&pickup_location=${
+						getTransactionInfo[0].pickup_location
+					}&drop_off_location=${getTransactionInfo[0].drop_off_location}&tranship_address=${
+						getTransactionInfo[0].tranship_address
+					}&date_detail=${getTransactionInfo[0].date_detail}&ticket_price=${
+						getTransactionInfo[0].ticket_price
+					}&email=${getTransactionInfo[0].email}&seat=${
+						getTransactionInfo[0].seat
+					}&transport=${getTransactionInfo[0].transport_id}&paymentStatus=${
+						vnp_Params["vnp_ResponseCode"]
+					}&route_name=${
+						getTransactionInfo[0].city_from + " - " + getTransactionInfo[0].city_to
+					}&vehicle_plate=${getTransactionInfo[0].vehicle_plate}&vehicle_type_id=${
+						getTransactionInfo[0].vehicle_type_id
+					}`,
 				);
 			}
 		} else {
 			await Transaction.destroy({ where: { id: vnp_Params["vnp_TxnRef"] } });
 			res.redirect(
-				`http://localhost:${process.env.FRONT_END_PORT}/payment?passenger_name=${getTransactionInfo.passenger_name}&passenger_phone=${getTransactionInfo.passenger_phone}&pickup_location=${getTransactionInfo.pickup_location}&drop_off_location=${getTransactionInfo.drop_off_location}&tranship_address=${getTransactionInfo.tranship_address}&date_detail=${getTransactionInfo.date_detail}&ticket_price=${getTransactionInfo.ticket_price}&email=${getTransactionInfo.email}&seat=${getTransactionInfo.seat}&transport=${getTransactionInfo.transport}&paymentStatus=${vnp_Params["vnp_ResponseCode"]}`,
+				`http://localhost:${process.env.FRONT_END_PORT}/payment?passenger_name=${
+					getTransactionInfo[0].passenger_name
+				}&passenger_phone=${getTransactionInfo[0].passenger_phone}&pickup_location=${
+					getTransactionInfo[0].pickup_location
+				}&drop_off_location=${getTransactionInfo[0].drop_off_location}&tranship_address=${
+					getTransactionInfo[0].tranship_address
+				}&date_detail=${getTransactionInfo[0].date_detail}&ticket_price=${
+					getTransactionInfo[0].ticket_price
+				}&email=${getTransactionInfo[0].email}&seat=${getTransactionInfo[0].seat}&transport=${
+					getTransactionInfo[0].transport_id
+				}&paymentStatus=${vnp_Params["vnp_ResponseCode"]}&route_name=${
+					getTransactionInfo[0].city_from + " - " + getTransactionInfo[0].city_to
+				}&vehicle_plate=${getTransactionInfo[0].vehicle_plate}&vehicle_type_id=${
+					getTransactionInfo[0].vehicle_type_id
+				}`,
 			);
 		}
 	},
@@ -155,7 +208,7 @@ module.exports = {
 		const offset = params.offset ? params.offset : 0;
 		const phone = params.phone;
 		try {
-			const querySQL = `select t.*, b.vehicle_plate, c.city_name as city_from, cc.city_name as city_to  from transaction t 
+			const querySQL = `select t.*, b.vehicle_plate, b.vehicle_type_id, c.city_name as city_from, cc.city_name as city_to  from transaction t 
 			join transport ts on t.transport_id = ts.id
 			join bus b on b.id = ts.bus_id
 			join bus_schedule bs on ts.bus_schedule_id = bs.id
