@@ -187,11 +187,13 @@ export default function TicketDetail(props) {
 										</Text>
 									</Box>
 								</Stack>
-								<Seat12
-									seatSelected={seatSelected}
-									setSeatSelected={setSeatSelected}
-									page="ticket detail"
-								/>
+								{props.data?.vehicle_type_id == 1 && (
+									<Seat12
+										seatSelected={seatSelected}
+										setSeatSelected={setSeatSelected}
+										page="ticket detail"
+									/>
+								)}
 							</Flex>
 						</CardBody>
 					</Card>

@@ -39,6 +39,11 @@ export default function BusScheduleBookTicket(props) {
 		userPhone: false,
 		userMail: false,
 	});
+	const seatCustomerSelected = props.data.number_seat_selected
+		.map((e) => e.seat)
+		.join()
+		.split(",")
+		.map((e) => e.trim());
 
 	const handleChangeUserName = useCallback(
 		(e) => {
@@ -115,8 +120,18 @@ export default function BusScheduleBookTicket(props) {
 				transport: props.data?.id,
 				route_name: props.route_name,
 				vehicle_plate: props.vehicle_plate,
+				vehicle_type_id: props.data?.bus[0]?.vehicle_type_id,
 			};
 			if (seatSelected.length) {
+				let checkSeatValidate = true;
+				seatSelected.forEach((seat) => {
+					if (seatCustomerSelected.includes(seat)) {
+						checkSeatValidate = false;
+					}
+				});
+				if (!checkSeatValidate) {
+					return;
+				}
 				if (step == 3) {
 					if (status == 0) {
 						setStep((prev) => prev - 1);
@@ -211,6 +226,7 @@ export default function BusScheduleBookTicket(props) {
 						seatSelected={seatSelected}
 						setSeatSelected={setSeatSelected}
 						data={props.data}
+						seatCustomerSelected={seatCustomerSelected}
 					/>
 					{ModalHTML}
 				</>
