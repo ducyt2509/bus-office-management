@@ -57,6 +57,16 @@ export default function Seat12User(props) {
   );
   const handleOpenSeatInformation = async (data) => {
     onOpen();
+    if (!data) {
+      setSeat([]);
+      setUserName('');
+      setUserPhone('');
+      setUserEmail('');
+      setNote('');
+      setPrice(props.scheduleData.price);
+      setPaymentStatus(0);
+      return;
+    }
     const getTransaction = await axios.post(
       `http://localhost:${props.port}/transaction/get-transaction-by-id`,
       { id: data.id },
@@ -193,7 +203,7 @@ export default function Seat12User(props) {
                   <FormLabel width={'51.5%'} fontWeight={'500'} mt={'2'}>
                     Giá vé:
                   </FormLabel>
-                  <Input value={formatMoney(price / seat.length)} />
+                  <Input value={formatMoney(props.scheduleData.price)} />
                 </Flex>
               </FormControl>
               <FormControl marginBottom="5%">
@@ -231,7 +241,7 @@ export default function Seat12User(props) {
                 <Text>{formatMoney(price)}</Text>
               </Flex>
               <Flex>
-                <Flex>
+                <Flex justifyContent={"space-between"}>
                   <Button backgroundColor={'#fff'} border="1px solid" marginRight={'10px'}>
                     Huỷ vé
                   </Button>

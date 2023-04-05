@@ -280,8 +280,9 @@ export default function Ticket(props) {
       </Flex>
     </Flex>
   );
-
-  const VehicleHTML = scheduleData && transportData && <Seat12User data={transportData} port={props.port}/>;
+  const VehicleHTML = scheduleData && transportData && (
+    <Seat12User data={transportData} port={props.port} scheduleData={scheduleData}/>
+  );
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
       <Flex
