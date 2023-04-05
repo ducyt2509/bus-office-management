@@ -74,6 +74,7 @@ export default function BusScheduleStep1(props) {
 					<Seat12
 						seatSelected={props.seatSelected}
 						setSeatSelected={props.setSeatSelected}
+						seatCustomerSelected={props.seatCustomerSelected}
 					/>
 				)}
 			</Flex>
