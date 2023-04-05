@@ -17,4 +17,10 @@ npx sequelize-cli db:migrate:undo; // revert lại data thay đổi trong folder
 
 Lệnh tạo mới file migration: "npx sequelize-cli migration:generate --name DayLaTenFile"
 
+
+
+Setup môi trường testing 
+1. cài các thử viện test : npm i -D jest supertest
+2. npm test để chạy test 
+
 --------------------- SẼ UPDATE THÊM SAU ---------------------

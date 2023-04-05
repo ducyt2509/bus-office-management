@@ -7,7 +7,14 @@
     "dev": "node dev",
     "build": "node build",
     "start": "nodemon server.js",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   },
   "dependencies": {
     "await": "^0.2.6",
@@ -41,5 +48,9 @@
     "sha256": "^0.2.0",
     "twilio": "^4.7.2",
     "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "supertest": "^6.3.3"
   }
 }
