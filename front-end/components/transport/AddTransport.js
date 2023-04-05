@@ -358,7 +358,7 @@ export default function AddTransport(props) {
 							color="#fff"
 							onClick={handleAddTransport}
 						>
-							{!props.transportId ? "Tạo Hành Trình" : "Chỉnh Sửa Hành Trình"}
+							{!props.transportId ? "Tạo" : "Chỉnh Sửa"}
 						</Button>
 					</ModalFooter>
 				</ModalContent>

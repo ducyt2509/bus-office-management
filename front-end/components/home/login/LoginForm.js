@@ -56,7 +56,7 @@ export default function ForgetLoginForm(props) {
 					<FormErrorMessage>
 						{props.password == ""
 							? "Mật khẩu là bắt buộc"
-							: "Mật khẩu chứa ít nhất 8 kí tự và 1 kí tự viết hoa"}
+							: "Mật khẩu chứa ít nhất tám ký tự và một ký tự viết hoa"}
 					</FormErrorMessage>
 				</FormControl>
 				<Button

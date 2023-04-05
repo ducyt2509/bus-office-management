@@ -183,7 +183,7 @@ export default function AddRoute(props) {
 							fontSize={"3xl"}
 							textAlign="center"
 						>
-							{!props.routeId ? "Tạo tuyến mới" : "Chỉnh sửa thông tin tuyến đường"}
+							{!props.routeId ? "Tạo tuyến đường" : "Chỉnh sửa thông tin tuyến đường"}
 						</Text>
 					</ModalHeader>
 					<ModalCloseButton />
@@ -277,7 +277,7 @@ export default function AddRoute(props) {
 							color="#fff"
 							onClick={handleAddRoute}
 						>
-							{!props.routeId ? "Tạo tuyến mới" : "Chỉnh sửa"}
+							{!props.routeId ? "Tạo" : "Chỉnh sửa"}
 						</Button>
 					</ModalFooter>
 				</ModalContent>
