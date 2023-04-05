@@ -10,4 +10,5 @@ router.post(
   // middleWare.verifyTokenForStaff,
   transactions.getListPayment
 );
+router.post('/transaction/get-transaction-by-id', transactions.getTransactionInformationById);
 module.exports = router;
