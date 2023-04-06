@@ -204,50 +204,50 @@ module.exports = {
 		const verifyOTPCode = params.verifyOTPCode;
 		const confirmPassword = params.confirm_password;
 		try {
-			if (verifyOTPCode.success && verifyOTPCode.messages == "Correct OTP Code") {
-				if (confirmPassword && password) {
-					if (password === confirmPassword) {
-						let getUser = await User.findOne({
-							where: {
-								[Op.or]: [{ email: user }, { phone: user }],
-							},
-							attributes: ["phone", "user_name", "email"],
-						});
-						const salt = await bcrypt.genSalt(10);
-						const hashPassword = bcrypt.hashSync(password, salt);
+			// if (verifyOTPCode.success && verifyOTPCode.messages == 'Correct OTP Code') {
+			if (confirmPassword && password) {
+				if (password === confirmPassword) {
+					let getUser = await User.findOne({
+						where: {
+							[Op.or]: [{ email: user }, { phone: user }],
+						},
+						attributes: ['phone', 'user_name', 'email'],
+					});
+					const salt = await bcrypt.genSalt(10);
+					const hashPassword = bcrypt.hashSync(password, salt);
 
-						if (getUser) {
-							let updateUser = await User.update(
-								{ password: hashPassword },
-								{
-									where: {
-										[Op.or]: [{ email: user }, { phone: user }],
-									},
+					if (getUser) {
+						let updateUser = await User.update(
+							{ password: hashPassword },
+							{
+								where: {
+									[Op.or]: [{ email: user }, { phone: user }],
 								},
-							);
-							if (updateUser) {
-								return responseHandler.ok(res, "Update user successful!");
-							} else {
-								return responseHandler.error(res);
 							}
+						);
+						if (updateUser) {
+							return responseHandler.ok(res, 'Update user successful!');
 						} else {
-							return responseHandler.responseWithData(res, 403, {
-								message: "User does not exist!",
-							});
+							return responseHandler.error(res);
 						}
 					} else {
 						return responseHandler.responseWithData(res, 403, {
-							message: "password not equal to password",
+							message: 'User does not exist!',
 						});
 					}
 				} else {
 					return responseHandler.responseWithData(res, 403, {
-						message: "password can not null",
+						message: 'password not equal to password',
 					});
 				}
 			} else {
-				return responseHandler.unauthorized(res);
+				return responseHandler.responseWithData(res, 403, {
+					message: 'password can not null',
+				});
 			}
+			// } else {
+			//   return responseHandler.unauthorized(res);
+			// }
 		} catch (error) {
 			return responseHandler.badRequest(res, error.message);
 		}
