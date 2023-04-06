@@ -391,6 +391,9 @@ module.exports = {
 							autoIncrement: true,
 							allowNull: false,
 						},
+						note: {
+							type: Sequelize.DataTypes.STRING
+						},
 						passenger_name: {
 							type: Sequelize.DataTypes.STRING,
 						},
@@ -403,24 +406,10 @@ module.exports = {
 						pickup_location: {
 							type: Sequelize.DataTypes.STRING,
 							allowNull: true,
-							// references: {
-							//   model: {
-							//     tableName: 'location',
-							//   },
-							//   key: 'id',
-							// },
-							// onDelete: 'cascade',
 						},
 						drop_off_location: {
 							type: Sequelize.DataTypes.STRING,
 							allowNull: false,
-							// references: {
-							//   model: {
-							//     tableName: 'location',
-							//   },
-							//   key: 'id',
-							// },
-							// onDelete: 'cascade',
 						},
 						tranship_address: {
 							type: Sequelize.DataTypes.TEXT,
@@ -432,13 +421,13 @@ module.exports = {
 						cashier: {
 							type: Sequelize.DataTypes.INTEGER(20).UNSIGNED,
 							allowNull: false,
-							references: {
-								model: {
-									tableName: "user",
-								},
-								key: "id",
-							},
-							onDelete: "cascade",
+							// references: {
+							// 	model: {
+							// 		tableName: "user",
+							// 	},
+							// 	key: "id",
+							// },
+							// onDelete: "cascade",
 						},
 						ticket_price: {
 							type: Sequelize.DataTypes.DOUBLE,

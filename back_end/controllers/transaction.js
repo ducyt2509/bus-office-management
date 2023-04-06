@@ -69,7 +69,7 @@ module.exports = {
         cashier: params.cashier,
         pickup_location: params.pickup_location,
         drop_off_location: params.drop_off_location,
-        tranship_address: params.tranship_address,
+        note: params.tranship_address,
         date_detail: params.date_detail,
         ticket_price: params.ticket_price,
         created_at: date,
