@@ -67,7 +67,6 @@ export default function BusScheduleDetail(props) {
 	const [locationDropOff, setLocationDropOff] = useState([]);
 	const [addressDropOff, setAddressDropOff] = useState([]);
 	const today = new Date().toISOString().split("T")[0];
-	console.log("today: ", today);
 
 	const handleChangeTimeForm = useCallback(
 		(e) => {
@@ -361,8 +360,6 @@ export default function BusScheduleDetail(props) {
 		}
 	}, []);
 
-	console.log("efectiveDate: ", effectiveDate);
-	console.log("compare: ", effectiveDate < today);
 	return (
 		<div style={{ position: "relative", left: "20%", width: "80%" }}>
 			<Flex
