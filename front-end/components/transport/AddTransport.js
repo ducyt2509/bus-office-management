@@ -264,7 +264,7 @@ export default function AddTransport(props) {
 							isRequired
 							marginBottom={"5%"}
 						>
-							<Box display={"flex"}>
+							<Flex>
 								<FormLabel
 									width={"51.5%"}
 									fontWeight={"500"}
@@ -286,7 +286,7 @@ export default function AddTransport(props) {
 										);
 									})}
 								</Select>
-							</Box>
+							</Flex>
 							<FormErrorMessage justifyContent={"flex-end"}>
 								Lịch trình xe là bắt buộc
 							</FormErrorMessage>
