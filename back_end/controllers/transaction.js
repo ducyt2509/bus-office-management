@@ -69,7 +69,7 @@ module.exports = {
         cashier: params.cashier,
         pickup_location: params.pickup_location,
         drop_off_location: params.drop_off_location,
-        note: params.tranship_address,
+        note: params.note,
         date_detail: params.date_detail,
         ticket_price: params.ticket_price,
         created_at: date,
@@ -77,6 +77,7 @@ module.exports = {
         payment_status: params.payment_status,
         seat: params.seat,
         transport_id: parseInt(params.transport),
+        tranship_address: params.tranship_address,
       };
       let currCode = 'VND';
       let vnp_Params = {};
@@ -104,13 +105,18 @@ module.exports = {
       let signed = hmac.update(new Buffer(signData, 'utf-8')).digest('hex');
       vnp_Params['vnp_SecureHash'] = signed;
       vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
-      Transaction.create(dataTransaction);
+      const createTransaction = await Transaction.create(dataTransaction);
       if (params.paymentStatusType) {
-        return responseHandler.ok(res);
+        if (createTransaction) {
+          return responseHandler.ok(res);
+        } else {
+          return responseHandler.badRequest(res, "Can't create payment");
+        }
       } else {
         return responseHandler.responseWithData(res, 200, { link_payment: vnpUrl });
       }
     } catch (error) {
+      console.log(error)
       return responseHandler.badRequest(res, error.message);
     }
   },

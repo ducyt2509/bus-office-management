@@ -233,6 +233,17 @@ div.bom-location-bus-schedule.add-location-bus-schedule {
 	--tabs-color: #f26a4c !important;
 }
 
+.chakra-tabs__tablist button[aria-selected="true"] {
+	--tabs-color: #000 !important;
+	color: #000;
+}
+
+.chakra-tabs__tablist button[aria-selected="false"] {
+	--tabs-color: #000 !important;
+	color: #9e9999;
+}
+
+
 .bom-book-ticket-steps {
 	margin: 0 auto;
 	width: 80%;
