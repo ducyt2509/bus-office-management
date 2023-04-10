@@ -139,7 +139,7 @@ export default function searchTicket(props) {
 					width={"60%"}
 					margin={"0 auto"}
 				>
-					<FormLabel w="30%">Số điện thoại</FormLabel>
+					<FormLabel w="30%">Số điện thoại/Mã vé</FormLabel>
 					<Input
 						value={phone}
 						onChange={handleChangePhone}

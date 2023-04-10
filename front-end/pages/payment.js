@@ -56,6 +56,7 @@ export default function Payment(props) {
       if (bookTicket.data.data.link_payment) {
         window.location.href = bookTicket.data.data.link_payment;
       } else {
+        props.data.id = bookTicket.data.data.id;
         setPaymentStatusType(1);
       }
     }

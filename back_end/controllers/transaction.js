@@ -168,7 +168,7 @@ module.exports = {
             getTransactionInfo[0].city_from + ' - ' + getTransactionInfo[0].city_to
           }&vehicle_plate=${getTransactionInfo[0].vehicle_plate}&vehicle_type_id=${
             getTransactionInfo[0].vehicle_type_id
-          }`
+          }&id=${getTransactionInfo[0].id}`
         );
       } else {
         return res.redirect(
@@ -186,7 +186,7 @@ module.exports = {
             getTransactionInfo[0].city_from + ' - ' + getTransactionInfo[0].city_to
           }&vehicle_plate=${getTransactionInfo[0].vehicle_plate}&vehicle_type_id=${
             getTransactionInfo[0].vehicle_type_id
-          }`
+          }&id=${getTransactionInfo[0].id}`
         );
       }
     } else {
@@ -206,7 +206,7 @@ module.exports = {
           getTransactionInfo[0].city_from + ' - ' + getTransactionInfo[0].city_to
         }&vehicle_plate=${getTransactionInfo[0].vehicle_plate}&vehicle_type_id=${
           getTransactionInfo[0].vehicle_type_id
-        }`
+        }&id=${getTransactionInfo[0].id}`
       );
     }
   },
@@ -223,7 +223,7 @@ module.exports = {
 			join route r on r.id = bs.route_id
             join city c on r.city_from_id = c.id
             join city cc on r.city_to_id = cc.id
-			where t.passenger_phone = '${phone}'
+			where t.passenger_phone = '${phone} or t.id = ${phone}'
 			limit ${limit} offset ${offset} 
 			`;
       let [listTransaction, numberTransaction] = await Promise.all([
