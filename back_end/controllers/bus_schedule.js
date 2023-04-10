@@ -124,28 +124,28 @@ module.exports = {
 							const [getBus, numberSeatSelected, numberSeatSold] = await Promise.all([
 								db.sequelize.query(
 									` select b.* , v.vehicle_type_name, v.number_seat, u.user_name as main_driver, uu.user_name as support_driver from transport t  
-                  join bus b  on t.bus_id = b.id
-                  join vehicle_type v on b.vehicle_type_id = v.id
-                  join user u on u.id = b.main_driver_id
-                  join user uu on uu.id = b.support_driver_id
-                  where t.bus_schedule_id = ${getTransport[j].bus_schedule_id} and t.bus_id = ${getTransport[j].bus_id}`,
+									join bus b  on t.bus_id = b.id
+									join vehicle_type v on b.vehicle_type_id = v.id
+									join user u on u.id = b.main_driver_id
+									join user uu on uu.id = b.support_driver_id
+									where t.bus_schedule_id = ${getTransport[j].bus_schedule_id} and t.bus_id = ${getTransport[j].bus_id}`,
 									{
 										type: QueryTypes.SELECT,
 									},
 								),
 								db.sequelize.query(
-									`select t.seat, t.passenger_name, t.passenger_phone, t.id, t.pickup_location, t.drop_off_location from transaction t
-                  join transport tr on tr.id = t.transport_id
-                  where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id}`,
+									`select t.seat, t.passenger_name, t.passenger_phone, t.id, t.pickup_location, t.drop_off_location, t.tranship_address from transaction t
+									join transport tr on tr.id = t.transport_id
+									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id}`,
 									{
 										type: QueryTypes.SELECT,
 									},
 								),
 								db.sequelize.query(
 									`select count(*) from ticket t
-                  join transaction tr on tr.id = t.transaction_id
-                  join transport tra on tra.id = tr.transport_id
-                  where tra.id = ${getTransport[j].id}`,
+									join transaction tr on tr.id = t.transaction_id
+									join transport tra on tra.id = tr.transport_id
+									where tra.id = ${getTransport[j].id}`,
 									{
 										type: QueryTypes.SELECT,
 									},

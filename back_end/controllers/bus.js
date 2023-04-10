@@ -6,54 +6,43 @@ const Op = db.Sequelize.Op;
 const QueryTypes = db.Sequelize.QueryTypes;
 const responseHandler = require('../handlers/response.handler');
 const validateHandler = require('../handlers/validate.handler');
-const messageHandler = require('../handlers/message.handler')
+const messageHandler = require('../handlers/message.handler');
 const regexHandler = require('../handlers/regex.handler');
 const { get } = require('jquery');
 
 const checkExistBus = async (vehicle_plate) => {
   const getBus = await Bus.findOne({
     where: {
-      vehicle_plate: vehicle_plate
-    }
-  })
+      vehicle_plate: vehicle_plate,
+    },
+  });
   if (getBus) return true;
   return false;
-}
-
-
+};
 
 const checkExistVehicleType = async (vehicle_type_id) => {
   const getType = await Vehicle_Type.findOne({
     where: {
-      id: vehicle_type_id
-    }
-  })
+      id: vehicle_type_id,
+    },
+  });
 
   if (getType) return getType.vehicle_type_name;
   return false;
-}
+};
 
 module.exports = {
-
   async addNewBus(req, res) {
     const params = req.body;
-    const { vehicle_plate,
-      main_driver_id,
-      support_driver_id,
-      vehicle_type_id,
-      vehicle_status } = req.body
-    console.log(vehicle_plate,
-      main_driver_id,
-      support_driver_id,
-      vehicle_type_id,
-      vehicle_status)
-    const b = vehicle_plate
+    const { vehicle_plate, main_driver_id, support_driver_id, vehicle_type_id, vehicle_status } =
+      req.body;
+    console.log(vehicle_plate, main_driver_id, support_driver_id, vehicle_type_id, vehicle_status);
+    const b = vehicle_plate;
 
-    console.log('REGEX', validateHandler.validateString(b, regexHandler.regexVehiclePlate))
-    console.log('REGEX', validateHandler.validateString(b, regexHandler.regexVehiclePlate))
+    console.log('REGEX', validateHandler.validateString(b, regexHandler.regexVehiclePlate));
+    console.log('REGEX', validateHandler.validateString(b, regexHandler.regexVehiclePlate));
 
-
-    console.log("Type ", checkExistVehicleType(vehicle_type_id))
+    console.log('Type ', checkExistVehicleType(vehicle_type_id));
     try {
       const createBus = await Bus.create(params);
       if (createBus) {
@@ -70,7 +59,8 @@ module.exports = {
     try {
       const params = req.body;
       const bus_id = params.id;
-      if (!validateHandler.validatePositiveIntegerNumber(bus_id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+      if (!validateHandler.validatePositiveIntegerNumber(bus_id))
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
       const deleteBus = await Bus.destroy({
         where: {
           id: bus_id,
@@ -79,7 +69,7 @@ module.exports = {
       if (deleteBus) {
         return responseHandler.ok(res, 'Delete bus successful!');
       } else {
-        return responseHandler.badRequest(res, "Bus not found");
+        return responseHandler.badRequest(res, 'Bus not found');
       }
     } catch (error) {
       return responseHandler.badRequest(res, error.message);
@@ -87,17 +77,17 @@ module.exports = {
   },
 
   async getListBus(req, res) {
-
     try {
-      var { limit, offset, query_search } = req.body
-      limit = limit ? limit : 7
-      offset = offset ? offset : 0
-      const querySearch = query_search ? "" : query_search
+      var { limit, offset, query_search } = req.body;
+      limit = limit ? limit : 7;
+      offset = offset ? offset : 0;
+      const querySearch = !query_search ? '' : query_search.toString().trim();
 
-
-
-      if (!validateHandler.validatePositiveIntegerNumber(limit) || !validateHandler.validatePositiveIntegerNumber(offset))
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+      if (
+        !validateHandler.validatePositiveIntegerNumber(limit) ||
+        !validateHandler.validatePositiveIntegerNumber(offset)
+      )
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const querySQL = `select bus.id, bus.vehicle_plate, bus.main_driver_id, bus.support_driver_id, bus.vehicle_type_id, bus.vehicle_status from bus 
       join vehicle_type v on bus.vehicle_type_id = v.id 
@@ -158,7 +148,7 @@ module.exports = {
           number_bus: numberBus[0]['count(*)'],
         });
       } else {
-        return responseHandler.badRequest(res, "Cant get list bus")
+        return responseHandler.badRequest(res, 'Cant get list bus');
       }
     } catch (error) {
       return responseHandler.badRequest(res, error.message);
@@ -166,11 +156,11 @@ module.exports = {
   },
 
   async getInformationBus(req, res) {
-
     try {
       const params = req.body;
       const bus_id = params.id;
-      if (!validateHandler.validatePositiveIntegerNumber(bus_id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+      if (!validateHandler.validatePositiveIntegerNumber(bus_id))
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const getBusById = await Bus.findOne({
         where: {
@@ -180,7 +170,7 @@ module.exports = {
       if (getBusById) {
         return responseHandler.responseWithData(res, 200, getBusById);
       } else {
-        return responseHandler.badRequest(res, "Bus not found");
+        return responseHandler.badRequest(res, 'Bus not found');
       }
     } catch (error) {
       return responseHandler.badRequest(res, error.message);
@@ -191,7 +181,8 @@ module.exports = {
     try {
       const params = req.body;
       const bus_id = params.id;
-      if (!validateHandler.validatePositiveIntegerNumber(bus_id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+      if (!validateHandler.validatePositiveIntegerNumber(bus_id))
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const updateBus = await Bus.update(params, {
         where: {
@@ -201,8 +192,7 @@ module.exports = {
       if (updateBus) {
         return responseHandler.ok(res, { message: 'Update bus successful!' });
       } else {
-        return responseHandler.badRequest(res, "Bus not found",
-        );
+        return responseHandler.badRequest(res, 'Bus not found');
       }
     } catch (error) {
       return responseHandler.badRequest(res, error.message);

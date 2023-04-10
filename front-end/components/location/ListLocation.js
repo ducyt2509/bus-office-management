@@ -45,9 +45,9 @@ export default function ListLocation(props) {
     return (
       <tr>
         <td>{index + 1}</td>
-        <td>{location.location_name}</td>
+        <td style={{ textAlign: 'initial', paddingLeft: '10px' }}>{location.location_name}</td>
         <td>{location.city_name}</td>
-        <td>{location.address}</td>
+        <td style={{ textAlign: 'initial', paddingLeft: '10px' }}>{location.address}</td>
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
             <IconButton
@@ -68,7 +68,7 @@ export default function ListLocation(props) {
       <thead>
         <tr>
           <td>STT</td>
-          <td>Tên địa điểm</td>
+          <td>Tên văn phòng</td>
           <td>Tên thành phố</td>
           <td>Địa chỉ</td>
           <td>Thao tác</td>

@@ -69,7 +69,7 @@ module.exports = {
         cashier: params.cashier,
         pickup_location: params.pickup_location,
         drop_off_location: params.drop_off_location,
-        note: params.tranship_address,
+        note: params.note,
         date_detail: params.date_detail,
         ticket_price: params.ticket_price,
         created_at: date,
@@ -77,6 +77,7 @@ module.exports = {
         payment_status: params.payment_status,
         seat: params.seat,
         transport_id: parseInt(params.transport),
+        tranship_address: params.tranship_address,
       };
       let currCode = 'VND';
       let vnp_Params = {};
@@ -104,13 +105,22 @@ module.exports = {
       let signed = hmac.update(new Buffer(signData, 'utf-8')).digest('hex');
       vnp_Params['vnp_SecureHash'] = signed;
       vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
-      Transaction.create(dataTransaction);
+      const createTransaction = await Transaction.create(dataTransaction);
       if (params.paymentStatusType) {
-        return responseHandler.ok(res);
+        if (createTransaction) {
+          return responseHandler.responseWithData(res, 200, createTransaction);
+        } else {
+          return responseHandler.badRequest(res, "Can't create payment");
+        }
       } else {
-        return responseHandler.responseWithData(res, 200, { link_payment: vnpUrl });
+        if (createTransaction) {
+          return responseHandler.responseWithData(res, 200, { link_payment: vnpUrl });
+        } else {
+          return responseHandler.badRequest(res, "Can't create payment");
+        }
       }
     } catch (error) {
+      console.log(error);
       return responseHandler.badRequest(res, error.message);
     }
   },
@@ -158,7 +168,7 @@ module.exports = {
             getTransactionInfo[0].city_from + ' - ' + getTransactionInfo[0].city_to
           }&vehicle_plate=${getTransactionInfo[0].vehicle_plate}&vehicle_type_id=${
             getTransactionInfo[0].vehicle_type_id
-          }`
+          }&id=${getTransactionInfo[0].id}`
         );
       } else {
         return res.redirect(
@@ -176,7 +186,7 @@ module.exports = {
             getTransactionInfo[0].city_from + ' - ' + getTransactionInfo[0].city_to
           }&vehicle_plate=${getTransactionInfo[0].vehicle_plate}&vehicle_type_id=${
             getTransactionInfo[0].vehicle_type_id
-          }`
+          }&id=${getTransactionInfo[0].id}`
         );
       }
     } else {
@@ -196,7 +206,7 @@ module.exports = {
           getTransactionInfo[0].city_from + ' - ' + getTransactionInfo[0].city_to
         }&vehicle_plate=${getTransactionInfo[0].vehicle_plate}&vehicle_type_id=${
           getTransactionInfo[0].vehicle_type_id
-        }`
+        }&id=${getTransactionInfo[0].id}`
       );
     }
   },
@@ -213,7 +223,7 @@ module.exports = {
 			join route r on r.id = bs.route_id
             join city c on r.city_from_id = c.id
             join city cc on r.city_to_id = cc.id
-			where t.passenger_phone = '${phone}'
+			where t.passenger_phone = '${phone} or t.id = ${phone}'
 			limit ${limit} offset ${offset} 
 			`;
       let [listTransaction, numberTransaction] = await Promise.all([
@@ -253,6 +263,26 @@ module.exports = {
         return responseHandler.responseWithData(res, 200, { transaction: getTransaction[0] });
       } else {
         return responseHandler.badRequest(res, "Can't get transaction information");
+      }
+    } catch (error) {
+      return responseHandler.badRequest(res, error.message);
+    }
+  },
+  async updateTransactionById(req, res) {
+    const params = req.body;
+    const id = params.id;
+    try {
+      const updateTransaction = await Transaction.update(params, {
+        where: {
+          id: id,
+        },
+      });
+      if (updateTransaction) {
+        return responseHandler.responseWithData(res, 200, {
+          message: 'Transaction update successfully',
+        });
+      } else {
+        return responseHandler.badRequest(res, "Transaction can't update");
       }
     } catch (error) {
       return responseHandler.badRequest(res, error.message);

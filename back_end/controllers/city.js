@@ -11,11 +11,11 @@ module.exports = {
 
     try {
       var { limit, offset, city_name } = req.body
-      limit = limit ? limit : 7
-      offset = offset ? offset : 0
+      // limit = limit ? limit : 7
+      // offset = offset ? offset : 0
       city_name = !city_name ? "" : city_name.toString().trim()
-      if (!validateHandler.validatePositiveIntegerNumber(limit) || !validateHandler.validatePositiveIntegerNumber(offset))
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+      // if (!validateHandler.validatePositiveIntegerNumber(limit) || !validateHandler.validatePositiveIntegerNumber(offset))
+      //   return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
 
       let whereCondition = {};
       if (city_name) {

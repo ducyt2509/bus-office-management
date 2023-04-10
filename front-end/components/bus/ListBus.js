@@ -66,11 +66,11 @@ export default function ListBus(props) {
           <Stack>
             <Flex alignItems={'center'} justifyContent={'center'}>
               <IoPersonOutline style={{ width: '15%' }} />
-              <p style={{ width: '56%' }}>{bus.driverMain.user_name}</p>
+              <p style={{ width: '80%' }}>{bus.driverMain.user_name}</p>
             </Flex>
             <Flex alignItems={'center'} justifyContent={'center'}>
               <IoCallOutline style={{ width: '15%' }} />
-              <p style={{ width: '56%' }}>{mainPhone}</p>
+              <p style={{ width: '80%' }}>{mainPhone}</p>
             </Flex>
           </Stack>
         </td>
@@ -80,7 +80,7 @@ export default function ListBus(props) {
               {bus.driverSupport?.user_name && (
                 <>
                   <IoPersonOutline style={{ width: '15%' }} />
-                  <p style={{ width: '56%' }}>{bus.driverSupport?.user_name}</p>
+                  <p style={{ width: '80%' }}>{bus.driverSupport?.user_name}</p>
                 </>
               )}
             </Flex>
@@ -88,7 +88,7 @@ export default function ListBus(props) {
               {bus.driverSupport?.phone && (
                 <>
                   <IoCallOutline style={{ width: '15%' }} />
-                  <p style={{ width: '56%' }}>{supportPhone}</p>
+                  <p style={{ width: '80%' }}>{supportPhone}</p>
                 </>
               )}
             </Flex>
