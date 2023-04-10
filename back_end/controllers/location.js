@@ -5,14 +5,21 @@ const responseHandler = require('../handlers/response.handler');
 const City = db.cities;
 const QueryTypes = db.Sequelize.QueryTypes;
 
+const validateHandler = require('../handlers/validate.handler');
+const messageHandler = require('../handlers/message.handler');
+const regexHandler = require('../handlers/regex.handler');
+
 module.exports = {
   async getListLocation(req, res) {
-    const params = req.body;
-    const limit = params.limit;
-    const offset = params.offset;
-    const querySearch = params.query_search;
-    const route = params.route;
     try {
+      var { limit, offset, query_search, route } = req.body
+      limit = limit ? limit : 7
+      offset = offset ? offset : 0
+      const querySearch = !query_search ? "" : query_search.toString().trim()
+
+      if (!validateHandler.validatePositiveIntegerNumber(limit) || !validateHandler.validatePositiveIntegerNumber(offset))
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+
       let querySQL = `select location.id, location.location_name, location.address, location.city_id from location join city c on c.id = location.city_id  
       where (location_name like '%${querySearch}%') 
       or (address like '%${querySearch}%') 
@@ -23,15 +30,15 @@ module.exports = {
       or (c.city_name like '%${querySearch}%')`;
       if (route) {
         querySQL = `select location.id, location.location_name, location.address, location.city_id from location join city c on c.id = location.city_id  
-      where (location_name like '%${querySearch}%') 
-      or (address like '%${querySearch}%') 
-      or (c.city_name like '%${querySearch}%') 
+      where (location_name like '%${querySearch}%'
+      or address like '%${querySearch}%'
+      or c.city_name like '%${querySearch}%') 
       and (location.city_id = ${route?.city_from_id} or location.city_id = ${route?.city_to_id})
       limit ${limit} offset ${offset}`;
         queryCount = `select count(*) from location l join city c on c.id = l.city_id  
-      where (location_name like '%${querySearch}%') 
-      or (address like '%${querySearch}%') 
-      or (c.city_name like '%${querySearch}%')
+      where (location_name like '%${querySearch}%'
+      or address like '%${querySearch}%'
+      or c.city_name like '%${querySearch}%')
       and (l.city_id = ${route?.city_from_id} or l.city_id = ${route?.city_to_id})`;
       }
       const [listLocation, numberLocation] = await Promise.all([
@@ -58,67 +65,104 @@ module.exports = {
   },
 
   async addNewLocation(req, res) {
-    const params = req.body;
-    const location_name = params.location_name;
     try {
-      if (!location_name) {
-        return responseHandler.responseWithData(res, 403, { message: "Name can't empty" });
-      } else {
-        const newLocation = Location.create(params);
-        if (newLocation) {
-          return responseHandler.ok(res, 'Add new location successfully!');
-        } else {
-          return responseHandler.responseWithData(res, 403, {
-            message: "Can't create new location",
-          });
+      const { location_name, address, city_id } = req.body;
+
+      if (!validateHandler.validateString(location_name, regexHandler.regexNormalString) ||
+        !validateHandler.validateString(address, regexHandler.regexNormalString) ||
+        !validateHandler.validatePositiveIntegerNumber(city_id)
+      )
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+
+      const getCity = await City.findOne({ where: { id: city_id } })
+
+      if (!getCity) {
+        return responseHandler.badRequest(res, "City not found")
+      }
+      const location = await Location.findOne({
+        where: {
+          [Op.or]: [{ location_name }, { address }],
         }
+      })
+      if (location) {
+        return responseHandler.badRequest(res, "Location is already exist")
+      }
+      console.log('3');
+      const newLocation = await Location.create({ location_name, address, city_id });
+      if (newLocation) {
+        return responseHandler.ok(res, 'Add new location successful');
+      } else {
+        return responseHandler.badRequest(res, "Cant add new location")
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      return responseHandler.badRequest(res, error.message)
     }
   },
 
   async deleteLocation(req, res) {
-    const params = req.body;
-    const location_id = params.id;
+
     try {
-      let location = await Location.findAll({
-        where: {
-          id: location_id,
-        },
-      });
-      if (!location.length) {
-        return responseHandler.notfound(res);
+      const params = req.body;
+      const id = params.id;
+
+      if (!validateHandler.validatePositiveIntegerNumber(id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+      const getLocation = await Location.findOne({ where: { id } })
+      if (!getLocation) {
+        return responseHandler.badRequest(res, "Location not found")
       }
       const destroyLocation = await Location.destroy({
         where: {
-          id: location_id,
+          id: id,
         },
       });
       if (destroyLocation) {
         return responseHandler.ok(res, 'Delete location successfully');
       } else {
-        return responseHandler.responseWithData(res, 404, { message: "Can't delete location" });
+        return responseHandler.badRequest(res, "Can't delete location");
       }
     } catch (error) {
-      return responseHandler.error(res);
+      return responseHandler.error;
     }
   },
   async updateLocation(req, res) {
-    const params = req.body;
+
     try {
-      const updateLocation = await Location.update(params, {
+      const { id, location_name, address, city_id } = req.body;
+      if (!validateHandler.validatePositiveIntegerNumber(id, regexHandler.regexNormalString) ||
+        !validateHandler.validatePositiveIntegerNumber(city_id, regexHandler.regexNormalString) ||
+        !validateHandler.validateString(location_name, regexHandler.regexNormalString) ||
+        !validateHandler.validateString(address, regexHandler.regexNormalString))
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+
+      const getCity = await City.findOne({ where: { id: city_id } })
+      if (!getCity) {
+        return responseHandler.badRequest(res, "City not found")
+      }
+
+      const getLocation = await Location.findOne({ where: { id } })
+      if (!getLocation) {
+        return responseHandler.badRequest(res, "Location not found")
+      }
+      const location = await Location.findOne({
         where: {
-          id: params.id,
+          [Op.or]: [{ location_name }, { address }],
+        }
+      })
+      if (location) {
+        return responseHandler.badRequest(res, "Location is already exist")
+      }
+      const updateLocation = await Location.update({ location_name, address, city_id }, {
+        where: {
+          id,
         },
       });
       if (updateLocation) {
-        return responseHandler.ok(res, 'Update location successfully');
+        return responseHandler.ok(res, 'Update location successfully!');
       } else {
-        return responseHandler.responseWithData(res, 403, { message: "Can't update location" });
+        return responseHandler.badRequest(res, "Cant update location");
       }
     } catch (error) {
-      return responseHandler.badRequest(res, message.error);
+      return responseHandler.error
     }
   },
 };

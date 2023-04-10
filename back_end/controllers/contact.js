@@ -32,7 +32,7 @@ module.exports = {
         return responseHandler.badRequest(res, 'Input is not null');
       }
     } catch (error) {
-      return responseHandler.error();
+      return responseHandler.error;
     }
   },
 };

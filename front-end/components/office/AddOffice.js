@@ -21,7 +21,7 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useRef } from "react";
 
-export default function AddCar(props) {
+export default function AddOffice(props) {
 	const toast = useToast();
 	const toastIdRef = useRef();
 
@@ -29,12 +29,12 @@ export default function AddCar(props) {
 
 	const [officeName, setOfficeName] = useState("");
 	const [city, setCity] = useState();
-	const [location, setLocation] = useState();
+	const [office, setLocation] = useState();
 
 	const [error, setError] = useState({
 		officeName: false,
 		city: false,
-		location: false,
+		office: false,
 	});
 
 	const handleChangeOfficeName = useCallback(
@@ -65,14 +65,14 @@ export default function AddCar(props) {
 		},
 		[error],
 	);
-	const handleChangeLocation = useCallback(
+	const handleChangeOffice = useCallback(
 		(e) => {
 			let value = e.target.value;
 			let oldError = { ...error };
 			if (!value) {
-				oldError.location = true;
+				oldError.office = true;
 			} else {
-				oldError.location = false;
+				oldError.office = false;
 			}
 			setError(oldError);
 			setLocation(e.target.value);
@@ -88,17 +88,17 @@ export default function AddCar(props) {
 		if (!city) {
 			oldError.city = true;
 		}
-		if (!location) {
-			oldError.location = true;
+		if (!office) {
+			oldError.office = true;
 		}
-		if (oldError.officeName || oldError.city || oldError.location) {
+		if (oldError.officeName || oldError.city || oldError.office) {
 			setError(oldError);
 			return;
 		}
 		const submitData = {
 			office_name: officeName,
 			city_id: city,
-			office_address: location,
+			office_address: office,
 		};
 		if (props.officeId) {
 			submitData.id = props.officeId;
@@ -160,7 +160,7 @@ export default function AddCar(props) {
 				});
 			}
 		}
-	}, [location, city, officeName, error]);
+	}, [office, city, officeName, error]);
 
 	const handleGetListCity = async () => {
 		const getListCity = await axios.get(`http://localhost:${props.port}/city/list-city`, {
@@ -179,7 +179,7 @@ export default function AddCar(props) {
 			setError({
 				officeName: false,
 				city: false,
-				location: false,
+				office: false,
 			});
 		} else {
 			setOfficeName("");
@@ -268,7 +268,7 @@ export default function AddCar(props) {
 						<FormControl
 							marginBottom={"5%"}
 							isRequired
-							isInvalid={error.location}
+							isInvalid={error.office}
 						>
 							<Flex>
 								<FormLabel
@@ -278,8 +278,8 @@ export default function AddCar(props) {
 									Địa chỉ
 								</FormLabel>
 								<Textarea
-									value={location}
-									onChange={handleChangeLocation}
+									value={office}
+									onChange={handleChangeOffice}
 								/>
 							</Flex>
 							<FormErrorMessage justifyContent={"flex-end"}>
