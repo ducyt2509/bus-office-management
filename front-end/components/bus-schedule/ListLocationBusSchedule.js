@@ -150,7 +150,7 @@ export default function ListLocationBusSchedule(props) {
 						colorScheme="linkedin"
 						onClick={addNewLocationBusSchedule}
 					>
-						Add
+						Thêm
 					</Button>
 				</div>
 				<Flex

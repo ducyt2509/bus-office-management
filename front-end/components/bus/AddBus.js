@@ -384,7 +384,7 @@ export default function AddCar(props) {
 							color="#fff"
 							onClick={handleAddVehicle}
 						>
-							{!props.vehicleId ? "Tạo Xe" : "Chỉnh sửa thông tin xe"}
+							{!props.vehicleId ? "Tạo" : "Chỉnh sửa"}
 						</Button>
 					</ModalFooter>
 				</ModalContent>

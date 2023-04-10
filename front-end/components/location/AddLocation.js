@@ -300,7 +300,7 @@ export default function AddLocation(props) {
 							color="#fff"
 							onClick={handleAddLocation}
 						>
-							{!props.locationId ? "Tạo Điểm Đón Trả" : "Chỉnh Sửa Điểm Đón Trả"}
+							{!props.locationId ? "Tạo" : "Chỉnh Sửa"}
 						</Button>
 					</ModalFooter>
 				</ModalContent>

@@ -80,7 +80,7 @@ export default function AddOffice(props) {
 		[error],
 	);
 
-	const handleAddVehicle = useCallback(async () => {
+	const handleAddOffice = useCallback(async () => {
 		let oldError = { ...error };
 		if (!officeName) {
 			oldError.officeName = true;
@@ -302,9 +302,9 @@ export default function AddOffice(props) {
 						<Button
 							backgroundColor="#F26A4C"
 							color="#fff"
-							onClick={handleAddVehicle}
+							onClick={handleAddOffice}
 						>
-							{!props.vehicleId ? "Tạo văn phòng" : "Chỉnh sửa thông tin văn phòng"}
+							{!props.officeId ? "Tạo" : "Chỉnh sửa"}
 						</Button>
 					</ModalFooter>
 				</ModalContent>

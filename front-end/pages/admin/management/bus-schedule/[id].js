@@ -67,7 +67,6 @@ export default function BusScheduleDetail(props) {
 	const [locationDropOff, setLocationDropOff] = useState([]);
 	const [addressDropOff, setAddressDropOff] = useState([]);
 	const today = new Date().toISOString().split("T")[0];
-	console.log("today: ", today);
 
 	const handleChangeTimeForm = useCallback(
 		(e) => {
@@ -361,8 +360,6 @@ export default function BusScheduleDetail(props) {
 		}
 	}, []);
 
-	console.log("efectiveDate: ", effectiveDate);
-	console.log("compare: ", effectiveDate < today);
 	return (
 		<div style={{ position: "relative", left: "20%", width: "80%" }}>
 			<Flex
@@ -378,7 +375,7 @@ export default function BusScheduleDetail(props) {
 					borderRadius="full"
 					boxSize="50px"
 					src={state.dataUser.avatar ? state.dataUser.avatar : "https://bit.ly/dan-abramov"}
-					alt="Dan Abramov"
+					alt="Nguyễn Văn A"
 				/>
 			</Flex>
 			<div style={{ width: "90%", margin: "0 auto" }}>
@@ -564,7 +561,7 @@ export default function BusScheduleDetail(props) {
 						<Box>
 							<FormControl isRequired>
 								<Box display={"flex"}>
-									<FormLabel>Trạng thái lịch trình hoạt động:</FormLabel>
+									<FormLabel>Tình trạng lịch trình:</FormLabel>
 									<Select
 										value={scheduleStatus}
 										onChange={handleChangeScheduleStatus}
@@ -648,7 +645,7 @@ export default function BusScheduleDetail(props) {
 							onClick={handleSubmitData}
 							colorScheme="linkedin"
 						>
-							Gửi
+							Lưu
 						</Button>
 					</CardFooter>
 				</Card>

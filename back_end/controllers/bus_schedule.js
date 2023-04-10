@@ -134,7 +134,7 @@ module.exports = {
 									},
 								),
 								db.sequelize.query(
-									`select t.seat from transaction t
+									`select t.seat, t.passenger_name, t.passenger_phone, t.id, t.pickup_location, t.drop_off_location from transaction t
                   join transport tr on tr.id = t.transport_id
                   where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id}`,
 									{
@@ -151,7 +151,6 @@ module.exports = {
 									},
 								),
 							]);
-							console.log(getTransport[j].id);
 							if (getBus) {
 								getTransport[j].dataValues.bus = getBus;
 							}

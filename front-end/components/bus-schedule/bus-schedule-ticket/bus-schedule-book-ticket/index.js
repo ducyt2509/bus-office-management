@@ -28,8 +28,6 @@ export default function BusScheduleBookTicket(props) {
 	const [seatSelected, setSeatSelected] = useState([]);
 	const [locationPickup, setLocationPickup] = useState("");
 	const [locationDropOff, setLocationDropOff] = useState("");
-	const [addressPickup, setAddressPickup] = useState("");
-	const [addressDropOff, setAddressDropOff] = useState("");
 	const [userName, setUserName] = useState("");
 	const [phone, setPhone] = useState("");
 	const [email, setEmail] = useState("");
@@ -103,7 +101,7 @@ export default function BusScheduleBookTicket(props) {
 				cashier: null,
 				pickup_location: locationPickup,
 				drop_off_location: locationDropOff,
-				tranship_address: notice,
+				note: notice,
 				date_detail:
 					router.query.refresh_date +
 					" | " +
@@ -236,12 +234,8 @@ export default function BusScheduleBookTicket(props) {
 					data={props.busScheduleInformation}
 					locationPickup={locationPickup}
 					locationDropOff={locationDropOff}
-					addressDropOff={addressDropOff}
-					addressPickup={addressPickup}
 					setLocationPickup={setLocationPickup}
 					setLocationDropOff={setLocationDropOff}
-					setAddressDropOff={setAddressDropOff}
-					setAddressPickup={setAddressPickup}
 				/>
 			)}
 			{step == 3 && (

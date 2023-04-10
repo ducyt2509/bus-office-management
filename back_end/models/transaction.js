@@ -16,8 +16,11 @@ module.exports = (sequelize, Sequelize) => {
 			passenger_email: {
 				type: Sequelize.STRING,
 			},
+			note: {
+				type: Sequelize.STRING,
+			},
 			cashier: {
-				type: Sequelize.INTEGER(20).UNSIGNED,
+				type: Sequelize.INTEGER(20),
 			},
 			pickup_location: {
 				type: Sequelize.STRING,
@@ -25,12 +28,6 @@ module.exports = (sequelize, Sequelize) => {
 			drop_off_location: {
 				type: Sequelize.STRING,
 			},
-			// pickup_location_id: {
-			//   type: Sequelize.INTEGER(20).UNSIGNED,
-			// },
-			// drop_off_location_id: {
-			//   type: Sequelize.INTEGER(20).UNSIGNED,
-			// },
 			tranship_address: {
 				type: Sequelize.TEXT,
 			},

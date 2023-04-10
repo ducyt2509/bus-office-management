@@ -1,19 +1,11 @@
 import { formatDate } from "@/helper";
 import { convertTime, validate } from "@/helper";
 import {
-	Tabs,
-	TabList,
-	Tab,
-	TabPanels,
-	TabPanel,
 	Text,
 	Heading,
 	InputGroup,
-	InputLeftElement,
 	Card,
-	CardHeader,
 	CardBody,
-	Input,
 	Flex,
 	Stack,
 	Box,
@@ -25,6 +17,7 @@ import axios from "axios";
 import { useState, useCallback } from "react";
 import { GoLocation } from "react-icons/go";
 import { MdOutlineSwapHorizontalCircle } from "react-icons/md";
+import { Seat12User } from "@/components/vehicle";
 
 export default function Ticket(props) {
 	const [startLocation, setStartLocation] = useState(47);
@@ -33,13 +26,16 @@ export default function Ticket(props) {
 	const [departureDay, setDepartureDay] = useState();
 	const [scheduleSelected, setScheduleSelected] = useState();
 	const [scheduleData, setScheduleData] = useState();
+	const [seatSelected, setSeatSelected] = useState([]);
 	const [transportData, setTransportData] = useState();
+	const [editButtonStatus, setEditButtonStatus] = useState(false);
+	const [deleteButtonStatus, setDeleteButtonStatus] = useState(false);
+	const [seatCustomerSelected, setSeatCustomerSelected] = useState([]);
 	const [error, setError] = useState({
 		from: false,
 		to: false,
 		date: false,
 	});
-
 	const handleChangeStartLocation = (e) => {
 		let value = e.target.value;
 		let oldError = { ...error };
@@ -85,7 +81,44 @@ export default function Ticket(props) {
 		setScheduleSelected(id);
 		setScheduleData(schedule);
 		setTransportData(transport);
+		setSeatCustomerSelected(
+			transport.number_seat_selected
+				.map((e) => e.seat)
+				.join()
+				.split(",")
+				.map((e) => e.trim()),
+		);
 	});
+
+	const handleSeatSelected = useCallback(
+		(id) => {
+			let cloneSeatSelected = [...seatSelected];
+			if (!cloneSeatSelected.includes(id)) {
+				cloneSeatSelected.push(id);
+			} else {
+				cloneSeatSelected.splice(cloneSeatSelected.indexOf(id), 1);
+			}
+			setSeatSelected(cloneSeatSelected);
+			let editStatus = true;
+			let deleteStatus = true;
+			if (!cloneSeatSelected.length) {
+				editStatus = false;
+				deleteStatus = false;
+			}
+			if (cloneSeatSelected.length > 1) {
+				editStatus = false;
+			}
+			cloneSeatSelected.forEach((seat) => {
+				if (!seatCustomerSelected.includes(seat)) {
+					editStatus = false;
+					deleteStatus = false;
+				}
+			});
+			setEditButtonStatus(editStatus);
+			setDeleteButtonStatus(deleteStatus);
+		},
+		[seatSelected, seatCustomerSelected],
+	);
 
 	const searchBusSchedule = useCallback(async () => {
 		let oldError = { ...error };
@@ -146,9 +179,9 @@ export default function Ticket(props) {
 									color={"#363636"}
 									cursor={"pointer"}
 									backgroundColor={
-										position + "" + index == scheduleSelected ? "#f5f5f5" : "#fff"
+										position + "" + index == scheduleSelected ? "#F2CAC2" : "#fff"
 									}
-									_hover={{ backgroundColor: "#f5f5f5" }}
+									_hover={{ backgroundColor: "#F2CAC2" }}
 									maxH="60px"
 									onClick={() =>
 										handleSCheduleSelected(position + "" + index, schedule, vehicle)
@@ -159,7 +192,7 @@ export default function Ticket(props) {
 										<Flex>
 											<Text marginRight={"5px"}>-----</Text>
 											<Text>
-												{number_seat_unselected + "/" + vehicle.bus[0].number_seat}
+												{number_seat_selected + "/" + vehicle.bus[0].number_seat}
 											</Text>
 										</Flex>
 									</Stack>
@@ -297,23 +330,27 @@ export default function Ticket(props) {
 			justifyContent={"space-between"}
 		>
 			<Flex>
-				<Button
-					leftIcon={<EditIcon />}
-					backgroundColor={"#fff"}
-					border="1px solid"
-					borderRadius={"5px"}
-					marginRight={"15px"}
-				>
-					Sửa
-				</Button>
-				<Button
-					leftIcon={<DeleteIcon />}
-					backgroundColor={"#fff"}
-					border="1px solid"
-					borderRadius={"5px"}
-				>
-					Xóa
-				</Button>
+				{editButtonStatus && (
+					<Button
+						leftIcon={<EditIcon />}
+						backgroundColor={"#fff"}
+						border="1px solid"
+						borderRadius={"5px"}
+						marginRight={"15px"}
+					>
+						Sửa
+					</Button>
+				)}
+				{deleteButtonStatus && (
+					<Button
+						leftIcon={<DeleteIcon />}
+						backgroundColor={"#fff"}
+						border="1px solid"
+						borderRadius={"5px"}
+					>
+						Xóa
+					</Button>
+				)}
 			</Flex>
 			<Flex>
 				<Button
@@ -350,14 +387,15 @@ export default function Ticket(props) {
 			</Flex>
 		</Flex>
 	);
-
 	const VehicleHTML = scheduleData && transportData && (
-		<Card
-			backgroundColor={"#F5F5F5"}
-			margin="3% 0"
-		>
-			<CardBody></CardBody>
-		</Card>
+		<Seat12User
+			data={transportData}
+			port={props.port}
+			scheduleData={scheduleData}
+			seatSelected={seatSelected}
+			handleSeatSelected={handleSeatSelected}
+			seatCustomerSelected={seatCustomerSelected}
+		/>
 	);
 	return (
 		<div style={{ position: "relative", left: "20%", width: "80%" }}>
@@ -369,12 +407,12 @@ export default function Ticket(props) {
 				marginBottom={"2%"}
 				paddingTop="2%"
 			>
-				<Text marginRight="1%">Dan Abramov</Text>
+				<Text marginRight="1%">Nguyễn Văn A</Text>
 				<Image
 					borderRadius="full"
 					boxSize="50px"
 					src="https://bit.ly/dan-abramov"
-					alt="Dan Abramov"
+					alt="Nguyễn Văn A"
 				/>
 			</Flex>
 			<Box
@@ -422,7 +460,7 @@ export default function Ticket(props) {
 								placeholder="Phone number"
 								onChange={handleChangeDepartureDay}
 								value={departureDay}
-								min = {validate.min_date}
+								min={validate.min_date}
 							/>
 						</InputGroup>
 					</Flex>

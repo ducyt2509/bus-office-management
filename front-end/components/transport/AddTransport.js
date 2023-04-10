@@ -14,6 +14,7 @@ import {
 	useToast,
 	FormControl,
 	FormLabel,
+	Flex,
 	FormErrorMessage,
 	Box,
 } from "@chakra-ui/react";
@@ -264,7 +265,7 @@ export default function AddTransport(props) {
 							isRequired
 							marginBottom={"5%"}
 						>
-							<Box display={"flex"}>
+							<Flex>
 								<FormLabel
 									width={"51.5%"}
 									fontWeight={"500"}
@@ -286,7 +287,7 @@ export default function AddTransport(props) {
 										);
 									})}
 								</Select>
-							</Box>
+							</Flex>
 							<FormErrorMessage justifyContent={"flex-end"}>
 								Lịch trình xe là bắt buộc
 							</FormErrorMessage>
@@ -358,7 +359,7 @@ export default function AddTransport(props) {
 							color="#fff"
 							onClick={handleAddTransport}
 						>
-							{!props.transportId ? "Tạo Hành Trình" : "Chỉnh Sửa Hành Trình"}
+							{!props.transportId ? "Tạo" : "Chỉnh Sửa"}
 						</Button>
 					</ModalFooter>
 				</ModalContent>

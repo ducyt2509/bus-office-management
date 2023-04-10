@@ -458,7 +458,7 @@ export default function AddEmployee(props) {
 							color="#fff"
 							onClick={handleAddEmployee}
 						>
-							{!props.userId ? "Thêm nhân viên" : "Chỉnh sửa"}
+							{!props.userId ? "Thêm" : "Chỉnh sửa"}
 						</Button>
 					</ModalFooter>
 				</ModalContent>

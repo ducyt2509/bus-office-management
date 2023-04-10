@@ -1,10 +1,16 @@
+import { Box, Text } from "@chakra-ui/react";
+
 export default function HomeContent() {
-  return (
-    <div className="home-content">
-      <h3 className="home-title">Lorem ipsum dolor sit amet onsectetur.</h3>
-      <p className="home-desc">
-        Lorem ipsum dolor sit amet consectetur. Velit non sed lobortis fermentum volutpat dignissim.
-      </p>
-    </div>
-  );
+	return (
+		<div className="home-content">
+			<h3 className="home-title">BOM - Chất lượng là danh dự</h3>
+			<Box
+				className="home-desc"
+				ml={10}
+			>
+				<Text>Dùng chữ “Tâm” để phục vụ </Text>
+				<Text mt={3}>Lấy chữ “Tín” để phát triển</Text>
+			</Box>
+		</div>
+	);
 }
