@@ -100,7 +100,7 @@ export default function BusScheduleBookTicket(props) {
 			const submitData = {
 				passenger_name: userName,
 				passenger_phone: phone,
-				// cashier: null,
+				cashier: null,
 				pickup_location: locationPickup,
 				drop_off_location: locationDropOff,
 				tranship_address: notice,

@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const cypherKey = crypto.randomBytes(64);
 
 const User = db.users;
+const Role = db.roles;
 const Office = db.offices;
 const Op = db.Sequelize.Op;
 const OTPCode = require("../helper/OTPCode");
@@ -10,7 +11,10 @@ const bcrypt = require("bcrypt");
 const QueryTypes = db.Sequelize.QueryTypes;
 const jwt = require("jsonwebtoken");
 const responseHandler = require("../handlers/response.handler");
-// require("crypto").randomBytes(64).toString('hex')
+
+const regexHandler = require('../handlers/regex.handler')
+const validateHandler = require("../handlers/validate.handler");
+const messageHandler = require("../handlers/message.handler");
 const generateRefreshToken = (user) => {
 	return jwt.sign(
 		{
@@ -34,22 +38,47 @@ const generateAccessToken = (user) => {
 
 module.exports = {
 	async createNewUser(req, res) {
-		const params = req.body;
 		try {
+			const { email, password, user_name, phone, avatar, role_id } = req.body;
+			console.log(email, password, user_name, phone, avatar, role_id)
+			if (!validateHandler.validateString(email, regexHandler.regexEmail) ||
+				!validateHandler.validateString(user_name, regexHandler.regexNormalString) ||
+				!validateHandler.validateString(phone, regexHandler.regexPhoneNumber) ||
+				!validateHandler.validateString(password, regexHandler.regexPassword)
+				// || !validateHandler.validateString(avatar, regexHandler.regexAvatar)
+
+			) return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+			const role = await Role.findOne({
+				where: {
+					id: role_id
+				},
+			})
+			if (!role) return responseHandler.badRequest(res, "Role not found");
+
+
+			const checkUserExist = await User.findOne({
+				where: {
+					[Op.or]: [{ email }, { phone }],
+				}
+			})
+
+			if (checkUserExist) {
+				return responseHandler.badRequest(res, "User is already exist");
+			}
 			const salt = await bcrypt.genSalt(10);
-			const hashPassword = bcrypt.hashSync(params.password, salt);
+			const hashPassword = bcrypt.hashSync(password, salt);
 			const newUser = {
-				...params,
+				email, user_name, phone, avatar, role_id,
 				password: hashPassword,
 			};
 			const createUser = await User.create(newUser);
 			if (createUser) {
 				return responseHandler.ok(res, "Create user successful!");
 			} else {
-				return responseHandler.responseWithData(res, 403, { message: "Can't add new user" });
+				return responseHandler.badRequest(res, "Create user failed");
 			}
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 	async requestRefreshToken(req, res) {
@@ -87,74 +116,75 @@ module.exports = {
 					return responseHandler.unauthorized(res);
 				}
 			} catch (error) {
-				return responseHandler.badRequest(res, error.message);
+				return responseHandler.error
 			}
 		}
 	},
 	async loginAccount(req, res) {
-		const params = req.body;
-		const user = params.user;
-		const password = params.password;
+
 		try {
-			if (user && password) {
-				const getUser = await User.findOne({
-					where: {
-						[Op.or]: [{ email: user }, { phone: user }],
-					},
-				});
-				if (getUser) {
-					const validPassword = bcrypt.compareSync(password, getUser.password);
-					if (!validPassword) {
-						return responseHandler.responseWithData(res, 403, {
-							message: "Password was wrong",
-						});
-					} else {
-						const accessToken = generateAccessToken(getUser);
-						const refreshAccessToken = generateRefreshToken(getUser);
-						const [updateRefreshToken, getOffice] = await Promise.all([
-							User.update(
-								{
-									refresh_access_token: refreshAccessToken,
-								},
-								{
-									where: {
-										[Op.or]: [{ email: user }, { phone: user }],
-									},
-								},
-							),
-							Office.findOne({
-								where: {
-									id: getUser.office_id,
-								},
-							}),
-						]);
-						if (getOffice) {
-							getUser.dataValues.office = getOffice;
-						}
-						res.cookie("refreshAccessToken", refreshAccessToken, {
-							httpOnly: true,
-							path: "/",
-							sameSite: "strict",
-							secure: false,
-						});
-						delete getUser.dataValues.password;
-						delete getUser._previousDataValues.password;
-						delete getUser.dataValues.refresh_access_token;
-						delete getUser._previousDataValues.refresh_access_token;
-						return responseHandler.responseWithData(res, 200, {
-							...getUser,
-							accessToken,
-							message: "Login successful!",
-						});
-					}
+			const params = req.body;
+			const user = params.user;
+			const password = params.password;
+			if (!validateHandler.validateString(user, regexHandler.regexPhoneNumberOrEmail) ||
+				// password not in range [8-15] characters
+				!validateHandler.validateStringInRange(user, 8, 15, regexHandler.password))
+				return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+
+			const getUser = await User.findOne({
+				where: {
+					[Op.or]: [{ email: user }, { phone: user }],
+				},
+			});
+			if (getUser) {
+				const validPassword = bcrypt.compareSync(password, getUser.password);
+				if (!validPassword) {
+					return responseHandler.badRequest(res, "Password was wrong")
 				} else {
-					return responseHandler.responseWithData(res, 403, { message: "User not exist" });
+					const accessToken = generateAccessToken(getUser);
+					const refreshAccessToken = generateRefreshToken(getUser);
+					const [updateRefreshToken, getOffice] = await Promise.all([
+						User.update(
+							{
+								refresh_access_token: refreshAccessToken,
+							},
+							{
+								where: {
+									[Op.or]: [{ email: user }, { phone: user }],
+								},
+							},
+						),
+						Office.findOne({
+							where: {
+								id: getUser.office_id,
+							},
+						}),
+					]);
+					if (getOffice) {
+						getUser.dataValues.office = getOffice;
+					}
+					res.cookie("refreshAccessToken", refreshAccessToken, {
+						httpOnly: true,
+						path: "/",
+						sameSite: "strict",
+						secure: false,
+					});
+					delete getUser.dataValues.password;
+					delete getUser._previousDataValues.password;
+					delete getUser.dataValues.refresh_access_token;
+					delete getUser._previousDataValues.refresh_access_token;
+					return responseHandler.responseWithData(res, 200, {
+						...getUser,
+						accessToken,
+						message: "Login successful!",
+					});
 				}
+
 			} else {
-				return responseHandler.responseWithData(res, 200, "User and password can not empty");
+				return responseHandler.badRequest(res, "User not found");
 			}
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 
@@ -162,20 +192,19 @@ module.exports = {
 		try {
 			const params = req.body;
 			const user = params.user;
-			if (user) {
-				let getUser = await User.findOne({
-					where: {
-						[Op.or]: [{ email: user }, { phone: user }],
-					},
-					attributes: ["phone", "email"],
-				});
-				let hashData = await OTPCode.sendCodeOTP(getUser.phone);
-				return responseHandler.responseWithData(res, 200, hashData);
-			} else {
-				throw { message: "Data is not null" };
-			}
+			if (!validateHandler.validateString(user, regexHandler.regexPhoneNumberOrEmail)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+			let getUser = await User.findOne({
+				where: {
+					[Op.or]: [{ email: user }, { phone: user }],
+				},
+				attributes: ["phone", "email"],
+			});
+			if (!getUser) return responseHandler.badRequest(res, "User not found");
+			let hashData = await OTPCode.sendCodeOTP(getUser.phone);
+			return responseHandler.responseWithData(res, 200, hashData);
+
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 
@@ -190,10 +219,10 @@ module.exports = {
 			if (verifyOTPCode.success) {
 				return responseHandler.responseWithData(res, 200, { phone, verifyOTPCode });
 			} else {
-				return responseHandler.responseWithData(res, 401, verifyOTPCode);
+				return responseHandler.responseWithData(res, 401, "Verify code is not available");
 			}
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 
@@ -204,63 +233,72 @@ module.exports = {
 		const verifyOTPCode = params.verifyOTPCode;
 		const confirmPassword = params.confirm_password;
 		try {
-			// if (verifyOTPCode.success && verifyOTPCode.messages == 'Correct OTP Code') {
-			if (confirmPassword && password) {
-				if (password === confirmPassword) {
-					let getUser = await User.findOne({
-						where: {
-							[Op.or]: [{ email: user }, { phone: user }],
-						},
-						attributes: ['phone', 'user_name', 'email'],
-					});
-					const salt = await bcrypt.genSalt(10);
-					const hashPassword = bcrypt.hashSync(password, salt);
+			if (!validateHandler.validateStringInRange(password, 8, 16, regexHandler.regexPassword) ||
+				!validateHandler.validateStringInRange(password, 8, 16, regexHandler.confirmPassword) ||
+				!validateHandler.validateString(user, regexHandler.regexPhoneNumberOrEmail)
+			)
+				if (verifyOTPCode.success && verifyOTPCode.messages == 'Correct OTP Code') {
+					if (password === confirmPassword) {
+						let getUser = await User.findOne({
+							where: {
+								[Op.or]: [{ email: user }, { phone: user }],
+							},
+							attributes: ['phone', 'email'],
+						});
+						const salt = await bcrypt.genSalt(10);
+						const hashPassword = bcrypt.hashSync(password, salt);
 
-					if (getUser) {
-						let updateUser = await User.update(
-							{ password: hashPassword },
-							{
-								where: {
-									[Op.or]: [{ email: user }, { phone: user }],
-								},
+						if (getUser) {
+							let updateUser = await User.update(
+								{ password: hashPassword },
+								{
+									where: {
+										[Op.or]: [{ email: user }, { phone: user }],
+									},
+								}
+							);
+							if (updateUser) {
+								return responseHandler.ok(res, 'Update user successful!');
+							} else {
+								return responseHandler.error(res);
 							}
-						);
-						if (updateUser) {
-							return responseHandler.ok(res, 'Update user successful!');
 						} else {
-							return responseHandler.error(res);
+							return responseHandler.badRequest(res, {
+								message: 'User not found',
+							});
 						}
 					} else {
 						return responseHandler.responseWithData(res, 403, {
-							message: 'User does not exist!',
+							message: 'Password not equal to confirm password',
 						});
 					}
 				} else {
-					return responseHandler.responseWithData(res, 403, {
-						message: 'password not equal to password',
-					});
+					return responseHandler.unauthorized(res);
 				}
-			} else {
-				return responseHandler.responseWithData(res, 403, {
-					message: 'password can not null',
-				});
-			}
-			// } else {
-			//   return responseHandler.unauthorized(res);
-			// }
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 
 	async getListUser(req, res) {
-		const params = req.body;
-		const limit = !params.limit ? 7 : params.limit;
-		const offset = !params.offset ? 0 : params.offset;
-		const role_id = params.role_id;
-		const querySearch = !params.query_search ? "" : params.query_search;
-
 		try {
+			var { limit, offset, query_search, role_id } = req.body;
+			limit = limit ? limit : 7;
+			offset = offset ? offset : 0;
+			const querySearch = !query_search ? "" : query_search.toString().trim();
+			role_id = role_id ? role_id : 0;
+
+			if (!validateHandler.validatePositiveIntegerNumber(limit) || !validateHandler.validatePositiveIntegerNumber(offset))
+				return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+
+			if (role_id && role_id !== null) {
+				const role = await Role.findOne({
+					where: {
+						id: role_id,
+					},
+				})
+				if (!role) return responseHandler.badRequest(res, "Role not found")
+			}
 			let attributes = "user.id, email, phone ,user_name, avatar, role_id, office_id";
 			let querySQL =
 				`select ` +
@@ -319,18 +357,26 @@ module.exports = {
 					number_user: numberUser[0]["count(*)"],
 				});
 			} else {
-				return responseHandler.responseWithData(res, 403, { message: "Can't get list user" });
+				if (querySearch && querySearch.length > 0) {
+					return responseHandler.badRequest(res, "User not found");
+				}
+				//NOTE
+				return responseHandler.badRequest(res, "");
+
 			}
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 	async getUserInformation(req, res) {
-		const params = req.body;
 		try {
+			const { id } = req.body;
+			console.log("User", id)
+			if (!validateHandler.validatePositiveIntegerNumber(id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+
 			const getUserById = await User.findOne({
 				where: {
-					id: params.id,
+					id,
 				},
 				attributes: ["id", "email", "phone", "user_name", "avatar", "role_id", "office_id"],
 			});
@@ -345,23 +391,37 @@ module.exports = {
 				}
 				return responseHandler.responseWithData(res, 200, getUserById);
 			} else {
-				return responseHandler.responseWithData(res, 401, {
-					message: "Can't get user information",
-				});
+				return responseHandler.badRequest(res, "User not found");
 			}
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 	async updateInformationUser(req, res) {
-		const params = req.body;
-		const id = params.id;
-		const password = params.password;
+
 		try {
+			const { email, password, user_name, phone, avatar, role_id } = req.body;
+			console.log(email, password, user_name, phone, avatar, role_id)
+			if (!validateHandler.validateString(email, regexHandler.regexEmail) ||
+				!validateHandler.validateString(user_name, regexHandler.regexNormalString) ||
+				!validateHandler.validateString(phone, regexHandler.regexPhoneNumber) ||
+				!validateHandler.validateString(password, regexHandler.regexPassword) ||
+				!validateHandler.validatePositiveIntegerNumber(role_id)
+				// || !validateHandler.validateString(avatar, regexHandler.regexAvatar)
+
+			) return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+			console.log(role_id)
+			const role = await Role.findOne({
+				where: {
+					id: role_id
+				},
+			})
+			if (!role) return responseHandler.badRequest(res, "Role not found");
 			const salt = await bcrypt.genSalt(10);
 			const hashPassword = bcrypt.hashSync(password, salt);
-			params.password = hashPassword;
-			let updateUser = await User.update(params, {
+			password = hashPassword;
+
+			let updateUser = await User.update({ email, password, user_name, phone, role_id }, {
 				where: {
 					id: id,
 				},
@@ -369,16 +429,18 @@ module.exports = {
 			if (updateUser) {
 				return responseHandler.ok(res, "Update user successful!");
 			} else {
-				return responseHandler.responseWithData(res, 403, "Can't update user information");
+				return responseHandler.badRequest(res, "Cant update user")
 			}
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 	async deleteUser(req, res) {
-		const params = req.body;
-		const id = params.id;
 		try {
+			const params = req.body;
+			const id = params.id;
+			if (!validateHandler.validateIntegerNumber(id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+
 			const deleteUser = await User.destroy({
 				where: {
 					id: id,
@@ -387,10 +449,10 @@ module.exports = {
 			if (deleteUser) {
 				return responseHandler.ok(res, "Delete user successful!");
 			} else {
-				return responseHandler.responseWithData(res, 403, { message: "Can't delete user" });
+				return responseHandler.badRequest(res, "User not found");
 			}
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 };
