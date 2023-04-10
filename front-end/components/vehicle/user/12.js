@@ -27,26 +27,27 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { formatMoney, validate } from '@/helper';
+import { convertTime, formatMoney, validate } from '@/helper';
 
 export default function Seat12User(props) {
   const seatVehicle = ['A1', 'A2', 'A3', 'A4', 'B1', 'B2', 'B3', 'B4', 'C1', 'C2', 'C3', 'C4'];
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [statusAddSeat, setStatusAddSeat] = useState(false);
   const [seat, setSeat] = useState([]);
+  const [transactionId, setTransactionId] = useState();
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userPhone, setUserPhone] = useState('');
   //radio value
-  const [locationPick, setLocationPick] = useState("")
-  const [locationDrop, setLocationDrop] = useState("")
-  
+  const [locationPick, setLocationPick] = useState('');
+  const [locationDrop, setLocationDrop] = useState('');
+
   //select value
   const [__locationPickup, __setLocationPickup] = useState('');
   const [__locationDropOff, __setLocationDropOff] = useState('');
-//db value
-const [locationPickup, setLocationPickup] = useState('');
-const [locationDropOff, setLocationDropOff] = useState('');
+  //db value
+  const [locationPickup, setLocationPickup] = useState('');
+  const [locationDropOff, setLocationDropOff] = useState('');
 
   const [note, setNote] = useState('');
   const [price, setPrice] = useState('');
@@ -113,7 +114,7 @@ const [locationDropOff, setLocationDropOff] = useState('');
     setNote(value);
   });
 
-  const delteteSeatSelected = useCallback(
+  const deleteSeatSelected = useCallback(
     (id) => {
       let cloneSeat = [...seat];
       cloneSeat.splice(seat.indexOf(id), 1);
@@ -128,6 +129,19 @@ const [locationDropOff, setLocationDropOff] = useState('');
     },
     [seat, statusAddSeat]
   );
+  const handleChangeLocationPick = useCallback((value) => {
+    if (value != '#') {
+      setLocationPickup(value);
+    }
+    setLocationPick(value);
+  }, []);
+
+  const handleChangeLocationDrop = useCallback((value) => {
+    if (value != '#') {
+      setLocationDropOff(value);
+    }
+    setLocationDrop(value);
+  }, []);
 
   const addNewSeat = useCallback(() => {
     let checkSeatRemain = seatVehicle.filter(
@@ -137,7 +151,9 @@ const [locationDropOff, setLocationDropOff] = useState('');
     if (checkSeatRemain.length == 1) {
       cloneSeat.push(checkSeatRemain[0]);
     } else {
-      cloneSeat.push(addSeat);
+      if (!cloneSeat.includes(addSeat)) {
+        cloneSeat.push(addSeat);
+      }
     }
     setSeat(cloneSeat);
     setStatusAddSeat(false);
@@ -150,7 +166,6 @@ const [locationDropOff, setLocationDropOff] = useState('');
       setUserName('');
       setUserPhone('');
       setUserEmail('');
-      setTranshipAddress('');
       setNote('');
       setPrice(props.scheduleData.price);
       setPaymentStatus(0);
@@ -165,14 +180,6 @@ const [locationDropOff, setLocationDropOff] = useState('');
     );
     if (getTransaction.data.statusCode == 200) {
       let userInformation = getTransaction.data.data.transaction;
-      // console.log(userInformation);
-      let pickup = props.scheduleData.location_bus_schedule
-        .filter((e) => e.bus_location_type == 0)
-        .map((e) => e.bus_detail);
-      let drop = props.scheduleData.location_bus_schedule
-        .filter((e) => e.bus_location_type == 1)
-        .map((e) => e.bus_detail);
-        console.log(pickup)
       setSeat(userInformation.seat.split(', '));
       setUserName(userInformation.passenger_name);
       setUserPhone(userInformation.passenger_phone);
@@ -180,6 +187,7 @@ const [locationDropOff, setLocationDropOff] = useState('');
       setPrice(userInformation.ticket_price);
       setPaymentStatus(userInformation.payment_status);
       setNote(userInformation.note);
+      setTransactionId(userInformation.id);
 
       let __pickup =
         userInformation.tranship_address && userInformation.tranship_address.split('!@#$%^&*')[0]
@@ -192,8 +200,8 @@ const [locationDropOff, setLocationDropOff] = useState('');
       let __drop =
         userInformation.tranship_address && userInformation.tranship_address.split('!@#$%^&*')[1]
           ? 'Trung chuyển'
-          : userInformation.drop_of_location &&
-            userInformation.drop_of_location.includes(props.scheduleData.arrive_location)
+          : userInformation.drop_off_location &&
+            userInformation.drop_off_location.includes(props.scheduleData.arrive_location)
           ? 'Tại bến'
           : 'Dọc đường';
 
@@ -204,12 +212,16 @@ const [locationDropOff, setLocationDropOff] = useState('');
           break;
         case 'Dọc đường':
           __setLocationPickup('1');
-          setLocationPick()
-          setLocationPickup(userInformation.location_pickup);
+          if (userInformation.pickup_location.includes('dọc đường')) {
+            setLocationPick('#');
+          } else {
+            setLocationPick(userInformation.pickup_location);
+          }
+          setLocationPickup(userInformation.pickup_location);
           break;
         case 'Tại bến':
           __setLocationPickup('0');
-          setLocationPickup(userInformation.location_pickup);
+          setLocationPickup(userInformation.pickup_location);
           break;
       }
       switch (__drop) {
@@ -219,17 +231,112 @@ const [locationDropOff, setLocationDropOff] = useState('');
           break;
         case 'Dọc đường':
           __setLocationDropOff('1');
-          setLocationDrop()
-          // if () {}
-          setLocationDropOff(userInformation.location_drop_off);
+          if (userInformation.drop_off_location.includes('dọc đường')) {
+            setLocationDrop('#');
+          } else {
+            setLocationDrop(userInformation.drop_off_location);
+          }
+          setLocationDropOff(userInformation.drop_off_location);
           break;
         case 'Tại bến':
           __setLocationDropOff('0');
-          setLocationDropOff(userInformation.location_drop_off);
+          setLocationDropOff(userInformation.drop_off_location);
           break;
       }
     }
   };
+
+  const updateUserInformation = useCallback(async () => {
+    const submitData = {
+      passenger_name: userName,
+      email: userEmail,
+      passenger_phone: userPhone,
+      note: note,
+      seat: seat.join(', '),
+      payment_status: paymentStatus,
+    };
+    if (__locationPickup == 2 && __locationDropOff == 2) {
+      submitData.tranship_address = locationPickup + ' !@#$%^&* ' + locationDropOff;
+    } else if (!__locationPickup != 2 && __locationDropOff != 2) {
+      submitData.pickup_location = locationPickup;
+      submitData.drop_off_location = locationDropOff;
+    } else if (__locationPickup == 2 && __locationDropOff != 2) {
+      submitData.tranship_address = locationPickup + ' !@#$%^&*';
+      submitData.drop_off_location = locationDropOff;
+    } else if (__locationPickup != 2 && __locationDropOff == 2) {
+      submitData.tranship_address = '!@#$%^&* ' + locationDropOff;
+      submitData.pickup_location = locationPickup;
+    }
+    let cloneSeatCustomerSelected = [...props.seatCustomerSelected];
+    let cloneData = { ...props.data };
+    seat.forEach((s) => {
+      if (!cloneSeatCustomerSelected.includes(s)) {
+        cloneSeatCustomerSelected.push(s);
+      }
+    });
+    if (transactionId) {
+      cloneData.number_seat_selected.forEach((s) => {
+        if (s.id == transactionId) {
+          s.seat = cloneSeatCustomerSelected.join(', ');
+        }
+      });
+      submitData.id = transactionId;
+      const updateTransactionById = await axios.put(
+        `http://localhost:${props.port}/transaction/update-transaction`,
+        submitData,
+        {
+          headers: { token: props.token },
+        }
+      );
+      if (updateTransactionById.data.statusCode == 200) {
+        props.setData(cloneData);
+        props.setSeatCustomerSelected(cloneSeatCustomerSelected);
+        onClose();
+      } else {
+      }
+    } else {
+      submitData.ticket_price = props.scheduleData.price * seat.length;
+      submitData.transport = props.data.id;
+      submitData.created_by = null;
+      submitData.cashier = 8;
+      submitData.bankCode = '';
+      submitData.paymentStatusType = 1;
+      submitData.date_detail =
+        props.data.departure_date.split('T')[0] +
+        ' | ' +
+        convertTime(props.scheduleData.time_from, 0) +
+        '-' +
+        convertTime(props.scheduleData.time_from, props.scheduleData.travel_time);
+      const createTransactionById = await axios.post(
+        `http://localhost:${props.port}/transaction/create-payment`,
+        submitData
+      );
+      if (createTransactionById.data.statusCode == 200) {
+        cloneData.number_seat_selected.push(createTransactionById.data.data);
+        props.setData(cloneData);
+        props.setSeatCustomerSelected(cloneSeatCustomerSelected);
+        onClose();
+      } else {
+      }
+    }
+  }, [
+    userEmail,
+    transactionId,
+    userName,
+    paymentStatus,
+    userPhone,
+    locationDrop,
+    locationPick,
+    locationPickup,
+    locationDropOff,
+    __locationDropOff,
+    __locationPickup,
+    note,
+    price,
+    seat,
+    props.data,
+    props.seatCustomerSelected,
+  ]);
 
   let location_pickup = props.scheduleData.location_bus_schedule
     ? props.scheduleData.location_bus_schedule.filter((e) => {
@@ -267,7 +374,6 @@ const [locationDropOff, setLocationDropOff] = useState('');
       const position = information[0];
       const date = new Date(props.data.departure_date);
       const value = time + ' - ' + date.toLocaleDateString() + ' - ' + position;
-      console.log(value)
       return (
         <Stack marginBottom={index != location_pickup.length - 1 ? '10px' : ''} marginLeft={'5px'}>
           <Radio value={value}>
@@ -312,7 +418,7 @@ const [locationDropOff, setLocationDropOff] = useState('');
           <Radio value={value}>
             <Flex
               marginBottom={'2%!important'}
-              color={value == locationPickup ? '#F26A4C' : '#363636'}
+              color={value == locationDropOff ? '#F26A4C' : '#363636'}
             >
               <Text fontWeight={'500'} fontSize={'16px'}>
                 {time}
@@ -371,7 +477,7 @@ const [locationDropOff, setLocationDropOff] = useState('');
                           <Text fontWeight={'500'}>{seat}</Text>{' '}
                           <SmallCloseIcon
                             cursor={'pointer'}
-                            onClick={() => delteteSeatSelected(seat)}
+                            onClick={() => deleteSeatSelected(seat)}
                           />
                         </Flex>
                       );
@@ -497,7 +603,7 @@ const [locationDropOff, setLocationDropOff] = useState('');
                   <>
                     <RadioGroup
                       value={locationPick}
-                      onChange={setLocationPick}
+                      onChange={(e) => handleChangeLocationPick(e)}
                       maxHeight={'250px'}
                       overflowY={'auto'}
                       margin={'10px 0'}
@@ -509,13 +615,15 @@ const [locationDropOff, setLocationDropOff] = useState('');
                             Khác
                           </Text>
                         </Radio>
-                        <Textarea
-                          marginLeft="33px!important"
-                          w="320px"
-                          marginTop={'5px!important'}
-                          value={locationPickup}
-                      onChange={(e) => setLocationPickup(e.target.value)}
-                        ></Textarea>
+                        {locationPick == '#' && (
+                          <Textarea
+                            marginLeft="33px!important"
+                            w="320px"
+                            marginTop={'5px!important'}
+                            value={locationPickup}
+                            onChange={(e) => setLocationPickup(e.target.value)}
+                          ></Textarea>
+                        )}
                       </Stack>
                     </RadioGroup>
                   </>
@@ -551,7 +659,7 @@ const [locationDropOff, setLocationDropOff] = useState('');
                   <>
                     <RadioGroup
                       value={locationDrop}
-                      onChange={setLocationDrop}
+                      onChange={(e) => handleChangeLocationDrop(e)}
                       maxHeight={'250px'}
                       overflowY={'auto'}
                       margin={'10px 0'}
@@ -564,13 +672,15 @@ const [locationDropOff, setLocationDropOff] = useState('');
                               Khác
                             </Text>
                           </Radio>
-                          <Textarea
-                            marginLeft="33px!important"
-                            w="320px"
-                            marginTop={'5px!important'}
-                            value={locationDropOff}
-                      onChange={(e) => setLocationDropOff(e.target.value)}
-                          ></Textarea>
+                          {locationDrop == '#' && (
+                            <Textarea
+                              marginLeft="33px!important"
+                              w="320px"
+                              marginTop={'5px!important'}
+                              value={locationDropOff}
+                              onChange={(e) => setLocationDropOff(e.target.value)}
+                            ></Textarea>
+                          )}
                         </>
                       </Stack>
                     </RadioGroup>
@@ -603,7 +713,11 @@ const [locationDropOff, setLocationDropOff] = useState('');
                   <FormLabel width={'51.5%'} fontWeight={'500'}>
                     Trạng thái thanh toán
                   </FormLabel>
-                  <Select placeholder="Chọn hình thức thanh toán" value={paymentStatus}>
+                  <Select
+                    placeholder="Chọn hình thức thanh toán"
+                    value={paymentStatus}
+                    onChange={(e) => setPaymentStatus(e.target.value)}
+                  >
                     <option value="0">Chưa thanh toán</option>
                     <option value="1">Đã thanh toán</option>
                     <option value="2">Thanh toán khi lên xe</option>
@@ -632,7 +746,12 @@ const [locationDropOff, setLocationDropOff] = useState('');
                   </Button>
                 </Flex>
                 <Flex>
-                  <Button backgroundColor="#F26A4C" color="#fff" marginRight={'10px'}>
+                  <Button
+                    backgroundColor="#F26A4C"
+                    color="#fff"
+                    marginRight={'10px'}
+                    onClick={updateUserInformation}
+                  >
                     Cập nhật
                   </Button>
                   <Button backgroundColor={'#fff'} border="1px solid" onClick={onClose}>

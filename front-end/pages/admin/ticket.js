@@ -390,11 +390,13 @@ export default function Ticket(props) {
 	const VehicleHTML = scheduleData && transportData && (
 		<Seat12User
 			data={transportData}
+			setData={setTransportData}
 			port={props.port}
 			scheduleData={scheduleData}
 			seatSelected={seatSelected}
 			handleSeatSelected={handleSeatSelected}
 			seatCustomerSelected={seatCustomerSelected}
+			setSeatCustomerSelected={setSeatCustomerSelected}
 		/>
 	);
 	return (

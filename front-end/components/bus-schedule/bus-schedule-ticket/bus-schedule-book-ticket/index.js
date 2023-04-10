@@ -130,7 +130,7 @@ export default function BusScheduleBookTicket(props) {
         // cashier: null,
         note: notice,
         date_detail:
-          router.query.refresh_date +
+          props.data.departure_date.split('T')[0] +
           ' | ' +
           convertTime(props.busScheduleInformation.time_from, 0) +
           '-' +
@@ -157,8 +157,8 @@ export default function BusScheduleBookTicket(props) {
         submitData.drop_off_location = locationDropOff;
       } else if (switchDropOffStatus && !switchPickupStatus) {
         submitData.tranship_address = '!@#$%^&* ' + locationDropOff;
-		submitData.pickup_location = locationPickup;
-      } 
+        submitData.pickup_location = locationPickup;
+      }
       if (seatSelected.length) {
         let checkSeatValidate = true;
         seatSelected.forEach((seat) => {
@@ -275,7 +275,7 @@ export default function BusScheduleBookTicket(props) {
       )}
       {step == 2 && (
         <BusScheduleStep2
-          data={props.busScheduleInformation}
+          data={props.data}
           locationPickup={locationPickup}
           locationDropOff={locationDropOff}
           setLocationPickup={setLocationPickup}
@@ -286,6 +286,7 @@ export default function BusScheduleBookTicket(props) {
           error={error}
           setError={setError}
           handleChangeSwitchDropOff={handleChangeSwitchDropOff}
+          busScheduleInformation={props.busScheduleInformation}
         />
       )}
       {step == 3 && (

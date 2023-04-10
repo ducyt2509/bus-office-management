@@ -15,6 +15,7 @@ import { useCallback, useState } from 'react';
 import { GoLocation } from 'react-icons/go';
 
 export default function BusScheduleStep2(props) {
+  console.log(props);
   const router = useRouter();
 
   const [radioLocationPickup, setRadioLocationPickup] = useState();
@@ -63,26 +64,26 @@ export default function BusScheduleStep2(props) {
     [props.error]
   );
 
-  let locationPickup = props.data.location_bus_schedule
-    ? props.data.location_bus_schedule.filter((e) => {
+  let locationPickup = props.busScheduleInformation.location_bus_schedule
+    ? props.busScheduleInformation.location_bus_schedule.filter((e) => {
         return e.bus_location_type == 0;
       })[0]?.bus_detail
     : [];
 
-  let addressPickup = props.data.location_bus_schedule
-    ? props.data.location_bus_schedule.filter((e) => {
+  let addressPickup = props.busScheduleInformation.location_bus_schedule
+    ? props.busScheduleInformation.location_bus_schedule.filter((e) => {
         return e.bus_location_type == 0;
       })[0]?.bus_location_address
     : [];
 
-  let locationDropOff = props.data.location_bus_schedule
-    ? props.data.location_bus_schedule.filter((e) => {
+  let locationDropOff = props.busScheduleInformation.location_bus_schedule
+    ? props.busScheduleInformation.location_bus_schedule.filter((e) => {
         return e.bus_location_type == 1;
       })[0]?.bus_detail
     : [];
 
-  let addressDropOff = props.data.location_bus_schedule
-    ? props.data.location_bus_schedule.filter((e) => {
+  let addressDropOff = props.busScheduleInformation.location_bus_schedule
+    ? props.busScheduleInformation.location_bus_schedule.filter((e) => {
         return e.bus_location_type == 1;
       })[0]?.bus_location_address
     : [];
@@ -101,7 +102,7 @@ export default function BusScheduleStep2(props) {
       const information = location.split(': ');
       const time = information[1];
       const position = information[0];
-      const date = new Date(router.query?.refresh_date);
+      const date = new Date(props.data.departure_date.split('T')[0]);
       const value = time + ' - ' + date.toLocaleDateString() + ' - ' + position;
       return (
         <Stack>
@@ -135,7 +136,7 @@ export default function BusScheduleStep2(props) {
       const information = location.split(': ');
       const time = information[1];
       const position = information[0];
-      const date = new Date(router.query?.refresh_date);
+      const date = new Date(props.data.departure_date.split('T')[0]);
       const value = time + ' - ' + date.toLocaleDateString() + ' - ' + position;
       return (
         <Stack>
@@ -164,7 +165,6 @@ export default function BusScheduleStep2(props) {
   ) : (
     <Text>Không có điểm trả</Text>
   );
-  console.log(props);
   return (
     <>
       <Box borderTop="1px solid #E2E8F0" borderBottom="1px solid #E2E8F0" margin="3% 0 1%">

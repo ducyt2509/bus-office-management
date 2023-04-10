@@ -108,15 +108,19 @@ module.exports = {
       const createTransaction = await Transaction.create(dataTransaction);
       if (params.paymentStatusType) {
         if (createTransaction) {
-          return responseHandler.ok(res);
+          return responseHandler.responseWithData(res, 200, createTransaction);
         } else {
           return responseHandler.badRequest(res, "Can't create payment");
         }
       } else {
-        return responseHandler.responseWithData(res, 200, { link_payment: vnpUrl });
+        if (createTransaction) {
+          return responseHandler.responseWithData(res, 200, { link_payment: vnpUrl });
+        } else {
+          return responseHandler.badRequest(res, "Can't create payment");
+        }
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return responseHandler.badRequest(res, error.message);
     }
   },
@@ -259,6 +263,26 @@ module.exports = {
         return responseHandler.responseWithData(res, 200, { transaction: getTransaction[0] });
       } else {
         return responseHandler.badRequest(res, "Can't get transaction information");
+      }
+    } catch (error) {
+      return responseHandler.badRequest(res, error.message);
+    }
+  },
+  async updateTransactionById(req, res) {
+    const params = req.body;
+    const id = params.id;
+    try {
+      const updateTransaction = await Transaction.update(params, {
+        where: {
+          id: id,
+        },
+      });
+      if (updateTransaction) {
+        return responseHandler.responseWithData(res, 200, {
+          message: 'Transaction update successfully',
+        });
+      } else {
+        return responseHandler.badRequest(res, "Transaction can't update");
       }
     } catch (error) {
       return responseHandler.badRequest(res, error.message);

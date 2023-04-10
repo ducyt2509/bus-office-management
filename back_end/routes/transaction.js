@@ -11,4 +11,5 @@ router.post(
   transactions.getListPayment
 );
 router.post('/transaction/get-transaction-by-id', transactions.getTransactionInformationById);
+router.put('/transaction/update-transaction', transactions.updateTransactionById)
 module.exports = router;
