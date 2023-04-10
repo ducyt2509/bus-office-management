@@ -5,21 +5,22 @@ header {
 .home-content {
 	position: absolute;
 	left: 5%;
-	top: 25%;
-	width: 578px;
+	top: 30%;
+	width: 1000px;
 	font-style: normal;
 	font-weight: 500;
 }
 .home-content .home-title {
-	font-size: 60px;
+	font-size: 50px;
 	line-height: 76px;
-	text-transform: capitalize;
+	text-transform: uppercase;
 	color: white;
+	font-weight: 600;
 }
 
 .home-content .home-desc {
 	margin-top: 20px;
-	font-size: 15.7px;
+	font-size: 24px;
 	line-height: 20px;
 	text-transform: capitalize;
 	color: #ffffff;
