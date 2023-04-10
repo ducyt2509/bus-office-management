@@ -407,12 +407,12 @@ export default function Ticket(props) {
 				marginBottom={"2%"}
 				paddingTop="2%"
 			>
-				<Text marginRight="1%">Dan Abramov</Text>
+				<Text marginRight="1%">Nguyễn Văn A</Text>
 				<Image
 					borderRadius="full"
 					boxSize="50px"
 					src="https://bit.ly/dan-abramov"
-					alt="Dan Abramov"
+					alt="Nguyễn Văn A"
 				/>
 			</Flex>
 			<Box

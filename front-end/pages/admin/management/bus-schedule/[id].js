@@ -375,7 +375,7 @@ export default function BusScheduleDetail(props) {
 					borderRadius="full"
 					boxSize="50px"
 					src={state.dataUser.avatar ? state.dataUser.avatar : "https://bit.ly/dan-abramov"}
-					alt="Dan Abramov"
+					alt="Nguyễn Văn A"
 				/>
 			</Flex>
 			<div style={{ width: "90%", margin: "0 auto" }}>

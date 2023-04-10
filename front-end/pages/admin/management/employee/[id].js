@@ -36,7 +36,7 @@ export default function Employee(props) {
 					borderRadius="full"
 					boxSize="50px"
 					src={state.dataUser.avatar ? state.dataUser.avatar : "https://bit.ly/dan-abramov"}
-					alt="Dan Abramov"
+					alt="Nguyễn Văn A"
 				/>
 			</Flex>
 			<Link href={"/admin/management/employee"}>
@@ -63,7 +63,7 @@ export default function Employee(props) {
 					height={[250, 340]}
 					borderRadius={"full"}
 					src={state.dataUser.avatar ? state.dataUser.avatar : "https://bit.ly/dan-abramov"}
-					alt="Dan Abramov"
+					alt="Nguyễn Văn A"
 					marginRight={"3%"}
 				/>
 				<Stack width={"50%"}>
