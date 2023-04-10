@@ -6,7 +6,7 @@ import PopularRoute from '@/components/home/content/PopularRoute';
 import LoginForm from '../components/home/login';
 
 export default function HomePage(props) {
-  const LoginFormHTML= <LoginForm />
+  const LoginFormHTML = <LoginForm />;
   const HomeContentHTML = <HomeContent />;
   const HomeDestinationHTML = (
     <HomeDestination list_city={props.list_city} port={props.BACK_END_PORT} />
@@ -21,12 +21,12 @@ export default function HomePage(props) {
         {HomeContentHTML}
         {HomeDestinationHTML}
       </header>
-      <main>{PopularRouteHTML}</main>
+      {/* <main>{PopularRouteHTML}</main> */}
     </>
   );
 }
 export async function getStaticProps() {
-  const getListCity = await axios.get(
+  const getListCity = await axios.post(
     `http://localhost:${process.env.BACK_END_PORT}/city/list-city`
   );
   return {

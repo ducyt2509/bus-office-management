@@ -5,43 +5,107 @@ const City = db.cities;
 const QueryTypes = db.Sequelize.QueryTypes;
 const Op = db.Sequelize.Op;
 const responseHandler = require("../handlers/response.handler");
+const validateHandler = require('../handlers/validate.handler');
+const messageHandler = require('../handlers/message.handler');
+const regexHandler = require('../handlers/regex.handler');
+
+const checkExistOffice = async (office_name, city_id, office_address) => {
+	const getOffice = await Office.findOne({
+		where: {
+			[Op.and]: [{
+				office_name,
+			}, {
+				city_id,
+			}, {
+				office_address
+				,
+			}]
+		}
+	})
+	if (getOffice) return true;
+	return false;
+}
+
 
 module.exports = {
 	async createNewOffice(req, res) {
-		const params = req.body;
+
 		try {
+			const { office_name,
+				city_id,
+				office_address } = req.body;
+
+			if (!validateHandler.validateString(office_name, regexHandler.regexNormalString) ||
+				!validateHandler.validatePositiveIntegerNumber(city_id) ||
+				!validateHandler.validateString(office_address, regexHandler.regexNormalString))
+				return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+
+			const getCity = await City.findOne({
+				id: city_id
+			})
+			if (!getCity) return responseHandler.badRequest(res, "City not found");
+
+			const isExist = await checkExistOffice(office_name,
+				city_id,
+				office_address)
+			if (isExist) return responseHandler.badRequest(res, "Office already exists");
 			const createOffice = await Office.create(params);
 			if (createOffice) {
 				return responseHandler.ok(res, { message: "Create office successful!" });
 			} else {
-				return responseHandler.error(res);
+				return responseHandler.badRequest(res, "Cant create office");
 			}
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 	async updateOfficeInformation(req, res) {
-		const params = req.body;
+
 		try {
-			const officeData = { ...params };
+			const { id, office_name,
+				city_id,
+				office_address, } = req.body;
+
+			if (!validateHandler.validateString(office_name, regexHandler.regexNormalString) ||
+				!validateHandler.validatePositiveIntegerNumber(city_id) ||
+				!validateHandler.validatePositiveIntegerNumber(id) ||
+				!validateHandler.validateString(office_address, regexHandler.regexNormalString))
+				return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+
+			const getCity = await City.findOne({
+				id: city_id
+			})
+			if (!getCity) return responseHandler.badRequest(res, "City not found");
+			const isExist = await checkExistOffice(office_name,
+				city_id,
+				office_address)
+			if (isExist) return responseHandler.badRequest(res, "Office already exists");
+
+			const officeData = {
+				id, office_name,
+				city_id,
+				office_address,
+			};
 			delete officeData.role_id;
 			const updateOffice = await Office.update(officeData, {
 				where: {
-					id: params.id,
+					id
 				},
 			});
 			if (updateOffice) {
 				return responseHandler.ok(res, { message: "Update office successful!" });
 			} else {
-				return responseHandler.error(res);
+				return responseHandler.badRequest(res, "Cant update office")
 			}
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 	async deleteOfficeInformation(req, res) {
-		const params = req.body;
 		try {
+			const { id } = req.body;
+			if (!validateHandler.validatePositiveIntegerNumber(id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+
 			const deleteOffice = await Office.destroy({
 				where: {
 					id: params.id,
@@ -50,23 +114,29 @@ module.exports = {
 			if (deleteOffice) {
 				return responseHandler.ok(res, { message: "Delete office successful!" });
 			} else {
-				return responseHandler.error(res);
+				return responseHandler.badRequest(res, "Office not found")
 			}
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 	async getListOffice(req, res) {
-		const params = req.body;
-		const limit = !params.limit ? 7 : params.limit;
-		const offset = !params.offset ? 0 : params.offset;
-		const querySearch = !params.query_search ? "" : params.query_search;
 		try {
+			var { limit, offset, query_search, route } = req.body
+			limit = limit ? limit : 7
+			offset = offset ? offset : 0
+			const querySearch = !query_search ? "" : query_search.toString().trim()
+
+
+			if (!validateHandler.validatePositiveIntegerNumber(limit) || !validateHandler.validatePositiveIntegerNumber(offset))
+				return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+
+
 			const querySQL = `select office.id, office_name, city_id, office_address from office join city c on office.city_id = c.id 
       where (office_name like '%${querySearch}%') 
       or (office_address like '%${querySearch}%') 
       or (c.city_name like '%${querySearch}%') limit ${limit} offset ${offset}`;
-			const queryCount = `select count(*) from office join city c on c.id = office.city_id  
+			const queryCount = `select count(*) as numberOffice from office join city c on c.id = office.city_id  
       where (office_name like '%${querySearch}%') 
       or (office_address like '%${querySearch}%') 
       or (c.city_name like '%${querySearch}%')`;
@@ -98,24 +168,27 @@ module.exports = {
 				}
 				return responseHandler.responseWithData(res, 200, {
 					list_office: listOffice,
-					number_office: numberOffice[0]["count(*)"],
+					number_office: numberOffice[0]["numberOffice"],
 				});
 			} else {
-				return responseHandler.error(res);
+				return responseHandler.badRequest(res, "Cant get list office");
 			}
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 	async getOfficeInformation(req, res) {
-		const params = req.body;
-		const id = params.id;
 		try {
+			const params = req.body;
+			const id = params.id;
+			if (!validateHandler.validatePositiveIntegerNumber(id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+
 			const officeInformation = await Office.findOne({
 				where: {
 					id: id,
 				},
 			});
+			console.log("officeInformation", officeInformation)
 			if (officeInformation) {
 				const [numberEmployee, getCity] = await Promise.all([
 					User.findAll({
@@ -138,10 +211,10 @@ module.exports = {
 				}
 				return responseHandler.responseWithData(res, 200, officeInformation);
 			} else {
-				return responseHandler.error(res);
+				return responseHandler.badRequest(res, "Office not found");
 			}
 		} catch (error) {
-			return responseHandler.badRequest(res, error.message);
+			return responseHandler.error
 		}
 	},
 };

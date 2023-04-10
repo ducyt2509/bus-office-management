@@ -100,8 +100,8 @@ export default function ManagementBus(props) {
           <CardBody>
             <Tabs>
               <TabList>
-                <Tab fontWeight={"700"}>Xe khách</Tab>
-                <Tab fontWeight={"700"}>Xe trung chuyển</Tab>
+                <Tab fontWeight={'700'}>Xe khách</Tab>
+                <Tab fontWeight={'700'}>Xe trung chuyển</Tab>
               </TabList>
               <TabPanels>
                 <TabPanel>

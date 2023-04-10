@@ -69,7 +69,7 @@ export default function BusSchedulesList(props) {
 							: 0;
 					const number_seat_unselected = vehicle.bus[0].number_seat - number_seat_selected;
 					const remain_seat = number_seat_unselected
-						? number_seat_unselected + " chỗ online"
+						? number_seat_unselected + " chỗ trống"
 						: "Hết chỗ";
 					return (
 						<Card className={"bom-schedule-detail"}>

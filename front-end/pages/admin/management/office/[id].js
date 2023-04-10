@@ -65,7 +65,7 @@ export default function Employee(props) {
 					borderRadius="full"
 					boxSize="50px"
 					src={state.dataUser.avatar ? state.dataUser.avatar : "https://bit.ly/dan-abramov"}
-					alt="Dan Abramov"
+					alt="Nguyễn Văn A"
 				/>
 			</Flex>
 			<Link href={"/admin/management/office"}>

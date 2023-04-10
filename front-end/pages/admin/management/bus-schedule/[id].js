@@ -375,7 +375,7 @@ export default function BusScheduleDetail(props) {
 					borderRadius="full"
 					boxSize="50px"
 					src={state.dataUser.avatar ? state.dataUser.avatar : "https://bit.ly/dan-abramov"}
-					alt="Dan Abramov"
+					alt="Nguyễn Văn A"
 				/>
 			</Flex>
 			<div style={{ width: "90%", margin: "0 auto" }}>
@@ -561,7 +561,7 @@ export default function BusScheduleDetail(props) {
 						<Box>
 							<FormControl isRequired>
 								<Box display={"flex"}>
-									<FormLabel>Trạng thái lịch trình hoạt động:</FormLabel>
+									<FormLabel>Tình trạng lịch trình:</FormLabel>
 									<Select
 										value={scheduleStatus}
 										onChange={handleChangeScheduleStatus}
@@ -645,7 +645,7 @@ export default function BusScheduleDetail(props) {
 							onClick={handleSubmitData}
 							colorScheme="linkedin"
 						>
-							Gửi
+							Lưu
 						</Button>
 					</CardFooter>
 				</Card>

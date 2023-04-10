@@ -25,12 +25,12 @@ export default function RevenueReport(props) {
         marginBottom={'2%'}
         paddingTop="2%"
       >
-        <Text marginRight="1%">Dan Abramov</Text>
+        <Text marginRight="1%">Nguyễn Văn A</Text>
         <Image
           borderRadius="full"
           boxSize="50px"
           src="https://bit.ly/dan-abramov"
-          alt="Dan Abramov"
+          alt="Nguyễn Văn A"
         />
       </Flex>
       <div style={{ width: '90%', margin: '0 auto' }}>
@@ -55,7 +55,7 @@ export default function RevenueReport(props) {
   );
 }
 export async function getStaticProps() {
-  const getListCity = await axios.get(
+  const getListCity = await axios.post(
     `http://localhost:${process.env.BACK_END_PORT}/city/list-city`
   );
   return {
