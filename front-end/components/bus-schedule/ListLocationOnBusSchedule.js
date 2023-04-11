@@ -15,6 +15,7 @@ export default function ListLocationOnBusSchedule(props) {
       page = typeof page == 'number' ? page - 1 : 1;
       const offset = limit * (page - 1);
       const token = `Bearer ${props.state.dataUser.token}`;
+      console.log('BEAN', props.route)
       const route = await axios.post(
         `http://localhost:${props.BACK_END_PORT}/route/route-by-id`,
         {
@@ -126,9 +127,9 @@ export default function ListLocationOnBusSchedule(props) {
         onClick={handleOpenSelect}
         style={
           (props.id == 3 && props.error?.departureLocationId) ||
-          (props.id == 4 && props.error?.arriveLocationId) ||
-          (props.id == 5 && props.error?.location) ||
-          (props.id == 6 && props.error?.location)
+            (props.id == 4 && props.error?.arriveLocationId) ||
+            (props.id == 5 && props.error?.location) ||
+            (props.id == 6 && props.error?.location)
             ? { borderColor: '#E53E3E', boxShadow: '0 0 0 1px #E53E3E' }
             : {}
         }

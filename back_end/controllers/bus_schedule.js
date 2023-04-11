@@ -21,6 +21,16 @@ const checkRenewal = (date, timeExpire) => {
 	}
 	return false
 }
+
+const removeDuplicates = (arr) => {
+	return arr.filter((obj, index, self) =>
+		index ===
+		self.findIndex(
+			(o) =>
+				JSON.stringify(o) === JSON.stringify(obj) // compare all attributes of objects
+		)
+	);
+};
 module.exports = {
 	async createNewBusSchedule(req, res) {
 		const params = req.body;
@@ -42,20 +52,47 @@ module.exports = {
 	},
 	async updateBusSchedule(req, res) {
 		const params = req.body;
+		const id = params.id
+		const {
+			route_id,
+			price,
+			time_from,
+			arrive_location_id,
+			departure_location_id,
+			travel_time,
+			effective_date,
+			bus_schedule_status,
+			schedule_frequency,
+			bus_schedule_expire,
+			refresh_date } = params.bus_schedule
 		try {
-			const updateBC = await Bus_schedule.update(params.bus_schedule, {
+			const updateBC = await Bus_schedule.update({
+				route_id,
+				price,
+				time_from,
+				arrive_location_id,
+				departure_location_id,
+				travel_time,
+				effective_date,
+				bus_schedule_status,
+				schedule_frequency,
+				bus_schedule_expire,
+				refresh_date
+			}, {
 				where: {
-					id: params.bus_schedule.id,
+					id,
 				},
 			});
-			for (let i = 0; i < params.location_bus_schedule.length; i++) {
-				let data = params.location_bus_schedule[i];
-				await Location_Bus_Schedule.update(data, {
-					where: {
-						bus_location_type: params.location_bus_schedule[i].bus_location_type == 1 ? 1 : 0,
-						bus_schedule_id: params.bus_schedule.id,
-					},
-				});
+			if (params.location_bus_schedule) {
+				for (let i = 0; i < params.location_bus_schedule.length; i++) {
+					let data = params.location_bus_schedule[i];
+					await Location_Bus_Schedule.update(data, {
+						where: {
+							bus_location_type: params.location_bus_schedule[i].bus_location_type == 1 ? 1 : 0,
+							bus_schedule_id: params.bus_schedule.id,
+						},
+					});
+				}
 			}
 			if (updateBC) {
 				return responseHandler.ok(res, "Update bus schedule successful!");
@@ -194,6 +231,7 @@ module.exports = {
 		const params = req.body;
 		const offset = !params.offset || !params.offset <= 0 ? 0 : params.offset;
 		const limit = !params.limit ? 5 : params.limit;
+		const querySearch = !params.query_search ? "" : params.query_search
 
 		try {
 			const querySQL = `select bs.id ,bs.route_id, departure_location_id , arrive_location_id , price , time_from , travel_time , effective_date , refresh_date , bus_schedule_status , bus_schedule_expire , city_from_id , city_to_id 
@@ -245,6 +283,7 @@ module.exports = {
 	},
 	async getBusScheduleById(req, res) {
 		const params = req.body;
+		console.log(params)
 		const id = params.id;
 		try {
 			const querySQL = `select bs.id ,c.city_name as city_from, bs.route_id, cc.city_name as city_to, 
@@ -289,23 +328,35 @@ module.exports = {
 			const currentDate = validateHandler.validateDate(new Date().toDateString())
 			const queryGetBusScheduleList = `select * from bus_schedule where refresh_date >=  ${currentDate} and bus_schedule_status = 1  `
 			const busScheduleList = await db.sequelize.query(queryGetBusScheduleList, { type: QueryTypes.SELECT });
-			console.log(busScheduleList)
-			let count = 0;
+			let renewalList = [];
 
 			for (let index = 0; index < busScheduleList.length; index++) {
-				const renewalDate = busScheduleList[index].refresh_date
-				const timeExpire = busScheduleList[index].bus_schedule_expire
-				console.log('DATE ' + renewalDate + ' FREQ ' + timeExpire)
+				// if in the database there are several objects with the same properties and data but it is renewed before
+				const formatDate = validateHandler.validateDate(`'${busScheduleList[index].effective_date}'`)
+				const query = `SELECT * FROM bus_schedule
+							WHERE route_id = ${busScheduleList[index].route_id} and departure_location_id = ${busScheduleList[index].departure_location_id} and arrive_location_id = ${busScheduleList[index].arrive_location_id}  
+							and price = ${busScheduleList[index].price} and time_from = ${busScheduleList[index].time_from} and  travel_time = ${busScheduleList[index].travel_time}
+							and schedule_frequency = ${busScheduleList[index].schedule_frequency} and bus_schedule_expire = ${busScheduleList[index].bus_schedule_expire}
+							and effective_date = '${formatDate}'
+							order by refresh_date desc limit 1 `
+				const getBs = await db.sequelize.query(query, { type: QueryTypes.SELECT });
+
+				let renewalDate = getBs[0].refresh_date
+				let timeExpire = getBs[0].bus_schedule_expire
 				let isRenewal = checkRenewal(renewalDate, timeExpire)
 				if (isRenewal) {
-					count++
+					renewalList.push(getBs[0])
 				}
+
 			}
+
+			renewalList = removeDuplicates(renewalList)
+			console.log(renewalList)
 			return responseHandler.responseWithData(res, 200, {
-				totalBSNeedRenewal: count
+				totalBSNeedRenewal: renewalList.length
 			})
 		} catch (error) {
-			responseHandler.badRequest(error.message)
+			responseHandler.badRequest(res, error.message)
 		}
 
 

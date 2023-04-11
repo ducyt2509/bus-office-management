@@ -33,6 +33,7 @@ export default function BusScheduleDetail(props) {
 	const router = useRouter();
 	const [state, dispath] = useStore();
 	const [data, setData] = useState();
+	const [method, setMethod] = useState()
 	const [error, setError] = useState({
 		route: false,
 		price: false,
@@ -241,34 +242,68 @@ export default function BusScheduleDetail(props) {
 			],
 		};
 		if (BusSchedule && BusSchedule.length && BusSchedule[0].id) {
-			submitData.bus_schedule.id = BusSchedule[0].id;
-			submitData.bus_schedule.refresh_date = calcDate(refreshDate, scheduleFrequency);
-			const updateBusSchedule = await axios.put(
-				`http://localhost:${props.BACK_END_PORT}/bus-schedule/update-bus-schedule`,
-				submitData,
-				{ headers: state.accessToken },
-			);
-			if (updateBusSchedule.data.statusCode == 200) {
-				toastIdRef.current = toast({
-					title: "Lịch trình đã được cập nhật.",
-					description: "Chúng tôi đã cập nhật lịch trình cho bạn.",
-					status: "success",
-					isClosable: true,
-					position: "top",
-					duration: 2000,
-				});
-				setTimeout(() => {
-					router.push("/admin/management/bus-schedule");
-				}, 2000);
-			} else {
-				toastIdRef.current = toast({
-					title: "Lịch trình không thể cập nhật.",
-					description: "Xảy ra lỗi khi cập nhật lịch trình. Làm ơn hãy thử lại.",
-					status: "error",
-					isClosable: true,
-					position: "top",
-					duration: 2000,
-				});
+			switch (method) {
+				case 'Refresh':
+					submitData.bus_schedule.refresh_date = calcDate(effectiveDate, scheduleFrequency);
+					const refreshBS = await axios.put(
+						`http://localhost:${props.BACK_END_PORT}/bus-schedule/add-bus-schedule`,
+						submitData,
+						{ headers: state.accessToken },
+					);
+					if (updateBusSchedule.data.statusCode == 200) {
+						toastIdRef.current = toast({
+							title: "Lịch trình đã thêm mới.",
+							description: "Hành trình đã được làm mới thành công.",
+							status: "success",
+							isClosable: true,
+							position: "top",
+							duration: 2000,
+						});
+						setTimeout(() => {
+							router.push("/admin/management/bus-schedule");
+						}, 2000);
+					} else {
+						toastIdRef.current = toast({
+							title: "Lịch trình không thể cập nhật.",
+							description: "Xảy ra lỗi khi cập nhật lịch trình. Làm ơn hãy thử lại.",
+							status: "error",
+							isClosable: true,
+							position: "top",
+							duration: 2000,
+						});
+					}
+					break;
+				default:
+					submitData.bus_schedule.refresh_date = calcDate(refreshDate, scheduleFrequency);
+					const updateBusSchedule = await axios.put(
+						`http://localhost:${props.BACK_END_PORT}/bus-schedule/update-bus-schedule`,
+						submitData,
+						{ headers: state.accessToken },
+					);
+					if (updateBusSchedule.data.statusCode == 200) {
+						toastIdRef.current = toast({
+							title: "Lịch trình đã được cập nhật.",
+							description: "Chúng tôi đã cập nhật lịch trình cho bạn.",
+							status: "success",
+							isClosable: true,
+							position: "top",
+							duration: 2000,
+						});
+						setTimeout(() => {
+							router.push("/admin/management/bus-schedule");
+						}, 2000);
+					} else {
+						toastIdRef.current = toast({
+							title: "Lịch trình không thể cập nhật.",
+							description: "Xảy ra lỗi khi cập nhật lịch trình. Làm ơn hãy thử lại.",
+							status: "error",
+							isClosable: true,
+							position: "top",
+							duration: 2000,
+						});
+					}
+					break;
+
 			}
 		} else {
 			submitData.bus_schedule.refresh_date = calcDate(new Date(), scheduleFrequency);
@@ -354,6 +389,7 @@ export default function BusScheduleDetail(props) {
 	);
 	useEffect(() => {
 		const id = router.query.id;
+		setMethod(router.query.method);
 		const data = {};
 		if (id != "add") {
 			getBusScheduleById(id);
@@ -386,7 +422,7 @@ export default function BusScheduleDetail(props) {
 				>
 					{router.query.id == "add" ? "Thêm lịch trình" : "Chỉnh sửa thông tin lịch trình"}
 				</Heading>
-				{}
+				{ }
 				<Card
 					margin={"0 auto"}
 					border={"1px solid"}
@@ -629,7 +665,7 @@ export default function BusScheduleDetail(props) {
 									<Input
 										disabled={router.query.id != "add" || effectiveDate <= today}
 										type={"date"}
-										value={effectiveDate}
+										// {...method == 'Refresh' ? value = { effectiveDate } : value = null }
 										min={today}
 										onChange={handleChangeEffectiveDate}
 									/>

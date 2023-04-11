@@ -10,16 +10,34 @@ import {
 	Stack,
 	Box,
 	Image,
-	Button,
+	Button, useToast,
 } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import axios from 'axios';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { GoLocation } from 'react-icons/go';
 import { MdOutlineSwapHorizontalCircle } from 'react-icons/md';
 import { Seat12User } from '@/components/vehicle';
-
+import { useRef } from "react";
 export default function Ticket(props) {
+	const toastRef = useRef()
+	const toast = useToast();
+	useEffect(() => {
+		if (props.totalRenewal && props.totalRenewal > 0) {
+			setTimeout(() => {
+				toastRef.current = toast({
+					title: "Lịch trình xe cần được cập nhật.",
+					description: `Có ${props.totalRenewal} lịch trình sắp hết hạn`,
+					status: "warning",
+					isClosable: true,
+					position: "top",
+					duration: 10000
+				});
+			}, 3000);
+		}
+		console.log("BEAN");
+	}, [])
+
 	const [startLocation, setStartLocation] = useState(47);
 	const [listBusSchedule, setListBusSchedule] = useState([]);
 	const [endLocation, setEndLocation] = useState(32);
@@ -148,7 +166,6 @@ export default function Ticket(props) {
 			setListBusSchedule(listBusSchedule.data.data.list_bus_schedule);
 		}
 	}, [startLocation, endLocation, departureDay, error]);
-
 	const cityOption =
 		props.list_city &&
 		props.list_city.map((city) => <option value={city.id}>{city.city_name}</option>);
@@ -486,10 +503,12 @@ export async function getStaticProps() {
 	const getListCity = await axios.post(
 		`http://localhost:${process.env.BACK_END_PORT}/city/list-city`
 	);
+	const getTotalRenewal = await axios.get(`http://localhost:${process.env.BACK_END_PORT}/bus-schedule/check-renewal-bus-schedule`)
 	return {
 		props: {
 			port: process.env.BACK_END_PORT,
 			list_city: getListCity.data.data?.listCity,
+			totalRenewal: getTotalRenewal.data.data.totalBSNeedRenewal
 		},
 	};
 }

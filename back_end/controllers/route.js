@@ -110,6 +110,7 @@ module.exports = {
 
     try {
       const { id } = req.body;
+      console.log("Check: ", req.body, id)
       if (!validateHandler.validatePositiveIntegerNumber(id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
 
       var getRoute = await Route.findOne({

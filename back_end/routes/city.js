@@ -8,7 +8,7 @@ const middleWare = require('../middleware/permission.middleware');
 // router.delete('/city/delete-city', middleWare.verifyTokenForManager, cities.deleteCity);
 
 
-router.get('/city/list-city', cities.getListCity);
+router.post('/city/list-city', cities.getListCity);
 router.post('/city/add-city', cities.addNewCity);
 router.put('/city/update-city', cities.updateCity);
 router.delete('/city/delete-city', cities.deleteCity);

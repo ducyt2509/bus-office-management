@@ -25,7 +25,6 @@ export default function searchTicket(props) {
 	const [listTicket, setListTicket] = useState([]);
 	const [numberTicket, setNumberTicket] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
-
 	const handleChangePhone = useCallback(
 		(e) => {
 			let value = e.target.value;
