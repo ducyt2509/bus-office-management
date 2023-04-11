@@ -4,10 +4,10 @@ const Bus = db.buses;
 const Transport = db.transports;
 const Location_Bus_Schedule = db.location_on_bus_schedules;
 const QueryTypes = db.Sequelize.QueryTypes;
-const responseHandler = require('../handlers/response.handler');
-const validateHandler = require('../handlers/validate.handler');
-const messageHandler = require('../handlers/message.handler')
-const regexHandler = require('../handlers/regex.handler')
+const responseHandler = require("../handlers/response.handler");
+const validateHandler = require("../handlers/validate.handler");
+const messageHandler = require("../handlers/message.handler");
+const regexHandler = require("../handlers/regex.handler");
 module.exports = {
 	async createNewBusSchedule(req, res) {
 		const params = req.body;
@@ -181,7 +181,7 @@ module.exports = {
 		const params = req.body;
 		const offset = !params.offset || !params.offset <= 0 ? 0 : params.offset;
 		const limit = !params.limit ? 5 : params.limit;
-
+		const querySearch = !params.query_search ? "" : !params.query_search;
 		try {
 			const querySQL = `select bs.id ,bs.route_id, departure_location_id , arrive_location_id , price , time_from , travel_time , effective_date , refresh_date , bus_schedule_status , bus_schedule_expire , city_from_id , city_to_id 
       from bus_schedule bs
