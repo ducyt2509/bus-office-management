@@ -345,33 +345,40 @@ export default function TransactionDetails(props) {
 			props.seatCustomerSelected,
 		],
 	);
+	
 	let location_pickup = props.scheduleData.location_bus_schedule
 		? props.scheduleData.location_bus_schedule.filter((e) => {
 				return e.bus_location_type == 0;
 		  })[0]?.bus_detail
 		: [];
+
 	let addressPickup = props.scheduleData.location_bus_schedule
 		? props.scheduleData.location_bus_schedule.filter((e) => {
 				return e.bus_location_type == 0;
 		  })[0]?.bus_location_address
 		: [];
+
 	let location_dropOff = props.scheduleData.location_bus_schedule
 		? props.scheduleData.location_bus_schedule.filter((e) => {
 				return e.bus_location_type == 1;
 		  })[0]?.bus_detail
 		: [];
+
 	let addressDropOff = props.scheduleData.location_bus_schedule
 		? props.scheduleData.location_bus_schedule.filter((e) => {
 				return e.bus_location_type == 1;
 		  })[0]?.bus_location_address
 		: [];
+
 	location_pickup =
 		location_pickup && location_pickup.length ? JSON.parse(location_pickup) : location_pickup;
+
 	location_dropOff =
 		location_dropOff && location_dropOff.length ? JSON.parse(location_dropOff) : location_dropOff;
 
 	addressPickup =
 		addressPickup && addressPickup.length ? JSON.parse(addressPickup) : addressPickup;
+
 	addressDropOff =
 		addressDropOff && addressDropOff.length ? JSON.parse(addressDropOff) : addressDropOff;
 

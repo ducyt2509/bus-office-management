@@ -18,6 +18,7 @@ import { useState, useCallback } from "react";
 import { GoLocation } from "react-icons/go";
 import { MdOutlineSwapHorizontalCircle } from "react-icons/md";
 import { Seat12User } from "@/components/vehicle";
+import LocationPickAndDrop from "@/components/ticket/location-pick-and-drop";
 
 export default function Ticket(props) {
 	const [startLocation, setStartLocation] = useState(47);
@@ -31,6 +32,7 @@ export default function Ticket(props) {
 	const [editButtonStatus, setEditButtonStatus] = useState(false);
 	const [deleteButtonStatus, setDeleteButtonStatus] = useState(false);
 	const [seatCustomerSelected, setSeatCustomerSelected] = useState([]);
+	const [tabSelected, setTabSelected] = useState(1);
 	const [error, setError] = useState({
 		from: false,
 		to: false,
@@ -173,7 +175,7 @@ export default function Ticket(props) {
 							return (
 								<Box
 									border={"1px solid"}
-									borderRadius={"10px"}
+									borderRadius={"5px"}
 									padding={"0 1%"}
 									marginRight={"1%"}
 									minW={"80px"}
@@ -192,7 +194,7 @@ export default function Ticket(props) {
 								>
 									<Stack>
 										<Text>{convertTime(schedule.time_from, 0)}</Text>
-										<Flex>
+										<Flex marginTop="0 !important">
 											<Text marginRight={"5px"}>-----</Text>
 											<Text>
 												{number_seat_selected + "/" + vehicle.bus[0].number_seat}
@@ -362,33 +364,37 @@ export default function Ticket(props) {
 				</Flex>
 				<Flex>
 					<Button
-						backgroundColor={"#fff"}
+						backgroundColor={tabSelected == 1 ? "#F2CAC2" : "#fff"}
 						border="1px solid"
 						borderRadius={"5px"}
 						marginRight={"15px"}
+						onClick={() => setTabSelected(1)}
 					>
-						Xuất phơi
+						Đặt vé
 					</Button>
 					<Button
-						backgroundColor={"#fff"}
+						backgroundColor={tabSelected == 2 ? "#F2CAC2" : "#fff"}
 						border="1px solid"
 						borderRadius={"5px"}
 						marginRight={"15px"}
+						onClick={() => setTabSelected(2)}
 					>
 						DS đón trả
 					</Button>
 					<Button
-						backgroundColor={"#fff"}
+						backgroundColor={tabSelected == 3 ? "#F2CAC2" : "#fff"}
 						border="1px solid"
 						borderRadius={"5px"}
 						marginRight={"15px"}
+						onClick={() => setTabSelected(3)}
 					>
-						T/chuyển
+						Xuất phơi
 					</Button>
 					<Button
-						backgroundColor={"#fff"}
+						backgroundColor={tabSelected == 4 ? "#F2CAC2" : "#fff"}
 						border="1px solid"
 						borderRadius={"5px"}
+						onClick={() => setTabSelected(4)}
 					>
 						Xuất bến
 					</Button>
@@ -409,6 +415,12 @@ export default function Ticket(props) {
 				setSeatCustomerSelected={setSeatCustomerSelected}
 			/>
 		) : null;
+	const LocationHTML = (
+		<LocationPickAndDrop
+			transportData={transportData}
+			scheduleData={scheduleData}
+		/>
+	);
 	return (
 		<div style={{ position: "relative", left: "20%", width: "80%" }}>
 			<Flex
@@ -495,7 +507,8 @@ export default function Ticket(props) {
 				</Flex>
 				{ScheduleDataHTML}
 				{ButtonGroupHTML}
-				{VehicleHTML}
+				{tabSelected == 1 && VehicleHTML}
+				{tabSelected == 2 && LocationHTML}
 			</Box>
 		</div>
 	);

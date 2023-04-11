@@ -134,7 +134,7 @@ module.exports = {
 									},
 								),
 								db.sequelize.query(
-									`select t.seat, t.passenger_name, t.passenger_phone, t.id, t.pickup_location, t.drop_off_location, t.tranship_address from transaction t
+									`select t.seat, t.passenger_name, t.passenger_phone, t.id, t.pickup_location, t.drop_off_location, t.tranship_address, t.payment_status from transaction t
 									join transport tr on tr.id = t.transport_id
 									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id} and t.payment_status != 3`,
 									{
