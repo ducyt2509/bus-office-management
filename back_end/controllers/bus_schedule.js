@@ -7,7 +7,20 @@ const QueryTypes = db.Sequelize.QueryTypes;
 const responseHandler = require('../handlers/response.handler');
 const validateHandler = require('../handlers/validate.handler');
 const messageHandler = require('../handlers/message.handler')
-const regexHandler = require('../handlers/regex.handler')
+const regexHandler = require('../handlers/regex.handler');
+const { Op } = require("sequelize");
+
+const checkRenewal = (date, timeExpire) => {
+	const current = new Date();
+	const expireDate = new Date(date);
+
+	// convert time to milliseconds
+	const renewalDate = expireDate.getTime() - (timeExpire / 2) * 24 * 60 * 60 * 1000
+	if (current.getTime() >= renewalDate) {
+		return true
+	}
+	return false
+}
 module.exports = {
 	async createNewBusSchedule(req, res) {
 		const params = req.body;
@@ -269,4 +282,33 @@ module.exports = {
 			return responseHandler.badRequest(res, error.message);
 		}
 	},
+
+
+	async checkRenewalBusSchedule(req, res) {
+		try {
+			const currentDate = validateHandler.validateDate(new Date().toDateString())
+			const queryGetBusScheduleList = `select * from bus_schedule where refresh_date >=  ${currentDate} and bus_schedule_status = 1  `
+			const busScheduleList = await db.sequelize.query(queryGetBusScheduleList, { type: QueryTypes.SELECT });
+			console.log(busScheduleList)
+			let count = 0;
+
+			for (let index = 0; index < busScheduleList.length; index++) {
+				const renewalDate = busScheduleList[index].refresh_date
+				const timeExpire = busScheduleList[index].bus_schedule_expire
+				console.log('DATE ' + renewalDate + ' FREQ ' + timeExpire)
+				let isRenewal = checkRenewal(renewalDate, timeExpire)
+				if (isRenewal) {
+					count++
+				}
+			}
+			return responseHandler.responseWithData(res, 200, {
+				totalBSNeedRenewal: count
+			})
+		} catch (error) {
+			responseHandler.badRequest(error.message)
+		}
+
+
+	}
+
 };

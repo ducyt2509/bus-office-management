@@ -158,47 +158,47 @@ export default function Ticket(props) {
 			<>
 				{schedule && schedule.transport && schedule.transport.length
 					? schedule.transport.map((vehicle, index) => {
-							const number_seat_selected =
-								vehicle.number_seat_selected && vehicle.number_seat_selected.length
-									? vehicle.number_seat_selected
-											.map((e) => e.seat)
-											.join()
-											.split(",").length
-									: 0;
-							const number_seat_unselected =
-								vehicle.bus[0].number_seat - number_seat_selected;
-							return (
-								<Box
-									border={"1px solid"}
-									borderRadius={"10px"}
-									padding={"0 1%"}
-									marginRight={"1%"}
-									minW={"80px"}
-									fontSize={"13px"}
-									fontWeight={"600"}
-									color={"#363636"}
-									cursor={"pointer"}
-									backgroundColor={
-										position + "" + index == scheduleSelected ? "#F2CAC2" : "#fff"
-									}
-									_hover={{ backgroundColor: "#F2CAC2" }}
-									maxH="60px"
-									onClick={() =>
-										handleSCheduleSelected(position + "" + index, schedule, vehicle)
-									}
-								>
-									<Stack>
-										<Text>{convertTime(schedule.time_from, 0)}</Text>
-										<Flex>
-											<Text marginRight={"5px"}>-----</Text>
-											<Text>
-												{number_seat_selected + "/" + vehicle.bus[0].number_seat}
-											</Text>
-										</Flex>
-									</Stack>
-								</Box>
-							);
-					  })
+						const number_seat_selected =
+							vehicle.number_seat_selected && vehicle.number_seat_selected.length
+								? vehicle.number_seat_selected
+									.map((e) => e.seat)
+									.join()
+									.split(",").length
+								: 0;
+						const number_seat_unselected =
+							vehicle.bus[0].number_seat - number_seat_selected;
+						return (
+							<Box
+								border={"1px solid"}
+								borderRadius={"10px"}
+								padding={"0 1%"}
+								marginRight={"1%"}
+								minW={"80px"}
+								fontSize={"13px"}
+								fontWeight={"600"}
+								color={"#363636"}
+								cursor={"pointer"}
+								backgroundColor={
+									position + "" + index == scheduleSelected ? "#F2CAC2" : "#fff"
+								}
+								_hover={{ backgroundColor: "#F2CAC2" }}
+								maxH="60px"
+								onClick={() =>
+									handleSCheduleSelected(position + "" + index, schedule, vehicle)
+								}
+							>
+								<Stack>
+									<Text>{convertTime(schedule.time_from, 0)}</Text>
+									<Flex>
+										<Text marginRight={"5px"}>-----</Text>
+										<Text>
+											{number_seat_selected + "/" + vehicle.bus[0].number_seat}
+										</Text>
+									</Flex>
+								</Stack>
+							</Box>
+						);
+					})
 					: null}
 			</>
 		);
@@ -289,11 +289,11 @@ export default function Ticket(props) {
 								color={"#363636"}
 							>
 								{transportData.number_seat_selected &&
-								transportData.number_seat_selected.length
+									transportData.number_seat_selected.length
 									? transportData.number_seat_selected
-											.map((e) => e.seat)
-											.join()
-											.split(",").length
+										.map((e) => e.seat)
+										.join()
+										.split(",").length
 									: 0}
 							</Text>
 						</Flex>
