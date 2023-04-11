@@ -183,7 +183,7 @@ export default function TicketDetail(props) {
 											marginBottom={"8%"}
 											fontWeight={"500"}
 										>
-											{props.data?.seat}
+											{props.data?.id}
 										</Text>
 									</Box>
 								</Stack>

@@ -134,18 +134,6 @@ const locationDropOffHTML = locationDropOff ? (
                 <Stack>{locationDropOffHTML}</Stack>
               </Stack>
             </Flex>
-            <Flex
-              width={'96%'}
-              margin={'0 auto'}
-              justifyContent="space-between"
-              borderTop="1px solid #E2E8F0"
-              marginTop="3%"
-            >
-              <Text fontWeight={'500'} fontSize={'20px'} marginTop="2%">
-                Xe trung chuyển
-              </Text>
-              <Switch size={'lg'} marginTop="2%" />
-            </Flex>
           </TabPanel>
           <TabPanel>
             <Text fontSize={'22px'} fontWeight="500">

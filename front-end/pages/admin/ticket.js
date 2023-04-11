@@ -1,5 +1,5 @@
-import { formatDate } from "@/helper";
-import { convertTime, validate } from "@/helper";
+import { formatDate } from '@/helper';
+import { convertTime, validate } from '@/helper';
 import {
 	Text,
 	Heading,
@@ -11,13 +11,13 @@ import {
 	Box,
 	Image,
 	Button,
-} from "@chakra-ui/react";
-import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import axios from "axios";
-import { useState, useCallback } from "react";
-import { GoLocation } from "react-icons/go";
-import { MdOutlineSwapHorizontalCircle } from "react-icons/md";
-import { Seat12User } from "@/components/vehicle";
+} from '@chakra-ui/react';
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import axios from 'axios';
+import { useState, useCallback } from 'react';
+import { GoLocation } from 'react-icons/go';
+import { MdOutlineSwapHorizontalCircle } from 'react-icons/md';
+import { Seat12User } from '@/components/vehicle';
 
 export default function Ticket(props) {
 	const [startLocation, setStartLocation] = useState(47);
@@ -85,8 +85,8 @@ export default function Ticket(props) {
 			transport.number_seat_selected
 				.map((e) => e.seat)
 				.join()
-				.split(",")
-				.map((e) => e.trim()),
+				.split(',')
+				.map((e) => e.trim())
 		);
 	});
 
@@ -117,7 +117,7 @@ export default function Ticket(props) {
 			setEditButtonStatus(editStatus);
 			setDeleteButtonStatus(deleteStatus);
 		},
-		[seatSelected, seatCustomerSelected],
+		[seatSelected, seatCustomerSelected]
 	);
 
 	const searchBusSchedule = useCallback(async () => {
@@ -142,7 +142,7 @@ export default function Ticket(props) {
 		};
 		const listBusSchedule = await axios.post(
 			`http://localhost:${props.port}/bus-schedule/list-bus-schedule-all`,
-			submitData,
+			submitData
 		);
 		if (listBusSchedule.data.statusCode == 200) {
 			setListBusSchedule(listBusSchedule.data.data.list_bus_schedule);
@@ -442,14 +442,11 @@ export default function Ticket(props) {
 						<MdOutlineSwapHorizontalCircle
 							className="bom-element admin"
 							onClick={handleSwapLocation}
-							cursor={"pointer"}
+							cursor={'pointer'}
 						/>
 						<Flex className="bom-element admin">
 							<GoLocation />
-							<select
-								value={endLocation}
-								onChange={handleChangeEndLocation}
-							>
+							<select value={endLocation} onChange={handleChangeEndLocation}>
 								{cityOption}
 							</select>
 						</Flex>
@@ -465,20 +462,17 @@ export default function Ticket(props) {
 						</InputGroup>
 					</Flex>
 					<Button
-						backgroundColor={"#fff"}
-						color={"#000"}
-						border={"1px solid"}
-						padding={"10px 20px"}
+						backgroundColor={'#fff'}
+						color={'#000'}
+						border={'1px solid'}
+						padding={'10px 20px'}
 						className="bom-element admin"
 						onClick={searchBusSchedule}
 					>
 						Tìm kiếm
 					</Button>
 				</Flex>
-				<Flex
-					maxW={"100%"}
-					overflowX={"auto"}
-				>
+				<Flex maxW={'100%'} overflowX={'auto'}>
 					{ListBusScheduleHTML}
 				</Flex>
 				{ScheduleDataHTML}
@@ -489,8 +483,8 @@ export default function Ticket(props) {
 	);
 }
 export async function getStaticProps() {
-	const getListCity = await axios.get(
-		`http://localhost:${process.env.BACK_END_PORT}/city/list-city`,
+	const getListCity = await axios.post(
+		`http://localhost:${process.env.BACK_END_PORT}/city/list-city`
 	);
 	return {
 		props: {
