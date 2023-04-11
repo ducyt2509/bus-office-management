@@ -221,8 +221,8 @@ module.exports = {
 			join bus b on b.id = ts.bus_id
 			join bus_schedule bs on ts.bus_schedule_id = bs.id
 			join route r on r.id = bs.route_id
-            join city c on r.city_from_id = c.id
-            join city cc on r.city_to_id = cc.id
+      join city c on r.city_from_id = c.id
+      join city cc on r.city_to_id = cc.id
 			where t.passenger_phone = '${phone} or t.id = ${phone}'
 			limit ${limit} offset ${offset} 
 			`;
