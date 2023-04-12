@@ -1,5 +1,5 @@
-import { formatDate } from '@/helper';
-import { convertTime, validate } from '@/helper';
+import { formatDate } from "@/helper";
+import { convertTime, validate } from "@/helper";
 import {
 	Text,
 	Heading,
@@ -10,34 +10,17 @@ import {
 	Stack,
 	Box,
 	Image,
-	Button, useToast,
-} from '@chakra-ui/react';
-import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
-import axios from 'axios';
-import { useState, useCallback, useEffect } from 'react';
-import { GoLocation } from 'react-icons/go';
-import { MdOutlineSwapHorizontalCircle } from 'react-icons/md';
-import { Seat12User } from '@/components/vehicle';
-import { useRef } from "react";
-export default function Ticket(props) {
-	const toastRef = useRef()
-	const toast = useToast();
-	useEffect(() => {
-		if (props.totalRenewal && props.totalRenewal > 0) {
-			setTimeout(() => {
-				toastRef.current = toast({
-					title: "Lịch trình xe cần được cập nhật.",
-					description: `Có ${props.totalRenewal} lịch trình sắp hết hạn`,
-					status: "warning",
-					isClosable: true,
-					position: "top",
-					duration: 10000
-				});
-			}, 3000);
-		}
-		console.log("BEAN");
-	}, [])
+	Button,
+} from "@chakra-ui/react";
+import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import axios from "axios";
+import { useState, useCallback } from "react";
+import { GoLocation } from "react-icons/go";
+import { MdOutlineSwapHorizontalCircle } from "react-icons/md";
+import { Seat12User } from "@/components/vehicle";
+import LocationPickAndDrop from "@/components/ticket/location-pick-and-drop";
 
+export default function Ticket(props) {
 	const [startLocation, setStartLocation] = useState(47);
 	const [listBusSchedule, setListBusSchedule] = useState([]);
 	const [endLocation, setEndLocation] = useState(32);
@@ -49,6 +32,7 @@ export default function Ticket(props) {
 	const [editButtonStatus, setEditButtonStatus] = useState(false);
 	const [deleteButtonStatus, setDeleteButtonStatus] = useState(false);
 	const [seatCustomerSelected, setSeatCustomerSelected] = useState([]);
+	const [tabSelected, setTabSelected] = useState(1);
 	const [error, setError] = useState({
 		from: false,
 		to: false,
@@ -101,10 +85,11 @@ export default function Ticket(props) {
 		setTransportData(transport);
 		setSeatCustomerSelected(
 			transport.number_seat_selected
+				.filter((e) => e.payment_status != 3)
 				.map((e) => e.seat)
 				.join()
-				.split(',')
-				.map((e) => e.trim())
+				.split(",")
+				.map((e) => e.trim()),
 		);
 	});
 
@@ -135,7 +120,7 @@ export default function Ticket(props) {
 			setEditButtonStatus(editStatus);
 			setDeleteButtonStatus(deleteStatus);
 		},
-		[seatSelected, seatCustomerSelected]
+		[seatSelected, seatCustomerSelected],
 	);
 
 	const searchBusSchedule = useCallback(async () => {
@@ -160,12 +145,13 @@ export default function Ticket(props) {
 		};
 		const listBusSchedule = await axios.post(
 			`http://localhost:${props.port}/bus-schedule/list-bus-schedule-all`,
-			submitData
+			submitData,
 		);
 		if (listBusSchedule.data.statusCode == 200) {
 			setListBusSchedule(listBusSchedule.data.data.list_bus_schedule);
 		}
 	}, [startLocation, endLocation, departureDay, error]);
+
 	const cityOption =
 		props.list_city &&
 		props.list_city.map((city) => <option value={city.id}>{city.city_name}</option>);
@@ -176,18 +162,20 @@ export default function Ticket(props) {
 				{schedule && schedule.transport && schedule.transport.length
 					? schedule.transport.map((vehicle, index) => {
 						const number_seat_selected =
-							vehicle.number_seat_selected && vehicle.number_seat_selected.length
+							vehicle.number_seat_selected &&
+								vehicle.number_seat_selected.length &&
+								vehicle.number_seat_selected.filter((e) => e.payment_status != 3).length
 								? vehicle.number_seat_selected
+									.filter((e) => e.payment_status != 3)
 									.map((e) => e.seat)
 									.join()
 									.split(",").length
 								: 0;
-						const number_seat_unselected =
-							vehicle.bus[0].number_seat - number_seat_selected;
+
 						return (
 							<Box
 								border={"1px solid"}
-								borderRadius={"10px"}
+								borderRadius={"5px"}
 								padding={"0 1%"}
 								marginRight={"1%"}
 								minW={"80px"}
@@ -206,7 +194,7 @@ export default function Ticket(props) {
 							>
 								<Stack>
 									<Text>{convertTime(schedule.time_from, 0)}</Text>
-									<Flex>
+									<Flex marginTop="0 !important">
 										<Text marginRight={"5px"}>-----</Text>
 										<Text>
 											{number_seat_selected + "/" + vehicle.bus[0].number_seat}
@@ -221,197 +209,216 @@ export default function Ticket(props) {
 		);
 	});
 
-	const ScheduleDataHTML = scheduleData && transportData && (
-		<Card
-			border={"1px solid"}
-			width={"100%"}
-			margin={"0 auto"}
-			marginTop={"2%"}
-		>
-			<CardBody>
-				<Flex
-					justifyContent={"space-between"}
-					fontSize={"13px"}
-				>
-					<Stack>
-						<Flex>
-							<Text
-								fontWeight="600"
-								color={"#363636"}
-							>
-								Biển số:&ensp;
-							</Text>
-							<Text
-								fontWeight="600"
-								color={"#363636"}
-							>
-								{transportData?.bus[0].vehicle_plate}
-							</Text>
-						</Flex>
-						<Flex>
-							<Text
-								fontWeight="600"
-								color={"#363636"}
-							>
-								Loại xe:&ensp;
-							</Text>
-							<Text
-								fontWeight="600"
-								color={"#363636"}
-							>
-								{transportData?.bus[0].vehicle_type_name}
-							</Text>
-						</Flex>
-					</Stack>
-					<Stack>
-						<Flex>
-							<Text
-								fontWeight="600"
-								color={"#363636"}
-							>
-								Tài xế:&ensp;
-							</Text>
-							<Text
-								fontWeight="600"
-								color={"#363636"}
-							>
-								{transportData?.bus[0]?.main_driver}
-							</Text>
-						</Flex>
-						<Flex>
-							<Text
-								fontWeight="600"
-								color={"#363636"}
-							>
-								Phụ xe:&ensp;
-							</Text>
-							<Text
-								fontWeight="600"
-								color={"#363636"}
-							>
-								{transportData?.bus[0]?.support_driver}
-							</Text>
-						</Flex>
-					</Stack>
-					<Stack>
-						<Flex>
-							<Text
-								fontWeight="600"
-								color={"#363636"}
-							>
-								Số vé đã đặt:&ensp;
-							</Text>
-							<Text
-								fontWeight="600"
-								color={"#363636"}
-							>
-								{transportData.number_seat_selected &&
-									transportData.number_seat_selected.length
-									? transportData.number_seat_selected
-										.map((e) => e.seat)
-										.join()
-										.split(",").length
-									: 0}
-							</Text>
-						</Flex>
-						<Flex>
-							<Text
-								fontWeight="600"
-								color={"#363636"}
-							>
-								Số vé đã thanh toán:&ensp;
-							</Text>
-							<Text
-								fontWeight="600"
-								color={"#363636"}
-							>
-								{transportData?.number_seat_sold}
-							</Text>
-						</Flex>
-					</Stack>
+	const ScheduleDataHTML =
+		scheduleData && transportData ? (
+			<Card
+				border={"1px solid"}
+				width={"100%"}
+				margin={"0 auto"}
+				marginTop={"2%"}
+			>
+				<CardBody>
+					<Flex
+						justifyContent={"space-between"}
+						fontSize={"13px"}
+					>
+						<Stack>
+							<Flex>
+								<Text
+									fontWeight="600"
+									color={"#363636"}
+								>
+									Biển số:&ensp;
+								</Text>
+								<Text
+									fontWeight="600"
+									color={"#363636"}
+								>
+									{transportData?.bus[0].vehicle_plate}
+								</Text>
+							</Flex>
+							<Flex>
+								<Text
+									fontWeight="600"
+									color={"#363636"}
+								>
+									Loại xe:&ensp;
+								</Text>
+								<Text
+									fontWeight="600"
+									color={"#363636"}
+								>
+									{transportData?.bus[0].vehicle_type_name}
+								</Text>
+							</Flex>
+						</Stack>
+						<Stack>
+							<Flex>
+								<Text
+									fontWeight="600"
+									color={"#363636"}
+								>
+									Tài xế:&ensp;
+								</Text>
+								<Text
+									fontWeight="600"
+									color={"#363636"}
+								>
+									{transportData?.bus[0]?.main_driver}
+								</Text>
+							</Flex>
+							<Flex>
+								<Text
+									fontWeight="600"
+									color={"#363636"}
+								>
+									Phụ xe:&ensp;
+								</Text>
+								<Text
+									fontWeight="600"
+									color={"#363636"}
+								>
+									{transportData?.bus[0]?.support_driver}
+								</Text>
+							</Flex>
+						</Stack>
+						<Stack>
+							<Flex>
+								<Text
+									fontWeight="600"
+									color={"#363636"}
+								>
+									Số vé đã đặt:&ensp;
+								</Text>
+								<Text
+									fontWeight="600"
+									color={"#363636"}
+								>
+									{transportData.number_seat_selected &&
+										transportData.number_seat_selected.length &&
+										transportData.number_seat_selected.filter((e) => e.payment_status != 3)
+											.length
+										? transportData.number_seat_selected
+											.filter((e) => e.payment_status != 3)
+											.map((e) => e.seat)
+											.join()
+											.split(",").length
+										: 0}
+								</Text>
+							</Flex>
+							<Flex>
+								<Text
+									fontWeight="600"
+									color={"#363636"}
+								>
+									Số vé đã thanh toán:&ensp;
+								</Text>
+								<Text
+									fontWeight="600"
+									color={"#363636"}
+								>
+									{transportData?.number_seat_sold}
+								</Text>
+							</Flex>
+						</Stack>
+					</Flex>
+					<Text
+						marginTop="1%"
+						fontWeight={"600"}
+					>
+						Chi tiết: Chuyến {convertTime(scheduleData.time_from, 0) + " "}; Ngày:{" "}
+						{new Date(formatDate(transportData?.departure_date)).toLocaleDateString()} ;
+						Tuyến: {scheduleData?.city_from + " - " + scheduleData?.city_to}
+					</Text>
+				</CardBody>
+			</Card>
+		) : null;
+	const ButtonGroupHTML =
+		scheduleData && transportData ? (
+			<Flex
+				marginTop="1%"
+				justifyContent={"space-between"}
+			>
+				<Flex>
+					{editButtonStatus && (
+						<Button
+							leftIcon={<EditIcon />}
+							backgroundColor={"#fff"}
+							border="1px solid"
+							borderRadius={"5px"}
+							marginRight={"15px"}
+						>
+							Sửa
+						</Button>
+					)}
+					{deleteButtonStatus && (
+						<Button
+							leftIcon={<DeleteIcon />}
+							backgroundColor={"#fff"}
+							border="1px solid"
+							borderRadius={"5px"}
+						>
+							Xóa
+						</Button>
+					)}
 				</Flex>
-				<Text
-					marginTop="1%"
-					fontWeight={"600"}
-				>
-					Chi tiết: Chuyến {convertTime(scheduleData.time_from, 0) + " "}; Ngày:{" "}
-					{new Date(formatDate(transportData?.departure_date)).toLocaleDateString()} ; Tuyến:{" "}
-					{scheduleData?.city_from + " - " + scheduleData?.city_to}
-				</Text>
-			</CardBody>
-		</Card>
-	);
-	const ButtonGroupHTML = scheduleData && transportData && (
-		<Flex
-			marginTop="1%"
-			justifyContent={"space-between"}
-		>
-			<Flex>
-				{editButtonStatus && (
+				<Flex>
 					<Button
-						leftIcon={<EditIcon />}
-						backgroundColor={"#fff"}
+						backgroundColor={tabSelected == 1 ? "#F2CAC2" : "#fff"}
 						border="1px solid"
 						borderRadius={"5px"}
 						marginRight={"15px"}
+						onClick={() => setTabSelected(1)}
 					>
-						Sửa
+						Đặt vé
 					</Button>
-				)}
-				{deleteButtonStatus && (
 					<Button
-						leftIcon={<DeleteIcon />}
-						backgroundColor={"#fff"}
+						backgroundColor={tabSelected == 2 ? "#F2CAC2" : "#fff"}
 						border="1px solid"
 						borderRadius={"5px"}
+						marginRight={"15px"}
+						onClick={() => setTabSelected(2)}
 					>
-						Xóa
+						DS đón trả
 					</Button>
-				)}
+					<Button
+						backgroundColor={tabSelected == 3 ? "#F2CAC2" : "#fff"}
+						border="1px solid"
+						borderRadius={"5px"}
+						marginRight={"15px"}
+						onClick={() => setTabSelected(3)}
+					>
+						Xuất phơi
+					</Button>
+					<Button
+						backgroundColor={tabSelected == 4 ? "#F2CAC2" : "#fff"}
+						border="1px solid"
+						borderRadius={"5px"}
+						onClick={() => setTabSelected(4)}
+					>
+						Xuất bến
+					</Button>
+				</Flex>
 			</Flex>
-			<Flex>
-				<Button
-					backgroundColor={"#fff"}
-					border="1px solid"
-					borderRadius={"5px"}
-					marginRight={"15px"}
-				>
-					Xuất phơi
-				</Button>
-				<Button
-					backgroundColor={"#fff"}
-					border="1px solid"
-					borderRadius={"5px"}
-					marginRight={"15px"}
-				>
-					DS đón trả
-				</Button>
-				<Button
-					backgroundColor={"#fff"}
-					border="1px solid"
-					borderRadius={"5px"}
-					marginRight={"15px"}
-				>
-					T/chuyển
-				</Button>
-				<Button
-					backgroundColor={"#fff"}
-					border="1px solid"
-					borderRadius={"5px"}
-				>
-					Xuất bến
-				</Button>
-			</Flex>
-		</Flex>
-	);
-	const VehicleHTML = scheduleData && transportData && (
-		<Seat12User
-			data={transportData}
-			port={props.port}
+		) : null;
+
+	const VehicleHTML =
+		scheduleData && transportData && transportData.bus[0]?.vehicle_type_id == 1 ? (
+			<Seat12User
+				data={transportData}
+				setData={setTransportData}
+				port={props.port}
+				scheduleData={scheduleData}
+				seatSelected={seatSelected}
+				handleSeatSelected={handleSeatSelected}
+				seatCustomerSelected={seatCustomerSelected}
+				setSeatCustomerSelected={setSeatCustomerSelected}
+			/>
+		) : null;
+	const LocationHTML = (
+		<LocationPickAndDrop
+			transportData={transportData}
 			scheduleData={scheduleData}
-			seatSelected={seatSelected}
-			handleSeatSelected={handleSeatSelected}
-			seatCustomerSelected={seatCustomerSelected}
 		/>
 	);
 	return (
@@ -459,11 +466,14 @@ export default function Ticket(props) {
 						<MdOutlineSwapHorizontalCircle
 							className="bom-element admin"
 							onClick={handleSwapLocation}
-							cursor={'pointer'}
+							cursor={"pointer"}
 						/>
 						<Flex className="bom-element admin">
 							<GoLocation />
-							<select value={endLocation} onChange={handleChangeEndLocation}>
+							<select
+								value={endLocation}
+								onChange={handleChangeEndLocation}
+							>
 								{cityOption}
 							</select>
 						</Flex>
@@ -479,22 +489,26 @@ export default function Ticket(props) {
 						</InputGroup>
 					</Flex>
 					<Button
-						backgroundColor={'#fff'}
-						color={'#000'}
-						border={'1px solid'}
-						padding={'10px 20px'}
+						backgroundColor={"#fff"}
+						color={"#000"}
+						border={"1px solid"}
+						padding={"10px 20px"}
 						className="bom-element admin"
 						onClick={searchBusSchedule}
 					>
 						Tìm kiếm
 					</Button>
 				</Flex>
-				<Flex maxW={'100%'} overflowX={'auto'}>
+				<Flex
+					maxW={"100%"}
+					overflowX={"auto"}
+				>
 					{ListBusScheduleHTML}
 				</Flex>
 				{ScheduleDataHTML}
 				{ButtonGroupHTML}
-				{VehicleHTML}
+				{tabSelected == 1 && VehicleHTML}
+				{tabSelected == 2 && LocationHTML}
 			</Box>
 		</div>
 	);

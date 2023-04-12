@@ -691,7 +691,6 @@ export default function BusScheduleDetail(props) {
 }
 export async function getServerSideProps(context) {
 	const id = context.query.id;
-
 	return {
 		props: {
 			BACK_END_PORT: process.env.BACK_END_PORT,
