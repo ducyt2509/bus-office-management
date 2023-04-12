@@ -15,9 +15,6 @@ import { useCallback, useState } from 'react';
 import { GoLocation } from 'react-icons/go';
 
 export default function BusScheduleStep2(props) {
-  console.log(props);
-  const router = useRouter();
-
   const [radioLocationPickup, setRadioLocationPickup] = useState();
   const [radioLocationDropOff, setRadioLocationDropOff] = useState();
 
@@ -33,36 +30,6 @@ export default function BusScheduleStep2(props) {
     }
     setRadioLocationDropOff(value);
   });
-
-  const handleChangeTranshipPickup = useCallback(
-    (e) => {
-      let oldError = { ...props.error };
-      const value = e.target.value;
-      if (!value) {
-        oldError.transhipPickUp = true;
-      } else {
-        oldError.transhipPickUp = false;
-      }
-      props.setError(oldError);
-      props.setLocationPickup(value);
-    },
-    [props.error]
-  );
-
-  const handleChangeTranshipDropOff = useCallback(
-    (e) => {
-      let oldError = { ...props.error };
-      const value = e.target.value;
-      if (!value) {
-        oldError.transhipDropOff = true;
-      } else {
-        oldError.transhipDropOff = false;
-      }
-      props.setError(oldError);
-      props.setLocationDropOff(value);
-    },
-    [props.error]
-  );
 
   let locationPickup = props.busScheduleInformation.location_bus_schedule
     ? props.busScheduleInformation.location_bus_schedule.filter((e) => {
@@ -90,10 +57,12 @@ export default function BusScheduleStep2(props) {
 
   locationPickup =
     locationPickup && locationPickup.length ? JSON.parse(locationPickup) : locationPickup;
+
   locationDropOff =
     locationDropOff && locationDropOff.length ? JSON.parse(locationDropOff) : locationDropOff;
 
   addressPickup = addressPickup && addressPickup.length ? JSON.parse(addressPickup) : addressPickup;
+
   addressDropOff =
     addressDropOff && addressDropOff.length ? JSON.parse(addressDropOff) : addressDropOff;
 
@@ -246,61 +215,6 @@ export default function BusScheduleStep2(props) {
                 </Stack>
               </RadioGroup>
             </Stack>
-          </Stack>
-        </Flex>
-      </Box>
-      <Box borderBottom="1px solid #E2E8F0" marginBottom={'3%'}>
-        <Flex
-          justifyContent={'space-between'}
-          width={'96%'}
-          margin={'0 auto'}
-          marginBottom={'5%'}
-          marginTop="2%"
-        >
-          <Stack w={'46%'}>
-            <Flex alignItems={'center'} justifyContent={'space-between'}>
-              <Text fontWeight={'500'}>Trung chuyển lúc đón</Text>
-              <Switch
-                size={'md'}
-                marginTop="2%"
-                isChecked={props.switchPickupStatus}
-                onChange={props.handleChangeSwitchPickUp}
-              />
-            </Flex>
-
-            {props.switchPickupStatus && (
-              <FormControl isInvalid={props.error.transhipPickUp}>
-                <Textarea
-                  value={props.locationPickup}
-                  onChange={(e) => handleChangeTranshipPickup(e)}
-                  placeholder="Nhập vị trí hoặc ghi chú"
-                  minHeight={'150px'}
-                ></Textarea>
-                <FormErrorMessage>Trường này là bắt buộc</FormErrorMessage>
-              </FormControl>
-            )}
-          </Stack>
-          <Stack w={'46%'}>
-            <Flex alignItems={'center'} justifyContent={'space-between'}>
-              <Text fontWeight={'500'}>Trung chuyển lúc trả</Text>
-              <Switch
-                size={'md'}
-                marginTop="2%"
-                isChecked={props.switchDropOffStatus}
-                onChange={props.handleChangeSwitchDropOff}
-              />
-            </Flex>
-            {props.switchDropOffStatus && (
-              <FormControl isInvalid={props.error.transhipDropOff}>
-                <Textarea
-                  value={props.locationDropOff}
-                  onChange={(e) => handleChangeTranshipDropOff(e)}
-                  placeholder="Nhập vị trí hoặc ghi chú"
-                  minHeight={'150px'}
-                ></Textarea>
-                <FormErrorMessage>Trường này là bắt buộc</FormErrorMessage>
-              </FormControl>
-            )}
           </Stack>
         </Flex>
       </Box>

@@ -58,7 +58,7 @@ export default function ManagementBusSchedule(props) {
 	const handleGetBusScheduleInformation = useCallback((id) => {
 		router.push({
 			pathname: "/admin/management/bus-schedule/[id]",
-			query: { id: id },
+			query: { id: id, method: "Refresh" },
 		});
 	});
 	useEffect(() => {

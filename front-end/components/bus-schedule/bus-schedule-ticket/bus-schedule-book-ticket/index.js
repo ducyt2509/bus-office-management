@@ -39,8 +39,6 @@ export default function BusScheduleBookTicket(props) {
     userName: false,
     userPhone: false,
     userMail: false,
-    transhipPickUp: false,
-    transhipDropOff: false,
   });
   const seatCustomerSelected = props.data.number_seat_selected
     .map((e) => e.seat)
@@ -131,7 +129,7 @@ export default function BusScheduleBookTicket(props) {
         note: notice,
         date_detail:
           props.data.departure_date.split('T')[0] +
-          ' | ' +
+          '  ' +
           convertTime(props.busScheduleInformation.time_from, 0) +
           '-' +
           convertTime(
@@ -146,19 +144,9 @@ export default function BusScheduleBookTicket(props) {
         route_name: props.route_name,
         vehicle_plate: props.vehicle_plate,
         vehicle_type_id: props.data?.bus[0]?.vehicle_type_id,
+        pickup_location: locationPickup,
+        drop_off_location: locationDropOff,
       };
-      if (switchPickupStatus && switchDropOffStatus) {
-        submitData.tranship_address = locationPickup + ' !@#$%^&* ' + locationDropOff;
-      } else if (!switchPickupStatus && !switchDropOffStatus) {
-        submitData.pickup_location = locationPickup;
-        submitData.drop_off_location = locationDropOff;
-      } else if (switchPickupStatus && !switchDropOffStatus) {
-        submitData.tranship_address = locationPickup + ' !@#$%^&*';
-        submitData.drop_off_location = locationDropOff;
-      } else if (switchDropOffStatus && !switchPickupStatus) {
-        submitData.tranship_address = '!@#$%^&* ' + locationDropOff;
-        submitData.pickup_location = locationPickup;
-      }
       if (seatSelected.length) {
         let checkSeatValidate = true;
         seatSelected.forEach((seat) => {
