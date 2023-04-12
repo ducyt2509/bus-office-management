@@ -299,23 +299,21 @@ module.exports = {
 				})
 				if (!role) return responseHandler.badRequest(res, "Role not found")
 			}
-			let attributes = "user.id, email, phone ,user_name, avatar, role_id, office_id";
+			let attributes = "user.id, email, phone ,user_name, avatar, role_id , office_id";
 			let querySQL =
 				`select ` +
 				attributes +
-				` from user join office o on o.id = user.office_id  
+				` from user 
       join role r on user.role_id = r.id
       where (user_name like '%${querySearch}%') 
       or (email like '%${querySearch}%')
       or (r.role_name like '%${querySearch}%') 
-      or (o.office_name like '%${querySearch}%')   
       or (phone like '%${querySearch}%') limit ${limit} offset ${offset}`;
-			let queryCount = `select count(*) from user join office o on o.id = user.office_id  
+			let queryCount = `select count(*) from user  
       join role r on user.role_id = r.id
       where (user_name like '%${querySearch}%') 
       or (email like '%${querySearch}%')
       or (r.role_name like '%${querySearch}%') 
-      or (o.office_name like '%${querySearch}%')   
       or (phone like '%${querySearch}%')`;
 			if (role_id) {
 				querySQL =
@@ -343,14 +341,20 @@ module.exports = {
 			]);
 			if (getUser) {
 				for (let i = 0; i < getUser.length; i++) {
-					const getOffice = await Office.findOne({
-						where: {
-							id: getUser[i].office_id,
-						},
-					});
-					if (getOffice) {
-						getUser[i].office = getOffice;
+					if (getUser[i].office_id != null) {
+						const getOffice = await Office.findOne({
+							where: {
+								id: getUser[i].office_id,
+							},
+						});
+						console.log(getOffice)
+						if (getOffice) {
+							getUser[i].office = getOffice;
+						}
+					} else {
+						getUser[i].office = null;
 					}
+
 				}
 				return responseHandler.responseWithData(res, 200, {
 					list_user: getUser,
