@@ -33,4 +33,10 @@ router.post(
 	bus_schedules.getBusScheduleById,
 );
 
+router.get(
+	"/bus-schedule/check-renewal-bus-schedule",
+	// middleWare.verifyTokenForManager,
+	bus_schedules.checkRenewalBusSchedule,
+);
+
 module.exports = router;

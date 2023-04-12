@@ -36,13 +36,6 @@ module.exports = {
     const params = req.body;
     const { vehicle_plate, main_driver_id, support_driver_id, vehicle_type_id, vehicle_status } =
       req.body;
-    console.log(vehicle_plate, main_driver_id, support_driver_id, vehicle_type_id, vehicle_status);
-    const b = vehicle_plate;
-
-    console.log('REGEX', validateHandler.validateString(b, regexHandler.regexVehiclePlate));
-    console.log('REGEX', validateHandler.validateString(b, regexHandler.regexVehiclePlate));
-
-    console.log('Type ', checkExistVehicleType(vehicle_type_id));
     try {
       const createBus = await Bus.create(params);
       if (createBus) {

@@ -40,7 +40,6 @@ module.exports = {
 	async createNewUser(req, res) {
 		try {
 			const { email, password, user_name, phone, avatar, role_id } = req.body;
-			console.log(email, password, user_name, phone, avatar, role_id)
 			if (!validateHandler.validateString(email, regexHandler.regexEmail) ||
 				!validateHandler.validateString(user_name, regexHandler.regexNormalString) ||
 				!validateHandler.validateString(phone, regexHandler.regexPhoneNumber) ||
@@ -371,7 +370,6 @@ module.exports = {
 	async getUserInformation(req, res) {
 		try {
 			const { id } = req.body;
-			console.log("User", id)
 			if (!validateHandler.validatePositiveIntegerNumber(id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
 
 			const getUserById = await User.findOne({
@@ -401,7 +399,6 @@ module.exports = {
 
 		try {
 			const { email, password, user_name, phone, avatar, role_id } = req.body;
-			console.log(email, password, user_name, phone, avatar, role_id)
 			if (!validateHandler.validateString(email, regexHandler.regexEmail) ||
 				!validateHandler.validateString(user_name, regexHandler.regexNormalString) ||
 				!validateHandler.validateString(phone, regexHandler.regexPhoneNumber) ||
@@ -410,7 +407,6 @@ module.exports = {
 				// || !validateHandler.validateString(avatar, regexHandler.regexAvatar)
 
 			) return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
-			console.log(role_id)
 			const role = await Role.findOne({
 				where: {
 					id: role_id

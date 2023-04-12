@@ -118,18 +118,8 @@ export default function Payment(props) {
       </ModalContent>
     </Modal>
   );
-  const pickup_location =
-    props.data?.tranship_address && props.data?.tranship_address.split('!@#$%^&*')[0]
-      ? props.data?.tranship_address.split('!@#$%^&*')[0] + ' (trung chuyển)'
-      : props.data?.pickup_location
-      ? props.data?.pickup_location
-      : '';
-  const drop_off_location =
-    props.data?.tranship_address && props.data?.tranship_address.split('!@#$%^&*')[1]
-      ? props.data?.tranship_address.split('!@#$%^&*')[1] + ' (trung chuyển)'
-      : props.data?.drop_off_location
-      ? props.data?.drop_off_location
-      : '';
+  const pickup_location = props.data?.pickup_location ? props.data?.pickup_location : '';
+  const drop_off_location = props.data?.drop_off_location ? props.data?.drop_off_location : '';
   return (
     <>
       {ModalNotification}
