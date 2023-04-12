@@ -190,16 +190,16 @@ module.exports = {
         db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),
       ]);
       if (listBusSchedule) {
-        let condition = {
-          departure_date: {
-            [Op.lte]: new Date(dateStart),
-          },
-          bus_schedule_id: listBusSchedule[i].id,
-        };
-        if (params.role_id == 1 || params.role_id == 2) {
-          delete condition.departure_date;
-        }
         for (let i = 0; i < listBusSchedule.length; i++) {
+          let condition = {
+            departure_date: {
+              [Op.lte]: new Date(dateStart),
+            },
+            bus_schedule_id: listBusSchedule[i].id,
+          };
+          if (params.role_id == 1 || params.role_id == 2) {
+            delete condition.departure_date;
+          }
           const [getListLocationBusSchedule, getTransport] = await Promise.all([
             Location_Bus_Schedule.findAll({
               where: {
