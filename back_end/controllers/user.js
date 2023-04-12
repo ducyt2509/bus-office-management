@@ -299,7 +299,7 @@ module.exports = {
 				})
 				if (!role) return responseHandler.badRequest(res, "Role not found")
 			}
-			let attributes = "user.id, email, phone ,user_name, avatar, role_id , office_id";
+			let attributes = "user.id, email, phone ,user_name, avatar, role_id, role_name , office_id";
 			let querySQL =
 				`select ` +
 				attributes +
