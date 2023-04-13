@@ -3,7 +3,7 @@ import { IoTrashBinOutline, IoPersonOutline, IoCallOutline } from 'react-icons/i
 import { Stack, IconButton, useToast } from '@chakra-ui/react';
 import axios from 'axios';
 import { useRef } from 'react';
-import { convertTime } from '@/helper';
+import { convertTime, formatDate } from '@/helper';
 export default function ListBusSchedule(props) {
   const toast = useToast();
   const toastIdRef = useRef();
@@ -38,6 +38,44 @@ export default function ListBusSchedule(props) {
     }
   };
 
+  const handleRenewalBusSchedule = async (busScheduleId, e) => {
+    e.stopPropagation();
+    const getBusSchedule = await axios.post(`http://localhost:${props.port}/bus-schedule/bus-schedule-by-id`,
+      { id: busScheduleId },
+      {
+        headers: { token: props.token },
+      })
+    let busSchedule = getBusSchedule.data.data.bus_schedule[0]
+    const checkRenewal = (date, timeExpire) => {
+      const expireDate = new Date(date);
+      return expireDate.getTime() + (timeExpire) * 24 * 60 * 60 * 1000
+    }
+    let newRefreshDate = checkRenewal(busSchedule.refresh_date, busSchedule.bus_schedule_expire)
+    newRefreshDate = formatDate(newRefreshDate)
+    busSchedule = { ...busSchedule, refresh_date: newRefreshDate }
+    const updateBusSchedule = await axios.put(`http://localhost:${props.port}/bus-schedule/update-bus-schedule`,
+      {
+        id: busScheduleId,
+        bus_schedule: busSchedule
+      },
+
+      {
+        headers: { token: props.token },
+      })
+
+    if (updateBusSchedule.data.statusCode === 200) {
+      toastIdRef.current = toast({
+        title: 'Gia hạn lịch trình thành công.',
+        description: 'Chúng tôi đã gia hạn lịch trình của bạn.',
+        status: 'success',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
+
+    }
+  }
+
   const ListBusScheduleHTML = props.list.map((busSchedule, index) => {
     const city_from_to = busSchedule.route[0]?.city_from + ' - ' + busSchedule.route[0]?.city_to;
     const time_from = convertTime(busSchedule.time_from, 0);
@@ -58,6 +96,15 @@ export default function ListBusSchedule(props) {
             <IconButton
               icon={<IoTrashBinOutline />}
               onClick={(e) => handleDeleteBusSchedule(busSchedule?.id, e)}
+            />
+
+            <IconButton
+              icon={<IoTrashBinOutline />}
+              onClick={(e) => handleRenewalBusSchedule(busSchedule?.id, e)}
+            />
+            <IconButton
+              icon={<IoTrashBinOutline />}
+              onClick={(e) => (busSchedule?.id, e)}
             />
           </Stack>
         </td>

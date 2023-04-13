@@ -68,7 +68,6 @@ module.exports = {
       const checkExists = await City.findOne({ where: { city_name } })
       if (checkExists) return responseHandler.badRequest(res, "City is already exist")
       const createCity = await City.create({ city_name });
-      console.log('createCity', createCity)
       if (createCity) {
         return responseHandler.ok(res, 'Add city successfully');
       } else {

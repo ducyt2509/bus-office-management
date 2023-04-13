@@ -47,7 +47,6 @@ module.exports = {
         return responseHandler.badRequest(res, "Can't add new route");
       }
     } catch (error) {
-      console.log(error)
       return responseHandler.error
     }
   },
