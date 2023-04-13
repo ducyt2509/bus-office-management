@@ -188,7 +188,6 @@ module.exports = {
 					id: id,
 				},
 			});
-			console.log("officeInformation", officeInformation)
 			if (officeInformation) {
 				const [numberEmployee, getCity] = await Promise.all([
 					User.findAll({
