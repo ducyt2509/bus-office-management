@@ -24,8 +24,6 @@ import { useRouter } from 'next/router';
 export default function BusScheduleBookTicket(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
-  const [switchPickupStatus, setSwitchPickupStatus] = useState(false);
-  const [switchDropOffStatus, setSwitchDropOffStatus] = useState(false);
 
   const [step, setStep] = useState(1);
   const [seatSelected, setSeatSelected] = useState([]);
@@ -39,36 +37,14 @@ export default function BusScheduleBookTicket(props) {
     userName: false,
     userPhone: false,
     userMail: false,
+    pickupLocation: false,
+    dropOffLocation: false,
   });
   const seatCustomerSelected = props.data.number_seat_selected
     .map((e) => e.seat)
     .join()
     .split(',')
     .map((e) => e.trim());
-
-  const handleChangeSwitchPickUp = useCallback(
-    (e) => {
-      if (!switchPickupStatus == false) {
-        let oldError = { ...error };
-        oldError.transhipPickUp = false;
-        setError(oldError);
-      }
-      setSwitchPickupStatus(!switchPickupStatus);
-    },
-    [switchPickupStatus, error]
-  );
-
-  const handleChangeSwitchDropOff = useCallback(
-    (e) => {
-      if (!switchDropOffStatus == false) {
-        let oldError = { ...error };
-        oldError.transhipDropOff = false;
-        setError(oldError);
-      }
-      setSwitchDropOffStatus(!switchDropOffStatus);
-    },
-    [switchDropOffStatus, error]
-  );
 
   const handleChangeUserName = useCallback(
     (e) => {
@@ -119,7 +95,6 @@ export default function BusScheduleBookTicket(props) {
   const handleChangeNotice = useCallback((e) => {
     setNotice(e.target.value);
   });
-
   const handleChangeStep = useCallback(
     (status) => {
       const submitData = {
@@ -183,16 +158,13 @@ export default function BusScheduleBookTicket(props) {
         }
         if (step == 2) {
           let oldError = { ...error };
-          if (switchPickupStatus && !locationPickup) {
-            oldError.transhipPickUp = true;
+          if (!locationPickup) {
+            oldError.pickupLocation = true;
           }
-          if (switchPickupStatus && !locationDropOff) {
-            oldError.transhipDropOff = true;
+          if (!locationDropOff) {
+            oldError.dropOffLocation = true;
           }
-          if (
-            (switchPickupStatus && oldError.transhipPickUp) ||
-            (switchPickupStatus && oldError.transhipDropOff)
-          ) {
+          if (oldError.pickupLocation || oldError.dropOffLocation) {
             setError(oldError);
             return;
           }
@@ -217,8 +189,6 @@ export default function BusScheduleBookTicket(props) {
       notice,
       props.vehicle_plate,
       props.route_name,
-      switchPickupStatus,
-      switchDropOffStatus,
     ]
   );
   const ModalHTML = (
@@ -268,12 +238,8 @@ export default function BusScheduleBookTicket(props) {
           locationDropOff={locationDropOff}
           setLocationPickup={setLocationPickup}
           setLocationDropOff={setLocationDropOff}
-          switchPickupStatus={switchPickupStatus}
-          handleChangeSwitchPickUp={handleChangeSwitchPickUp}
-          switchDropOffStatus={switchDropOffStatus}
           error={error}
           setError={setError}
-          handleChangeSwitchDropOff={handleChangeSwitchDropOff}
           busScheduleInformation={props.busScheduleInformation}
         />
       )}

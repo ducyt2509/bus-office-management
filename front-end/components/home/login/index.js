@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { CloseIcon } from '@chakra-ui/icons';
 import axios from 'axios';
 import { useStore, actions } from '@/src/store';
@@ -11,8 +11,12 @@ import StepForgetPassword from './StepForgetPassword';
 import LoginForm from './LoginForm';
 import { validate } from '@/helper';
 import NavBar from '@/components/common/sidebar/NavBar';
+import { useToast } from '@chakra-ui/react';
 
 export default function Login(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
+
   const [state, dispatch] = useStore();
   const router = useRouter();
   const [userData, setUserData] = useState({});
@@ -154,8 +158,15 @@ export default function Login(props) {
           );
           router.push('/admin');
         }
-      } else if (loginAccount.data.statusCode === 403) {
-        console.log(loginAccount.data.data.message);
+      } else {
+        toastIdRef.current = toast({
+          title: 'Đăng nhập thất bại.',
+          description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 5000,
+        });
       }
     }
   }, [user, password]);
@@ -170,8 +181,15 @@ export default function Login(props) {
     );
     if (sendOTP.data.statusCode === 200) {
       setShowCountdownTime(true);
-    } else if (sendOTP.data.statusCode === 403) {
-      console.log(sendOTP.data.data.message);
+    } else {
+      toastIdRef.current = toast({
+        title: 'Lỗi.',
+        description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 5000,
+      });
     }
   }, [userData]);
 
@@ -211,8 +229,15 @@ export default function Login(props) {
         if (sendOTP.data.statusCode === 200) {
           setUserData(sendOTP.data.data);
           setStepForgetPassword(step);
-        } else if (sendOTP.data.statusCode === 403) {
-          console.log(sendOTP.data.data.message);
+        } else {
+          toastIdRef.current = toast({
+            title: 'Lỗi.',
+            description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 5000,
+          });
         }
         setShowCountdownTime(true);
         setLoading(false);
@@ -236,8 +261,15 @@ export default function Login(props) {
           if (verifyOTP.data.statusCode === 200) {
             setStepForgetPassword(step);
             setUserData(verifyOTP.data.data);
-          } else if (verifyOTP.data.statusCode === 403) {
-            console.log(verifyOTP.data.data.message);
+          } else {
+            toastIdRef.current = toast({
+              title: 'Lỗi.',
+              description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
+              status: 'error',
+              isClosable: true,
+              position: 'top',
+              duration: 5000,
+            });
           }
           setLoading(false);
         }
@@ -259,8 +291,15 @@ export default function Login(props) {
         );
         if (changePassword.data.statusCode === 200) {
           setStepForgetPassword(step);
-        } else if (changePassword.data.statusCode === 403) {
-          console.log(changePassword.data.data.message);
+        } else {
+          toastIdRef.current = toast({
+            title: 'Lỗi.',
+            description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 5000,
+          });
         }
         setLoading(false);
         break;
