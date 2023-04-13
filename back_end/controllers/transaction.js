@@ -145,12 +145,11 @@ module.exports = {
                   join route r on r.id = bs.route_id
                   join city c on c.id = r.city_from_id
                   join city cc on cc.id = r.city_to_id where t.id = ${vnp_Params['vnp_TxnRef']}`;
-      const [updateTransaction, getTransactionInfo, createTicket] = await Promise.all([
+      const [updateTransaction, getTransactionInfo] = await Promise.all([
         Transaction.update({ payment_status: 1 }, { where: { id: vnp_Params['vnp_TxnRef'] } }),
         db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
-        Ticket.create({ transaction_id: vnp_Params['vnp_TxnRef'] }),
       ]);
-      if (updateTransaction && createTicket) {
+      if (updateTransaction) {
         return res.redirect(
           `http://localhost:${process.env.FRONT_END_PORT}/payment?passenger_name=${
             getTransactionInfo[0].passenger_name
@@ -174,9 +173,11 @@ module.exports = {
             getTransactionInfo[0].passenger_name
           }&passenger_phone=${getTransactionInfo[0].passenger_phone}&pickup_location=${
             getTransactionInfo[0].pickup_location
-          }&drop_off_location=${getTransactionInfo[0].drop_off_location}&date_detail=${getTransactionInfo[0].date_detail}&ticket_price=${
-            getTransactionInfo[0].ticket_price
-          }&email=${getTransactionInfo[0].email}&seat=${getTransactionInfo[0].seat}&transport=${
+          }&drop_off_location=${getTransactionInfo[0].drop_off_location}&date_detail=${
+            getTransactionInfo[0].date_detail
+          }&ticket_price=${getTransactionInfo[0].ticket_price}&email=${
+            getTransactionInfo[0].email
+          }&seat=${getTransactionInfo[0].seat}&transport=${
             getTransactionInfo[0].transport_id
           }&paymentStatus=${vnp_Params['vnp_ResponseCode']}&route_name=${
             getTransactionInfo[0].city_from + ' - ' + getTransactionInfo[0].city_to
@@ -192,9 +193,11 @@ module.exports = {
           getTransactionInfo[0].passenger_name
         }&passenger_phone=${getTransactionInfo[0].passenger_phone}&pickup_location=${
           getTransactionInfo[0].pickup_location
-        }&drop_off_location=${getTransactionInfo[0].drop_off_location}&date_detail=${getTransactionInfo[0].date_detail}&ticket_price=${
-          getTransactionInfo[0].ticket_price
-        }&email=${getTransactionInfo[0].email}&seat=${getTransactionInfo[0].seat}&transport=${
+        }&drop_off_location=${getTransactionInfo[0].drop_off_location}&date_detail=${
+          getTransactionInfo[0].date_detail
+        }&ticket_price=${getTransactionInfo[0].ticket_price}&email=${
+          getTransactionInfo[0].email
+        }&seat=${getTransactionInfo[0].seat}&transport=${
           getTransactionInfo[0].transport_id
         }&paymentStatus=${vnp_Params['vnp_ResponseCode']}&route_name=${
           getTransactionInfo[0].city_from + ' - ' + getTransactionInfo[0].city_to

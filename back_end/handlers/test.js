@@ -20,9 +20,3 @@ const regexNormalString = "^[a-z0-9A-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠ�
 const regexPassword = "^[a-zA-Z0-9]+$";
 const regexVehiclePlate = "^[1-9][0-9][A-Za-z][1-9]-[0-9]{5}$";
 
-
-console.log(validateString('bean132-', regexNormalString), "PHONE VALID")
-console.log(validateString('abc', regexNormalString), "PHONE VALID")
-console.log(validateString(':111@gmail.com', regexNormalString), "PHONE VALID")
-console.log(validateString('Văn phòng Mĩ Đình', regexNormalString), "PHONE VALID")
-console.log(validateString('108 Trần Thái Tông, Dịch Vọng, Cầu Giấy, Hà Nội', regexNormalString), "PHONE VALID")

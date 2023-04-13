@@ -604,7 +604,6 @@ export default function Ticket(props) {
                 placeholder="Phone number"
                 onChange={handleChangeDepartureDay}
                 value={departureDay}
-                min={validate.min_date}
               />
             </InputGroup>
           </Flex>
