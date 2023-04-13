@@ -181,12 +181,8 @@ module.exports = {
 		const params = req.body;
 		const offset = !params.offset || !params.offset <= 0 ? 0 : params.offset;
 		const limit = !params.limit ? 5 : params.limit;
-<<<<<<< HEAD
-		const querySearch = !params.query_search ? "" : !params.query_search;
-=======
 		const querySearch = params.query_search ? params.query_search : "";
 
->>>>>>> da5638de0ca3b2f8a0d6fa041374bb655c902958
 		try {
 			const querySQL = `select bs.id ,bs.route_id, departure_location_id , arrive_location_id , price , time_from , travel_time , effective_date , refresh_date , bus_schedule_status , bus_schedule_expire , city_from_id , city_to_id 
 			from bus_schedule bs
