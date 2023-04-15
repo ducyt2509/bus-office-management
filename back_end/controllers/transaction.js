@@ -223,6 +223,9 @@ module.exports = {
 			join route r on r.id = bs.route_id
       join city c on r.city_from_id = c.id
       join city cc on r.city_to_id = cc.id
+
+			where t.passenger_phone = '${phone} or t.id = ${phone}'
+			limit ${limit} offset ${offset} 
 			`;
       if (role_id == 3) {
         querySQL += `where ts.id = ${transport_id} and t.date_detail like "%${date_detail}%" and t.payment_status != 3`;

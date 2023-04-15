@@ -67,8 +67,8 @@ export default function ListEmployee(props) {
 						user.role_id == 1
 							? { color: "red" }
 							: user.role_id == 2
-							? { color: "green" }
-							: { color: "blue" }
+								? { color: "green" }
+								: { color: "blue" }
 					}
 				>
 					<p style={{ width: "95%" }}>{role}</p>
@@ -94,7 +94,7 @@ export default function ListEmployee(props) {
 						alignItems={"center"}
 						justifyContent={"center"}
 					>
-						<p style={{ width: "95%" }}>{user.office.office_name}</p>
+						<p style={{ width: "95%" }}>{user.office?.office_name ? user.office.office_name : "Không thuộc văn phòng nào"}</p>
 					</Flex>
 				</td>
 				<td>
