@@ -44,3 +44,6 @@ ul.bom-navbar-component li div {
     -webkit-box-shadow: inset 0 0 6px #FFF;
     background-color: #FFF;
 }
+.bom-driver-screen .chakra-stack__divider {
+  border-color: #000 !important;
+}

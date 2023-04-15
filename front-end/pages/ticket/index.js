@@ -86,7 +86,7 @@ export default function searchTicket(props) {
 						<Stack>
 							<Flex>
 								<Text fontWeight="600">Ngày đi:&ensp;</Text>
-								<Text fontWeight="600">{ticket?.date_detail.split(" | ")[0]}</Text>
+								<Text fontWeight="600">{ticket?.date_detail.split("  ")[0]}</Text>
 							</Flex>
 							<Flex>
 								<Text fontWeight="600">Tuyến đường:&ensp;</Text>
@@ -96,7 +96,7 @@ export default function searchTicket(props) {
 						<Stack>
 							<Flex>
 								<Text fontWeight="600">Thời gian:&ensp;</Text>
-								<Text fontWeight="600">{ticket?.date_detail.split(" | ")[1]}</Text>
+								<Text fontWeight="600">{ticket?.date_detail.split("  ")[1]}</Text>
 							</Flex>
 							<Flex>
 								<Text fontWeight="600">Biển số xe:&ensp;</Text>

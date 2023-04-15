@@ -28,9 +28,6 @@ module.exports = (sequelize, Sequelize) => {
 			drop_off_location: {
 				type: Sequelize.STRING,
 			},
-			tranship_address: {
-				type: Sequelize.TEXT,
-			},
 			date_detail: {
 				type: Sequelize.STRING,
 			},
@@ -41,7 +38,7 @@ module.exports = (sequelize, Sequelize) => {
 				type: Sequelize.DATE,
 			},
 			created_by: {
-				type: Sequelize.INTEGER(20).UNSIGNED,
+				type: Sequelize.INTEGER(20),
 			},
 			payment_status: {
 				type: Sequelize.INTEGER,

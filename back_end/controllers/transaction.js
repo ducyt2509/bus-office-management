@@ -77,7 +77,6 @@ module.exports = {
         payment_status: params.payment_status,
         seat: params.seat,
         transport_id: parseInt(params.transport),
-        tranship_address: params.tranship_address,
       };
       let currCode = 'VND';
       let vnp_Params = {};
@@ -120,7 +119,6 @@ module.exports = {
         }
       }
     } catch (error) {
-      console.log(error);
       return responseHandler.badRequest(res, error.message);
     }
   },
@@ -147,22 +145,21 @@ module.exports = {
                   join route r on r.id = bs.route_id
                   join city c on c.id = r.city_from_id
                   join city cc on cc.id = r.city_to_id where t.id = ${vnp_Params['vnp_TxnRef']}`;
-      const [updateTransaction, getTransactionInfo, createTicket] = await Promise.all([
+      const [updateTransaction, getTransactionInfo] = await Promise.all([
         Transaction.update({ payment_status: 1 }, { where: { id: vnp_Params['vnp_TxnRef'] } }),
         db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
-        Ticket.create({ transaction_id: vnp_Params['vnp_TxnRef'] }),
       ]);
-      if (updateTransaction && createTicket) {
+      if (updateTransaction) {
         return res.redirect(
           `http://localhost:${process.env.FRONT_END_PORT}/payment?passenger_name=${
             getTransactionInfo[0].passenger_name
           }&passenger_phone=${getTransactionInfo[0].passenger_phone}&pickup_location=${
             getTransactionInfo[0].pickup_location
-          }&drop_off_location=${getTransactionInfo[0].drop_off_location}&tranship_address=${
-            getTransactionInfo[0].tranship_address
-          }&date_detail=${getTransactionInfo[0].date_detail}&ticket_price=${
-            getTransactionInfo[0].ticket_price
-          }&email=${getTransactionInfo[0].email}&seat=${getTransactionInfo[0].seat}&transport=${
+          }&drop_off_location=${getTransactionInfo[0].drop_off_location}&date_detail=${
+            getTransactionInfo[0].date_detail
+          }&ticket_price=${getTransactionInfo[0].ticket_price}&email=${
+            getTransactionInfo[0].email
+          }&seat=${getTransactionInfo[0].seat}&transport=${
             getTransactionInfo[0].transport_id
           }&paymentStatus=1&route_name=${
             getTransactionInfo[0].city_from + ' - ' + getTransactionInfo[0].city_to
@@ -176,11 +173,11 @@ module.exports = {
             getTransactionInfo[0].passenger_name
           }&passenger_phone=${getTransactionInfo[0].passenger_phone}&pickup_location=${
             getTransactionInfo[0].pickup_location
-          }&drop_off_location=${getTransactionInfo[0].drop_off_location}&tranship_address=${
-            getTransactionInfo[0].tranship_address
-          }&date_detail=${getTransactionInfo[0].date_detail}&ticket_price=${
-            getTransactionInfo[0].ticket_price
-          }&email=${getTransactionInfo[0].email}&seat=${getTransactionInfo[0].seat}&transport=${
+          }&drop_off_location=${getTransactionInfo[0].drop_off_location}&date_detail=${
+            getTransactionInfo[0].date_detail
+          }&ticket_price=${getTransactionInfo[0].ticket_price}&email=${
+            getTransactionInfo[0].email
+          }&seat=${getTransactionInfo[0].seat}&transport=${
             getTransactionInfo[0].transport_id
           }&paymentStatus=${vnp_Params['vnp_ResponseCode']}&route_name=${
             getTransactionInfo[0].city_from + ' - ' + getTransactionInfo[0].city_to
@@ -196,11 +193,11 @@ module.exports = {
           getTransactionInfo[0].passenger_name
         }&passenger_phone=${getTransactionInfo[0].passenger_phone}&pickup_location=${
           getTransactionInfo[0].pickup_location
-        }&drop_off_location=${getTransactionInfo[0].drop_off_location}&tranship_address=${
-          getTransactionInfo[0].tranship_address
-        }&date_detail=${getTransactionInfo[0].date_detail}&ticket_price=${
-          getTransactionInfo[0].ticket_price
-        }&email=${getTransactionInfo[0].email}&seat=${getTransactionInfo[0].seat}&transport=${
+        }&drop_off_location=${getTransactionInfo[0].drop_off_location}&date_detail=${
+          getTransactionInfo[0].date_detail
+        }&ticket_price=${getTransactionInfo[0].ticket_price}&email=${
+          getTransactionInfo[0].email
+        }&seat=${getTransactionInfo[0].seat}&transport=${
           getTransactionInfo[0].transport_id
         }&paymentStatus=${vnp_Params['vnp_ResponseCode']}&route_name=${
           getTransactionInfo[0].city_from + ' - ' + getTransactionInfo[0].city_to
@@ -214,18 +211,28 @@ module.exports = {
     const params = req.body;
     const limit = params.limit ? params.limit : 7;
     const offset = params.offset ? params.offset : 0;
-    const phone = params.phone;
+    const phone = params.phone ? params.phone : null;
+    const role_id = params.role_id;
+    const transport_id = params.transport_id;
+    const date_detail = params.date_detail;
     try {
-      const querySQL = `select t.*, b.vehicle_plate, b.vehicle_type_id, c.city_name as city_from, cc.city_name as city_to  from transaction t 
+      let querySQL = `select t.*, b.vehicle_plate, b.vehicle_type_id, c.city_name as city_from, cc.city_name as city_to  from transaction t 
 			join transport ts on t.transport_id = ts.id
 			join bus b on b.id = ts.bus_id
 			join bus_schedule bs on ts.bus_schedule_id = bs.id
 			join route r on r.id = bs.route_id
       join city c on r.city_from_id = c.id
       join city cc on r.city_to_id = cc.id
+
 			where t.passenger_phone = '${phone} or t.id = ${phone}'
 			limit ${limit} offset ${offset} 
 			`;
+      if (role_id == 3) {
+        querySQL += `where ts.id = ${transport_id} and t.date_detail like "%${date_detail}%" and t.payment_status != 3`;
+      } else {
+        querySQL += ` where t.passenger_phone = '${phone} or t.id = ${phone}'
+        limit ${limit} offset ${offset}`;
+      }
       let [listTransaction, numberTransaction] = await Promise.all([
         db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
         Transaction.count({
@@ -244,6 +251,7 @@ module.exports = {
         });
       }
     } catch (error) {
+      console.log(error);
       return responseHandler.badRequest(res, error.message);
     }
   },

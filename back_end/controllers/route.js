@@ -47,7 +47,6 @@ module.exports = {
         return responseHandler.badRequest(res, "Can't add new route");
       }
     } catch (error) {
-      console.log(error)
       return responseHandler.error
     }
   },
@@ -110,7 +109,6 @@ module.exports = {
 
     try {
       const { id } = req.body;
-      console.log("Check: ", req.body, id)
       if (!validateHandler.validatePositiveIntegerNumber(id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
 
       var getRoute = await Route.findOne({

@@ -11,7 +11,7 @@ module.exports = {
         payment_status_name:"Đã thanh toán"
       },
       {
-        payment_status_name: "Thanh toán khi lên xe"
+        payment_status_name: "Đã lên xe"
       },
       {
         payment_status_name: "Huỷ vé"

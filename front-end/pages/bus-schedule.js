@@ -144,7 +144,7 @@ export async function getServerSideProps(context) {
   const port = process.env.BACK_END_PORT;
   const [listBusSchedule, getListCity] = await Promise.all([
     axios.post(`http://localhost:${port}/bus-schedule/list-bus-schedule-all`, data),
-    axios.get(`http://localhost:${process.env.BACK_END_PORT}/city/list-city`),
+    axios.post(`http://localhost:${process.env.BACK_END_PORT}/city/list-city`),
   ]);
 
   return {

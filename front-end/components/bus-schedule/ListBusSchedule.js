@@ -53,7 +53,6 @@ export default function ListBusSchedule(props) {
     let newRefreshDate = checkRenewal(busSchedule.refresh_date, busSchedule.bus_schedule_expire)
     newRefreshDate = formatDate(newRefreshDate)
     busSchedule = { ...busSchedule, refresh_date: newRefreshDate }
-    console.log(busSchedule)
     const updateBusSchedule = await axios.put(`http://localhost:${props.port}/bus-schedule/update-bus-schedule`,
       {
         id: busScheduleId,

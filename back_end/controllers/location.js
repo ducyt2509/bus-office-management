@@ -87,7 +87,6 @@ module.exports = {
       if (location) {
         return responseHandler.badRequest(res, "Location is already exist")
       }
-      console.log('3');
       const newLocation = await Location.create({ location_name, address, city_id });
       if (newLocation) {
         return responseHandler.ok(res, 'Add new location successful');
