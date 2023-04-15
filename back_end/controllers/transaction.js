@@ -211,18 +211,25 @@ module.exports = {
     const params = req.body;
     const limit = params.limit ? params.limit : 7;
     const offset = params.offset ? params.offset : 0;
-    const phone = params.phone;
+    const phone = params.phone ? params.phone : null;
+    const role_id = params.role_id;
+    const transport_id = params.transport_id;
+    const date_detail = params.date_detail;
     try {
-      const querySQL = `select t.*, b.vehicle_plate, b.vehicle_type_id, c.city_name as city_from, cc.city_name as city_to  from transaction t 
+      let querySQL = `select t.*, b.vehicle_plate, b.vehicle_type_id, c.city_name as city_from, cc.city_name as city_to  from transaction t 
 			join transport ts on t.transport_id = ts.id
 			join bus b on b.id = ts.bus_id
 			join bus_schedule bs on ts.bus_schedule_id = bs.id
 			join route r on r.id = bs.route_id
       join city c on r.city_from_id = c.id
       join city cc on r.city_to_id = cc.id
-			where t.passenger_phone = '${phone} or t.id = ${phone}'
-			limit ${limit} offset ${offset} 
 			`;
+      if (role_id == 3) {
+        querySQL += `where ts.id = ${transport_id} and t.date_detail like "%${date_detail}%" and t.payment_status != 3`;
+      } else {
+        querySQL += ` where t.passenger_phone = '${phone} or t.id = ${phone}'
+        limit ${limit} offset ${offset}`;
+      }
       let [listTransaction, numberTransaction] = await Promise.all([
         db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
         Transaction.count({
@@ -241,6 +248,7 @@ module.exports = {
         });
       }
     } catch (error) {
+      console.log(error);
       return responseHandler.badRequest(res, error.message);
     }
   },

@@ -23,6 +23,11 @@ router.post(
 	bus_schedules.getListBusScheduleForManager,
 );
 router.post(
+	"/bus-schedule/list-bus-schedule-driver",
+	// middleWare.verifyTokenForManager,
+	bus_schedules.getListBusScheduleForDriver,
+);
+router.post(
 	"/bus-schedule/list-bus-schedule-all",
 	// middleWare.verifyTokenForManager,
 	bus_schedules.getListBusScheduleForUser,
