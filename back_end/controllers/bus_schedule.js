@@ -338,6 +338,59 @@ module.exports = {
       return responseHandler.badRequest(res, error.message);
     }
   },
+  async getListBusScheduleForDriver(req, res) {
+    const params = req.body;
+    const departure_date = params.departure_date;
+    const user_id = params.user_id;
+    try {
+      const querySQL = `select bs.time_from, c.city_name as city_from, cc.city_name as city_to, v.number_seat, tr.id as transport_id, tr.departure_date from bus_schedule bs 
+      join transport tr on bs.id = tr.bus_schedule_id
+      join bus b on b.id = tr.bus_id
+      join vehicle_type v on v.id = b.vehicle_type_id 
+      join user u on u.id = b.main_driver_id
+      join route r on r.id = bs.route_id
+      join city c on c.id = r.city_from_id
+      join city cc on cc.id = r.city_to_id
+      left join user uu on uu.id = b.support_driver_id
+      where (b.main_driver_id = ${user_id} or b.support_driver_id = ${user_id}) and tr.departure_date like "%${departure_date}%";`;
+
+      const queryCount = `select count(*) from bus_schedule bs 
+      join transport tr on bs.id = tr.bus_schedule_id
+      join bus b on b.id = tr.bus_id
+      join user u on u.id = b.main_driver_id
+      left join user uu on uu.id = b.support_driver_id
+      where (b.main_driver_id = ${user_id} or b.support_driver_id = ${user_id}) and tr.departure_date like "%${departure_date}%";`;
+
+      const [listBusSchedule, numberBusSchedule] = await Promise.all([
+        db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
+        db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),
+      ]);
+      if (listBusSchedule) {
+        for (let i = 0; i < listBusSchedule.length; i++) {
+          const numberSeatSQL = `select count(*) from transaction t 
+          join transport ts on t.transport_id = ts.id where ts.id = ${
+            listBusSchedule[i].transport_id
+          } and t.date_detail like "%${
+            listBusSchedule[i].departure_date.toISOString().split('T')[0]
+          }%" and t.payment_status != 3`;
+          let count = await db.sequelize.query(numberSeatSQL, { type: QueryTypes.SELECT });
+          if (count) {
+            listBusSchedule[i].number_seat_sold = count[0]['count(*)'];
+          }
+        }
+        return responseHandler.responseWithData(res, 200, {
+          list_bus_schedule: listBusSchedule,
+          number_bus_schedule: numberBusSchedule[0]['count(*)'],
+        });
+      } else {
+        return responseHandler.responseWithData(res, 403, {
+          message: "Can't get list bus schedule",
+        });
+      }
+    } catch (error) {
+      return responseHandler.badRequest(res, error.message);
+    }
+  },
   async getBusScheduleById(req, res) {
     const params = req.body;
     const id = params.id;
