@@ -132,7 +132,7 @@ module.exports = {
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
       const isExist = await checkExistTransport(bus_schedule_id, bus_id, departure_date);
 
-      if (!isExist) return responseHandler.badRequest(res, 'Transport is not exist');
+      if (isExist) return responseHandler.badRequest(res, 'Transport is already exist');
       const updateTransport = await Transport.update(
         {
           bus_schedule_id,

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AddIcon } from '@chakra-ui/icons';
 import { Text, Card, CardBody, Flex, Box, useDisclosure } from '@chakra-ui/react';
 import TransactionDetails from '@/components/ticket/transaction-detail';
+import { formatMoney } from '@/helper';
 
 export default function Seat12User(props) {
   const seatVehicle = ['A1', 'A2', 'A3', 'A4', 'B1', 'B2', 'B3', 'B4', 'C1', 'C2', 'C3', 'C4'];
@@ -22,7 +23,6 @@ export default function Seat12User(props) {
       departureDay={props.departureDay}
     />
   );
-
   const seatHTML = (id) => {
     let position;
     props.data.number_seat_selected
@@ -32,20 +32,16 @@ export default function Seat12User(props) {
           position = index;
         }
       });
-    let pickup =
-      props.data.number_seat_selected[position]?.pickup_location &&
-      props.data.number_seat_selected[position]?.pickup_location.includes(
-        props.scheduleData.departure_location
-      )
-        ? 'Tại bến'
-        : 'Dọc đường';
-    let drop =
-      props.data.number_seat_selected[position]?.drop_off_location &&
-      props.data.number_seat_selected[position]?.drop_off_location.includes(
-        props.scheduleData.arrive_location
-      )
-        ? 'Tại bến'
-        : 'Dọc đường';
+    let numberSeat = props.data.number_seat_selected[position]?.seat
+      ? props.data.number_seat_selected[position]?.seat.split(', ').length
+      : 1;
+    let priceText = formatMoney(
+      props.data.number_seat_selected[position]?.ticket_price / numberSeat
+    );
+    let paymentStatus =
+      props.data.number_seat_selected[position]?.payment_status == 0
+        ? 'Chưa thanh toán'
+        : 'Đã thanh toán';
 
     return (
       <Box
@@ -75,8 +71,14 @@ export default function Seat12User(props) {
               {props.data.number_seat_selected[position]?.passenger_phone}
             </Text>
             <Flex color={'#363636'} fontSize="10px" justifyContent={'space-between'}>
-              <Text>{pickup}</Text>
-              <Text>{drop}</Text>
+              <Text
+                color={
+                  props.data.number_seat_selected[position]?.payment_status == 0 ? 'red' : 'green'
+                }
+              >
+                {paymentStatus}
+              </Text>
+              <Text>{priceText}</Text>
             </Flex>
           </>
         ) : (
@@ -125,5 +127,4 @@ export default function Seat12User(props) {
       </CardBody>
     </Card>
   );
-
 }
