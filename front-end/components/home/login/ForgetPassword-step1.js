@@ -28,7 +28,7 @@ export default function ForgetPasswordStep1(props) {
 					onClick={props.handleForgetPassword}
 					className="bom-button-send-request"
 				>
-					Gửi yêu cầu
+					Gửi OTP
 				</Button>
 				{props.stepForgetPasswordHTML}
 			</div>
