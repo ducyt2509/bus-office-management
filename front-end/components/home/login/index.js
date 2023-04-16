@@ -14,6 +14,7 @@ import NavBar from '@/components/common/sidebar/NavBar';
 import { useToast } from '@chakra-ui/react';
 
 export default function Login(props) {
+  console.log(props);
   const toast = useToast();
   const toastIdRef = useRef();
 
@@ -144,28 +145,36 @@ export default function Login(props) {
         user: value,
         password,
       };
-      const loginAccount = await axios.post(
-        `http://localhost:${props.BACK_END_PORT}/login`,
-        submitData
-      );
-      if (loginAccount.data.statusCode === 200) {
-        if (loginAccount.data.data.dataValues.role_id == 1) {
+      try {
+        const loginAccount = await axios.post(
+          `http://localhost:${props.BACK_END_PORT}/login`,
+          submitData
+        );
+        if (loginAccount.data.statusCode === 200) {
           dispatch(
             actions.setDataUser({
               ...loginAccount.data.data.dataValues,
               token: loginAccount.data.data.accessToken,
             })
           );
-          router.push('/admin');
+          if (loginAccount.data.data.dataValues.role_id == 1) {
+            router.push('/admin');
+          }
+          if (loginAccount.data.data.dataValues.role_id == 2) {
+            router.push('/staff');
+          }
+          if (loginAccount.data.data.dataValues.role_id == 3) {
+            router.push('/driver');
+          }
         }
-      } else {
+      } catch (error) {
         toastIdRef.current = toast({
           title: 'Đăng nhập thất bại.',
           description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
           status: 'error',
           isClosable: true,
           position: 'top',
-          duration: 5000,
+          duration: 2000,
         });
       }
     }
@@ -175,20 +184,23 @@ export default function Login(props) {
     var submitData = {
       user: userData?.phone,
     };
-    const sendOTP = await axios.post(
-      `http://localhost:${props.BACK_END_PORT}/send-otp`,
-      submitData
-    );
-    if (sendOTP.data.statusCode === 200) {
-      setShowCountdownTime(true);
-    } else {
+    try {
+      const sendOTP = await axios.post(
+        `http://localhost:${props.BACK_END_PORT}/send-otp`,
+        submitData
+      );
+      if (sendOTP.data.statusCode === 200) {
+        setShowCountdownTime(true);
+        setUserData(sendOTP.data.data);
+      }
+    } catch (error) {
       toastIdRef.current = toast({
         title: 'Lỗi.',
         description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
         status: 'error',
         isClosable: true,
         position: 'top',
-        duration: 5000,
+        duration: 2000,
       });
     }
   }, [userData]);
@@ -212,9 +224,11 @@ export default function Login(props) {
     switch (stepForgetPassword) {
       case 1:
         let value = user;
-        if (errorInput.user) {
+        if (!value) {
+          setErrorInput({ ...errorInput, user: true });
           return;
         }
+
         if (value.length >= 8 && value[0] == 0 && parseInt(value)) {
           value = '+84' + value.substring(1);
         }
@@ -222,21 +236,23 @@ export default function Login(props) {
           user: value,
         };
         setLoading(true);
-        const sendOTP = await axios.post(
-          `http://localhost:${props.BACK_END_PORT}/send-otp`,
-          submitData
-        );
-        if (sendOTP.data.statusCode === 200) {
-          setUserData(sendOTP.data.data);
-          setStepForgetPassword(step);
-        } else {
+        try {
+          const sendOTP = await axios.post(
+            `http://localhost:${props.BACK_END_PORT}/send-otp`,
+            submitData
+          );
+          if (sendOTP.data.statusCode === 200) {
+            setUserData(sendOTP.data.data);
+            setStepForgetPassword(step);
+          }
+        } catch (error) {
           toastIdRef.current = toast({
-            title: 'Lỗi.',
-            description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
+            title: 'Tài khoản không tồn tại.',
+            description: 'Tài khoản không tồn tại. Làm ơn hãy thử lại.',
             status: 'error',
             isClosable: true,
             position: 'top',
-            duration: 5000,
+            duration: 2000,
           });
         }
         setShowCountdownTime(true);
@@ -254,23 +270,26 @@ export default function Login(props) {
             hash: userData?.hash,
             phone: userData?.phone,
           };
-          const verifyOTP = await axios.post(
-            `http://localhost:${props.BACK_END_PORT}/verify-otp`,
-            submitData
-          );
-          if (verifyOTP.data.statusCode === 200) {
-            setStepForgetPassword(step);
-            setUserData(verifyOTP.data.data);
-          } else {
+          try {
+            const verifyOTP = await axios.post(
+              `http://localhost:${props.BACK_END_PORT}/verify-otp`,
+              submitData
+            );
+            if (verifyOTP.data.statusCode === 200) {
+              setStepForgetPassword(step);
+              setUserData(verifyOTP.data.data);
+            }
+          } catch (error) {
             toastIdRef.current = toast({
-              title: 'Lỗi.',
-              description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
+              title: 'Mã OTP không đúng.',
+              description: 'Mã OTP không đúng. Làm ơn hãy thử lại.',
               status: 'error',
               isClosable: true,
               position: 'top',
-              duration: 5000,
+              duration: 2000,
             });
           }
+
           setLoading(false);
         }
         break;
@@ -285,20 +304,22 @@ export default function Login(props) {
           verifyOTPCode: userData?.verifyOTPCode,
           confirm_password: confirmPassword,
         };
-        const changePassword = await axios.put(
-          `http://localhost:${props.BACK_END_PORT}/change-password`,
-          submitData
-        );
-        if (changePassword.data.statusCode === 200) {
-          setStepForgetPassword(step);
-        } else {
+        try {
+          const changePassword = await axios.put(
+            `http://localhost:${props.BACK_END_PORT}/change-password`,
+            submitData
+          );
+          if (changePassword.data.statusCode === 200) {
+            setStepForgetPassword(step);
+          }
+        } catch (error) {
           toastIdRef.current = toast({
             title: 'Lỗi.',
             description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
             status: 'error',
             isClosable: true,
             position: 'top',
-            duration: 5000,
+            duration: 2000,
           });
         }
         setLoading(false);

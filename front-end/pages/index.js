@@ -6,7 +6,7 @@ import PopularRoute from '@/components/home/content/PopularRoute';
 import LoginForm from '../components/home/login';
 
 export default function HomePage(props) {
-  const LoginFormHTML = <LoginForm />;
+  const LoginFormHTML = <LoginForm BACK_END_PORT={props.BACK_END_PORT}/>;
   const HomeContentHTML = <HomeContent />;
   const HomeDestinationHTML = (
     <HomeDestination list_city={props.list_city} port={props.BACK_END_PORT} />
