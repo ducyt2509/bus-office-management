@@ -29,6 +29,7 @@ import LocationPickAndDrop from '@/components/ticket/location-pick-and-drop';
 export default function Ticket(props) {
   const toastRef = useRef();
   const toast = useToast();
+  const [userNameData, setUserNameData] = useState('');
 
   const [seatInformation, setSeatInformation] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -268,6 +269,9 @@ export default function Ticket(props) {
   }, [startLocation, endLocation, departureDay, error]);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setUserNameData(window.localStorage.getItem('user_name'));
+    }
     if (props.totalRenewal && props.totalRenewal > 0) {
       let toastRenew = setTimeout(() => {
         toastRef.current = toast({
@@ -523,7 +527,6 @@ export default function Ticket(props) {
         </Flex>
       </Flex>
     ) : null;
-
   const VehicleHTML =
     scheduleData && transportData && transportData.bus[0]?.vehicle_type_id == 1 ? (
       <Seat12User
@@ -557,7 +560,7 @@ export default function Ticket(props) {
         marginBottom={'2%'}
         paddingTop="2%"
       >
-        <Text marginRight="1%">Nguyễn Văn A</Text>
+        <Text marginRight="1%">{userNameData}</Text>
         <Image
           borderRadius="full"
           boxSize="50px"
@@ -604,7 +607,6 @@ export default function Ticket(props) {
                 placeholder="Phone number"
                 onChange={handleChangeDepartureDay}
                 value={departureDay}
-                min={validate.min_date}
               />
             </InputGroup>
           </Flex>

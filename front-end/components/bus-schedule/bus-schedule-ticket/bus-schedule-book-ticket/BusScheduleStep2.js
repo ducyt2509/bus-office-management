@@ -15,21 +15,41 @@ import { useCallback, useState } from "react";
 import { GoLocation } from "react-icons/go";
 
 export default function BusScheduleStep2(props) {
-	const [radioLocationPickup, setRadioLocationPickup] = useState();
-	const [radioLocationDropOff, setRadioLocationDropOff] = useState();
+	const [radioLocationPickup, setRadioLocationPickup] = useState(props.locationPickup);
+	const [radioLocationDropOff, setRadioLocationDropOff] = useState(props.locationDropOff);
 
-	const handleChangeLocationPickup = useCallback((value) => {
-		if (value != "#") {
-			props.setLocationPickup(value);
-		}
-		setRadioLocationPickup(value);
-	});
-	const handleChangeLocationDropOff = useCallback((value) => {
-		if (value != "#") {
-			props.setLocationDropOff(value);
-		}
-		setRadioLocationDropOff(value);
-	});
+	const handleChangeLocationPickup = useCallback(
+		(value) => {
+			let oldError = { ...props.error };
+			if (!value) {
+				oldError.pickupLocation = true;
+			} else {
+				oldError.pickupLocation = false;
+			}
+			if (value != "#") {
+				props.setLocationPickup(value);
+			}
+
+			setRadioLocationPickup(value);
+		},
+		[props.error],
+	);
+
+	const handleChangeLocationDropOff = useCallback(
+		(value) => {
+			let oldError = { ...props.error };
+			if (!value) {
+				oldError.dropOffLocation = true;
+			} else {
+				oldError.dropOffLocation = false;
+			}
+			if (value != "#") {
+				props.setLocationDropOff(value);
+			}
+			setRadioLocationDropOff(value);
+		},
+		[props.error],
+	);
 
 	let locationPickup = props.busScheduleInformation.location_bus_schedule
 		? props.busScheduleInformation.location_bus_schedule.filter((e) => {
@@ -72,8 +92,7 @@ export default function BusScheduleStep2(props) {
 			const information = location.split(": ");
 			const time = information[1];
 			const position = information[0];
-			const date = new Date(props.data.departure_date.split("T")[0]);
-			const value = time + " - " + date.toLocaleDateString() + " - " + position;
+			const value = time + " - " + position;
 			return (
 				<Stack>
 					<Radio value={value}>
@@ -113,7 +132,7 @@ export default function BusScheduleStep2(props) {
 			const time = information[1];
 			const position = information[0];
 			const date = new Date(props.data.departure_date.split("T")[0]);
-			const value = time + " - " + date.toLocaleDateString() + " - " + position;
+			const value = time + " - " + position;
 			return (
 				<Stack>
 					<Radio value={value}>

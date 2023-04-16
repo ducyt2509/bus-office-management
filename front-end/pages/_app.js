@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import Sidebar from '@/components/common/sidebar/SideBar';
 import NavBar from '@/components/home/login';
 import { StoreProvider } from '@/src/store';
+import SideBarDriver from '@/components/common/sidebar/SideBarDriver';
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
@@ -20,9 +21,11 @@ export default function App({ Component, pageProps }) {
     <ChakraProvider>
       <StoreProvider>
         {router.pathname.includes('/admin') && <Sidebar />}
+        {router.pathname.includes('/driver') && <SideBarDriver />}
         {router.pathname != '/contact-us' &&
           router.pathname != '/' &&
-          !router.pathname.includes('/admin') && <NavBar />}
+          !router.pathname.includes('/admin') &&
+          !router.pathname.includes('/driver') && <NavBar />}
         <Component {...pageProps} />
       </StoreProvider>
     </ChakraProvider>

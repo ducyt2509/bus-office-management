@@ -125,4 +125,5 @@ export default function Seat12User(props) {
       </CardBody>
     </Card>
   );
+
 }

@@ -3,10 +3,10 @@ const EmailService = require('../helper/Gmail');
 module.exports = {
   async send(req, res) {
     try {
-      const { message, email, fullname } = req.body;
+      const { message, email, fullName } = req.body;
       const subject = 'Đóng góp ý kiến từ khách hàng';
       const htmlForm = `
-            <p>Người gửi : ${fullname}</p>
+            <p>Người gửi : ${fullName}</p>
             <p>Email : ${email}</p>
             <p>Nội dung góp ý : <br>
             ${message}
@@ -15,14 +15,14 @@ module.exports = {
 
       const subjectResponse = 'Cảm ơn bạn đã đóng góp ý kiến!';
       const htmlFormForResponse = `
-            <h4>Gửi bạn ${fullname}!</h4>
+            <h4>Gửi bạn ${fullName}!</h4>
             <br>
             <p>Cảm ơn bạn đã gửi góp ý cho nhà xe! Nhà xe sẽ phản hồi bạn trong thời gian sớm nhất <3</p>
             <br>
             <p>Thanks</p>
             `;
 
-      if (message && email && fullname) {
+      if (message && email && fullName) {
         //send to owner or manager
         EmailService.sendMail('duclee028@gmail.com', subject, htmlForm);
         // send back to customer

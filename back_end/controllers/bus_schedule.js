@@ -280,7 +280,6 @@ module.exports = {
         });
       }
     } catch (error) {
-      console.log(error);
       return responseHandler.badRequest(res, error.message);
     }
   },
@@ -339,6 +338,57 @@ module.exports = {
       return responseHandler.badRequest(res, error.message);
     }
   },
+  async getListBusScheduleForDriver(req, res) {
+    const params = req.body;
+    const departure_date = params.departure_date;
+    const user_id = params.user_id;
+    try {
+      const querySQL = `select bs.time_from, c.city_name as city_from, cc.city_name as city_to, v.number_seat, tr.id as transport_id, tr.departure_date from bus_schedule bs 
+      join transport tr on bs.id = tr.bus_schedule_id
+      join bus b on b.id = tr.bus_id
+      join vehicle_type v on v.id = b.vehicle_type_id 
+      join user u on u.id = b.main_driver_id
+      join route r on r.id = bs.route_id
+      join city c on c.id = r.city_from_id
+      join city cc on cc.id = r.city_to_id
+      left join user uu on uu.id = b.support_driver_id
+      where (b.main_driver_id = ${user_id} or b.support_driver_id = ${user_id}) and tr.departure_date like "%${departure_date}%";`;
+
+      const queryCount = `select count(*) from bus_schedule bs 
+      join transport tr on bs.id = tr.bus_schedule_id
+      join bus b on b.id = tr.bus_id
+      join user u on u.id = b.main_driver_id
+      left join user uu on uu.id = b.support_driver_id
+      where (b.main_driver_id = ${user_id} or b.support_driver_id = ${user_id}) and tr.departure_date like "%${departure_date}%";`;
+
+      const [listBusSchedule, numberBusSchedule] = await Promise.all([
+        db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
+        db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),
+      ]);
+      if (listBusSchedule) {
+        for (let i = 0; i < listBusSchedule.length; i++) {
+          const numberSeatSQL = `select count(*) from transaction t 
+          join transport ts on t.transport_id = ts.id where ts.id = ${listBusSchedule[i].transport_id
+            } and t.date_detail like "%${listBusSchedule[i].departure_date.toISOString().split('T')[0]
+            }%" and t.payment_status != 3`;
+          let count = await db.sequelize.query(numberSeatSQL, { type: QueryTypes.SELECT });
+          if (count) {
+            listBusSchedule[i].number_seat_sold = count[0]['count(*)'];
+          }
+        }
+        return responseHandler.responseWithData(res, 200, {
+          list_bus_schedule: listBusSchedule,
+          number_bus_schedule: numberBusSchedule[0]['count(*)'],
+        });
+      } else {
+        return responseHandler.responseWithData(res, 403, {
+          message: "Can't get list bus schedule",
+        });
+      }
+    } catch (error) {
+      return responseHandler.badRequest(res, error.message);
+    }
+  },
   async getBusScheduleById(req, res) {
     const params = req.body;
     const id = params.id;
@@ -379,6 +429,44 @@ module.exports = {
     }
   },
 
+  async checkRenewalBusSchedule(req, res) {
+    try {
+      const currentDate = validateHandler.validateDate(new Date().toDateString());
+      const queryGetBusScheduleList = `select * from bus_schedule where refresh_date >=  ${currentDate} and bus_schedule_status = 1  `;
+      const busScheduleList = await db.sequelize.query(queryGetBusScheduleList, {
+        type: QueryTypes.SELECT,
+      });
+      let renewalList = [];
+
+      for (let index = 0; index < busScheduleList.length; index++) {
+        // if in the database there are several objects with the same properties and data but it is renewed before
+        const formatDate = validateHandler.validateDate(
+          `'${busScheduleList[index].effective_date}'`
+        );
+        const query = `SELECT * FROM bus_schedule
+							WHERE route_id = ${busScheduleList[index].route_id} and departure_location_id = ${busScheduleList[index].departure_location_id} and arrive_location_id = ${busScheduleList[index].arrive_location_id}  
+							and price = ${busScheduleList[index].price} and time_from = ${busScheduleList[index].time_from} and  travel_time = ${busScheduleList[index].travel_time}
+							and schedule_frequency = ${busScheduleList[index].schedule_frequency} and bus_schedule_expire = ${busScheduleList[index].bus_schedule_expire}
+							and effective_date = '${formatDate}'
+							order by refresh_date desc limit 1 `;
+        const getBs = await db.sequelize.query(query, { type: QueryTypes.SELECT });
+
+        let renewalDate = getBs[0].refresh_date;
+        let timeExpire = getBs[0].bus_schedule_expire;
+        let isRenewal = checkRenewal(renewalDate, timeExpire);
+        if (isRenewal) {
+          renewalList.push(getBs[0]);
+        }
+      }
+
+      renewalList = removeDuplicates(renewalList);
+      return responseHandler.responseWithData(res, 200, {
+        totalBSNeedRenewal: renewalList.length,
+      });
+    } catch (error) {
+      responseHandler.badRequest(res, error.message);
+    }
+  },
   async checkRenewalBusSchedule(req, res) {
     try {
       const currentDate = validateHandler.validateDate(new Date().toDateString());
