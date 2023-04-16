@@ -55,10 +55,10 @@ export default function DriverPage(props) {
         .join(' - ');
       router.push({
         pathname: '/driver/[id]',
-        query: { id: id, date_detail: dateDetail, location: location },
+        query: { id: id, date_detail: departureDate, location: location },
       });
     },
-    [departureDate]
+    [departureDate, listSchedule]
   );
 
   const listBusScheduleHTML = listSchedule.map((schedule, index) => {
