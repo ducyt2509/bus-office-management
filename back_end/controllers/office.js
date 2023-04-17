@@ -60,7 +60,6 @@ module.exports = {
 		}
 	},
 	async updateOfficeInformation(req, res) {
-
 		try {
 			const { id, office_name,
 				city_id,

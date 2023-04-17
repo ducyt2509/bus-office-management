@@ -1,6 +1,7 @@
 const db = require('../models');
 const Route = db.routes;
 const City = db.cities;
+const BS = db.bus_schedules;
 const QueryTypes = db.Sequelize.QueryTypes;
 const Op = db.Sequelize.Op;
 
@@ -147,9 +148,10 @@ module.exports = {
         db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
         db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),
       ]);
+      const today = validateHandler.formatDate(new Date());
       if (listRoute) {
         for (let index = 0; index < listRoute.length; index++) {
-          const [getCityFrom, getCityTo] = await Promise.all([
+          const [getCityFrom, getCityTo, getTotalBS] = await Promise.all([
             City.findOne({
               where: {
                 id: listRoute[index].city_from_id,
@@ -160,10 +162,12 @@ module.exports = {
                 id: listRoute[index].city_to_id,
               },
             }),
+            // count số lt đang hoạt động 
+            db.sequelize.query(`select count(*) as total from bus_schedule where route_id = ${listRoute[index].id}  and refresh_date >= '${today}'  and bus_schedule_status = 1`, { type: QueryTypes.SELECT }),
           ]);
-
           listRoute[index].city_from = getCityFrom;
           listRoute[index].city_to = getCityTo;
+          listRoute[index].totalBS = getTotalBS[0].total;
         }
         return responseHandler.responseWithData(res, 200, {
           list_route: listRoute,

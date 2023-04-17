@@ -42,7 +42,7 @@ module.exports = {
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
-      const querySQL = `SELECT t.id  , t.bus_id, t.bus_schedule_id ,vehicle_plate , bs.route_id , bs.time_from , t.departure_date , r.city_from_id , r.city_to_id , c.city_name as 'departure_city' , cc.city_name as 'arrive_city' FROM bom.transport t 
+      const querySQL = `SELECT t.id  , t.bus_id, t.bus_schedule_id ,vehicle_plate , bs.route_id , bs.time_from , bs.travel_time, t.departure_date , r.city_from_id , r.city_to_id , c.city_name as 'departure_city' , cc.city_name as 'arrive_city' FROM bom.transport t 
             join bus_schedule bs on bs.id = t.bus_schedule_id
             join  bus b on b.id = t.bus_id
             join route r  on bs.route_id = r.id
