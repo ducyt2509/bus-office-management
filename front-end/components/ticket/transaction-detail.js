@@ -36,9 +36,6 @@ export default function TransactionDetails(props) {
   const [locationPick, setLocationPick] = useState('');
   const [locationDrop, setLocationDrop] = useState('');
 
-  //   //select value
-  //   const [__locationPickup, __setLocationPickup] = useState('');
-  //   const [__locationDropOff, __setLocationDropOff] = useState('');
   //db value
   const [locationPickup, setLocationPickup] = useState('');
   const [locationDropOff, setLocationDropOff] = useState('');
@@ -51,8 +48,9 @@ export default function TransactionDetails(props) {
     userName: false,
     userEmail: false,
     userPhone: false,
-    price: false,
     paymentStatus: false,
+    pickupLocation: false,
+    dropOffLocation: false,
   });
 
   const handleChangeUserName = useCallback(
@@ -66,6 +64,21 @@ export default function TransactionDetails(props) {
       }
       setError(oldError);
       setUserName(value);
+    },
+    [error]
+  );
+
+  const handleChangePaymentStatus = useCallback(
+    (e) => {
+      let value = e.target.value;
+      let oldError = { ...error };
+      if (!value) {
+        oldError.paymentStatus = true;
+      } else {
+        oldError.paymentStatus = false;
+      }
+      setError(oldError);
+      setPaymentStatus(value);
     },
     [error]
   );
@@ -123,19 +136,37 @@ export default function TransactionDetails(props) {
     },
     [seat, statusAddSeat]
   );
-  const handleChangeLocationPick = useCallback((value) => {
-    if (value != '#') {
-      setLocationPickup(value);
-    }
-    setLocationPick(value);
-  }, []);
+  const handleChangeLocationPick = useCallback(
+    (value) => {
+      let oldError = { ...error };
+      if (!value) {
+        oldError.pickupLocation = true;
+      } else {
+        oldError.pickupLocation = false;
+      }
+      if (value != '#') {
+        setLocationPickup(value);
+      }
+      setLocationPick(value);
+    },
+    [error]
+  );
 
-  const handleChangeLocationDrop = useCallback((value) => {
-    if (value != '#') {
-      setLocationDropOff(value);
-    }
-    setLocationDrop(value);
-  }, []);
+  const handleChangeLocationDrop = useCallback(
+    (value) => {
+      let oldError = { ...error };
+      if (!value) {
+        oldError.dropOffLocation = true;
+      } else {
+        oldError.dropOffLocation = false;
+      }
+      if (value != '#') {
+        setLocationDropOff(value);
+      }
+      setLocationDrop(value);
+    },
+    [error]
+  );
 
   const addNewSeat = useCallback(() => {
     let checkSeatRemain = props.seatVehicle.filter(
@@ -190,6 +221,32 @@ export default function TransactionDetails(props) {
 
   const updateUserInformation = useCallback(
     async (status) => {
+      let cloneError = { ...error };
+      if (!userName) {
+        cloneError.userName = true;
+      }
+      if (!userEmail) {
+        cloneError.userEmail = true;
+      }
+      if (!userPhone) {
+        cloneError.userPhone = true;
+      }
+      if (!locationPickup) {
+        cloneError.pickupLocation = true;
+      }
+      if (!locationDropOff) {
+        cloneError.dropOffLocation = true;
+      }
+      if (
+        cloneError.userName ||
+        cloneError.userEmail ||
+        cloneError.userPhone ||
+        cloneError.pickupLocation ||
+        cloneError.dropOffLocation
+      ) {
+        setError(cloneError);
+        return;
+      }
       let submitData = {
         passenger_name: userName,
         email: userEmail,
@@ -256,6 +313,10 @@ export default function TransactionDetails(props) {
             };
           }
         }
+        cloneData.number_seat_selected = cloneData.number_seat_selected.filter(
+          (e) => e.payment_status != 3
+        );
+
         const updateTransactionById = await axios.put(
           `http://localhost:${props.port}/transaction/update-transaction`,
           submitData,
@@ -308,6 +369,7 @@ export default function TransactionDetails(props) {
       note,
       price,
       seat,
+      error,
       props.data,
       props.seatCustomerSelected,
       props.seatInformation,
@@ -540,7 +602,7 @@ export default function TransactionDetails(props) {
               </Box>
             </Box>
             <Box>
-              <FormControl marginBottom="5%" isRequired isInvalid={false}>
+              <FormControl marginBottom="5%" isRequired isInvalid={error.userName}>
                 <Flex>
                   <FormLabel width={'51.5%'} fontWeight={'500'} mt={'2'}>
                     Hành khách:
@@ -551,7 +613,7 @@ export default function TransactionDetails(props) {
                   Hành khách là bắt buộc
                 </FormErrorMessage>
               </FormControl>
-              <FormControl marginBottom="5%" isInvalid={false}>
+              <FormControl marginBottom="5%" isInvalid={error.userEmail}>
                 <Flex>
                   <Text width={'55%'} fontWeight={'500'} mt="2">
                     Email:
@@ -561,7 +623,7 @@ export default function TransactionDetails(props) {
                 <FormErrorMessage justifyContent={'flex-end'}>Email sai định dạng</FormErrorMessage>
               </FormControl>
 
-              <FormControl marginBottom="5%" isRequired isInvalid={false}>
+              <FormControl marginBottom="5%" isRequired isInvalid={error.userPhone}>
                 <Flex>
                   <FormLabel width={'50%'} fontWeight={'500'} mt={'2'}>
                     Số điện thoại:
@@ -582,12 +644,15 @@ export default function TransactionDetails(props) {
               </FormControl>
             </Box>
             <Box>
-              <FormControl marginBottom="5%">
+              <FormControl marginBottom="5%" isInvalid={error.pickupLocation}>
                 <Flex>
                   <FormLabel width={'51.5%'} fontWeight={'500'}>
                     Điểm đón:
                   </FormLabel>
                 </Flex>
+                <FormErrorMessage justifyContent={'flex-end'}>
+                  Điểm đón là bắt buộc
+                </FormErrorMessage>
                 <>
                   <RadioGroup
                     value={locationPick}
@@ -616,13 +681,15 @@ export default function TransactionDetails(props) {
                   </RadioGroup>
                 </>
               </FormControl>
-              <FormControl>
+              <FormControl isInvalid={error.dropOffLocation}>
                 <Flex>
                   <FormLabel width={'51.5%'} fontWeight={'500'}>
                     Điểm trả:
                   </FormLabel>
                 </Flex>
-
+                <FormErrorMessage justifyContent={'flex-end'}>
+                  Điểm trả là bắt buộc
+                </FormErrorMessage>
                 <RadioGroup
                   value={locationDrop}
                   onChange={(e) => handleChangeLocationDrop(e)}
@@ -666,7 +733,7 @@ export default function TransactionDetails(props) {
                   <FormLabel width={'51.5%'} fontWeight={'500'}>
                     Trạng thái thanh toán
                   </FormLabel>
-                  <Select value={paymentStatus} onChange={(e) => setPaymentStatus(e.target.value)}>
+                  <Select value={paymentStatus} onChange={(e) => handleChangePaymentStatus(e)}>
                     <option value="0">Chưa thanh toán</option>
                     <option value="1">Đã thanh toán</option>
                   </Select>

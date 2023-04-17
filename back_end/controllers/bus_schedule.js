@@ -228,7 +228,7 @@ module.exports = {
                   }
                 ),
                 db.sequelize.query(
-                  `select t.seat, t.passenger_name, t.passenger_phone, t.id, t.pickup_location, t.drop_off_location, t.payment_status, t.date_detail from transaction t
+                  `select t.seat, t.passenger_name, t.passenger_phone, t.id, t.pickup_location, t.drop_off_location, t.payment_status, t.date_detail, t.ticket_price from transaction t
 									join transport tr on tr.id = t.transport_id
 									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id} and t.payment_status != 3`,
                   {
@@ -265,8 +265,8 @@ module.exports = {
         let booking_date = new Date(dateStart);
         let filter = listBusSchedule.filter((bs) => {
           return (
-            new Date(bs.refresh_date) < booking_date &&
-            booking_date < bs.refresh_date.addDays(bs.schedule_frequency) &&
+            new Date(bs.refresh_date) >= booking_date &&
+            booking_date >= new Date(bs.effective_date) &&
             DateDiff.inDays(booking_date, new Date(bs.effective_date)) % bs.schedule_frequency == 0
           );
         });
@@ -368,9 +368,11 @@ module.exports = {
       if (listBusSchedule) {
         for (let i = 0; i < listBusSchedule.length; i++) {
           const numberSeatSQL = `select count(*) from transaction t 
-          join transport ts on t.transport_id = ts.id where ts.id = ${listBusSchedule[i].transport_id
-            } and t.date_detail like "%${listBusSchedule[i].departure_date.toISOString().split('T')[0]
-            }%" and t.payment_status != 3`;
+          join transport ts on t.transport_id = ts.id where ts.id = ${
+            listBusSchedule[i].transport_id
+          } and t.date_detail like "%${
+            listBusSchedule[i].departure_date.toISOString().split('T')[0]
+          }%" and t.payment_status != 3`;
           let count = await db.sequelize.query(numberSeatSQL, { type: QueryTypes.SELECT });
           if (count) {
             listBusSchedule[i].number_seat_sold = count[0]['count(*)'];

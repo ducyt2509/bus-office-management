@@ -67,7 +67,7 @@ export default function Ticket(props) {
       if (status == 'edit') {
         data = transportData.number_seat_selected[position];
       }
-      if (!data) {
+      if (!data || seatSelected.payment_status == 3) {
         if (!id) {
           setSeatInformation({ seat_selected: seatSelected });
         } else {
@@ -99,6 +99,7 @@ export default function Ticket(props) {
         .addDays(scheduleData.schedule_frequency)
         .toISOString(),
     };
+    console.log(submitData);
     const updateDepartureDate = await axios.put(
       `http://localhost:${props.port}/transport/update-transport`,
       submitData,
@@ -222,11 +223,13 @@ export default function Ticket(props) {
       if (cloneSeatSelected.length > 1) {
         editStatus = false;
       }
+      console.log(1, seatCustomerSelected);
+      console.log(2, cloneSeatSelected);
       cloneSeatSelected.forEach((seat) => {
         if (!seatCustomerSelected.includes(seat)) {
           editStatus = false;
           deleteStatus = false;
-          addStatus = true;
+          // addStatus = true;
         } else {
           addStatus = false;
         }
@@ -539,6 +542,7 @@ export default function Ticket(props) {
         seatCustomerSelected={seatCustomerSelected}
         setSeatCustomerSelected={setSeatCustomerSelected}
         seatInformation={seatInformation}
+        setSeatInformation={setSeatInformation}
         handleOpenSeatInformation={handleOpenSeatInformation}
         isOpen={isOpen}
         onOpen={onOpen}
