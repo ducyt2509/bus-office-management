@@ -157,7 +157,7 @@ module.exports = {
             getTransactionInfo[0].pickup_location
           }&drop_off_location=${getTransactionInfo[0].drop_off_location}&date_detail=${
             getTransactionInfo[0].date_detail
-          }&ticket_price=${getTransactionInfo[0].ticket_price}&email=${
+          }&ticket_price=${getTransactionInfo[0].ticket_price}&passenger_email=${
             getTransactionInfo[0].email
           }&seat=${getTransactionInfo[0].seat}&transport=${
             getTransactionInfo[0].transport_id

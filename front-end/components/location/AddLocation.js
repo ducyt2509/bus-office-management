@@ -1,3 +1,4 @@
+import { axiosJWT } from '@/helper';
 import {
   Button,
   Modal,
@@ -129,7 +130,7 @@ export default function AddLocation(props) {
         });
       }
     } else {
-      const addLocation = await axios.post(
+      const addLocation = await axiosJWT.post(
         `http://localhost:${props.port}/location/add-location`,
         submitData,
         {

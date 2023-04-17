@@ -17,5 +17,6 @@ router.put('/user/update-user', users.updateInformationUser);
 router.post('/user/list-user', users.getListUser);
 router.post('/user/add-user', users.createNewUser);
 router.delete('/user/delete-user', users.deleteUser);
+router.post('/refresh-token', users.requestRefreshToken);
 
 module.exports = router;
