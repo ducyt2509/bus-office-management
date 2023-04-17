@@ -2,6 +2,7 @@ const db = require('../models');
 const VehicleType = db.vehicle_types;
 const Op = db.Sequelize.Op;
 const responseHandler = require('../handlers/response.handler');
+const validateHandler = require('../handlers/validate.handler');
 
 
 const checkExistVehicle = async (bus_schedule_id, bus_id, departure_date) => {
