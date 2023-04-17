@@ -1,19 +1,18 @@
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
-import { AiOutlineSearch } from "react-icons/ai";
-import { FormErrorMessage } from "@chakra-ui/react";
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import axios from 'axios';
+import { useCallback, useEffect, useState } from 'react';
+import { AiOutlineSearch } from 'react-icons/ai';
+import { FormErrorMessage } from '@chakra-ui/react';
 
 export default function ListLocationOnBusSchedule(props) {
 	const [listLocation, setListLocation] = useState([]);
 	const [locationName, setLocationName] = useState();
-	const [querySearch, setQuerySearch] = useState("");
-
+	const [querySearch, setQuerySearch] = useState('');
 
 	const handleGetListLocation = useCallback(
 		async (page, limit, value) => {
 			limit = limit ? limit : 7;
-			page = typeof page == "number" ? page - 1 : 1;
+			page = typeof page == 'number' ? page - 1 : 1;
 			const offset = limit * (page - 1);
 			const token = `Bearer ${props.state.dataUser.token}`;
 			const route = await axios.post(
@@ -25,7 +24,7 @@ export default function ListLocationOnBusSchedule(props) {
 					headers: {
 						token: token,
 					},
-				},
+				}
 			);
 			const getListLocation = await axios.post(
 				`http://localhost:${props.BACK_END_PORT}/location/list-location`,
@@ -39,21 +38,21 @@ export default function ListLocationOnBusSchedule(props) {
 					headers: {
 						token: token,
 					},
-				},
+				}
 			);
 			if (getListLocation.data.statusCode === 200) {
 				setListLocation(
-					getListLocation.data.data.listLocation.filter((location) => location.city_id),
+					getListLocation.data.data.listLocation.filter((location) => location.city_id)
 				);
 			}
 		},
-		[props.state, querySearch, props.route],
+		[props.state, querySearch, props.route]
 	);
 	const handleChangeQuerySearch = useCallback((e) => {
 		const value = e.target.value;
 		setQuerySearch(value);
 		if (!value) {
-			handleGetListLocation(null, null, "");
+			handleGetListLocation(null, null, '');
 		} else {
 			handleGetListLocation(null, null, value);
 		}
@@ -86,30 +85,27 @@ export default function ListLocationOnBusSchedule(props) {
 				props.setError(oldError);
 			}
 			setLocationName(value);
-			props.setLocation(props.type == "pickup/drop" ? value : id);
-			if (props.type == "pickup/drop") {
+			props.setLocation(props.type == 'pickup/drop' ? value : id);
+			if (props.type == 'pickup/drop') {
 				props.setAddress(address);
 			}
 			handleOpenSelect();
 		},
-		[props.id, props.error],
+		[props.id, props.error]
 	);
+	console.log(props.id, listLocation);
 	const ListLocationHTML = listLocation.map((location) => {
 		return (
 			<li
-				onClick={() =>
-					handleSelectLocation(location.id, location.location_name, location.address)
-				}
+				onClick={() => handleSelectLocation(location.id, location.location_name, location.address)}
 			>
 				{location.location_name}
 			</li>
 		);
 	});
 	const handleOpenSelect = () => {
-		const wrapper = document.querySelector(
-			`.bom-bus-schedule-detail .wrapper.wrapper${props.id}`,
-		);
-		wrapper.classList.toggle("active");
+		const wrapper = document.querySelector(`.bom-bus-schedule-detail .wrapper.wrapper${props.id}`);
+		wrapper.classList.toggle('active');
 	};
 	useEffect(() => {
 		if (props.route) {
@@ -119,11 +115,11 @@ export default function ListLocationOnBusSchedule(props) {
 	useEffect(() => {
 		if (props.data && props.data.length) {
 			setLocationName(
-				props.id == 3 ? props.data[0]?.location_start : props.data[0]?.location_finish,
+				props.id == 3 ? props.data[0]?.location_start : props.data[0]?.location_finish
 			);
 		}
 		if (!props.location) {
-			setLocationName("");
+			setLocationName('');
 		}
 	}, [props.data, props.data, props.location]);
 	return (
@@ -136,27 +132,23 @@ export default function ListLocationOnBusSchedule(props) {
 						(props.id == 4 && props.error?.arriveLocationId) ||
 						(props.id == 5 && props.error?.location) ||
 						(props.id == 6 && props.error?.location)
-						? { borderColor: "#E53E3E", boxShadow: "0 0 0 1px #E53E3E" }
+						? { borderColor: '#E53E3E', boxShadow: '0 0 0 1px #E53E3E' }
 						: {}
 				}
 			>
-				<p>{locationName ? locationName : "Chọn địa điểm"}</p>
+				<p>{locationName ? locationName : 'Chọn địa điểm'}</p>
 				<IoIosArrowDown />
 			</div>
 			<FormErrorMessage>
-				{props.id == 5 || props.id == 6 ? "Địa điêm là bắt buộc" : ""}
+				{props.id == 5 || props.id == 6 ? 'Địa điêm là bắt buộc' : ''}
 			</FormErrorMessage>
 			<div className="content">
 				<div className="search">
 					<AiOutlineSearch />
-					<input
-						onChange={handleChangeQuerySearch}
-						value={querySearch}
-					/>
+					<input onChange={handleChangeQuerySearch} value={querySearch} />
 				</div>
 				<ul className="options">{ListLocationHTML}</ul>
 			</div>
 		</div>
 	);
-
 }

@@ -185,6 +185,7 @@ export default function BusSchedulesList(props) {
 											busScheduleInformation={props.data}
 											route_name={props.data.city_from + " - " + props.data.city_to}
 											vehicle_plate={vehicle?.bus[0]?.vehicle_plate}
+											departureDay={props.departureDay}
 										/>
 									)}
 								</Stack>

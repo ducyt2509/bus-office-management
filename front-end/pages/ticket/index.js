@@ -28,7 +28,7 @@ export default function searchTicket(props) {
 	const handleChangePhone = useCallback(
 		(e) => {
 			let value = e.target.value;
-			if (!value || !value.match(validate.phone)) {
+			if (!value) {
 				setError(true);
 			} else {
 				setError(false);

@@ -103,7 +103,7 @@ export default function BusScheduleBookTicket(props) {
         // cashier: null,
         note: notice,
         date_detail:
-          props.data.departure_date.split('T')[0] +
+          props.departureDay +
           '  ' +
           convertTime(props.busScheduleInformation.time_from, 0) +
           '-' +

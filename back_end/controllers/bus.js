@@ -52,7 +52,7 @@ module.exports = {
     try {
       const params = req.body;
       const bus_id = params.id;
-      if (!validateHandler.validatePositiveIntegerNumber(bus_id))
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(bus_id)))
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
       const deleteBus = await Bus.destroy({
         where: {
@@ -77,8 +77,8 @@ module.exports = {
       const querySearch = !query_search ? '' : query_search.toString().trim();
 
       if (
-        !validateHandler.validatePositiveIntegerNumber(limit) ||
-        !validateHandler.validatePositiveIntegerNumber(offset)
+        !validateHandler.validatePositiveIntegerNumber(parseInt(limit)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(offset))
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
@@ -152,7 +152,7 @@ module.exports = {
     try {
       const params = req.body;
       const bus_id = params.id;
-      if (!validateHandler.validatePositiveIntegerNumber(bus_id))
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(bus_id)))
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const getBusById = await Bus.findOne({
@@ -174,7 +174,7 @@ module.exports = {
     try {
       const params = req.body;
       const bus_id = params.id;
-      if (!validateHandler.validatePositiveIntegerNumber(bus_id))
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(bus_id)))
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const updateBus = await Bus.update(params, {

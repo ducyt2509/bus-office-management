@@ -15,6 +15,7 @@ const responseHandler = require('../handlers/response.handler');
 const regexHandler = require('../handlers/regex.handler');
 const validateHandler = require('../handlers/validate.handler');
 const messageHandler = require('../handlers/message.handler');
+
 const generateRefreshToken = (user) => {
   return jwt.sign(
     {
@@ -85,7 +86,9 @@ module.exports = {
     }
   },
   async requestRefreshToken(req, res) {
-    const refreshAccessToken = req.cookie.refreshAccessToken;
+    // const refreshAccessToken = req.cookie.refreshAccessToken;
+    console.log(1, req.cookies);
+    return;
     if (!refreshAccessToken) {
       return responseHandler.unauthorized(res);
     } else {
@@ -103,10 +106,10 @@ module.exports = {
               const newAccessToken = generateAccessToken(user);
               const newRefreshAccessToken = generateRefreshToken(user);
               res.cookie('refreshAccessToken', newRefreshAccessToken, {
-                httpOnly: true,
-                path: '/',
-                sameSite: 'strict',
-                secure: false,
+                // httpOnly: true,
+                // path: '/',
+                // sameSite: 'strict',
+                // secure: false,
               });
               return responseHandler.responseWithData(res, 200, newAccessToken);
             }
@@ -126,7 +129,7 @@ module.exports = {
       const password = params.password;
       if (
         !validateHandler.validateString(user, regexHandler.regexPhoneNumberOrEmail) ||
-        // password not in range [8-15] characters
+        // password not in range [8+] characters
         !validateHandler.validateString(password, regexHandler.regexPassword)
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
@@ -290,8 +293,8 @@ module.exports = {
       role_id = role_id ? role_id : 0;
 
       if (
-        !validateHandler.validatePositiveIntegerNumber(limit) ||
-        !validateHandler.validatePositiveIntegerNumber(offset)
+        !validateHandler.validatePositiveIntegerNumber(parseInt(limit)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(offset))
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
@@ -377,7 +380,7 @@ module.exports = {
   async getUserInformation(req, res) {
     try {
       const { id } = req.body;
-      if (!validateHandler.validatePositiveIntegerNumber(id))
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id)))
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const getUserById = await User.findOne({
@@ -411,7 +414,7 @@ module.exports = {
         !validateHandler.validateString(user_name, regexHandler.regexNormalString) ||
         !validateHandler.validateString(phone, regexHandler.regexPhoneNumber) ||
         !validateHandler.validateString(password, regexHandler.regexPassword) ||
-        !validateHandler.validatePositiveIntegerNumber(role_id)
+        !validateHandler.validatePositiveIntegerNumber(parseInt(role_id))
         // || !validateHandler.validateString(avatar, regexHandler.regexAvatar)
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
@@ -446,7 +449,7 @@ module.exports = {
     try {
       const params = req.body;
       const id = params.id;
-      if (!validateHandler.validateIntegerNumber(id))
+      if (!validateHandler.validateIntegerNumber(parseInt(id)))
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const deleteUser = await User.destroy({

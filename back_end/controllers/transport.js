@@ -37,8 +37,8 @@ module.exports = {
       const querySearch = !query_search ? '' : query_search.toString().trim();
 
       if (
-        !validateHandler.validatePositiveIntegerNumber(limit) ||
-        !validateHandler.validatePositiveIntegerNumber(offset)
+        !validateHandler.validatePositiveIntegerNumber(parseInt(limit)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(offset))
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
@@ -75,8 +75,8 @@ module.exports = {
     try {
       const { bus_schedule_id, bus_id, departure_date } = req.body;
       if (
-        !validateHandler.validatePositiveIntegerNumber(bus_schedule_id) ||
-        !validateHandler.validatePositiveIntegerNumber(bus_id) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(bus_schedule_id)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(bus_id)) ||
         !validateHandler.validateDate(departure_date)
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
@@ -102,7 +102,7 @@ module.exports = {
   async deleteTransport(req, res) {
     try {
       const { id } = req.body;
-      if (!validateHandler.validatePositiveIntegerNumber(id))
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id)))
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const deleteTransport = await Transport.destroy({
@@ -124,9 +124,9 @@ module.exports = {
       const { id, bus_schedule_id, bus_id, departure_date } = req.body;
 
       if (
-        !validateHandler.validatePositiveIntegerNumber(id) ||
-        !validateHandler.validatePositiveIntegerNumber(bus_schedule_id) ||
-        !validateHandler.validatePositiveIntegerNumber(bus_id) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(id)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(bus_schedule_id)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(bus_id)) ||
         !validateHandler.validateDate(departure_date)
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);

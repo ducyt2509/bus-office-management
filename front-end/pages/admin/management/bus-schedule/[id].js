@@ -558,6 +558,7 @@ export default function BusScheduleDetail(props) {
 								setListAddress={setAddressPickup}
 								setListLocation={setLocationPickup}
 								id={5}
+								route={route}
 								state={state}
 								BACK_END_PORT={props.BACK_END_PORT}
 							/>
@@ -567,6 +568,7 @@ export default function BusScheduleDetail(props) {
 							<ListLocationBusSchedule
 								list={BusSchedule[0]?.location_bus_schedule}
 								id={6}
+								route={route}
 								listLocation={locationDropOff}
 								listAddress={addressDropOff}
 								setListAddress={setAddressDropOff}
