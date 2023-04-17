@@ -296,6 +296,7 @@ export default function TransactionDetails(props) {
             if (status == 'hủy vé') {
               if (seat.length > 1) {
                 s.seat = cloneSeat.join(', ');
+                s.ticket_price = cloneSeat.length * props.scheduleData.price;
               } else {
                 s.payment_status = 3;
               }
@@ -306,6 +307,7 @@ export default function TransactionDetails(props) {
         if (status == 'hủy vé') {
           if (seat.length > 1) {
             submitData.seat = cloneSeat.join(', ');
+            submitData.ticket_price = cloneSeat.length * props.scheduleData.price;
           } else {
             submitData = {
               id: transactionId,

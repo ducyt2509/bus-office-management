@@ -99,7 +99,6 @@ export default function Ticket(props) {
         .addDays(scheduleData.schedule_frequency)
         .toISOString(),
     };
-    console.log(submitData);
     const updateDepartureDate = await axios.put(
       `http://localhost:${props.port}/transport/update-transport`,
       submitData,
