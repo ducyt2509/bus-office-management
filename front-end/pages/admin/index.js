@@ -8,7 +8,6 @@ export default function AdminPage(props) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.localStorage.setItem('user_name', state.dataUser.user_name);
-      window.localStorage.setItem('token', state.dataUser.token);
     }
     router.push('/admin/ticket');
   }, []);

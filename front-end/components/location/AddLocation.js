@@ -1,4 +1,3 @@
-import { axiosJWT } from '@/helper';
 import {
   Button,
   Modal,
@@ -101,25 +100,27 @@ export default function AddLocation(props) {
     };
     if (props.locationId) {
       submitData.id = props.locationId;
-      const updateLocation = await axios.put(
-        `http://localhost:${props.port}/location/update-location`,
-        submitData,
-        {
-          headers: { token: props.token },
+      try {
+        const updateLocation = await props.axiosJWT.put(
+          `http://localhost:${props.port}/location/update-location`,
+          submitData,
+          {
+            headers: { token: `Bearer ${props.state.dataUser.token}` },
+          }
+        );
+        if (updateLocation.data.statusCode == 200) {
+          toastIdRef.current = toast({
+            title: 'Điểm đón trả đã được cập nhật.',
+            description: 'Chúng tôi đã cập nhật điểm đón trả cho bạn.',
+            status: 'success',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+          props.handleGetListLocation(props.currentPage);
+          props.onClose();
         }
-      );
-      if (updateLocation.data.statusCode == 200) {
-        toastIdRef.current = toast({
-          title: 'Điểm đón trả đã được cập nhật.',
-          description: 'Chúng tôi đã cập nhật điểm đón trả cho bạn.',
-          status: 'success',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
-        props.handleGetListLocation(props.currentPage);
-        props.onClose();
-      } else {
+      } catch (error) {
         toastIdRef.current = toast({
           title: 'Điểm đón trả không thể cập nhật.',
           description: 'Xảy ra lỗi khi cập nhật điểm đón trả. Làm ơn hãy thử lại.',
@@ -130,25 +131,27 @@ export default function AddLocation(props) {
         });
       }
     } else {
-      const addLocation = await axiosJWT.post(
-        `http://localhost:${props.port}/location/add-location`,
-        submitData,
-        {
-          headers: { token: props.token },
+      try {
+        if (addLocation.data.statusCode == 200) {
+          const addLocation = await props.axiosJWT.post(
+            `http://localhost:${props.port}/location/add-location`,
+            submitData,
+            {
+              headers: { token: props.token },
+            }
+          );
+          toastIdRef.current = toast({
+            title: 'Điểm đón trả đã được thêm.',
+            description: 'Chúng tôi đã thêm điểm đón trả cho bạn.',
+            status: 'success',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+          props.handleGetListLocation(props.currentPage);
+          props.onClose();
         }
-      );
-      if (addLocation.data.statusCode == 200) {
-        toastIdRef.current = toast({
-          title: 'Điểm đón trả đã được thêm.',
-          description: 'Chúng tôi đã thêm điểm đón trả cho bạn.',
-          status: 'success',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
-        props.handleGetListLocation(props.currentPage);
-        props.onClose();
-      } else {
+      } catch (error) {
         toastIdRef.current = toast({
           title: 'Không thể thêm mới điểm đón trả.',
           description: 'Xảy ra lỗi khi thêm điểm đón trả. Làm ơn hãy thử lại.',
@@ -159,6 +162,7 @@ export default function AddLocation(props) {
         });
       }
     }
+    setAddress('');
     setLocationName('');
     setCity(0);
   }, [address, city, locationName, error]);

@@ -1,30 +1,6 @@
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 
-const axiosJWT = axios.create();
-
-axiosJWT.interceptors.request.use(async (config) => {
-  let date = new Date();
-  // const decodedToken = jwtDecode(localStorage.getItem('token'));
-  const getRefreshToken = await axios.post(
-    'http://localhost:5000/refresh-token',
-    {},
-    {
-      withCredentials: true,
-      credentials: 'include',
-    }
-  );
-  // if (decodedToken.exp < date.getTime()/1000) {
-  //   try {
-  //     if (getRefreshToken.data.statusCode == 200) {
-  //       console.log(getRefreshToken.data.data);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-});
-
 const convertTime = (time, plus) => {
   const result = (time + plus) % 24;
   const string = result.toString().split('.');
@@ -86,4 +62,4 @@ const validate = {
   float: /^-?\d*(\.\d+)?$/,
   number: /^\d+$/,
 };
-export { convertInt, convertTime, formatMoney, calcDate, formatDate, validate, axiosJWT };
+export { convertInt, convertTime, formatMoney, calcDate, formatDate, validate };

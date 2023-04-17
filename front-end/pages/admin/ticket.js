@@ -529,6 +529,7 @@ export default function Ticket(props) {
         </Flex>
       </Flex>
     ) : null;
+
   const VehicleHTML =
     scheduleData && transportData && transportData.bus[0]?.vehicle_type_id == 1 ? (
       <Seat12User

@@ -12,24 +12,26 @@ export default function ListBus(props) {
     props.onOpen();
   };
   const handleDeleteBus = async (busId) => {
-    const deleteVehicle = await axios.delete(
-      `http://localhost:${props.port}/bus/delete-bus`,
-      { data: { id: busId } },
-      {
-        headers: { token: props.token },
+    try {
+      const deleteVehicle = await props.axiosJWT.delete(
+        `http://localhost:${props.port}/bus/delete-bus`,
+        { data: { id: busId } },
+        {
+          headers: { token: props.token },
+        }
+      );
+      if (deleteVehicle.data.statusCode == 200) {
+        toastIdRef.current = toast({
+          title: 'Thông tin xe đã được xoá.',
+          description: 'Chúng tôi đã xoá thông tin xe cho bạn',
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+        props.handleGetListBus();
       }
-    );
-    if (deleteVehicle.data.statusCode == 200) {
-      toastIdRef.current = toast({
-        title: 'Thông tin xe đã được xoá.',
-        description: 'Chúng tôi đã xoá thông tin xe cho bạn',
-        status: 'success',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
-      props.handleGetListBus();
-    } else {
+    } catch (err) {
       toastIdRef.current = toast({
         title: 'Thông tin xe không thể xoá',
         description: 'Xảy ra lỗi khi xoá thông tin xe. Làm ơn hãy thử lại.',

@@ -17,24 +17,26 @@ export default function ListOffice(props) {
   };
   const handleDeleteOffice = async (officeId, e) => {
     e.stopPropagation();
-    const deleteOffice = await axios.delete(
-      `http://localhost:${props.port}/office/delete-office`,
-      { data: { id: officeId } },
-      {
-        headers: { token: props.token },
+    try {
+      const deleteOffice = await props.axiosJWT.delete(
+        `http://localhost:${props.port}/office/delete-office`,
+        { data: { id: officeId } },
+        {
+          headers: { token: props.token },
+        }
+      );
+      if (deleteOffice.data.statusCode == 200) {
+        toastIdRef.current = toast({
+          title: 'Thông tin văn phòng đã được xoá.',
+          description: 'Chúng tôi đã xoá thông tin văn phòng cho bạn',
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+        props.handleGetListOffice();
       }
-    );
-    if (deleteOffice.data.statusCode == 200) {
-      toastIdRef.current = toast({
-        title: 'Thông tin văn phòng đã được xoá.',
-        description: 'Chúng tôi đã xoá thông tin văn phòng cho bạn',
-        status: 'success',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
-      props.handleGetListOffice();
-    } else {
+    } catch (error) {
       toastIdRef.current = toast({
         title: 'Thông tin văn phòng không thể xoá',
         description: 'Xảy ra lỗi khi xoá thông tin văn phòng. Làm ơn hãy thử lại.',
