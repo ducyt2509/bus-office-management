@@ -223,8 +223,6 @@ export default function Ticket(props) {
       if (cloneSeatSelected.length > 1) {
         editStatus = false;
       }
-      console.log(1, seatCustomerSelected);
-      console.log(2, cloneSeatSelected);
       cloneSeatSelected.forEach((seat) => {
         if (!seatCustomerSelected.includes(seat)) {
           editStatus = false;

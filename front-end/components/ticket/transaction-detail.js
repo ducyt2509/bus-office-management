@@ -498,6 +498,10 @@ export default function TransactionDetails(props) {
         setPrice(props.scheduleData.price);
         setPaymentStatus(0);
         setTransactionId(0);
+        setLocationDrop(0);
+        setLocationPick(0);
+        setLocationDropOff('');
+        setLocationPickup('');
       } else {
         getTransactionById();
       }
