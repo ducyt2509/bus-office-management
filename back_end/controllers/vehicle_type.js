@@ -2,6 +2,7 @@ const db = require('../models');
 const VehicleType = db.vehicle_types;
 const Op = db.Sequelize.Op;
 const responseHandler = require('../handlers/response.handler');
+const validateHandler = require('../handlers/validate.handler');
 
 
 const checkExistVehicle = async (bus_schedule_id, bus_id, departure_date) => {
@@ -28,7 +29,7 @@ module.exports = {
     const limit = !params?.limit ? 7 : params.limit;
     const offset = !params?.offset ? 0 : params.offset;
     const querySearch = !params?.query_search ? "" : params.query_search;
-    if (!validateHandler.validatePositiveIntegerNumber(limit) || !validateHandler.validatePositiveIntegerNumber(offset))
+    if (!validateHandler.validatePositiveIntegerNumber(parseInt(limit)) || !validateHandler.validatePositiveIntegerNumber(parseInt(offset)))
       return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
     try {
       const whereCondition = {};

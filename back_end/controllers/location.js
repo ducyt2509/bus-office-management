@@ -12,13 +12,16 @@ const regexHandler = require('../handlers/regex.handler');
 module.exports = {
   async getListLocation(req, res) {
     try {
-      var { limit, offset, query_search, route } = req.body
-      limit = limit ? limit : 7
-      offset = offset ? offset : 0
-      const querySearch = !query_search ? "" : query_search.toString().trim()
+      var { limit, offset, query_search, route } = req.body;
+      limit = limit ? limit : 7;
+      offset = offset ? offset : 0;
+      const querySearch = !query_search ? '' : query_search.toString().trim();
 
-      if (!validateHandler.validatePositiveIntegerNumber(limit) || !validateHandler.validatePositiveIntegerNumber(offset))
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+      if (
+        !validateHandler.validatePositiveIntegerNumber(parseInt(limit)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(offset))
+      )
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       let querySQL = `select location.id, location.location_name, location.address, location.city_id from location join city c on c.id = location.city_id  
       where (location_name like '%${querySearch}%') 
@@ -68,46 +71,47 @@ module.exports = {
     try {
       const { location_name, address, city_id } = req.body;
 
-      if (!validateHandler.validateString(location_name, regexHandler.regexNormalString) ||
+      if (
+        !validateHandler.validateString(location_name, regexHandler.regexNormalString) ||
         !validateHandler.validateString(address, regexHandler.regexNormalString) ||
-        !validateHandler.validatePositiveIntegerNumber(city_id)
+        !validateHandler.validatePositiveIntegerNumber(parseInt(city_id))
       )
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
-      const getCity = await City.findOne({ where: { id: city_id } })
+      const getCity = await City.findOne({ where: { id: city_id } });
 
       if (!getCity) {
-        return responseHandler.badRequest(res, "City not found")
+        return responseHandler.badRequest(res, 'City not found');
       }
       const location = await Location.findOne({
         where: {
           [Op.or]: [{ location_name }, { address }],
-        }
-      })
+        },
+      });
       if (location) {
-        return responseHandler.badRequest(res, "Location is already exist")
+        return responseHandler.badRequest(res, 'Location is already exist');
       }
       const newLocation = await Location.create({ location_name, address, city_id });
       if (newLocation) {
         return responseHandler.ok(res, 'Add new location successful');
       } else {
-        return responseHandler.badRequest(res, "Cant add new location")
+        return responseHandler.badRequest(res, 'Cant add new location');
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message)
+      return responseHandler.badRequest(res, error.message);
     }
   },
 
   async deleteLocation(req, res) {
-
     try {
       const params = req.body;
       const id = params.id;
 
-      if (!validateHandler.validatePositiveIntegerNumber(id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
-      const getLocation = await Location.findOne({ where: { id } })
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id)))
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+      const getLocation = await Location.findOne({ where: { id } });
       if (!getLocation) {
-        return responseHandler.badRequest(res, "Location not found")
+        return responseHandler.badRequest(res, 'Location not found');
       }
       const destroyLocation = await Location.destroy({
         where: {
@@ -124,44 +128,48 @@ module.exports = {
     }
   },
   async updateLocation(req, res) {
-
     try {
       const { id, location_name, address, city_id } = req.body;
-      if (!validateHandler.validatePositiveIntegerNumber(id, regexHandler.regexNormalString) ||
-        !validateHandler.validatePositiveIntegerNumber(city_id, regexHandler.regexNormalString) ||
+      if (
+        !validateHandler.validatePositiveIntegerNumber(parseInt(id), regexHandler.regexNormalString) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(city_id), regexHandler.regexNormalString) ||
         !validateHandler.validateString(location_name, regexHandler.regexNormalString) ||
-        !validateHandler.validateString(address, regexHandler.regexNormalString))
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+        !validateHandler.validateString(address, regexHandler.regexNormalString)
+      )
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
-      const getCity = await City.findOne({ where: { id: city_id } })
+      const getCity = await City.findOne({ where: { id: city_id } });
       if (!getCity) {
-        return responseHandler.badRequest(res, "City not found")
+        return responseHandler.badRequest(res, 'City not found');
       }
 
-      const getLocation = await Location.findOne({ where: { id } })
+      const getLocation = await Location.findOne({ where: { id } });
       if (!getLocation) {
-        return responseHandler.badRequest(res, "Location not found")
+        return responseHandler.badRequest(res, 'Location not found');
       }
       const location = await Location.findOne({
         where: {
           [Op.or]: [{ location_name }, { address }],
-        }
-      })
-      if (location) {
-        return responseHandler.badRequest(res, "Location is already exist")
-      }
-      const updateLocation = await Location.update({ location_name, address, city_id }, {
-        where: {
-          id,
         },
       });
+      if (location) {
+        return responseHandler.badRequest(res, 'Location is already exist');
+      }
+      const updateLocation = await Location.update(
+        { location_name, address, city_id },
+        {
+          where: {
+            id,
+          },
+        }
+      );
       if (updateLocation) {
         return responseHandler.ok(res, 'Update location successfully!');
       } else {
-        return responseHandler.badRequest(res, "Cant update location");
+        return responseHandler.badRequest(res, 'Cant update location');
       }
     } catch (error) {
-      return responseHandler.error
+      return responseHandler.error;
     }
   },
 };

@@ -13,24 +13,26 @@ export default function ListRoute(props) {
     props.onOpen();
   };
   const handleDeleteRoute = async (routeId) => {
-    const deleteRoute = await axios.delete(
-      `http://localhost:${props.port}/route/delete-route`,
-      { data: { id: routeId } },
-      {
-        headers: { token: props.token },
+    try {
+      const deleteRoute = await props.axiosJWT.delete(
+        `http://localhost:${props.port}/route/delete-route`,
+        { data: { id: routeId } },
+        {
+          headers: { token: props.token },
+        }
+      );
+      if (deleteRoute.data.statusCode == 200) {
+        toastIdRef.current = toast({
+          title: 'Thông tin tuyến đường đã được xoá.',
+          description: 'Chúng tôi đã xoá thông tin tuyến đường cho bạn',
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+        props.handleGetListRoute();
       }
-    );
-    if (deleteRoute.data.statusCode == 200) {
-      toastIdRef.current = toast({
-        title: 'Thông tin tuyến đường đã được xoá.',
-        description: 'Chúng tôi đã xoá thông tin tuyến đường cho bạn',
-        status: 'success',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
-      props.handleGetListRoute();
-    } else {
+    } catch (error) {
       toastIdRef.current = toast({
         title: 'Thông tin tuyến đường không thể xoá',
         description: 'Xảy ra lỗi khi xoá thông tin tuyến đường. Làm ơn hãy thử lại.',

@@ -22,7 +22,7 @@ import Pagination from '@/components/common/Pagination';
 import AddBus from '@/components/bus/AddBus';
 
 export default function ManagementBus(props) {
-  const [state, dispath] = useStore();
+  const [state, dispatch, axiosJWT] = useStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [listBus, setListBus] = useState([]);
@@ -41,25 +41,29 @@ export default function ManagementBus(props) {
       if (typeof page == 'number') {
         setCurrentPage(page);
       }
-      const getListBus = await axios.post(
-        `http://localhost:${props.BACK_END_PORT}/bus/list-bus`,
-        {
-          offset: offset,
-          limit: limit,
-          query_search: value != undefined ? value : querySearch,
-        },
-        {
-          headers: {
-            token: token,
+      try {
+        const getListBus = await axiosJWT.post(
+          `http://localhost:${props.BACK_END_PORT}/bus/list-bus`,
+          {
+            offset: offset,
+            limit: limit,
+            query_search: value != undefined ? value : querySearch,
           },
+          {
+            headers: {
+              token: token,
+            },
+          }
+        );
+        if (getListBus.data.statusCode === 200) {
+          setListBus(getListBus.data.data.list_bus);
+          if (type == 'search') {
+            setCurrentPage(1);
+          }
+          setNumberBus(getListBus.data.data.number_bus);
         }
-      );
-      if (getListBus.data.statusCode === 200) {
-        setListBus(getListBus.data.data.list_bus);
-        if (type == 'search') {
-          setCurrentPage(1);
-        }
-        setNumberBus(getListBus.data.data.number_bus);
+      } catch (error) {
+        console.log(error);
       }
     },
     [state, querySearch]
@@ -120,6 +124,7 @@ export default function ManagementBus(props) {
                     setVehicle={setVehicle}
                     handleGetListBus={handleGetListBus}
                     port={props.BACK_END_PORT}
+                    axiosJWT={axiosJWT}
                   />
                   <Pagination
                     list_number={numberBus}
@@ -136,6 +141,7 @@ export default function ManagementBus(props) {
                     handleGetListBus={handleGetListBus}
                     vehicleId={vehicleId}
                     vehicle={vehicle}
+                    axiosJWT={axiosJWT}
                   />
                 </TabPanel>
                 <TabPanel></TabPanel>

@@ -2,7 +2,7 @@ const vehicle_types = require('../controllers').vehicle_type;
 var router = require('express').Router();
 const middleWare = require('../middleware/permission.middleware');
 
-router.get('/vehicle-type/list-vehicle-type', vehicle_types.getListVehicleType);
+router.post('/vehicle-type/list-vehicle-type', vehicle_types.getListVehicleType);
 // router.delete(
 //   '/vehicle-type/delete-vehicle-type',
 //   middleWare.verifyTokenForManager,

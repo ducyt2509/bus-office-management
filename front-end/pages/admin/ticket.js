@@ -36,7 +36,7 @@ export default function Ticket(props) {
 
   const [startLocation, setStartLocation] = useState(47);
   const [listBusSchedule, setListBusSchedule] = useState([]);
-  const [endLocation, setEndLocation] = useState(32);
+  const [endLocation, setEndLocation] = useState(14);
   const [departureDay, setDepartureDay] = useState();
   const [scheduleSelected, setScheduleSelected] = useState();
   const [scheduleData, setScheduleData] = useState();
@@ -84,7 +84,6 @@ export default function Ticket(props) {
     },
     [seatSelected, transportData]
   );
-
   const handleDisembark = useCallback(async () => {
     Date.prototype.addDays = function (days) {
       var date = new Date(this.valueOf());
@@ -99,7 +98,6 @@ export default function Ticket(props) {
         .addDays(scheduleData.schedule_frequency)
         .toISOString(),
     };
-    console.log(submitData);
     const updateDepartureDate = await axios.put(
       `http://localhost:${props.port}/transport/update-transport`,
       submitData,
@@ -135,6 +133,9 @@ export default function Ticket(props) {
         submitData.payment_status = 3;
       } else {
         submitData.seat = cloneData.number_seat_selected[i].seat;
+        submitData.ticket_price =
+          cloneData.number_seat_selected[i].seat.split(', ').length *
+          (scheduleData && scheduleData.price ? scheduleData.price : 0);
       }
       const updateTransactionById = await axios.put(
         `http://localhost:${props.port}/transaction/update-transaction`,
@@ -146,7 +147,7 @@ export default function Ticket(props) {
     }
     setSeatCustomerSelected(cloneSeatCustomerSelected);
     setTransportData(cloneData);
-  }, [seatCustomerSelected, transportData, seatSelected]);
+  }, [seatCustomerSelected, transportData, seatSelected, scheduleData]);
 
   const handleChangeStartLocation = (e) => {
     let value = e.target.value;
@@ -223,8 +224,6 @@ export default function Ticket(props) {
       if (cloneSeatSelected.length > 1) {
         editStatus = false;
       }
-      console.log(1, seatCustomerSelected);
-      console.log(2, cloneSeatSelected);
       cloneSeatSelected.forEach((seat) => {
         if (!seatCustomerSelected.includes(seat)) {
           editStatus = false;
@@ -530,6 +529,7 @@ export default function Ticket(props) {
         </Flex>
       </Flex>
     ) : null;
+
   const VehicleHTML =
     scheduleData && transportData && transportData.bus[0]?.vehicle_type_id == 1 ? (
       <Seat12User

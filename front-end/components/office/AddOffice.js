@@ -102,25 +102,27 @@ export default function AddOffice(props) {
     };
     if (props.officeId) {
       submitData.id = props.officeId;
-      const updateOffice = await axios.put(
-        `http://localhost:${props.port}/office/update-office`,
-        submitData,
-        {
-          headers: { token: props.token },
+      try {
+        const updateOffice = await axios.put(
+          `http://localhost:${props.port}/office/update-office`,
+          submitData,
+          {
+            headers: { token: props.token },
+          }
+        );
+        if (updateOffice.data.statusCode == 200) {
+          toastIdRef.current = toast({
+            title: 'Thông tin văn phòng đã được cập nhật.',
+            description: 'Chúng tôi đã cập nhật thông tin văn phòng cho bạn.',
+            status: 'success',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+          props.handleGetListOffice();
+          props.onClose();
         }
-      );
-      if (updateOffice.data.statusCode == 200) {
-        toastIdRef.current = toast({
-          title: 'Thông tin văn phòng đã được cập nhật.',
-          description: 'Chúng tôi đã cập nhật thông tin văn phòng cho bạn.',
-          status: 'success',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
-        props.handleGetListOffice();
-        props.onClose();
-      } else {
+      } catch (error) {
         toastIdRef.current = toast({
           title: 'Thông tin văn phòng không thể cập nhật.',
           description: 'Xảy ra lỗi khi cập nhật thông tin văn phòng. Làm ơn hãy thử lại.',
@@ -131,25 +133,27 @@ export default function AddOffice(props) {
         });
       }
     } else {
-      const addOffice = await axios.post(
-        `http://localhost:${props.port}/office/add-office`,
-        submitData,
-        {
-          headers: { token: props.token },
+      try {
+        const addOffice = await axios.post(
+          `http://localhost:${props.port}/office/add-office`,
+          submitData,
+          {
+            headers: { token: props.token },
+          }
+        );
+        if (addOffice.data.statusCode == 200) {
+          toastIdRef.current = toast({
+            title: 'Thông tin văn phòng đã được thêm.',
+            description: 'Chúng tôi đã thêm thông tin văn phòng cho bạn.',
+            status: 'success',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+          props.handleGetListOffice();
+          props.onClose();
         }
-      );
-      if (addOffice.data.statusCode == 200) {
-        toastIdRef.current = toast({
-          title: 'Thông tin văn phòng đã được thêm.',
-          description: 'Chúng tôi đã thêm thông tin văn phòng cho bạn.',
-          status: 'success',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
-        props.handleGetListOffice();
-        props.onClose();
-      } else {
+      } catch (error) {
         toastIdRef.current = toast({
           title: 'Không thể thêm mới Thông tin văn phòng.',
           description: 'Xảy ra lỗi khi thêm thông tin văn phòng. Làm ơn hãy thử lại.',

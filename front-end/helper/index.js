@@ -1,3 +1,6 @@
+import axios from 'axios';
+import jwtDecode from 'jwt-decode';
+
 const convertTime = (time, plus) => {
   const result = (time + plus) % 24;
   const string = result.toString().split('.');

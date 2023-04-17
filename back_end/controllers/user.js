@@ -1,6 +1,5 @@
 const db = require('../models');
 const crypto = require('crypto');
-const cypherKey = crypto.randomBytes(64);
 
 const User = db.users;
 const Role = db.roles;
@@ -15,6 +14,7 @@ const responseHandler = require('../handlers/response.handler');
 const regexHandler = require('../handlers/regex.handler');
 const validateHandler = require('../handlers/validate.handler');
 const messageHandler = require('../handlers/message.handler');
+
 const generateRefreshToken = (user) => {
   return jwt.sign(
     {
@@ -22,7 +22,7 @@ const generateRefreshToken = (user) => {
       role_id: user.role_id,
     },
     process.env.JWT_REFRESH_SECRET_TOKEN,
-    { expiresIn: '2h' }
+    { expiresIn: '8h' }
   );
 };
 const generateAccessToken = (user) => {
@@ -32,7 +32,7 @@ const generateAccessToken = (user) => {
       role_id: user.role_id,
     },
     process.env.JWT_SECRET_TOKEN,
-    { expiresIn: '1d' }
+    { expiresIn: '30m' }
   );
 };
 
@@ -85,32 +85,40 @@ module.exports = {
     }
   },
   async requestRefreshToken(req, res) {
-    const refreshAccessToken = req.cookie.refreshAccessToken;
+    const refreshAccessToken = req.cookies.refreshAccessToken;
     if (!refreshAccessToken) {
       return responseHandler.unauthorized(res);
     } else {
       try {
         const getUser = await User.findOne({
           where: {
-            email: req.body?.email,
+            id: req.body?.id,
           },
         });
-        if (getUser) {
-          jwt.verify(refreshAccessToken, process.env.JWT_REFRESH_SECRET_TOKEN, (error, user) => {
-            if (error) {
-              return responseHandler.badRequest(res, error.message);
-            } else {
-              const newAccessToken = generateAccessToken(user);
-              const newRefreshAccessToken = generateRefreshToken(user);
-              res.cookie('refreshAccessToken', newRefreshAccessToken, {
-                httpOnly: true,
-                path: '/',
-                sameSite: 'strict',
-                secure: false,
-              });
-              return responseHandler.responseWithData(res, 200, newAccessToken);
+        console.log(getUser.refresh_access_token);
+        if (getUser && getUser.refresh_access_token == refreshAccessToken) {
+          jwt.verify(
+            refreshAccessToken,
+            process.env.JWT_REFRESH_SECRET_TOKEN,
+            async (error, user) => {
+              if (error) {
+                return responseHandler.badRequest(res, error.message);
+              } else {
+                const newAccessToken = generateAccessToken(user);
+                const newRefreshAccessToken = generateRefreshToken(user);
+                await User.update(
+                  { refresh_access_token: newRefreshAccessToken },
+                  { where: { id: req.body?.id } }
+                );
+                res.cookie('refreshAccessToken', newRefreshAccessToken, {
+                  httpOnly: true,
+                  sameSite: 'strict',
+                  secure: false,
+                });
+                return responseHandler.responseWithData(res, 200, newAccessToken);
+              }
             }
-          });
+          );
         } else {
           return responseHandler.unauthorized(res);
         }
@@ -126,7 +134,7 @@ module.exports = {
       const password = params.password;
       if (
         !validateHandler.validateString(user, regexHandler.regexPhoneNumberOrEmail) ||
-        // password not in range [8-15] characters
+        // password not in range [8+] characters
         !validateHandler.validateString(password, regexHandler.regexPassword)
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
@@ -290,8 +298,8 @@ module.exports = {
       role_id = role_id ? role_id : 0;
 
       if (
-        !validateHandler.validatePositiveIntegerNumber(limit) ||
-        !validateHandler.validatePositiveIntegerNumber(offset)
+        !validateHandler.validatePositiveIntegerNumber(parseInt(limit)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(offset))
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
@@ -377,7 +385,7 @@ module.exports = {
   async getUserInformation(req, res) {
     try {
       const { id } = req.body;
-      if (!validateHandler.validatePositiveIntegerNumber(id))
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id)))
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const getUserById = await User.findOne({
@@ -411,7 +419,7 @@ module.exports = {
         !validateHandler.validateString(user_name, regexHandler.regexNormalString) ||
         !validateHandler.validateString(phone, regexHandler.regexPhoneNumber) ||
         !validateHandler.validateString(password, regexHandler.regexPassword) ||
-        !validateHandler.validatePositiveIntegerNumber(role_id)
+        !validateHandler.validatePositiveIntegerNumber(parseInt(role_id))
         // || !validateHandler.validateString(avatar, regexHandler.regexAvatar)
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
@@ -446,7 +454,7 @@ module.exports = {
     try {
       const params = req.body;
       const id = params.id;
-      if (!validateHandler.validateIntegerNumber(id))
+      if (!validateHandler.validateIntegerNumber(parseInt(id)))
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const deleteUser = await User.destroy({

@@ -36,7 +36,7 @@ module.exports = {
 				office_address } = req.body;
 
 			if (!validateHandler.validateString(office_name, regexHandler.regexNormalString) ||
-				!validateHandler.validatePositiveIntegerNumber(city_id) ||
+				!validateHandler.validatePositiveIntegerNumber(parseInt(city_id)) ||
 				!validateHandler.validateString(office_address, regexHandler.regexNormalString))
 				return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
@@ -67,8 +67,8 @@ module.exports = {
 				office_address, } = req.body;
 
 			if (!validateHandler.validateString(office_name, regexHandler.regexNormalString) ||
-				!validateHandler.validatePositiveIntegerNumber(city_id) ||
-				!validateHandler.validatePositiveIntegerNumber(id) ||
+				!validateHandler.validatePositiveIntegerNumber(parseInt(city_id)) ||
+				!validateHandler.validatePositiveIntegerNumber(parseInt(id)) ||
 				!validateHandler.validateString(office_address, regexHandler.regexNormalString))
 				return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
@@ -104,7 +104,7 @@ module.exports = {
 	async deleteOfficeInformation(req, res) {
 		try {
 			const { id } = req.body;
-			if (!validateHandler.validatePositiveIntegerNumber(id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+			if (!validateHandler.validatePositiveIntegerNumber(parseInt(id))) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
 
 			const deleteOffice = await Office.destroy({
 				where: {
@@ -128,7 +128,7 @@ module.exports = {
 			const querySearch = !query_search ? "" : query_search.toString().trim()
 
 
-			if (!validateHandler.validatePositiveIntegerNumber(limit) || !validateHandler.validatePositiveIntegerNumber(offset))
+			if (!validateHandler.validatePositiveIntegerNumber(parseInt(limit)) || !validateHandler.validatePositiveIntegerNumber(parseInt(offset)))
 				return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
 
 
@@ -181,7 +181,7 @@ module.exports = {
 		try {
 			const params = req.body;
 			const id = params.id;
-			if (!validateHandler.validatePositiveIntegerNumber(id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+			if (!validateHandler.validatePositiveIntegerNumber(parseInt(id))) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
 
 			const officeInformation = await Office.findOne({
 				where: {

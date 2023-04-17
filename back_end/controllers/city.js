@@ -44,7 +44,7 @@ module.exports = {
     try {
       const params = req.body;
       const id = params.id
-      if (!validateHandler.validatePositiveIntegerNumber(id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id))) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
 
       const updateCity = await Bus_type.update(params, {
         where: {
@@ -80,7 +80,7 @@ module.exports = {
   async deleteCity(req, res) {
     const { id } = req.body;
     try {
-      if (!validateHandler.validatePositiveIntegerNumber(id)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id))) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
       const checkExists = await City.findOne({ where: { id } })
       if (!checkExists) return responseHandler.badRequest(res, "City not found")
       const destroyCity = await City.destroy({

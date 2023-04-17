@@ -87,7 +87,7 @@ export default function BusScheduleAll(props) {
   const listBusScheduleHTML =
     listBusSchedule &&
     listBusSchedule.map((busSchedule) => {
-      return <ListBusSchedule data={busSchedule} />;
+      return <ListBusSchedule data={busSchedule} departureDay={departureDay} />;
     });
   return (
     <>
