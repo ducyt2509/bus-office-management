@@ -47,6 +47,7 @@ export default function ListRoute(props) {
         <td>{index + 1}</td>
         <td>{route.city_from?.city_name}</td>
         <td>{route.city_to?.city_name}</td>
+        <td>{route.totalBS}</td>
 
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
@@ -64,6 +65,7 @@ export default function ListRoute(props) {
           <td>STT</td>
           <td>Thành phố đi </td>
           <td>Thành phố đến</td>
+          <td>Số lượng lịch trình</td>
           <td>Thao tác</td>
         </tr>
       </thead>

@@ -420,7 +420,7 @@ export default function BusScheduleDetail(props) {
 					marginBottom={"3%"}
 					textAlign={"center"}
 				>
-					{router.query.id == "add" ? "Thêm lịch trình" : "Chỉnh sửa thông tin lịch trình"}
+					{method == "Refresh" ? "Làm mới lịch trình" : router.query.id == "add" ? "Thêm lịch trình" : "Chỉnh sửa thông tin lịch trình"}
 				</Heading>
 				{ }
 				<Card
@@ -654,7 +654,6 @@ export default function BusScheduleDetail(props) {
 								</FormErrorMessage>
 							</FormControl>
 						</Box>
-
 						<Box>
 							<FormControl
 								isInvalid={error.effectiveDate}
@@ -663,9 +662,9 @@ export default function BusScheduleDetail(props) {
 								<Box display={"flex"}>
 									<FormLabel marginBottom="0">Ngày lịch trình có hiệu lực:</FormLabel>
 									<Input
-										disabled={router.query.id != "add" || effectiveDate <= today}
+										disabled={(method != "Refresh" & router.query.id != "add") || refreshDate <= today}
 										type={"date"}
-										// {...method == 'Refresh' ? value = { effectiveDate } : value = null }
+										// value={ }
 										min={today}
 										onChange={handleChangeEffectiveDate}
 									/>

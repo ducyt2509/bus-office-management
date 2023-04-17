@@ -6,6 +6,7 @@ import { useRef } from "react";
 import { convertTime } from "@/helper";
 
 export default function ListTransport(props) {
+	console.log('listTransport', props);
 	const toast = useToast();
 	const toastIdRef = useRef();
 	const handleActiveModal = (transportId, transport) => {
@@ -43,13 +44,16 @@ export default function ListTransport(props) {
 		}
 	};
 	const ListTransportHTML = props.list.map((transport, index) => {
+		const time_from = convertTime(transport.time_from, 0);
+		const time_to = convertTime(transport.time_from, transport.travel_time);
+		const time_from_to = time_from + ' - ' + time_to;
 		return (
 			<tr key={index}>
 				<td>{index + 1}</td>
 				<td>
 					{transport.departure_city}-{transport.arrive_city}
 				</td>
-				<td>{convertTime(transport.time_from, 0)}</td>
+				<td>{time_from_to}</td>
 				<td>{transport.vehicle_plate}</td>
 				<td>
 					<Stack

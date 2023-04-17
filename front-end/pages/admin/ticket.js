@@ -301,43 +301,43 @@ export default function Ticket(props) {
       <>
         {schedule && schedule.transport && schedule.transport.length
           ? schedule.transport.map((vehicle, index) => {
-              const number_seat_selected =
-                vehicle.number_seat_selected &&
+            const number_seat_selected =
+              vehicle.number_seat_selected &&
                 vehicle.number_seat_selected.length &&
                 vehicle.number_seat_selected.filter((e) => e.payment_status != 3).length
-                  ? vehicle.number_seat_selected
-                      .filter((e) => e.payment_status != 3)
-                      .map((e) => e.seat)
-                      .join()
-                      .split(',').length
-                  : 0;
+                ? vehicle.number_seat_selected
+                  .filter((e) => e.payment_status != 3)
+                  .map((e) => e.seat)
+                  .join()
+                  .split(',').length
+                : 0;
 
-              return (
-                <Box
-                  border={'1px solid'}
-                  borderRadius={'5px'}
-                  padding={'0 1%'}
-                  marginRight={'1%'}
-                  minW={'80px'}
-                  fontSize={'13px'}
-                  fontWeight={'600'}
-                  color={'#363636'}
-                  cursor={'pointer'}
-                  backgroundColor={position + '' + index == scheduleSelected ? '#F2CAC2' : '#fff'}
-                  _hover={{ backgroundColor: '#F2CAC2' }}
-                  maxH="60px"
-                  onClick={() => handleSCheduleSelected(position + '' + index, schedule, vehicle)}
-                >
-                  <Stack>
-                    <Text>{convertTime(schedule.time_from, 0)}</Text>
-                    <Flex marginTop="0 !important">
-                      <Text marginRight={'5px'}>-----</Text>
-                      <Text>{number_seat_selected + '/' + vehicle.bus[0].number_seat}</Text>
-                    </Flex>
-                  </Stack>
-                </Box>
-              );
-            })
+            return (
+              <Box
+                border={'1px solid'}
+                borderRadius={'5px'}
+                padding={'0 1%'}
+                marginRight={'1%'}
+                minW={'80px'}
+                fontSize={'13px'}
+                fontWeight={'600'}
+                color={'#363636'}
+                cursor={'pointer'}
+                backgroundColor={position + '' + index == scheduleSelected ? '#F2CAC2' : '#fff'}
+                _hover={{ backgroundColor: '#F2CAC2' }}
+                maxH="60px"
+                onClick={() => handleSCheduleSelected(position + '' + index, schedule, vehicle)}
+              >
+                <Stack>
+                  <Text>{convertTime(schedule.time_from, 0)}</Text>
+                  <Flex marginTop="0 !important">
+                    <Text marginRight={'5px'}>-----</Text>
+                    <Text>{number_seat_selected + '/' + vehicle.bus[0].number_seat}</Text>
+                  </Flex>
+                </Stack>
+              </Box>
+            );
+          })
           : null}
       </>
     );
@@ -422,13 +422,13 @@ export default function Ticket(props) {
                 </Text>
                 <Text fontWeight="600" color={'#363636'}>
                   {transportData.number_seat_selected &&
-                  transportData.number_seat_selected.length &&
-                  transportData.number_seat_selected.filter((e) => e.payment_status != 3).length
+                    transportData.number_seat_selected.length &&
+                    transportData.number_seat_selected.filter((e) => e.payment_status != 3).length
                     ? transportData.number_seat_selected
-                        .filter((e) => e.payment_status != 3)
-                        .map((e) => e.seat)
-                        .join()
-                        .split(',').length
+                      .filter((e) => e.payment_status != 3)
+                      .map((e) => e.seat)
+                      .join()
+                      .split(',').length
                     : 0}
                 </Text>
               </Flex>
