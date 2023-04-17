@@ -158,7 +158,7 @@ module.exports = {
           }&drop_off_location=${getTransactionInfo[0].drop_off_location}&date_detail=${
             getTransactionInfo[0].date_detail
           }&ticket_price=${getTransactionInfo[0].ticket_price}&passenger_email=${
-            getTransactionInfo[0].email
+            getTransactionInfo[0].passenger_email
           }&seat=${getTransactionInfo[0].seat}&transport=${
             getTransactionInfo[0].transport_id
           }&paymentStatus=1&route_name=${
@@ -175,8 +175,8 @@ module.exports = {
             getTransactionInfo[0].pickup_location
           }&drop_off_location=${getTransactionInfo[0].drop_off_location}&date_detail=${
             getTransactionInfo[0].date_detail
-          }&ticket_price=${getTransactionInfo[0].ticket_price}&email=${
-            getTransactionInfo[0].email
+          }&ticket_price=${getTransactionInfo[0].ticket_price}&passenger_email=${
+            getTransactionInfo[0].passenger_email
           }&seat=${getTransactionInfo[0].seat}&transport=${
             getTransactionInfo[0].transport_id
           }&paymentStatus=${vnp_Params['vnp_ResponseCode']}&route_name=${
@@ -195,8 +195,8 @@ module.exports = {
           getTransactionInfo[0].pickup_location
         }&drop_off_location=${getTransactionInfo[0].drop_off_location}&date_detail=${
           getTransactionInfo[0].date_detail
-        }&ticket_price=${getTransactionInfo[0].ticket_price}&email=${
-          getTransactionInfo[0].email
+        }&ticket_price=${getTransactionInfo[0].ticket_price}&passenger_email=${
+          getTransactionInfo[0].passenger_email
         }&seat=${getTransactionInfo[0].seat}&transport=${
           getTransactionInfo[0].transport_id
         }&paymentStatus=${vnp_Params['vnp_ResponseCode']}&route_name=${
@@ -227,7 +227,7 @@ module.exports = {
       if (role_id == 3) {
         querySQL += `where ts.id = ${transport_id} and t.date_detail like "%${date_detail}%" and t.payment_status != 3`;
       } else {
-        querySQL += ` where t.passenger_phone = '${phone} or t.id = ${phone}'
+        querySQL += ` where t.passenger_phone = '${phone}' or t.id = '${phone}'
         limit ${limit} offset ${offset}`;
       }
       let [listTransaction, numberTransaction] = await Promise.all([

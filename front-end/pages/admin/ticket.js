@@ -36,7 +36,7 @@ export default function Ticket(props) {
 
   const [startLocation, setStartLocation] = useState(47);
   const [listBusSchedule, setListBusSchedule] = useState([]);
-  const [endLocation, setEndLocation] = useState(32);
+  const [endLocation, setEndLocation] = useState(14);
   const [departureDay, setDepartureDay] = useState();
   const [scheduleSelected, setScheduleSelected] = useState();
   const [scheduleData, setScheduleData] = useState();
@@ -84,7 +84,6 @@ export default function Ticket(props) {
     },
     [seatSelected, transportData]
   );
-
   const handleDisembark = useCallback(async () => {
     Date.prototype.addDays = function (days) {
       var date = new Date(this.valueOf());
@@ -134,6 +133,9 @@ export default function Ticket(props) {
         submitData.payment_status = 3;
       } else {
         submitData.seat = cloneData.number_seat_selected[i].seat;
+        submitData.ticket_price =
+          cloneData.number_seat_selected[i].seat.split(', ').length *
+          (scheduleData && scheduleData.price ? scheduleData.price : 0);
       }
       const updateTransactionById = await axios.put(
         `http://localhost:${props.port}/transaction/update-transaction`,
@@ -145,7 +147,7 @@ export default function Ticket(props) {
     }
     setSeatCustomerSelected(cloneSeatCustomerSelected);
     setTransportData(cloneData);
-  }, [seatCustomerSelected, transportData, seatSelected]);
+  }, [seatCustomerSelected, transportData, seatSelected, scheduleData]);
 
   const handleChangeStartLocation = (e) => {
     let value = e.target.value;

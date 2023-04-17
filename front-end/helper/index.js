@@ -6,10 +6,14 @@ const axiosJWT = axios.create();
 axiosJWT.interceptors.request.use(async (config) => {
   let date = new Date();
   // const decodedToken = jwtDecode(localStorage.getItem('token'));
-  const getRefreshToken = await axios.post('http://localhost:5000/refresh-token', {
-    withCredentials: true,
-    credentials: 'include',
-  });
+  const getRefreshToken = await axios.post(
+    'http://localhost:5000/refresh-token',
+    {},
+    {
+      withCredentials: true,
+      credentials: 'include',
+    }
+  );
   // if (decodedToken.exp < date.getTime()/1000) {
   //   try {
   //     if (getRefreshToken.data.statusCode == 200) {

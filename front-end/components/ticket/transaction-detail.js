@@ -755,7 +755,7 @@ export default function TransactionDetails(props) {
                 fontSize={'18px'}
               >
                 <Text>Tổng tiền:</Text>
-                <Text>{formatMoney(price * seat.length)}</Text>
+                <Text>{formatMoney(props.scheduleData.price * seat.length)}</Text>
               </Flex>
               <Flex justifyContent={'space-between'}>
                 <Flex>
