@@ -2,7 +2,8 @@ const db = require('../models');
 const VehicleType = db.vehicle_types;
 const Op = db.Sequelize.Op;
 const responseHandler = require('../handlers/response.handler');
-
+const validateHandler = require('../handlers/validate.handler');
+const messageHandler = require('../handlers/message.handler');
 
 const checkExistVehicle = async (bus_schedule_id, bus_id, departure_date) => {
   const getTransport = await Transport.findOne({
@@ -23,7 +24,6 @@ const checkExistVehicle = async (bus_schedule_id, bus_id, departure_date) => {
 
 module.exports = {
   async getListVehicleType(req, res) {
-
     const params = req.body;
     const limit = !params?.limit ? 7 : params.limit;
     const offset = !params?.offset ? 0 : params.offset;
@@ -32,7 +32,7 @@ module.exports = {
       return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
     try {
       const whereCondition = {};
-      vehicle_name ? (whereCondition['vehicle_name'] = { [Op.like]: `%${vehicle_name}%` }) : '';
+      querySearch ? (whereCondition['vehicle_name'] = { [Op.like]: `%${querySearch}%` }) : '';
       const listVehicle = await VehicleType.findAll({
         where: whereCondition,
         offset: offset,
