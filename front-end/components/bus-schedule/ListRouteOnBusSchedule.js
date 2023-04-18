@@ -14,21 +14,25 @@ export default function ListRouteOnBusSchedule(props) {
       page = typeof page == 'number' ? page - 1 : 1;
       const offset = limit * (page - 1);
       const token = `Bearer ${props.state.dataUser.token}`;
-      const getListRoute = await axios.post(
-        `http://localhost:${props.BACK_END_PORT}/route/list-route`,
-        {
-          offset: offset,
-          limit: limit,
-          query_search: value != undefined ? value : querySearch,
-        },
-        {
-          headers: {
-            token: token,
+      try {
+        const getListRoute = await props.axiosJWT.post(
+          `http://localhost:${props.BACK_END_PORT}/route/list-route`,
+          {
+            offset: offset,
+            limit: limit,
+            query_search: value != undefined ? value : querySearch,
           },
+          {
+            headers: {
+              token: token,
+            },
+          }
+        );
+        if (getListRoute.data.statusCode === 200) {
+          setListRoute(getListRoute.data.data.list_route);
         }
-      );
-      if (getListRoute.data.statusCode === 200) {
-        setListRoute(getListRoute.data.data.list_route);
+      } catch (err) {
+        console.log(err);
       }
     },
     [props.state, querySearch]
@@ -73,13 +77,16 @@ export default function ListRouteOnBusSchedule(props) {
       </li>
     );
   });
+
   const handleOpenSelect = () => {
     const wrapper = document.querySelector('.bom-bus-schedule-detail .wrapper.wrapper1');
     wrapper.classList.toggle('active');
   };
+
   useEffect(() => {
     handleGetListRoute();
   }, []);
+
   useEffect(() => {
     const filterRoute = listRoute.filter((route) => {
       return route.id == props.route;
@@ -91,6 +98,7 @@ export default function ListRouteOnBusSchedule(props) {
       setRouteName(name);
     }
   }, [props.route, listRoute]);
+
   return (
     <div className="wrapper wrapper1">
       <div

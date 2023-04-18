@@ -102,51 +102,40 @@ export default function ManagementBus(props) {
             <Heading size="lg">Quản lí xe</Heading>
           </CardHeader>
           <CardBody>
-            <Tabs>
-              <TabList>
-                <Tab fontWeight={'700'}>Xe khách</Tab>
-                <Tab fontWeight={'700'}>Xe trung chuyển</Tab>
-              </TabList>
-              <TabPanels>
-                <TabPanel>
-                  <ActionBar
-                    onOpen={onOpen}
-                    setVehicleId={setVehicleId}
-                    querySearch={querySearch}
-                    setQuerySearch={setQuerySearch}
-                    handleGetListBus={handleGetListBus}
-                    handleChangeQuerySearch={handleChangeQuerySearch}
-                  />
-                  <ListBus
-                    list={listBus}
-                    onOpen={onOpen}
-                    setVehicleId={setVehicleId}
-                    setVehicle={setVehicle}
-                    handleGetListBus={handleGetListBus}
-                    port={props.BACK_END_PORT}
-                    axiosJWT={axiosJWT}
-                  />
-                  <Pagination
-                    list_number={numberBus}
-                    handleGetList={handleGetListBus}
-                    setList={setListBus}
-                    list={listBus}
-                    currentPage={currentPage}
-                  />
-                  <AddBus
-                    isOpen={isOpen}
-                    onClose={onClose}
-                    port={props.BACK_END_PORT}
-                    token={`Bearer ${state.dataUser.token}`}
-                    handleGetListBus={handleGetListBus}
-                    vehicleId={vehicleId}
-                    vehicle={vehicle}
-                    axiosJWT={axiosJWT}
-                  />
-                </TabPanel>
-                <TabPanel></TabPanel>
-              </TabPanels>
-            </Tabs>
+            <ActionBar
+              onOpen={onOpen}
+              setVehicleId={setVehicleId}
+              querySearch={querySearch}
+              setQuerySearch={setQuerySearch}
+              handleGetListBus={handleGetListBus}
+              handleChangeQuerySearch={handleChangeQuerySearch}
+            />
+            <ListBus
+              list={listBus}
+              onOpen={onOpen}
+              setVehicleId={setVehicleId}
+              setVehicle={setVehicle}
+              handleGetListBus={handleGetListBus}
+              port={props.BACK_END_PORT}
+              axiosJWT={axiosJWT}
+            />
+            <Pagination
+              list_number={numberBus}
+              handleGetList={handleGetListBus}
+              setList={setListBus}
+              list={listBus}
+              currentPage={currentPage}
+            />
+            <AddBus
+              isOpen={isOpen}
+              onClose={onClose}
+              port={props.BACK_END_PORT}
+              token={`Bearer ${state.dataUser.token}`}
+              handleGetListBus={handleGetListBus}
+              vehicleId={vehicleId}
+              vehicle={vehicle}
+              axiosJWT={axiosJWT}
+            />
           </CardBody>
         </Card>
       </div>

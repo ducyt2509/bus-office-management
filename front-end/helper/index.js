@@ -1,5 +1,5 @@
 import axios from 'axios';
-import jwtDecode from 'jwt-decode';
+// import jwtDecode from 'jwt-decode';
 
 const convertTime = (time, plus) => {
   const result = (time + plus) % 24;
@@ -42,9 +42,8 @@ const calcDate = (time, n) => {
   var time = new Date(time);
   var newDate = new Date(time.getTime() + n * 24 * 60 * 60 * 1000);
   var d = new Date(newDate);
-  var formatDate = `${d.getFullYear()}-${
-    d.getMonth() + 1 < 10 ? `0${d.getMonth() + 1}` : d.getMonth()
-  }-${d.getDate()}`;
+  var formatDate = `${d.getFullYear()}-${d.getMonth() + 1 < 10 ? `0${d.getMonth() + 1}` : d.getMonth()
+    }-${d.getDate()}`;
   return formatDate;
 };
 

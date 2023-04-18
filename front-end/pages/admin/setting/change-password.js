@@ -87,7 +87,7 @@ export default function Setting(props) {
         toastIdRef.current = toast({
           title: 'Thay đổi mật khẩu thành công.',
           description: 'Mật khẩu của bạn đã được thay đổi.',
-          status: 'error',
+          status: 'success',
           isClosable: true,
           position: 'top',
           duration: 5000,
@@ -95,7 +95,7 @@ export default function Setting(props) {
       }
     } catch (err) {
       toastIdRef.current = toast({
-        title: 'Lỗi.',
+        title: 'Thay đổi mật khẩu thất bại.',
         description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
         status: 'error',
         isClosable: true,

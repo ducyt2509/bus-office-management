@@ -112,7 +112,7 @@ export default function ManagementEmployees(props) {
               setUser={setUser}
               handleGetListUser={handleGetListUser}
               port={props.BACK_END_PORT}
-			  axiosJWT={axiosJWT}
+              axiosJWT={axiosJWT}
             />
             <Pagination
               list_number={numberUser}
@@ -129,7 +129,7 @@ export default function ManagementEmployees(props) {
               handleGetListUser={handleGetListUser}
               userId={userId}
               user={user}
-			  axiosJWT={axiosJWT}
+              axiosJWT={axiosJWT}
             />
           </CardBody>
         </Card>

@@ -25,10 +25,13 @@ import { GoLocation } from 'react-icons/go';
 import { MdOutlineSwapHorizontalCircle } from 'react-icons/md';
 import { Seat12User } from '@/components/vehicle';
 import LocationPickAndDrop from '@/components/ticket/location-pick-and-drop';
+import { useStore } from '@/src/store';
 
 export default function Ticket(props) {
-  const toastRef = useRef();
+  const toastIdRef = useRef();
   const toast = useToast();
+  const [state, dispatch, axiosJWT] = useStore();
+
   const [userNameData, setUserNameData] = useState('');
 
   const [seatInformation, setSeatInformation] = useState();
@@ -84,6 +87,35 @@ export default function Ticket(props) {
     },
     [seatSelected, transportData]
   );
+
+  const handleTotalRenewal = useCallback(async () => {
+    try {
+      const getTotalRenewal = await axios.get(
+        `http://localhost:${process.env.BACK_END_PORT}/bus-schedule/check-renewal-bus-schedule`
+      );
+      if (getTotalRenewal.data.statusCode == 200) {
+        let totalRenewal = getTotalRenewal.data.data.totalBSNeedRenewal;
+        if (totalRenewal && totalRenewal > 0) {
+          let toastRenew = setTimeout(() => {
+            toastRef.current = toast({
+              title: 'Lịch trình xe cần được cập nhật.',
+              description: `Có ${totalRenewal} lịch trình sắp hết hạn`,
+              status: 'warning',
+              isClosable: true,
+              position: 'top',
+              duration: 10000,
+            });
+          }, 3000);
+          return () => {
+            clearTimeout(toastRenew);
+          };
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
   const handleDisembark = useCallback(async () => {
     Date.prototype.addDays = function (days) {
       var date = new Date(this.valueOf());
@@ -98,15 +130,34 @@ export default function Ticket(props) {
         .addDays(scheduleData.schedule_frequency)
         .toISOString(),
     };
-    const updateDepartureDate = await axios.put(
-      `http://localhost:${props.port}/transport/update-transport`,
-      submitData,
-      {
-        headers: { token: props.token },
+    try {
+      const updateDepartureDate = await axiosJWT.put(
+        `http://localhost:${props.port}/transport/update-transport`,
+        submitData,
+        {
+          headers: { token: `Bearer ${state.dataUser.token}` },
+        }
+      );
+      if (updateDepartureDate.data.statusCode == 200) {
+        toastIdRef.current = toast({
+          title: 'Xe đã xuất bến',
+          description: 'Chúng tôi đã cập nhật hành trình xe cho bạn.',
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
       }
-    );
-    if (updateDepartureDate.data.statusCode == 200) {
       setModalStatus(false);
+    } catch (err) {
+      toastIdRef.current = toast({
+        title: 'Lỗi trong quá trình thao tác',
+        description: 'Có lỗi xảy ra trong quá trình thao tác làm ơn hãy thử lại',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
     }
   }, [scheduleData, transportData, scheduleSelected]);
 
@@ -137,17 +188,76 @@ export default function Ticket(props) {
           cloneData.number_seat_selected[i].seat.split(', ').length *
           (scheduleData && scheduleData.price ? scheduleData.price : 0);
       }
-      const updateTransactionById = await axios.put(
-        `http://localhost:${props.port}/transaction/update-transaction`,
-        submitData,
-        {
-          headers: { token: props.token },
+      try {
+        const updateTransactionById = await axiosJWT.put(
+          `http://localhost:${props.port}/transaction/update-transaction`,
+          submitData,
+          {
+            headers: { token: `Bearer ${state.dataUser.token}` },
+          }
+        );
+        if (updateTransactionById.data.statusCode == 200) {
+          toastIdRef.current = toast({
+            title: 'Cập nhật thôn tin khách hàng thành công.',
+            description: 'Chúng tôi đã cập nhật thông tin khách hàng cho bạn.',
+            status: 'success',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+          setSeatCustomerSelected(cloneSeatCustomerSelected);
+          setTransportData(cloneData);
         }
-      );
+      } catch (err) {
+        toastIdRef.current = toast({
+          title: 'Cập nhật thôn tin khách hàng thất bại.',
+          description: 'Thông tin khách hàng cập nhật thất bại. Vui lòng thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
     }
-    setSeatCustomerSelected(cloneSeatCustomerSelected);
-    setTransportData(cloneData);
   }, [seatCustomerSelected, transportData, seatSelected, scheduleData]);
+
+  const searchBusSchedule = useCallback(async () => {
+    let oldError = { ...error };
+    if (!startLocation) {
+      oldError.from = true;
+    }
+    if (!endLocation) {
+      oldError.to = true;
+    }
+    if (!departureDay) {
+      oldError.date = true;
+    }
+    if (oldError.from || oldError.to || oldError.date) {
+      setError(oldError);
+      return;
+    }
+    const submitData = {
+      departure_location_id: startLocation,
+      arrive_location_id: endLocation,
+      refresh_date: departureDay,
+      role_id: 1,
+    };
+    try {
+      const listBusSchedule = await axios.post(
+        `http://localhost:${props.port}/bus-schedule/list-bus-schedule-all`,
+        submitData
+      );
+      if (listBusSchedule.data.statusCode == 200) {
+        setListBusSchedule(listBusSchedule.data.data.list_bus_schedule);
+        setScheduleSelected(0);
+        setScheduleData();
+        setTransportData();
+        setSeatCustomerSelected([]);
+      }
+    } catch {
+      console.log(err);
+    }
+  }, [startLocation, endLocation, departureDay, error]);
 
   const handleChangeStartLocation = (e) => {
     let value = e.target.value;
@@ -228,7 +338,6 @@ export default function Ticket(props) {
         if (!seatCustomerSelected.includes(seat)) {
           editStatus = false;
           deleteStatus = false;
-          // addStatus = true;
         } else {
           addStatus = false;
         }
@@ -240,55 +349,11 @@ export default function Ticket(props) {
     [seatSelected, seatCustomerSelected]
   );
 
-  const searchBusSchedule = useCallback(async () => {
-    let oldError = { ...error };
-    if (!startLocation) {
-      oldError.from = true;
-    }
-    if (!endLocation) {
-      oldError.to = true;
-    }
-    if (!departureDay) {
-      oldError.date = true;
-    }
-    if (oldError.from || oldError.to || oldError.date) {
-      setError(oldError);
-      return;
-    }
-    const submitData = {
-      departure_location_id: startLocation,
-      arrive_location_id: endLocation,
-      refresh_date: departureDay,
-      role_id: 1,
-    };
-    const listBusSchedule = await axios.post(
-      `http://localhost:${props.port}/bus-schedule/list-bus-schedule-all`,
-      submitData
-    );
-    if (listBusSchedule.data.statusCode == 200) {
-      setListBusSchedule(listBusSchedule.data.data.list_bus_schedule);
-    }
-  }, [startLocation, endLocation, departureDay, error]);
-
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setUserNameData(window.localStorage.getItem('user_name'));
     }
-    if (props.totalRenewal && props.totalRenewal > 0) {
-      let toastRenew = setTimeout(() => {
-        toastRef.current = toast({
-          title: 'Lịch trình xe cần được cập nhật.',
-          description: `Có ${props.totalRenewal} lịch trình sắp hết hạn`,
-          status: 'warning',
-          isClosable: true,
-          position: 'top',
-          duration: 10000,
-        });
-      }, 3000);
-      return () => {
-        clearTimeout(toastRenew);
-      };
-    }
+    handleTotalRenewal();
   }, []);
 
   const cityOption =
@@ -443,7 +508,7 @@ export default function Ticket(props) {
           </Flex>
           <Text marginTop="1%" fontWeight={'600'}>
             Chi tiết: Chuyến {convertTime(scheduleData.time_from, 0) + ' '}; Ngày:{' '}
-            {new Date(formatDate(transportData?.departure_date)).toLocaleDateString()} ; Tuyến:{' '}
+            {new Date(formatDate(departureDay)).toLocaleDateString()} ; Tuyến:{' '}
             {scheduleData?.city_from + ' - ' + scheduleData?.city_to}
           </Text>
         </CardBody>
@@ -548,11 +613,18 @@ export default function Ticket(props) {
         onOpen={onOpen}
         onClose={onClose}
         departureDay={departureDay}
+        axiosJWT={axiosJWT}
+        token={`Bearer ${state.dataUser.token}`}
       />
     ) : null;
 
   const LocationHTML = (
-    <LocationPickAndDrop transportData={transportData} scheduleData={scheduleData} />
+    <LocationPickAndDrop
+      transportData={transportData}
+      scheduleData={scheduleData}
+      token={`Bearer ${state.dataUser.token}`}
+      axiosJWT={axiosJWT}
+    />
   );
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
@@ -641,14 +713,11 @@ export async function getStaticProps() {
   const getListCity = await axios.post(
     `http://localhost:${process.env.BACK_END_PORT}/city/list-city`
   );
-  const getTotalRenewal = await axios.get(
-    `http://localhost:${process.env.BACK_END_PORT}/bus-schedule/check-renewal-bus-schedule`
-  );
+
   return {
     props: {
       port: process.env.BACK_END_PORT,
       list_city: getListCity.data.data?.listCity,
-      totalRenewal: getTotalRenewal.data.data.totalBSNeedRenewal,
     },
   };
 }

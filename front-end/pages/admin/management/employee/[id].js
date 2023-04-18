@@ -25,6 +25,7 @@ export default function Employee(props) {
   useEffect(() => {
     getEmployeeDetail();
   }, []);
+  
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
       <Flex

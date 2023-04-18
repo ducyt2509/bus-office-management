@@ -10,37 +10,40 @@ export default function Provider({ children }) {
 
   const axiosJWT = axios.create();
 
-  axiosJWT.interceptors.request.use(async (config) => {
-    let date = new Date();
-    const decodedToken = jwtDecode(state.dataUser.token);
-    if (decodedToken.exp < date.getTime() / 1000) {
-      try {
-        const getRefreshToken = await axios.post(
-          'http://localhost:5000/refresh-token',
-          {
-            id: state.dataUser.id,
-          },
-          {
-            withCredentials: true,
-          }
-        );
-        if (getRefreshToken.data.statusCode == 200) {
-          dispatch(
-            actions.setDataUser({
-              ...state.dataUser,
-              token: getRefreshToken.data.data,
-            })
+  axiosJWT.interceptors.request.use(
+    async (config) => {
+      let date = new Date();
+      const decodedToken = jwtDecode(state.dataUser.token);
+      if (decodedToken.exp < date.getTime() / 1000) {
+        try {
+          const getRefreshToken = await axios.post(
+            'http://localhost:5000/refresh-token',
+            {
+              id: state.dataUser.id,
+            },
+            {
+              withCredentials: true,
+            }
           );
-          config.headers['token'] = 'Bearer ' + getRefreshToken.data.data;
+          if (getRefreshToken.data.statusCode == 200) {
+            dispatch(
+              actions.setDataUser({
+                ...state.dataUser,
+                token: getRefreshToken.data.data,
+              })
+            );
+            config.headers['token'] = 'Bearer ' + getRefreshToken.data.data;
+          }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
       }
+      return config;
+    },
+    (err) => {
+      return Promise.reject(err);
     }
-    return config;
-  },err=>{
-    return Promise.reject(err)
-  });
+  );
 
   return <Context.Provider value={[state, dispatch, axiosJWT]}>{children}</Context.Provider>;
 }
