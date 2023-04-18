@@ -91,6 +91,8 @@ export default function AddCar(props) {
     },
     [vehicleStatus]
   );
+
+  console.log(vehicleType);
   const handleAddVehicle = useCallback(async () => {
     let oldError = { ...error };
     if (!vehiclePlate) {
@@ -206,13 +208,13 @@ export default function AddCar(props) {
       console.log(err);
     }
   };
-
+  
   useEffect(() => {
     if (props.vehicleId) {
       setVehiclePlate(props.vehicle.vehicle_plate);
       setMainDriver(props.vehicle.main_driver_id);
       setSupportDriver(props.vehicle.support_driver_id);
-      setVehicleType(props.vehicle.vehicle_id);
+      setVehicleType(props.vehicle.vehicle_type_id);
       setVehicleStatus(props.vehicle.vehicle_status);
       setError({
         vehiclePlate: false,

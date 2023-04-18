@@ -21,6 +21,8 @@ export default function Seat12User(props) {
       onClose={props.onClose}
       seatInformation={props.seatInformation}
       departureDay={props.departureDay}
+      axiosJWT={props.axiosJWT}
+      token={props.token}
     />
   );
   const seatHTML = (id) => {

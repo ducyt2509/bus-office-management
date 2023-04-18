@@ -1,15 +1,15 @@
 .bom-table-bus td {
 	border: 1px solid #000;
+	/* color: #000; */
+}
+
+.bom-table-bus thead td {
+	border: 1px solid;
 	color: #000;
 }
 
 .bom-table-bus thead td {
-	border: 1px solid ;
-	color: #000;
-}
-
-.bom-table-bus thead td {
-	background-color: #F26A4C;
+	background-color: #f26a4c;
 	color: #fff;
 	padding: 6px;
 }
@@ -48,9 +48,9 @@ table.bom-table-bus tr td button {
 	border-radius: 10px;
 	border: 1px solid #ff5151;
 }
-.bom-table-bus tbody tr{
- cursor: pointer;
+.bom-table-bus tbody tr {
+	cursor: pointer;
 }
-.bom-table-bus tbody tr:hover{
-	background-color: #F2CAC2;
+.bom-table-bus tbody tr:hover {
+	background-color: #f2cac2;
 }

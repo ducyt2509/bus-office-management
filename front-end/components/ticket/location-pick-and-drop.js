@@ -44,7 +44,7 @@ export default function LocationPickAndDrop(props) {
 
   addressDropOff =
     addressDropOff && addressDropOff.length ? JSON.parse(addressDropOff) : addressDropOff;
-  console.log(props.transportData.number_seat_selected);
+
   const locationPickupHTML = location_pickup
     ? location_pickup.map((location, index) => {
         return (

@@ -15,35 +15,39 @@ export default function ListLocationOnBusSchedule(props) {
       page = typeof page == 'number' ? page - 1 : 1;
       const offset = limit * (page - 1);
       const token = `Bearer ${props.state.dataUser.token}`;
-      const route = await axios.post(
-        `http://localhost:${props.BACK_END_PORT}/route/route-by-id`,
-        {
-          id: props.route,
-        },
-        {
-          headers: {
-            token: token,
+      try {
+        const route = await props.axiosJWT.post(
+          `http://localhost:${props.BACK_END_PORT}/route/route-by-id`,
+          {
+            id: props.route,
           },
-        }
-      );
-      const getListLocation = await axios.post(
-        `http://localhost:${props.BACK_END_PORT}/location/list-location`,
-        {
-          offset: offset,
-          limit: limit,
-          route: route.data?.data?.route,
-          query_search: value != undefined ? value : querySearch,
-        },
-        {
-          headers: {
-            token: token,
-          },
-        }
-      );
-      if (getListLocation.data.statusCode === 200) {
-        setListLocation(
-          getListLocation.data.data.listLocation.filter((location) => location.city_id)
+          {
+            headers: {
+              token: token,
+            },
+          }
         );
+        const getListLocation = await props.axiosJWT.post(
+          `http://localhost:${props.BACK_END_PORT}/location/list-location`,
+          {
+            offset: offset,
+            limit: limit,
+            route: route.data?.data?.route,
+            query_search: value != undefined ? value : querySearch,
+          },
+          {
+            headers: {
+              token: token,
+            },
+          }
+        );
+        if (getListLocation.data.statusCode === 200) {
+          setListLocation(
+            getListLocation.data.data.listLocation.filter((location) => location.city_id)
+          );
+        }
+      } catch (err) {
+        console.log(err);
       }
     },
     [props.state, querySearch, props.route]
@@ -57,6 +61,7 @@ export default function ListLocationOnBusSchedule(props) {
       handleGetListLocation(null, null, value);
     }
   });
+  
   const handleSelectLocation = useCallback(
     (id, value, address) => {
       let oldError = { ...props.error };
@@ -93,7 +98,7 @@ export default function ListLocationOnBusSchedule(props) {
     },
     [props.id, props.error]
   );
-  console.log(props.id, listLocation);
+
   const ListLocationHTML = listLocation.map((location) => {
     return (
       <li
@@ -103,10 +108,12 @@ export default function ListLocationOnBusSchedule(props) {
       </li>
     );
   });
+
   const handleOpenSelect = () => {
     const wrapper = document.querySelector(`.bom-bus-schedule-detail .wrapper.wrapper${props.id}`);
     wrapper.classList.toggle('active');
   };
+
   useEffect(() => {
     if (props.route) {
       handleGetListLocation();
@@ -122,6 +129,7 @@ export default function ListLocationOnBusSchedule(props) {
       setLocationName('');
     }
   }, [props.data, props.data, props.location]);
+
   return (
     <div className={`wrapper wrapper${props.id}`}>
       <div

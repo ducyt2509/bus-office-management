@@ -14,21 +14,25 @@ export default function ListBusOnBusSchedule(props) {
       page = typeof page == 'number' ? page - 1 : 0;
       const offset = limit * (page - 1);
       const token = `Bearer ${props.state.dataUser.token}`;
-      const getListBus = await axios.post(
-        `http://localhost:${props.BACK_END_PORT}/bus/list-bus`,
-        {
-          offset: offset,
-          limit: limit,
-          query_search: value != undefined ? value : querySearch,
-        },
-        {
-          headers: {
-            token: token,
+      try {
+        const getListBus = await props.axiosJWT.post(
+          `http://localhost:${props.BACK_END_PORT}/bus/list-bus`,
+          {
+            offset: offset,
+            limit: limit,
+            query_search: value != undefined ? value : querySearch,
           },
+          {
+            headers: {
+              token: token,
+            },
+          }
+        );
+        if (getListBus.data.statusCode === 200) {
+          setListBus(getListBus.data.data.list_bus);
         }
-      );
-      if (getListBus.data.statusCode === 200) {
-        setListBus(getListBus.data.data.list_bus);
+      } catch (err) {
+        console.log(err);
       }
     },
     [props.state, querySearch]
@@ -54,15 +58,18 @@ export default function ListBusOnBusSchedule(props) {
     const wrapper = document.querySelector('.bom-bus-schedule-detail .wrapper.wrapper2');
     wrapper.classList.toggle('active');
   };
+
   useEffect(() => {
     handleGetListBus();
   }, []);
+  
   useEffect(() => {
     const filterList = listBus.filter((bus) => {
       return bus.id == props.bus;
     });
     setBusPlate(filterList[0]?.vehicle_plate);
   }, [listBus, props.bus]);
+  
   return (
     <div className="wrapper wrapper2">
       <div className="select-btn" onClick={handleOpenSelect}>

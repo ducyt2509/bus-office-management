@@ -65,9 +65,11 @@ export default function ManagementBusSchedule(props) {
       query: { id: id, method: 'Refresh' },
     });
   });
+
   useEffect(() => {
     handleGetListBusSchedule();
   }, []);
+  
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
       <Flex
@@ -104,6 +106,7 @@ export default function ManagementBusSchedule(props) {
               handleGetListBusSchedule={handleGetListBusSchedule}
               port={props.BACK_END_PORT}
               handleGetBusScheduleInformation={handleGetBusScheduleInformation}
+              axiosJWT={axiosJWT}
             />
             <Pagination
               list_number={numberBusSchedule}

@@ -41,6 +41,7 @@ export default function ListLocationBusSchedule(props) {
           );
         })
       : null;
+
   const deleteLocationBusSchedule = useCallback(
     (index) => {
       const oldListLocation = [...props.listLocation];
@@ -53,6 +54,7 @@ export default function ListLocationBusSchedule(props) {
     },
     [props.listLocation]
   );
+
   const handleDisplayAddLocation = () => {
     const selector = document.querySelector(
       `.bom-add-location-pickup.bom-add-location-pickup${props.id}`
@@ -108,6 +110,7 @@ export default function ListLocationBusSchedule(props) {
       props.setListAddress(JSON.parse(filterList[0]?.bus_location_address));
     }
   }, [props.list, props.data]);
+
   return (
     <div>
       <div
@@ -125,12 +128,13 @@ export default function ListLocationBusSchedule(props) {
               location={location}
               setLocation={setLocation}
               address={address}
-			  route={props.route}
+              route={props.route}
               setAddress={setAddress}
               id={props.id}
               type={'pickup/drop'}
               error={error}
               setError={setError}
+              axiosJWT={props.axiosJWT}
             />
           </FormControl>
           <FormControl isInvalid={error.time} w="97%" margin={'0 3%'}>

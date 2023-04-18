@@ -46,7 +46,19 @@ module.exports = {
       },
       {
         location_name: 'Văn Phòng Nam Định',
-        address: '272 Trần Hưng Đạo, Bà Triệu, TP. Nam Định, Nam Định',
+        address: '272 Trần Hưng Đạo, Bà Triệu, TP. Nam Định',
+        city_id: 14,
+      },
+
+      {
+        location_name: 'Văn Phòng Lê Hồng Phong',
+        address: '76 Vị Xuyên, phường Vị Xuyên, Tp. Nam Định',
+        city_id: 14,
+      },
+
+      {
+        location_name: 'Văn Phòng Nghĩa Hưng',
+        address: 'Liễu Đề, Nghĩa Hưng, Nam Định',
         city_id: 14,
       },
       {

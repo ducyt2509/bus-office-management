@@ -15,10 +15,11 @@ export default function DriverPage(props) {
   const [departureDate, setDepartureDate] = useState(new Date().toISOString().split('T')[0]);
 
   const getBusScheduleList = useCallback(async (date) => {
+    const user_id = window.localStorage.getItem("user_id")
     const listBusSchedule = await axios.post(
       `http://localhost:${props.port}/bus-schedule/list-bus-schedule-driver`,
       {
-        user_id: 10,
+        user_id: user_id,
         departure_date: date,
       },
       {
