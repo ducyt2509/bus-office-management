@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useStore } from '@/src/store';
+import { actions, useStore } from '@/src/store';
 import { useEffect, useState } from 'react';
 import {
   Flex,
@@ -17,6 +17,7 @@ import { MdOutlineLocationCity } from 'react-icons/md';
 import { IoIosArrowBack } from 'react-icons/io';
 import { VscPerson } from 'react-icons/vsc';
 import Link from 'next/link';
+import Cookies from 'js-cookie';
 
 export default function Employee(props) {
   const [state, dispatch, axiosJWT] = useStore();
@@ -45,6 +46,8 @@ export default function Employee(props) {
     });
 
   useEffect(() => {
+    const userDate = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userDate)));
     getOfficeDetail();
   }, []);
 

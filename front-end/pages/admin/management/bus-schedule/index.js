@@ -3,9 +3,10 @@ import axios from 'axios';
 import ActionBar from '@/components/bus-schedule/ActionBar';
 import ListBusSchedule from '@/components/bus-schedule/ListBusSchedule';
 import Pagination from '@/components/common/Pagination';
-import { useStore } from '@/src/store';
+import { actions, useStore } from '@/src/store';
 import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 
 export default function ManagementBusSchedule(props) {
   const router = useRouter();
@@ -67,9 +68,11 @@ export default function ManagementBusSchedule(props) {
   });
 
   useEffect(() => {
+    const userDate = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userDate)));
     handleGetListBusSchedule();
   }, []);
-  
+
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
       <Flex
@@ -80,7 +83,7 @@ export default function ManagementBusSchedule(props) {
         marginBottom={'2%'}
         paddingTop="2%"
       >
-        <Text marginRight="1%">Nguyễn Văn A</Text>
+        <Text marginRight="1%">{state.dataUser.user_name}</Text>
         <Image
           borderRadius="full"
           boxSize="50px"

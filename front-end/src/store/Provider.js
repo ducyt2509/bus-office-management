@@ -4,6 +4,7 @@ import reducer, { initState } from './reducer';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import { actions } from '.';
+import Cookies from 'js-cookie';
 
 export default function Provider({ children }) {
   const [state, dispatch] = useReducer(reducer, initState);
@@ -13,13 +14,15 @@ export default function Provider({ children }) {
   axiosJWT.interceptors.request.use(
     async (config) => {
       let date = new Date();
-      const decodedToken = jwtDecode(state.dataUser.token);
-      if (decodedToken.exp < date.getTime() / 1000) {
-        try {
+      const dataUser = Cookies.get('dataUser');
+      const cloneData = { ...JSON.parse(dataUser) };
+      try {
+        const decodedToken = jwtDecode(cloneData.token);
+        if (decodedToken.exp < date.getTime() / 1000) {
           const getRefreshToken = await axios.post(
             'http://localhost:5000/refresh-token',
             {
-              id: state.dataUser.id,
+              id: cloneData.id,
             },
             {
               withCredentials: true,
@@ -28,15 +31,22 @@ export default function Provider({ children }) {
           if (getRefreshToken.data.statusCode == 200) {
             dispatch(
               actions.setDataUser({
-                ...state.dataUser,
+                ...cloneData,
+                token: getRefreshToken.data.data,
+              })
+            );
+            Cookies.set(
+              'dataUser',
+              JSON.stringify({
+                ...cloneData,
                 token: getRefreshToken.data.data,
               })
             );
             config.headers['token'] = 'Bearer ' + getRefreshToken.data.data;
           }
-        } catch (error) {
-          console.log(error);
         }
+      } catch (error) {
+        console.log(error);
       }
       return config;
     },

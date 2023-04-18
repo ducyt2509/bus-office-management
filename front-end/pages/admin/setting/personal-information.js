@@ -15,8 +15,9 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useCallback, useEffect, useState, useRef } from 'react';
-import { useStore } from '@/src/store';
+import { actions, useStore } from '@/src/store';
 import { validate } from '@/helper';
+import Cookies from 'js-cookie';
 
 export default function Setting(props) {
   const toast = useToast();
@@ -137,6 +138,19 @@ export default function Setting(props) {
         }
       );
       if (updateUser.data.statusCode == 200) {
+        const userDate = Cookies.get('dataUser');
+        let cloneData = {
+          ...JSON.parse(userDate),
+          id: state.dataUser.id,
+          user_name: userName,
+          email: userEmail,
+          phone: phone,
+          role_id: userRole,
+          office_id: userOffice,
+        };
+        Cookies.set('dataUser', cloneData);
+        dispatch(actions.setDataUser(cloneData));
+
         toastIdRef.current = toast({
           title: 'Thay đổi thông tin thành công.',
           description: 'Thông tin của bạn đã được thay đổi.',
@@ -159,6 +173,8 @@ export default function Setting(props) {
   }, [userEmail, userPhone, userRole, userOffice, userName, state, error]);
 
   useEffect(() => {
+    const userDate = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userDate)));
     handleGetListOffice();
   }, []);
 

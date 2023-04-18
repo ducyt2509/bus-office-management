@@ -25,14 +25,14 @@ import { GoLocation } from 'react-icons/go';
 import { MdOutlineSwapHorizontalCircle } from 'react-icons/md';
 import { Seat12User } from '@/components/vehicle';
 import LocationPickAndDrop from '@/components/ticket/location-pick-and-drop';
-import { useStore } from '@/src/store';
+import { actions, useStore } from '@/src/store';
+import Cookies from 'js-cookie';
 
 export default function Ticket(props) {
   const toastIdRef = useRef();
   const toast = useToast();
   const [state, dispatch, axiosJWT] = useStore();
 
-  const [userNameData, setUserNameData] = useState('');
 
   const [seatInformation, setSeatInformation] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -350,9 +350,8 @@ export default function Ticket(props) {
   );
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setUserNameData(window.localStorage.getItem('user_name'));
-    }
+    const userDate = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userDate)));
     handleTotalRenewal();
   }, []);
 
@@ -636,7 +635,7 @@ export default function Ticket(props) {
         marginBottom={'2%'}
         paddingTop="2%"
       >
-        <Text marginRight="1%">{userNameData}</Text>
+        <Text marginRight="1%">{state.dataUser.user_name}</Text>
         <Image
           borderRadius="full"
           boxSize="50px"

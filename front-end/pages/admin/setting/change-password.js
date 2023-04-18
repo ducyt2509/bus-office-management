@@ -16,8 +16,9 @@ import {
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import axios from 'axios';
-import { useCallback, useRef, useState } from 'react';
-import { useStore } from '@/src/store';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { actions, useStore } from '@/src/store';
+import Cookies from 'js-cookie';
 
 export default function Setting(props) {
   const toast = useToast();
@@ -68,7 +69,6 @@ export default function Setting(props) {
     if (errorInput.password || errorInput.confirm_password) {
       return;
     }
-    // setLoading(true);
     var submitData = {
       password: password,
       user: state.dataUser?.phone,
@@ -103,8 +103,12 @@ export default function Setting(props) {
         duration: 5000,
       });
     }
-    // setLoading(false);
   }, [errorInput, password, confirmPassword, state]);
+
+  useEffect(()=>{
+    const userDate = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userDate)));
+  },[])
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
       <Flex

@@ -9,12 +9,13 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
-import { useStore } from '@/src/store';
+import { actions, useStore } from '@/src/store';
 import axios from 'axios';
 import ActionBar from '@/components/transport/ActionBar';
 import AddTransport from '@/components/transport/AddTransport';
 import ListTransport from '@/components/transport/ListTransport';
 import Pagination from '@/components/common/Pagination';
+import Cookies from 'js-cookie';
 
 export default function ManagementTransport(props) {
   const [state, dispatch, axiosJWT] = useStore();
@@ -71,6 +72,8 @@ export default function ManagementTransport(props) {
     }
   });
   useEffect(() => {
+    const userDate = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userDate)));
     handleGetListTransport();
   }, []);
   return (
