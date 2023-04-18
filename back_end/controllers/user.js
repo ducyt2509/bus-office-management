@@ -40,7 +40,7 @@ const generateAccessToken = (user) => {
 module.exports = {
   async createNewUser(req, res) {
     try {
-      const { email, password, user_name, phone, avatar, role_id } = req.body;
+      let { email, password, user_name, phone, avatar, role_id, office_id } = req.body;
       if (
         !validateHandler.validateString(email, regexHandler.regexEmail) ||
         !validateHandler.validateString(user_name, regexHandler.regexNormalString) ||
@@ -55,6 +55,29 @@ module.exports = {
         },
       });
       if (!role) return responseHandler.badRequest(res, 'Role not found');
+      const salt = await bcrypt.genSalt(10);
+      const hashPassword = bcrypt.hashSync(password, salt);
+      let newUser = {
+        email,
+        user_name,
+        phone,
+        avatar: null,
+        role_id,
+        password: hashPassword,
+        office_id,
+        refresh_access_token: null
+      };
+      if (3 == parseInt(role_id)) {
+        newUser = {
+          ...newUser,
+          office_id: null
+        }
+      } else {
+        if (
+          !validateHandler.validatePositiveIntegerNumber(parseInt(office_id))) return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+        const getOffice = await Office.findOne({ where: { id: office_id } })
+        if (!getOffice) return responseHandler.badRequest(res, "Office not found");
+      }
 
       const checkUserExist = await User.findOne({
         where: {
@@ -65,24 +88,18 @@ module.exports = {
       if (checkUserExist) {
         return responseHandler.badRequest(res, 'User is already exist');
       }
-      const salt = await bcrypt.genSalt(10);
-      const hashPassword = bcrypt.hashSync(password, salt);
-      const newUser = {
-        email,
-        user_name,
-        phone,
-        avatar,
-        role_id,
-        password: hashPassword,
-      };
+
+
+      console.log(newUser);
       const createUser = await User.create(newUser);
+      console.log("11111111111111111111", createUser)
       if (createUser) {
         return responseHandler.ok(res, 'Create user successful!');
       } else {
         return responseHandler.badRequest(res, 'Create user failed');
       }
     } catch (error) {
-      return responseHandler.error;
+      return responseHandler.badRequest(res, error.message)
     }
   },
   async requestRefreshToken(req, res) {
