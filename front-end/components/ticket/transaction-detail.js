@@ -18,14 +18,17 @@ import {
   Select,
   Button,
   Textarea,
+  useToast,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { convertTime, formatMoney, validate } from '@/helper';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { SmallCloseIcon, SmallAddIcon } from '@chakra-ui/icons';
 import { GoLocation } from 'react-icons/go';
 
 export default function TransactionDetails(props) {
+  const toastIdRef = useRef();
+  const toast = useToast();
   const [statusAddSeat, setStatusAddSeat] = useState(false);
   const [seat, setSeat] = useState([]);
   const [transactionId, setTransactionId] = useState();
@@ -144,6 +147,7 @@ export default function TransactionDetails(props) {
       } else {
         oldError.pickupLocation = false;
       }
+      setError(oldError);
       if (value != '#') {
         setLocationPickup(value);
       }
@@ -154,12 +158,14 @@ export default function TransactionDetails(props) {
 
   const handleChangeLocationDrop = useCallback(
     (value) => {
+      console.log(value);
       let oldError = { ...error };
       if (!value) {
         oldError.dropOffLocation = true;
       } else {
         oldError.dropOffLocation = false;
       }
+      setError(oldError);
       if (value != '#') {
         setLocationDropOff(value);
       }
@@ -185,37 +191,41 @@ export default function TransactionDetails(props) {
   }, [seat, addSeat, props.seatCustomerSelected]);
 
   const getTransactionById = useCallback(async () => {
-    const getTransaction = await axios.post(
-      `http://localhost:${props.port}/transaction/get-transaction-by-id`,
-      { id: props.seatInformation.id },
-      {
-        headers: { token: props.token },
-      }
-    );
-    if (getTransaction.data.statusCode == 200) {
-      let userInformation = getTransaction.data.data.transaction;
-      setSeat(userInformation.seat.split(', '));
-      setUserName(userInformation.passenger_name);
-      setUserPhone(userInformation.passenger_phone);
-      setUserEmail(userInformation.passenger_email);
-      setPrice(userInformation.ticket_price);
-      setPaymentStatus(userInformation.payment_status);
-      setNote(userInformation.note);
-      setTransactionId(userInformation.id);
+    try {
+      const getTransaction = await props.axiosJWT.post(
+        `http://localhost:${props.port}/transaction/get-transaction-by-id`,
+        { id: props.seatInformation.id },
+        {
+          headers: { token: props.token },
+        }
+      );
+      if (getTransaction.data.statusCode == 200) {
+        let userInformation = getTransaction.data.data.transaction;
+        setSeat(userInformation.seat.split(', '));
+        setUserName(userInformation.passenger_name);
+        setUserPhone(userInformation.passenger_phone);
+        setUserEmail(userInformation.passenger_email);
+        setPrice(userInformation.ticket_price);
+        setPaymentStatus(userInformation.payment_status);
+        setNote(userInformation.note);
+        setTransactionId(userInformation.id);
 
-      if (userInformation.pickup_location.includes('dọc đường')) {
-        setLocationPick('#');
-      } else {
-        setLocationPick(userInformation.pickup_location);
-      }
-      setLocationPickup(userInformation.pickup_location);
+        if (userInformation.pickup_location.includes('dọc đường')) {
+          setLocationPick('#');
+        } else {
+          setLocationPick(userInformation.pickup_location);
+        }
+        setLocationPickup(userInformation.pickup_location);
 
-      if (userInformation.drop_off_location.includes('dọc đường')) {
-        setLocationDrop('#');
-      } else {
-        setLocationDrop(userInformation.drop_off_location);
+        if (userInformation.drop_off_location.includes('dọc đường')) {
+          setLocationDrop('#');
+        } else {
+          setLocationDrop(userInformation.drop_off_location);
+        }
+        setLocationDropOff(userInformation.drop_off_location);
       }
-      setLocationDropOff(userInformation.drop_off_location);
+    } catch (err) {
+      console.log(err);
     }
   }, [props.data, props.seatInformation]);
 
@@ -225,7 +235,7 @@ export default function TransactionDetails(props) {
       if (!userName) {
         cloneError.userName = true;
       }
-      if (!userEmail) {
+      if (userEmail && !userEmail.match(validate.email)) {
         cloneError.userEmail = true;
       }
       if (!userPhone) {
@@ -296,6 +306,7 @@ export default function TransactionDetails(props) {
             if (status == 'hủy vé') {
               if (seat.length > 1) {
                 s.seat = cloneSeat.join(', ');
+                s.ticket_price = cloneSeat.length * props.scheduleData.price;
               } else {
                 s.payment_status = 3;
               }
@@ -306,6 +317,7 @@ export default function TransactionDetails(props) {
         if (status == 'hủy vé') {
           if (seat.length > 1) {
             submitData.seat = cloneSeat.join(', ');
+            submitData.ticket_price = cloneSeat.length * props.scheduleData.price;
           } else {
             submitData = {
               id: transactionId,
@@ -316,19 +328,37 @@ export default function TransactionDetails(props) {
         cloneData.number_seat_selected = cloneData.number_seat_selected.filter(
           (e) => e.payment_status != 3
         );
-
-        const updateTransactionById = await axios.put(
-          `http://localhost:${props.port}/transaction/update-transaction`,
-          submitData,
-          {
-            headers: { token: props.token },
+        console.log(2222);
+        try {
+          const updateTransactionById = await props.axiosJWT.put(
+            `http://localhost:${props.port}/transaction/update-transaction`,
+            submitData,
+            {
+              headers: { token: props.token },
+            }
+          );
+          if (updateTransactionById.data.statusCode == 200) {
+            toastIdRef.current = toast({
+              title: 'Thông tin khách hàng đã được cập nhật',
+              description: 'Chúng tôi đã cập nhật thông tin khách hàng cho bạn.',
+              status: 'success',
+              isClosable: true,
+              position: 'top',
+              duration: 2000,
+            });
+            props.setSeatCustomerSelected(cloneSeatCustomerSelected);
+            props.setData(cloneData);
+            props.onClose();
           }
-        );
-        if (updateTransactionById.data.statusCode == 200) {
-          props.setSeatCustomerSelected(cloneSeatCustomerSelected);
-          props.setData(cloneData);
-          props.onClose();
-        } else {
+        } catch (err) {
+          toastIdRef.current = toast({
+            title: 'Thông tin khách hàng chưa được cập nhật',
+            description: 'Có lỗi xảy ra khi cập nhật thông tin khách hàng. Vui lòng thử lại',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
         }
       } else {
         submitData.ticket_price = props.scheduleData.price * seat.length;
@@ -343,16 +373,35 @@ export default function TransactionDetails(props) {
           convertTime(props.scheduleData.time_from, 0) +
           '-' +
           convertTime(props.scheduleData.time_from, props.scheduleData.travel_time);
-        const createTransactionById = await axios.post(
-          `http://localhost:${props.port}/transaction/create-payment`,
-          submitData
-        );
-        if (createTransactionById.data.statusCode == 200) {
-          cloneData.number_seat_selected.push(createTransactionById.data.data);
-          props.setData(cloneData);
-          props.setSeatCustomerSelected(cloneSeatCustomerSelected);
-          props.onClose();
-        } else {
+        try {
+          const createTransactionById = await props.axiosJWT.post(
+            `http://localhost:${props.port}/transaction/create-payment`,
+            submitData
+          );
+          if (createTransactionById.data.statusCode == 200) {
+            cloneData.number_seat_selected.push(createTransactionById.data.data);
+            props.setData(cloneData);
+            props.setSeatCustomerSelected(cloneSeatCustomerSelected);
+            props.onClose();
+            toastIdRef.current = toast({
+              title: 'Tạo thông tin khách hàng thành công',
+              description: 'Chúng tôi đã thêm thông tin khách hàng cho bạn.',
+              status: 'success',
+              isClosable: true,
+              position: 'top',
+              duration: 2000,
+            });
+          }
+        } catch (err) {
+          console.log(err);
+          toastIdRef.current = toast({
+            title: 'Tạo thông tin khách hàng thất bại',
+            description: 'Có lỗi xảy ra. Vui lòng thử lại',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
         }
       }
     },
@@ -498,6 +547,10 @@ export default function TransactionDetails(props) {
         setPrice(props.scheduleData.price);
         setPaymentStatus(0);
         setTransactionId(0);
+        setLocationDrop(0);
+        setLocationPick(0);
+        setLocationDropOff('');
+        setLocationPickup('');
       } else {
         getTransactionById();
       }
@@ -650,9 +703,7 @@ export default function TransactionDetails(props) {
                     Điểm đón:
                   </FormLabel>
                 </Flex>
-                <FormErrorMessage justifyContent={'flex-end'}>
-                  Điểm đón là bắt buộc
-                </FormErrorMessage>
+                <FormErrorMessage>Điểm đón là bắt buộc</FormErrorMessage>
                 <>
                   <RadioGroup
                     value={locationPick}
@@ -687,9 +738,7 @@ export default function TransactionDetails(props) {
                     Điểm trả:
                   </FormLabel>
                 </Flex>
-                <FormErrorMessage justifyContent={'flex-end'}>
-                  Điểm trả là bắt buộc
-                </FormErrorMessage>
+                <FormErrorMessage>Điểm trả là bắt buộc</FormErrorMessage>
                 <RadioGroup
                   value={locationDrop}
                   onChange={(e) => handleChangeLocationDrop(e)}
@@ -749,7 +798,7 @@ export default function TransactionDetails(props) {
                 fontSize={'18px'}
               >
                 <Text>Tổng tiền:</Text>
-                <Text>{formatMoney(price * seat.length)}</Text>
+                <Text>{formatMoney(props.scheduleData.price * seat.length)}</Text>
               </Flex>
               <Flex justifyContent={'space-between'}>
                 <Flex>

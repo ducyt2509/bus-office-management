@@ -13,24 +13,26 @@ export default function ListLocation(props) {
     props.onOpen();
   };
   const handleDeleteLocation = async (locationId) => {
-    const deleteLocation = await axios.post(
-      `http://localhost:${props.port}/location/delete-location`,
-      { id: locationId },
-      {
-        headers: { token: props.token },
+    try {
+      const deleteLocation = await props.axiosJWT.post(
+        `http://localhost:${props.port}/location/delete-location`,
+        { id: locationId },
+        {
+          headers: { token: props.token },
+        }
+      );
+      if (deleteLocation.data.statusCode == 200) {
+        toastIdRef.current = toast({
+          title: 'Điểm đón trả đã được xoá.',
+          description: 'Chúng tôi đã xoá điểm đón trả cho bạn',
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+        props.handleGetListLocation();
       }
-    );
-    if (deleteLocation.data.statusCode == 200) {
-      toastIdRef.current = toast({
-        title: 'Điểm đón trả đã được xoá.',
-        description: 'Chúng tôi đã xoá điểm đón trả cho bạn',
-        status: 'success',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
-      props.handleGetListLocation();
-    } else {
+    } catch (error) {
       toastIdRef.current = toast({
         title: 'Điểm đón trả không thể xoá',
         description: 'Xảy ra lỗi khi xoá điểm đón trả. Làm ơn hãy thử lại.',

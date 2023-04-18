@@ -1,6 +1,5 @@
 const db = require('../models');
 const crypto = require('crypto');
-const cypherKey = crypto.randomBytes(64);
 
 const User = db.users;
 const Role = db.roles;
@@ -15,6 +14,7 @@ const responseHandler = require('../handlers/response.handler');
 const regexHandler = require('../handlers/regex.handler');
 const validateHandler = require('../handlers/validate.handler');
 const messageHandler = require('../handlers/message.handler');
+
 const generateRefreshToken = (user) => {
   return jwt.sign(
     {
@@ -22,7 +22,7 @@ const generateRefreshToken = (user) => {
       role_id: user.role_id,
     },
     process.env.JWT_REFRESH_SECRET_TOKEN,
-    { expiresIn: '2h' }
+    { expiresIn: '8h' }
   );
 };
 const generateAccessToken = (user) => {
@@ -32,14 +32,14 @@ const generateAccessToken = (user) => {
       role_id: user.role_id,
     },
     process.env.JWT_SECRET_TOKEN,
-    { expiresIn: '1d' }
+    { expiresIn: '30m' }
   );
 };
 
 module.exports = {
   async createNewUser(req, res) {
     try {
-      const { email, password, user_name, phone, avatar, role_id } = req.body;
+      let { email, password, user_name, phone, avatar, role_id, office_id } = req.body;
       if (
         !validateHandler.validateString(email, regexHandler.regexEmail) ||
         !validateHandler.validateString(user_name, regexHandler.regexNormalString) ||
@@ -54,6 +54,29 @@ module.exports = {
         },
       });
       if (!role) return responseHandler.badRequest(res, 'Role not found');
+      const salt = await bcrypt.genSalt(10);
+      const hashPassword = bcrypt.hashSync(password, salt);
+      let newUser = {
+        email,
+        user_name,
+        phone,
+        avatar: null,
+        role_id,
+        password: hashPassword,
+        office_id,
+        refresh_access_token: null,
+      };
+      if (3 == parseInt(role_id)) {
+        newUser = {
+          ...newUser,
+          office_id: null,
+        };
+      } else {
+        if (!validateHandler.validatePositiveIntegerNumber(parseInt(office_id)))
+          return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+        const getOffice = await Office.findOne({ where: { id: office_id } });
+        if (!getOffice) return responseHandler.badRequest(res, 'Office not found');
+      }
 
       const checkUserExist = await User.findOne({
         where: {
@@ -64,53 +87,54 @@ module.exports = {
       if (checkUserExist) {
         return responseHandler.badRequest(res, 'User is already exist');
       }
-      const salt = await bcrypt.genSalt(10);
-      const hashPassword = bcrypt.hashSync(password, salt);
-      const newUser = {
-        email,
-        user_name,
-        phone,
-        avatar,
-        role_id,
-        password: hashPassword,
-      };
+
+      console.log(newUser);
       const createUser = await User.create(newUser);
+      console.log('11111111111111111111', createUser);
       if (createUser) {
         return responseHandler.ok(res, 'Create user successful!');
       } else {
         return responseHandler.badRequest(res, 'Create user failed');
       }
     } catch (error) {
-      return responseHandler.error;
+      return responseHandler.badRequest(res, error.message);
     }
   },
   async requestRefreshToken(req, res) {
-    const refreshAccessToken = req.cookie.refreshAccessToken;
+    const refreshAccessToken = req.cookies.refreshAccessToken;
     if (!refreshAccessToken) {
       return responseHandler.unauthorized(res);
     } else {
       try {
         const getUser = await User.findOne({
           where: {
-            email: req.body?.email,
+            id: req.body?.id,
           },
         });
-        if (getUser) {
-          jwt.verify(refreshAccessToken, process.env.JWT_REFRESH_SECRET_TOKEN, (error, user) => {
-            if (error) {
-              return responseHandler.badRequest(res, error.message);
-            } else {
-              const newAccessToken = generateAccessToken(user);
-              const newRefreshAccessToken = generateRefreshToken(user);
-              res.cookie('refreshAccessToken', newRefreshAccessToken, {
-                httpOnly: true,
-                path: '/',
-                sameSite: 'strict',
-                secure: false,
-              });
-              return responseHandler.responseWithData(res, 200, newAccessToken);
+        console.log(getUser.refresh_access_token);
+        if (getUser && getUser.refresh_access_token == refreshAccessToken) {
+          jwt.verify(
+            refreshAccessToken,
+            process.env.JWT_REFRESH_SECRET_TOKEN,
+            async (error, user) => {
+              if (error) {
+                return responseHandler.badRequest(res, error.message);
+              } else {
+                const newAccessToken = generateAccessToken(user);
+                const newRefreshAccessToken = generateRefreshToken(user);
+                await User.update(
+                  { refresh_access_token: newRefreshAccessToken },
+                  { where: { id: req.body?.id } }
+                );
+                res.cookie('refreshAccessToken', newRefreshAccessToken, {
+                  httpOnly: true,
+                  sameSite: 'strict',
+                  secure: false,
+                });
+                return responseHandler.responseWithData(res, 200, newAccessToken);
+              }
             }
-          });
+          );
         } else {
           return responseHandler.unauthorized(res);
         }
@@ -126,7 +150,7 @@ module.exports = {
       const password = params.password;
       if (
         !validateHandler.validateString(user, regexHandler.regexPhoneNumberOrEmail) ||
-        // password not in range [8-15] characters
+        // password not in range [8+] characters
         !validateHandler.validateString(password, regexHandler.regexPassword)
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
@@ -290,8 +314,8 @@ module.exports = {
       role_id = role_id ? role_id : 0;
 
       if (
-        !validateHandler.validatePositiveIntegerNumber(limit) ||
-        !validateHandler.validatePositiveIntegerNumber(offset)
+        !validateHandler.validatePositiveIntegerNumber(parseInt(limit)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(offset))
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
@@ -377,7 +401,7 @@ module.exports = {
   async getUserInformation(req, res) {
     try {
       const { id } = req.body;
-      if (!validateHandler.validatePositiveIntegerNumber(id))
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id)))
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const getUserById = await User.findOne({
@@ -405,34 +429,46 @@ module.exports = {
   },
   async updateInformationUser(req, res) {
     try {
-      let { email, password, user_name, phone, avatar, role_id, id } = req.body;
-      if (
+      let { email, password, user_name, phone, role_id, id } = req.body;
+
+      let condition =
         !validateHandler.validateString(email, regexHandler.regexEmail) ||
         !validateHandler.validateString(user_name, regexHandler.regexNormalString) ||
         !validateHandler.validateString(phone, regexHandler.regexPhoneNumber) ||
         !validateHandler.validateString(password, regexHandler.regexPassword) ||
-        !validateHandler.validatePositiveIntegerNumber(role_id)
-        // || !validateHandler.validateString(avatar, regexHandler.regexAvatar)
-      )
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+        !validateHandler.validatePositiveIntegerNumber(parseInt(role_id));
+
+      if (!password) {
+        condition =
+          !validateHandler.validateString(email, regexHandler.regexEmail) ||
+          !validateHandler.validateString(user_name, regexHandler.regexNormalString) ||
+          !validateHandler.validateString(phone, regexHandler.regexPhoneNumber) ||
+          !validateHandler.validatePositiveIntegerNumber(parseInt(role_id));
+      }
+      if (condition) return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
       const role = await Role.findOne({
         where: {
           id: role_id,
         },
       });
       if (!role) return responseHandler.badRequest(res, 'Role not found');
-      const salt = await bcrypt.genSalt(10);
-      const hashPassword = bcrypt.hashSync(password, salt);
-      password = hashPassword;
 
-      let updateUser = await User.update(
-        { email, password, user_name, phone, role_id },
-        {
-          where: {
-            id: id,
-          },
-        }
-      );
+      let hashPassword = '';
+      let element = { email, password, user_name, phone, role_id };
+
+      if (password) {
+        const salt = await bcrypt.genSalt(10);
+        hashPassword = bcrypt.hashSync(password, salt);
+        password = hashPassword;
+      } else {
+        delete element.password;
+      }
+
+      let updateUser = await User.update(element, {
+        where: {
+          id: id,
+        },
+      });
       if (updateUser) {
         return responseHandler.ok(res, 'Update user successful!');
       } else {
@@ -446,7 +482,7 @@ module.exports = {
     try {
       const params = req.body;
       const id = params.id;
-      if (!validateHandler.validateIntegerNumber(id))
+      if (!validateHandler.validateIntegerNumber(parseInt(id)))
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const deleteUser = await User.destroy({

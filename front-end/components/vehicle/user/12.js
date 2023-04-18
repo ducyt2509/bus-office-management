@@ -21,6 +21,8 @@ export default function Seat12User(props) {
       onClose={props.onClose}
       seatInformation={props.seatInformation}
       departureDay={props.departureDay}
+      axiosJWT={props.axiosJWT}
+      token={props.token}
     />
   );
   const seatHTML = (id) => {
@@ -35,9 +37,7 @@ export default function Seat12User(props) {
     let numberSeat = props.data.number_seat_selected[position]?.seat
       ? props.data.number_seat_selected[position]?.seat.split(', ').length
       : 1;
-    let priceText = formatMoney(
-      props.data.number_seat_selected[position]?.ticket_price / numberSeat
-    );
+    let priceText = formatMoney(props.scheduleData.price);
     let paymentStatus =
       props.data.number_seat_selected[position]?.payment_status == 0
         ? 'Chưa thanh toán'

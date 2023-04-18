@@ -54,10 +54,6 @@ const validateString = (str, regex) => {
 
 
 const validateDate = (dateString) => {
-    // Check if dateString is not empty
-    if (!dateString || dateString.trim().length === 0) {
-        return false;
-    }
     // Check if dateString can be converted to a Date object
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {

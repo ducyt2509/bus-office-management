@@ -37,12 +37,12 @@ module.exports = {
       const querySearch = !query_search ? '' : query_search.toString().trim();
 
       if (
-        !validateHandler.validatePositiveIntegerNumber(limit) ||
-        !validateHandler.validatePositiveIntegerNumber(offset)
+        !validateHandler.validatePositiveIntegerNumber(parseInt(limit)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(offset))
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
-      const querySQL = `SELECT t.id  , t.bus_id, t.bus_schedule_id ,vehicle_plate , bs.route_id , bs.time_from , t.departure_date , r.city_from_id , r.city_to_id , c.city_name as 'departure_city' , cc.city_name as 'arrive_city' FROM bom.transport t 
+      const querySQL = `SELECT t.id  , t.bus_id, t.bus_schedule_id ,vehicle_plate , bs.route_id , bs.time_from , bs.travel_time, t.departure_date , r.city_from_id , r.city_to_id , c.city_name as 'departure_city' , cc.city_name as 'arrive_city' FROM bom.transport t 
             join bus_schedule bs on bs.id = t.bus_schedule_id
             join  bus b on b.id = t.bus_id
             join route r  on bs.route_id = r.id
@@ -75,8 +75,8 @@ module.exports = {
     try {
       const { bus_schedule_id, bus_id, departure_date } = req.body;
       if (
-        !validateHandler.validatePositiveIntegerNumber(bus_schedule_id) ||
-        !validateHandler.validatePositiveIntegerNumber(bus_id) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(bus_schedule_id)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(bus_id)) ||
         !validateHandler.validateDate(departure_date)
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
@@ -102,7 +102,7 @@ module.exports = {
   async deleteTransport(req, res) {
     try {
       const { id } = req.body;
-      if (!validateHandler.validatePositiveIntegerNumber(id))
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id)))
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const deleteTransport = await Transport.destroy({
@@ -124,9 +124,9 @@ module.exports = {
       const { id, bus_schedule_id, bus_id, departure_date } = req.body;
 
       if (
-        !validateHandler.validatePositiveIntegerNumber(id) ||
-        !validateHandler.validatePositiveIntegerNumber(bus_schedule_id) ||
-        !validateHandler.validatePositiveIntegerNumber(bus_id) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(id)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(bus_schedule_id)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(bus_id)) ||
         !validateHandler.validateDate(departure_date)
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);

@@ -48,8 +48,6 @@ var DateDiff = {
 const checkRenewal = (date, timeExpire) => {
   const current = new Date();
   const expireDate = new Date(date);
-
-  // convert time to milliseconds
   const renewalDate = expireDate.getTime() - (timeExpire / 2) * 24 * 60 * 60 * 1000;
   if (current.getTime() >= renewalDate) {
     return true;
@@ -291,13 +289,16 @@ module.exports = {
     const querySearch = !params.query_search ? '' : params.query_search;
 
     try {
+      const currentDate = validateHandler.validateDate(new Date());
+      console.log(currentDate)
       const querySQL = `select bs.id ,bs.route_id, departure_location_id , arrive_location_id , price , time_from , travel_time , effective_date , refresh_date , bus_schedule_status , bus_schedule_expire , city_from_id , city_to_id 
 			from bus_schedule bs
 			join route r on bs.route_id = r.id 
 			join city c on r.city_from_id = c.id
 			join city cc on r.city_to_id = cc.id
-       		where (c.city_name like '%${querySearch}%') 
-            or (cc.city_name like '%${querySearch}%') 
+       where ( (c.city_name like '%%') 
+            or (cc.city_name like '%%') )
+			 and refresh_date >= "${currentDate}"
             limit ${limit} offset ${offset}
 `;
       const queryCount = `select count(*) from bus_schedule bs
@@ -368,11 +369,9 @@ module.exports = {
       if (listBusSchedule) {
         for (let i = 0; i < listBusSchedule.length; i++) {
           const numberSeatSQL = `select count(*) from transaction t 
-          join transport ts on t.transport_id = ts.id where ts.id = ${
-            listBusSchedule[i].transport_id
-          } and t.date_detail like "%${
-            listBusSchedule[i].departure_date.toISOString().split('T')[0]
-          }%" and t.payment_status != 3`;
+          join transport ts on t.transport_id = ts.id where ts.id = ${listBusSchedule[i].transport_id
+            } and t.date_detail like "%${listBusSchedule[i].departure_date.toISOString().split('T')[0]
+            }%" and t.payment_status != 3`;
           let count = await db.sequelize.query(numberSeatSQL, { type: QueryTypes.SELECT });
           if (count) {
             listBusSchedule[i].number_seat_sold = count[0]['count(*)'];
@@ -472,10 +471,11 @@ module.exports = {
   async checkRenewalBusSchedule(req, res) {
     try {
       const currentDate = validateHandler.validateDate(new Date().toDateString());
-      const queryGetBusScheduleList = `select * from bus_schedule where refresh_date >=  ${currentDate} and bus_schedule_status = 1  `;
+      const queryGetBusScheduleList = `select * from bus_schedule where refresh_date >=  "${currentDate}" and bus_schedule_status = 1  `;
       const busScheduleList = await db.sequelize.query(queryGetBusScheduleList, {
         type: QueryTypes.SELECT,
       });
+      console.log(busScheduleList)
       let renewalList = [];
 
       for (let index = 0; index < busScheduleList.length; index++) {
@@ -485,9 +485,8 @@ module.exports = {
         );
         const query = `SELECT * FROM bus_schedule
 							WHERE route_id = ${busScheduleList[index].route_id} and departure_location_id = ${busScheduleList[index].departure_location_id} and arrive_location_id = ${busScheduleList[index].arrive_location_id}  
-							and price = ${busScheduleList[index].price} and time_from = ${busScheduleList[index].time_from} and  travel_time = ${busScheduleList[index].travel_time}
-							and schedule_frequency = ${busScheduleList[index].schedule_frequency} and bus_schedule_expire = ${busScheduleList[index].bus_schedule_expire}
-							and effective_date = '${formatDate}'
+						  and time_from = ${busScheduleList[index].time_from} and travel_time = ${busScheduleList[index].travel_time}
+							and schedule_frequency = ${busScheduleList[index].schedule_frequency}
 							order by refresh_date desc limit 1 `;
         const getBs = await db.sequelize.query(query, { type: QueryTypes.SELECT });
 
@@ -498,7 +497,7 @@ module.exports = {
           renewalList.push(getBs[0]);
         }
       }
-
+      console.log(renewalList)
       renewalList = removeDuplicates(renewalList);
       return responseHandler.responseWithData(res, 200, {
         totalBSNeedRenewal: renewalList.length,

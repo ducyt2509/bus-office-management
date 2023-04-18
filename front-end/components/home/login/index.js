@@ -148,7 +148,10 @@ export default function Login(props) {
       try {
         const loginAccount = await axios.post(
           `http://localhost:${props.BACK_END_PORT}/login`,
-          submitData
+          submitData,
+          {
+            withCredentials: true,
+          }
         );
         if (loginAccount.data.statusCode === 200) {
           dispatch(

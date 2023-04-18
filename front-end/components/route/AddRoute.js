@@ -81,25 +81,27 @@ export default function AddRoute(props) {
     };
     if (props.routeId) {
       submitData.id = props.routeId;
-      const updateRoute = await axios.put(
-        `http://localhost:${props.port}/route/update-route`,
-        submitData,
-        {
-          headers: { token: props.token },
+      try {
+        const updateRoute = await props.axiosJWT.put(
+          `http://localhost:${props.port}/route/update-route`,
+          submitData,
+          {
+            headers: { token: props.token },
+          }
+        );
+        if (updateRoute.data.statusCode == 200) {
+          toastIdRef.current = toast({
+            title: 'Thông tin tuyến đường đã được cập nhật.',
+            description: 'Chúng tôi đã cập nhật thông tin tuyến đường cho bạn.',
+            status: 'success',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+          props.handleGetListRoute();
+          props.onClose();
         }
-      );
-      if (updateRoute.data.statusCode == 200) {
-        toastIdRef.current = toast({
-          title: 'Thông tin tuyến đường đã được cập nhật.',
-          description: 'Chúng tôi đã cập nhật thông tin tuyến đường cho bạn.',
-          status: 'success',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
-        props.handleGetListRoute();
-        props.onClose();
-      } else {
+      } catch (error) {
         toastIdRef.current = toast({
           title: 'Thông tin tuyến đường không thể cập nhật.',
           description: 'Xảy ra lỗi khi cập nhật thông tin tuyến đường. Làm ơn hãy thử lại.',
@@ -110,25 +112,27 @@ export default function AddRoute(props) {
         });
       }
     } else {
-      const addRoute = await axios.post(
-        `http://localhost:${props.port}/route/add-route`,
-        submitData,
-        {
-          headers: { token: props.token },
+      try {
+        const addRoute = await props.axiosJWT.post(
+          `http://localhost:${props.port}/route/add-route`,
+          submitData,
+          {
+            headers: { token: props.token },
+          }
+        );
+        if (addRoute.data.statusCode == 200) {
+          toastIdRef.current = toast({
+            title: 'Thông tin tuyến đường đã được thêm.',
+            description: 'Chúng tôi đã thêm thông tin tuyến đường cho bạn.',
+            status: 'success',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+          props.handleGetListRoute();
+          props.onClose();
         }
-      );
-      if (addRoute.data.statusCode == 200) {
-        toastIdRef.current = toast({
-          title: 'Thông tin tuyến đường đã được thêm.',
-          description: 'Chúng tôi đã thêm thông tin tuyến đường cho bạn.',
-          status: 'success',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
-        props.handleGetListRoute();
-        props.onClose();
-      } else {
+      } catch (error) {
         toastIdRef.current = toast({
           title: 'Không thể thêm mới thông tin tuyến đường.',
           description: 'Xảy ra lỗi khi thêm thông tin tuyến đường. Làm ơn hãy thử lại.',

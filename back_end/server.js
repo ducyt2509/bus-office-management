@@ -13,8 +13,8 @@ const corsOptions = {
   optionSuccessStatus: 200,
 };
 
-app.use(cors(corsOptions));
 app.use(cookieParser());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // app.use(permission.checkRole);
@@ -51,4 +51,4 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}. Entry at "http://localhost:${PORT}"`);
 });
 
-module.exports = app
+module.exports = app;

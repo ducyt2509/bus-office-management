@@ -33,7 +33,7 @@ import Pagination from '@/components/common/Pagination';
 
 export default function RevenueReport(props) {
   const [report, setReport] = useState('1');
-  const [state, dispath] = useStore();
+  const [state, dispatch, axiosJWT] = useStore();
 
   const [listRevenue, setListRevenue] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,10 +46,10 @@ export default function RevenueReport(props) {
 
   const handleChangeReport = useCallback((value) => {
     setReport(value);
-    getListRevenue('', 1, 7, value);
+    handleListRevenue('', 1, 7, value);
   });
 
-  const getListRevenue = useCallback(
+  const handleListRevenue = useCallback(
     async (type, page, limit, value) => {
       const token = `Bearer ${state.dataUser.token}`;
       limit = limit ? limit : 7;
@@ -58,32 +58,35 @@ export default function RevenueReport(props) {
       if (typeof page == 'number') {
         setCurrentPage(page);
       }
-
-      const getListRevenue = await axios.post(
-        `http://localhost:${props.BACK_END_PORT}/revenue/list-revenue`,
-        {
-          offset: offset,
-          limit: limit,
-          query_search: value != undefined ? value : report,
-        },
-        {
-          headers: {
-            token: token,
+      try {
+        const getListRevenue = await axiosJWT.post(
+          `http://localhost:${props.BACK_END_PORT}/revenue/list-revenue`,
+          {
+            offset: offset,
+            limit: limit,
+            query_search: value != undefined ? value : report,
           },
+          {
+            headers: {
+              token: token,
+            },
+          }
+        );
+        if (getListRevenue.data.statusCode == 200) {
+          setListRevenue(getListRevenue.data.data.list_revenue);
+          setNumberRevenue(getListRevenue.data.data.number_revenue);
+          setRevenueData(getListRevenue.data.data.revenue_report);
+          setRevenue({
+            TotalRevenue: getListRevenue.data.data.total_revenue
+              ? getListRevenue.data.data.total_revenue
+              : 0,
+            SoldTicket: getListRevenue.data.data.count_ticket
+              ? getListRevenue.data.data.count_ticket
+              : 0,
+          });
         }
-      );
-      if (getListRevenue.data.statusCode == 200) {
-        setListRevenue(getListRevenue.data.data.list_revenue);
-        setNumberRevenue(getListRevenue.data.data.number_revenue);
-        setRevenueData(getListRevenue.data.data.revenue_report);
-        setRevenue({
-          TotalRevenue: getListRevenue.data.data.total_revenue
-            ? getListRevenue.data.data.total_revenue
-            : 0,
-          SoldTicket: getListRevenue.data.data.count_ticket
-            ? getListRevenue.data.data.count_ticket
-            : 0,
-        });
+      } catch (err) {
+        console.log(err);
       }
     },
     [report, state]
@@ -109,7 +112,7 @@ export default function RevenueReport(props) {
   };
 
   useEffect(() => {
-    getListRevenue();
+    handleListRevenue();
   }, []);
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
@@ -194,7 +197,7 @@ export default function RevenueReport(props) {
                   <ListCashier listRevenue={listRevenue} />
                   <Pagination
                     list_number={numberRevenue}
-                    handleGetList={getListRevenue}
+                    handleGetList={handleListRevenue}
                     setList={setListRevenue}
                     list={listRevenue}
                     currentPage={currentPage}
@@ -236,7 +239,7 @@ export default function RevenueReport(props) {
             <ListCashier listRevenue={listRevenue} />
             <Pagination
               list_number={numberRevenue}
-              handleGetList={getListRevenue}
+              handleGetList={handleListRevenue}
               setList={setListRevenue}
               list={listRevenue}
               currentPage={currentPage}
@@ -251,8 +254,6 @@ export async function getStaticProps() {
   return {
     props: {
       BACK_END_PORT: process.env.BACK_END_PORT,
-      // list_revenue: getListRevenue.data.data?.list_revenue,
-      // number_revenue: getListRevenue.data.data?.number_revenue,
     },
   };
 }

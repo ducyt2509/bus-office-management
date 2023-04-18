@@ -22,7 +22,7 @@ import { useStore } from '@/src/store';
 export default function Setting(props) {
   const toast = useToast();
   const toastIdRef = useRef();
-  const [state, dispath] = useStore();
+  const [state, dispatch, axiosJWT] = useStore();
   const [errorInput, setErrorInput] = useState({
     password: false,
     confirm_password: false,
@@ -78,14 +78,24 @@ export default function Setting(props) {
       },
       confirm_password: confirmPassword,
     };
-    const changePassword = await axios.put(
-      `http://localhost:${props.BACK_END_PORT}/change-password`,
-      submitData
-    );
-    if (changePassword.data.statusCode === 200) {
-    } else {
+    try {
+      const changePassword = await axiosJWT.put(
+        `http://localhost:${props.BACK_END_PORT}/change-password`,
+        submitData
+      );
+      if (changePassword.data.statusCode === 200) {
+        toastIdRef.current = toast({
+          title: 'Thay đổi mật khẩu thành công.',
+          description: 'Mật khẩu của bạn đã được thay đổi.',
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 5000,
+        });
+      }
+    } catch (err) {
       toastIdRef.current = toast({
-        title: 'Lỗi.',
+        title: 'Thay đổi mật khẩu thất bại.',
         description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
         status: 'error',
         isClosable: true,
