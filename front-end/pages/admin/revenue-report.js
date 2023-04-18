@@ -46,10 +46,10 @@ export default function RevenueReport(props) {
 
   const handleChangeReport = useCallback((value) => {
     setReport(value);
-    getListRevenue('', 1, 7, value);
+    handleListRevenue('', 1, 7, value);
   });
 
-  const getListRevenue = useCallback(
+  const handleListRevenue = useCallback(
     async (type, page, limit, value) => {
       const token = `Bearer ${state.dataUser.token}`;
       limit = limit ? limit : 7;
@@ -112,7 +112,7 @@ export default function RevenueReport(props) {
   };
 
   useEffect(() => {
-    getListRevenue();
+    handleListRevenue();
   }, []);
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
@@ -197,7 +197,7 @@ export default function RevenueReport(props) {
                   <ListCashier listRevenue={listRevenue} />
                   <Pagination
                     list_number={numberRevenue}
-                    handleGetList={getListRevenue}
+                    handleGetList={handleListRevenue}
                     setList={setListRevenue}
                     list={listRevenue}
                     currentPage={currentPage}
@@ -239,7 +239,7 @@ export default function RevenueReport(props) {
             <ListCashier listRevenue={listRevenue} />
             <Pagination
               list_number={numberRevenue}
-              handleGetList={getListRevenue}
+              handleGetList={handleListRevenue}
               setList={setListRevenue}
               list={listRevenue}
               currentPage={currentPage}
