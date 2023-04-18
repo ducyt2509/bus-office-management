@@ -1,6 +1,8 @@
-const tickets = require("../controllers").ticket;
-var router = require("express").Router();
+const middleWare = require('../middleware/permission.middleware');
 
-router.post("/revenue/list-revenue", tickets.getRevenueList);
+const tickets = require('../controllers').ticket;
+var router = require('express').Router();
+
+router.post('/revenue/list-revenue', middleWare.verifyTokenForManager, tickets.getRevenueList);
 
 module.exports = router;
