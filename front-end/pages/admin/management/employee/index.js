@@ -14,7 +14,8 @@ import ActionBar from '@/components/employee/ActionBar';
 import AddEmployee from '@/components/employee/AddEmployee';
 import ListEmployee from '@/components/employee/ListEmployee';
 import Pagination from '@/components/common/Pagination';
-import { useStore } from '@/src/store';
+import { actions, useStore } from '@/src/store';
+import Cookies from 'js-cookie';
 
 export default function ManagementEmployees(props) {
   const [state, dispatch, axiosJWT] = useStore();
@@ -71,6 +72,8 @@ export default function ManagementEmployees(props) {
     }
   });
   useEffect(() => {
+    const userDate = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userDate)));
     handleGetListUser();
   }, []);
   return (

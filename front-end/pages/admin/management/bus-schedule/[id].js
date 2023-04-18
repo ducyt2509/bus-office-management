@@ -19,13 +19,14 @@ import {
 } from '@chakra-ui/react';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { useStore } from '@/src/store';
+import { actions, useStore } from '@/src/store';
 import axios from 'axios';
 import ListRouteOnBusSchedule from '@/components/bus-schedule/ListRouteOnBusSchedule';
 import ListBusOnBusSchedule from '@/components/bus-schedule/ListBusOnBusSchedule';
 import ListLocationOnBusSchedule from '@/components/bus-schedule/ListLocationOnBusSchedule';
 import ListLocationBusSchedule from '@/components/bus-schedule/ListLocationBusSchedule';
 import { convertInt, convertTime, calcDate, validate } from '@/helper';
+import Cookies from 'js-cookie';
 
 export default function BusScheduleDetail(props) {
   const toast = useToast();
@@ -397,6 +398,8 @@ export default function BusScheduleDetail(props) {
     [state]
   );
   useEffect(() => {
+    const userDate = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userDate)));
     const id = router.query.id;
     setMethod(router.query.method);
     if (id != 'add') {
@@ -457,7 +460,7 @@ export default function BusScheduleDetail(props) {
                     setAddressDropOff={setAddressDropOff}
                     setDepartureLocationId={setDepartureLocationId}
                     setArriveLocationId={setArriveLocationId}
-					axiosJWT={axiosJWT}
+                    axiosJWT={axiosJWT}
                   />
                 </Box>
                 <FormErrorMessage justifyContent={'flex-end'}>
@@ -529,7 +532,7 @@ export default function BusScheduleDetail(props) {
                     location={arriveLocationId}
                     setLocation={setArriveLocationId}
                     id={4}
-					axiosJWT={axiosJWT}
+                    axiosJWT={axiosJWT}
                   />
                 </Box>
                 <FormErrorMessage justifyContent={'flex-end'}>
@@ -550,7 +553,7 @@ export default function BusScheduleDetail(props) {
                 route={route}
                 state={state}
                 BACK_END_PORT={props.BACK_END_PORT}
-				axiosJWT={axiosJWT}
+                axiosJWT={axiosJWT}
               />
             </Flex>
             <Flex>
@@ -565,7 +568,7 @@ export default function BusScheduleDetail(props) {
                 setListLocation={setLocationDropOff}
                 state={state}
                 BACK_END_PORT={props.BACK_END_PORT}
-				axiosJWT={axiosJWT}
+                axiosJWT={axiosJWT}
               />
             </Flex>
 

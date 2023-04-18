@@ -9,12 +9,13 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
-import { useStore } from '@/src/store';
+import { actions, useStore } from '@/src/store';
 import axios from 'axios';
 import ActionBar from '@/components/route/ActionBar';
 import AddRoute from '@/components/route/AddRoute';
 import ListRoute from '@/components/route/ListRoute';
 import Pagination from '@/components/common/Pagination';
+import Cookies from 'js-cookie';
 
 export default function ManagementRoute(props) {
   const [state, dispatch, axiosJWT] = useStore();
@@ -71,6 +72,8 @@ export default function ManagementRoute(props) {
     }
   });
   useEffect(() => {
+    const userDate = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userDate)));
     handleGetListRoute();
   }, []);
   return (

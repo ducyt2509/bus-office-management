@@ -32,7 +32,7 @@ const generateAccessToken = (user) => {
       role_id: user.role_id,
     },
     process.env.JWT_SECRET_TOKEN,
-    { expiresIn: '30m' }
+    { expiresIn: '4h' }
   );
 };
 
@@ -90,7 +90,6 @@ module.exports = {
 
       console.log(newUser);
       const createUser = await User.create(newUser);
-      console.log('11111111111111111111', createUser);
       if (createUser) {
         return responseHandler.ok(res, 'Create user successful!');
       } else {
@@ -496,6 +495,24 @@ module.exports = {
         return responseHandler.badRequest(res, 'User not found');
       }
     } catch (error) {
+      return responseHandler.error;
+    }
+  },
+  async logoutAccount(req, res) {
+    try {
+      const deleteRefreshToken = await User.update(
+        { refresh_access_token: null },
+        { where: { id: req.body.id } }
+      );
+      if (deleteRefreshToken) {
+        res.clearCookie('dataUser');
+        res.clearCookie('refreshAccessToken');
+        res.clearCookie('sideBarActive');
+        return responseHandler.ok(res, 'Log our success!');
+      } else {
+        return responseHandler.badRequest(res, 'Can not log out');
+      }
+    } catch (err) {
       return responseHandler.error;
     }
   },

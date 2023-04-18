@@ -12,9 +12,9 @@ import LoginForm from './LoginForm';
 import { validate } from '@/helper';
 import NavBar from '@/components/common/sidebar/NavBar';
 import { useToast } from '@chakra-ui/react';
+import Cookies from 'js-cookie';
 
 export default function Login(props) {
-  console.log(props);
   const toast = useToast();
   const toastIdRef = useRef();
 
@@ -160,7 +160,16 @@ export default function Login(props) {
               token: loginAccount.data.data.accessToken,
             })
           );
+          Cookies.set(
+            'dataUser',
+            JSON.stringify({
+              ...loginAccount.data.data.dataValues,
+              token: loginAccount.data.data.accessToken,
+            })
+          );
+
           if (loginAccount.data.data.dataValues.role_id == 1) {
+            Cookies.set('sideBarActive', 0);
             router.push('/admin');
           }
           if (loginAccount.data.data.dataValues.role_id == 2) {

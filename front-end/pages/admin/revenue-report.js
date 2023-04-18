@@ -28,8 +28,9 @@ import DoanhThu from '@/images/icons/DoanhThu.png';
 import TrungBinhNgay from '@/images/icons/TrungBinhNgay.png';
 import VeBan from '@/images/icons/VeBan.png';
 import { useCallback, useEffect, useState } from 'react';
-import { useStore } from '@/src/store';
+import { actions, useStore } from '@/src/store';
 import Pagination from '@/components/common/Pagination';
+import Cookies from 'js-cookie';
 
 export default function RevenueReport(props) {
   const [report, setReport] = useState('1');
@@ -112,6 +113,8 @@ export default function RevenueReport(props) {
   };
 
   useEffect(() => {
+    const userDate = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userDate)));
     handleListRevenue();
   }, []);
   return (
@@ -124,7 +127,7 @@ export default function RevenueReport(props) {
         marginBottom={'2%'}
         paddingTop="2%"
       >
-        <Text marginRight="1%">Nguyễn Văn A</Text>
+        <Text marginRight="1%">{state.dataUser.user_name}</Text>
         <Img
           borderRadius="full"
           boxSize="50px"

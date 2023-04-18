@@ -11,5 +11,9 @@ router.post(
   transactions.getListPayment
 );
 router.post('/transaction/get-transaction-by-id', transactions.getTransactionInformationById);
-router.put('/transaction/update-transaction', transactions.updateTransactionById)
+router.put(
+  '/transaction/update-transaction',
+  middleWare.verifyTokenForCustomer,
+  transactions.updateTransactionById
+);
 module.exports = router;

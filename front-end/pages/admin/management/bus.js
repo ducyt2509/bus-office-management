@@ -14,12 +14,13 @@ import {
   Image,
 } from '@chakra-ui/react';
 import axios from 'axios';
-import { useStore } from '@/src/store';
+import { actions, useStore } from '@/src/store';
 import { useCallback, useEffect, useState } from 'react';
 import ListBus from '@/components/bus/ListBus';
 import ActionBar from '@/components/bus/ActionBar';
 import Pagination from '@/components/common/Pagination';
 import AddBus from '@/components/bus/AddBus';
+import Cookies from 'js-cookie';
 
 export default function ManagementBus(props) {
   const [state, dispatch, axiosJWT] = useStore();
@@ -76,6 +77,8 @@ export default function ManagementBus(props) {
     }
   });
   useEffect(() => {
+    const userDate = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userDate)));
     handleGetListBus();
   }, []);
   return (
