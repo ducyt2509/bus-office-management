@@ -46,8 +46,8 @@ export default function Employee(props) {
     });
 
   useEffect(() => {
-    const userDate = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userDate)));
+    const userData = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userData)));
     getOfficeDetail();
   }, []);
 

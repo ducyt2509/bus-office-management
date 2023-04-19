@@ -105,10 +105,10 @@ export default function Setting(props) {
     }
   }, [errorInput, password, confirmPassword, state]);
 
-  useEffect(()=>{
-    const userDate = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userDate)));
-  },[])
+  useEffect(() => {
+    const userData = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userData)));
+  }, []);
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
       <Flex

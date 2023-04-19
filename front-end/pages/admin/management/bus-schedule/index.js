@@ -68,8 +68,8 @@ export default function ManagementBusSchedule(props) {
   });
 
   useEffect(() => {
-    const userDate = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userDate)));
+    const userData = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userData)));
     handleGetListBusSchedule();
   }, []);
 
@@ -109,6 +109,7 @@ export default function ManagementBusSchedule(props) {
               handleGetListBusSchedule={handleGetListBusSchedule}
               port={props.BACK_END_PORT}
               handleGetBusScheduleInformation={handleGetBusScheduleInformation}
+              token={`Bearer ${state.dataUser.token}`}
               axiosJWT={axiosJWT}
             />
             <Pagination

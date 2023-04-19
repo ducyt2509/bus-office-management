@@ -250,7 +250,11 @@ export default function BusScheduleDetail(props) {
             const refreshBS = await axiosJWT.put(
               `http://localhost:${props.BACK_END_PORT}/bus-schedule/add-bus-schedule`,
               submitData,
-              { headers: state.accessToken }
+              {
+                headers: {
+                  token: `Bearer ${state.dataUser.token}`,
+                },
+              }
             );
             if (updateBusSchedule.data.statusCode == 200) {
               toastIdRef.current = toast({
@@ -282,7 +286,11 @@ export default function BusScheduleDetail(props) {
             const updateBusSchedule = await axiosJWT.put(
               `http://localhost:${props.BACK_END_PORT}/bus-schedule/update-bus-schedule`,
               submitData,
-              { headers: state.accessToken }
+              {
+                headers: {
+                  token: `Bearer ${state.dataUser.token}`,
+                },
+              }
             );
             if (updateBusSchedule.data.statusCode == 200) {
               toastIdRef.current = toast({
@@ -315,7 +323,11 @@ export default function BusScheduleDetail(props) {
         const createBusSchedule = await axiosJWT.post(
           `http://localhost:${props.BACK_END_PORT}/bus-schedule/create-bus-schedule`,
           submitData,
-          { headers: state.accessToken }
+          {
+            headers: {
+              token: `Bearer ${state.dataUser.token}`,
+            },
+          }
         );
         if (createBusSchedule.data.statusCode == 200) {
           toastIdRef.current = toast({
@@ -370,7 +382,7 @@ export default function BusScheduleDetail(props) {
           },
           {
             headers: {
-              token: state.dataUser.accessToken,
+              token: `Bearer ${state.dataUser.token}`,
             },
           }
         );
@@ -398,8 +410,8 @@ export default function BusScheduleDetail(props) {
     [state]
   );
   useEffect(() => {
-    const userDate = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userDate)));
+    const userData = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userData)));
     const id = router.query.id;
     setMethod(router.query.method);
     if (id != 'add') {

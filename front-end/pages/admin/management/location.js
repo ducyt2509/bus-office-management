@@ -72,8 +72,8 @@ export default function ManagementOffice(props) {
     }
   });
   useEffect(() => {
-    const userDate = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userDate)));
+    const userData = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userData)));
     handleGetListLocation();
   }, []);
   return (
@@ -114,6 +114,7 @@ export default function ManagementOffice(props) {
               setLocationId={setLocationId}
               setLocation={setLocation}
               handleGetListLocation={handleGetListLocation}
+              token={`Bearer ${state.dataUser.token}`}
               port={props.BACK_END_PORT}
               axiosJWT={axiosJWT}
             />

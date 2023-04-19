@@ -16,10 +16,7 @@ export default function ListRoute(props) {
     try {
       const deleteRoute = await props.axiosJWT.delete(
         `http://localhost:${props.port}/route/delete-route`,
-        { data: { id: routeId } },
-        {
-          headers: { token: props.token },
-        }
+        { data: { id: routeId }, headers: { token: props.token } }
       );
       if (deleteRoute.data.statusCode == 200) {
         toastIdRef.current = toast({

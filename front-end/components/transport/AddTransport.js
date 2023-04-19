@@ -220,10 +220,11 @@ export default function AddTransport(props) {
             },
           }
         );
-      } catch (err) {
         if (getListBus.data.statusCode === 200) {
           setListBus(getListBus.data.data.list_bus);
         }
+      } catch (err) {
+        console.log(err);
       }
     },
     [state]

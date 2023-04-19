@@ -20,10 +20,7 @@ export default function ListOffice(props) {
     try {
       const deleteOffice = await props.axiosJWT.delete(
         `http://localhost:${props.port}/office/delete-office`,
-        { data: { id: officeId } },
-        {
-          headers: { token: props.token },
-        }
+        { data: { id: officeId }, headers: { token: props.token } }
       );
       if (deleteOffice.data.statusCode == 200) {
         toastIdRef.current = toast({

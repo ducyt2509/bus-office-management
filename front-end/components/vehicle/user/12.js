@@ -34,9 +34,6 @@ export default function Seat12User(props) {
           position = index;
         }
       });
-    let numberSeat = props.data.number_seat_selected[position]?.seat
-      ? props.data.number_seat_selected[position]?.seat.split(', ').length
-      : 1;
     let priceText = formatMoney(props.scheduleData.price);
     let paymentStatus =
       props.data.number_seat_selected[position]?.payment_status == 0

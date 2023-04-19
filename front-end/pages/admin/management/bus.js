@@ -77,8 +77,8 @@ export default function ManagementBus(props) {
     }
   });
   useEffect(() => {
-    const userDate = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userDate)));
+    const userData = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userData)));
     handleGetListBus();
   }, []);
   return (
@@ -121,6 +121,7 @@ export default function ManagementBus(props) {
               handleGetListBus={handleGetListBus}
               port={props.BACK_END_PORT}
               axiosJWT={axiosJWT}
+              token={`Bearer ${state.dataUser.token}`}
             />
             <Pagination
               list_number={numberBus}

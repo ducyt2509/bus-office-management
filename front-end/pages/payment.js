@@ -182,7 +182,7 @@ export default function Payment(props) {
                     Email
                   </Text>
                   <Text marginBottom={'6%'} fontWeight={'500'}>
-                    {props.data?.email}
+                    {props.data?.email ? props.data?.email : props.data?.passenger_email}
                   </Text>
                 </Box>
                 <Box>

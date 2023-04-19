@@ -158,7 +158,7 @@ export default function AddEmployee(props) {
 
     let phone = employeePhone;
     if (employeePhone && employeePhone[0] == 0) {
-      phone = '+841' + employeePhone.substring(1);
+      phone = '+84' + employeePhone.substring(1);
     }
     const submitData = {
       user_name: employeeName,
@@ -245,11 +245,12 @@ export default function AddEmployee(props) {
     error,
     props.userId,
   ]);
-
+  console.log(props.token);
   const handleGetListOffice = async () => {
     try {
       const getListOffice = await props.axiosJWT.post(
         `http://localhost:${props.port}/office/list-office`,
+        {},
         {
           headers: { token: props.token },
         }

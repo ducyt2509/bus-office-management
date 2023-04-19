@@ -5,21 +5,19 @@ import { Icon } from '@chakra-ui/react';
 import { BsDashLg } from 'react-icons/bs';
 import { Stack, IconButton, useToast } from '@chakra-ui/react';
 import axios from 'axios';
-import { useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { convertTime, formatDate } from '@/helper';
 
 export default function ListBusSchedule(props) {
   const toast = useToast();
   const toastIdRef = useRef();
+
   const handleDeleteBusSchedule = async (busScheduleId, e) => {
     e.stopPropagation();
     try {
       const deleteBusSchedule = await props.axiosJWT.delete(
         `http://localhost:${props.port}/bus-schedule/delete-bus-schedule`,
-        { data: { id: busScheduleId } },
-        {
-          headers: { token: props.token },
-        }
+        { data: { id: busScheduleId }, headers: { token: props.token } }
       );
       if (deleteBusSchedule.data.statusCode == 200) {
         toastIdRef.current = toast({
@@ -98,6 +96,61 @@ export default function ListBusSchedule(props) {
       });
     }
   };
+
+  const handleRefreshBusSchedule = useCallback(async (busScheduleId, e) => {
+    e.stopPropagation();
+    try {
+      const getBusSchedule = await props.axiosJWT.post(
+        `http://localhost:${props.port}/bus-schedule/bus-schedule-by-id`,
+        { id: busScheduleId },
+        {
+          headers: { token: props.token },
+        }
+      );
+      let busSchedule = getBusSchedule.data.data.bus_schedule[0];
+      const checkRenewal = (date, timeExpire) => {
+        const expireDate = new Date(date);
+        return expireDate.getTime() + timeExpire * 24 * 60 * 60 * 1000;
+      };
+
+      let newRefreshDate = checkRenewal(busSchedule.refresh_date, busSchedule.bus_schedule_expire);
+      newRefreshDate = formatDate(newRefreshDate);
+      busSchedule = { ...busSchedule, refresh_date: newRefreshDate };
+
+      const updateBusSchedule = await props.axiosJWT.put(
+        `http://localhost:${props.port}/bus-schedule/update-bus-schedule`,
+        {
+          id: busScheduleId,
+          bus_schedule: busSchedule,
+        },
+
+        {
+          headers: { token: props.token },
+        }
+      );
+
+      if (updateBusSchedule.data.statusCode === 200) {
+        toastIdRef.current = toast({
+          title: 'Gia hạn lịch trình thành công.',
+          description: 'Chúng tôi đã gia hạn lịch trình của bạn.',
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+        props.handleGetListBusSchedule('search');
+      }
+    } catch (err) {
+      toastIdRef.current = toast({
+        title: 'Gia hạn lịch trình thất bại',
+        description: 'Có lỗi xảy ra trong quá trinhg thao tác vui lòng thử lại.',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
+    }
+  });
 
   let styles = { color: 'black' };
   const ListBusScheduleHTML = props.list.map((busSchedule, index) => {
