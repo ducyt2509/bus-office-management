@@ -18,6 +18,7 @@ import { actions, useStore } from '@/src/store';
 import Cookies from 'js-cookie';
 
 export default function ManagementEmployees(props) {
+  const [token, setToken] = useState("");
   const [state, dispatch, axiosJWT] = useStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -35,7 +36,6 @@ export default function ManagementEmployees(props) {
       if (typeof page == 'number') {
         setCurrentPage(page);
       }
-      const token = `Bearer ${state.dataUser.token}`;
       const offset = limit * (page - 1);
       try {
         const getListUser = await axiosJWT.post(
@@ -62,7 +62,7 @@ export default function ManagementEmployees(props) {
         console.log(err);
       }
     },
-    [state, querySearch]
+    [state, querySearch, token]
   );
   const handleChangeQuerySearch = useCallback((e) => {
     const value = e.target.value;
@@ -74,8 +74,10 @@ export default function ManagementEmployees(props) {
   useEffect(() => {
     const userData = Cookies.get('dataUser');
     dispatch(actions.setDataUser(JSON.parse(userData)));
+    setToken(`Bearer ${JSON.parse(userData).token}`);
     handleGetListUser();
-  }, []);
+  }, [token]);
+
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
       <Flex

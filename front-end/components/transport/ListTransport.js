@@ -6,7 +6,6 @@ import { useRef } from 'react';
 import { convertTime } from '@/helper';
 
 export default function ListTransport(props) {
-  console.log('listTransport', props);
   const toast = useToast();
   const toastIdRef = useRef();
   const handleActiveModal = (transportId, transport) => {

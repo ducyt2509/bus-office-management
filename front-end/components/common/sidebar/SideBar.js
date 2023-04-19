@@ -68,7 +68,7 @@ export default function Sidebar() {
       boxShadow="0 4px 12px 0 #888"
       w={navSize == 'small' ? '75px' : '17%'}
       flexDir="column"
-      justifyContent="flex-start"
+      justifyContent="space-between"
       id="bom-side-bar"
     >
       <Stack>
