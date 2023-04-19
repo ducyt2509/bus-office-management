@@ -18,6 +18,7 @@ import Pagination from '@/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function ManagementOffice(props) {
+  const [token, setToken] = useState("");
   const [state, dispatch, axiosJWT] = useStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -36,7 +37,6 @@ export default function ManagementOffice(props) {
       if (typeof page == 'number') {
         setCurrentPage(page);
       }
-      const token = `Bearer ${state.dataUser.token}`;
       try {
         const getListOffice = await axiosJWT.post(
           `http://localhost:${props.BACK_END_PORT}/office/list-office`,
@@ -62,7 +62,7 @@ export default function ManagementOffice(props) {
         console.log(error);
       }
     },
-    [state, querySearch]
+    [state, querySearch, token]
   );
   const handleChangeQuerySearch = useCallback((e) => {
     const value = e.target.value;
@@ -74,8 +74,9 @@ export default function ManagementOffice(props) {
   useEffect(() => {
     const userData = Cookies.get('dataUser');
     dispatch(actions.setDataUser(JSON.parse(userData)));
+    setToken(`Bearer ${JSON.parse(userData).token}`);
     handleGetListOffice();
-  }, []);
+  }, [token]);
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
       <Flex

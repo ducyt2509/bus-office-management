@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 
 export default function ManagementBusSchedule(props) {
+  const [token, setToken] = useState("");
   const router = useRouter();
   const [state, dispatch, axiosJWT] = useStore();
 
@@ -24,7 +25,6 @@ export default function ManagementBusSchedule(props) {
       if (typeof page == 'number') {
         setCurrentPage(page);
       }
-      const token = `Bearer ${state.dataUser.token}`;
       const offset = limit * (page - 1);
       try {
         const getListBusSchedule = await axiosJWT.post(
@@ -51,7 +51,7 @@ export default function ManagementBusSchedule(props) {
         console.log(err);
       }
     },
-    [state, querySearch]
+    [state, querySearch, token]
   );
   const handleChangeQuerySearch = useCallback((e) => {
     const value = e.target.value;
@@ -70,8 +70,9 @@ export default function ManagementBusSchedule(props) {
   useEffect(() => {
     const userData = Cookies.get('dataUser');
     dispatch(actions.setDataUser(JSON.parse(userData)));
+    setToken(`Bearer ${JSON.parse(userData).token}`);
     handleGetListBusSchedule();
-  }, []);
+  }, [token]);
 
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
