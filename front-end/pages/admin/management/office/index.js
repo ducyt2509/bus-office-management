@@ -72,8 +72,8 @@ export default function ManagementOffice(props) {
     }
   });
   useEffect(() => {
-    const userDate = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userDate)));
+    const userData = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userData)));
     handleGetListOffice();
   }, []);
   return (
@@ -111,6 +111,7 @@ export default function ManagementOffice(props) {
             <ListOffice
               list={listOffice}
               onOpen={onOpen}
+              token={`Bearer ${state.dataUser.token}`}
               setOfficeId={setOfficeId}
               setOffice={setOffice}
               handleGetListOffice={handleGetListOffice}

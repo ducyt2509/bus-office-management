@@ -157,6 +157,10 @@ export default function BusScheduleBookTicket(props) {
           }
         }
         if (step == 2) {
+          if (status == 0) {
+            setStep((prev) => prev - 1);
+            return;
+          }
           let oldError = { ...error };
           if (!locationPickup) {
             oldError.pickupLocation = true;

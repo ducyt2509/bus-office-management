@@ -173,8 +173,8 @@ export default function Setting(props) {
   }, [userEmail, userPhone, userRole, userOffice, userName, state, error]);
 
   useEffect(() => {
-    const userDate = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userDate)));
+    const userData = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userData)));
     handleGetListOffice();
   }, []);
 

@@ -105,7 +105,7 @@ export default function AddLocation(props) {
           `http://localhost:${props.port}/location/update-location`,
           submitData,
           {
-            headers: { token: `Bearer ${props.state.dataUser.token}` },
+            headers: { token: props.token },
           }
         );
         if (updateLocation.data.statusCode == 200) {
@@ -132,14 +132,14 @@ export default function AddLocation(props) {
       }
     } else {
       try {
+        const addLocation = await props.axiosJWT.post(
+          `http://localhost:${props.port}/location/add-location`,
+          submitData,
+          {
+            headers: { token: props.token },
+          }
+        );
         if (addLocation.data.statusCode == 200) {
-          const addLocation = await props.axiosJWT.post(
-            `http://localhost:${props.port}/location/add-location`,
-            submitData,
-            {
-              headers: { token: props.token },
-            }
-          );
           toastIdRef.current = toast({
             title: 'Điểm đón trả đã được thêm.',
             description: 'Chúng tôi đã thêm điểm đón trả cho bạn.',

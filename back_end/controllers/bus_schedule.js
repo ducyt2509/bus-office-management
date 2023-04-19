@@ -178,7 +178,7 @@ module.exports = {
       join route r on bs.route_id = r.id
       join city c on r.city_from_id = c.id
       join city cc on r.city_to_id = cc.id
-      where r.city_from_id = ${locationStartId} and r.city_to_id = ${locationFinishId} 
+      where r.city_from_id = ${locationStartId} and r.city_to_id = ${locationFinishId} and '${dateStart}' >= '${dateNow}'
       `;
       const queryCount = `select count(*) from bus_schedule bs
       join route r on bs.route_id = r.id
@@ -284,22 +284,21 @@ module.exports = {
 
   async getListBusScheduleForManager(req, res) {
     const params = req.body;
-    const offset = !params.offset || !params.offset <= 0 ? 0 : params.offset;
+    const offset = !params.offset || params.offset <= 0 ? 0 : params.offset;
     const limit = !params.limit ? 5 : params.limit;
     const querySearch = !params.query_search ? '' : params.query_search;
 
     try {
       const currentDate = validateHandler.validateDate(new Date());
-      console.log(currentDate)
       const querySQL = `select bs.id ,bs.route_id, departure_location_id , arrive_location_id , price , time_from , travel_time , effective_date , refresh_date , bus_schedule_status , bus_schedule_expire , city_from_id , city_to_id 
 			from bus_schedule bs
 			join route r on bs.route_id = r.id 
 			join city c on r.city_from_id = c.id
 			join city cc on r.city_to_id = cc.id
-       where ( (c.city_name like '%%') 
-            or (cc.city_name like '%%') )
-			 and refresh_date >= "${currentDate}"
-            limit ${limit} offset ${offset}
+      where ( (c.city_name like '%%') 
+      or (cc.city_name like '%%') )
+			and refresh_date >= "${currentDate}"
+      limit ${limit} offset ${offset}
 `;
       const queryCount = `select count(*) from bus_schedule bs
 			join route r on bs.route_id = r.id 
@@ -369,9 +368,11 @@ module.exports = {
       if (listBusSchedule) {
         for (let i = 0; i < listBusSchedule.length; i++) {
           const numberSeatSQL = `select count(*) from transaction t 
-          join transport ts on t.transport_id = ts.id where ts.id = ${listBusSchedule[i].transport_id
-            } and t.date_detail like "%${listBusSchedule[i].departure_date.toISOString().split('T')[0]
-            }%" and t.payment_status != 3`;
+          join transport ts on t.transport_id = ts.id where ts.id = ${
+            listBusSchedule[i].transport_id
+          } and t.date_detail like "%${
+            listBusSchedule[i].departure_date.toISOString().split('T')[0]
+          }%" and t.payment_status != 3`;
           let count = await db.sequelize.query(numberSeatSQL, { type: QueryTypes.SELECT });
           if (count) {
             listBusSchedule[i].number_seat_sold = count[0]['count(*)'];
@@ -475,7 +476,7 @@ module.exports = {
       const busScheduleList = await db.sequelize.query(queryGetBusScheduleList, {
         type: QueryTypes.SELECT,
       });
-      console.log(busScheduleList)
+      console.log(busScheduleList);
       let renewalList = [];
 
       for (let index = 0; index < busScheduleList.length; index++) {
@@ -497,7 +498,7 @@ module.exports = {
           renewalList.push(getBs[0]);
         }
       }
-      console.log(renewalList)
+      console.log(renewalList);
       renewalList = removeDuplicates(renewalList);
       return responseHandler.responseWithData(res, 200, {
         totalBSNeedRenewal: renewalList.length,

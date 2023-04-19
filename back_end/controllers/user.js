@@ -40,14 +40,17 @@ module.exports = {
   async createNewUser(req, res) {
     try {
       let { email, password, user_name, phone, avatar, role_id, office_id } = req.body;
-      if (
+      let condition =
         !validateHandler.validateString(email, regexHandler.regexEmail) ||
         !validateHandler.validateString(user_name, regexHandler.regexNormalString) ||
         !validateHandler.validateString(phone, regexHandler.regexPhoneNumber) ||
-        !validateHandler.validateString(password, regexHandler.regexPassword)
-        // || !validateHandler.validateString(avatar, regexHandler.regexAvatar)
-      )
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+        !validateHandler.validateString(password, regexHandler.regexPassword);
+      if (!email) {
+        !validateHandler.validateString(user_name, regexHandler.regexNormalString) ||
+          !validateHandler.validateString(phone, regexHandler.regexPhoneNumber) ||
+          !validateHandler.validateString(password, regexHandler.regexPassword);
+      }
+      if (condition) return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
       const role = await Role.findOne({
         where: {
           id: role_id,
@@ -66,7 +69,7 @@ module.exports = {
         office_id,
         refresh_access_token: null,
       };
-      if (3 == parseInt(role_id)) {
+      if (parseInt(role_id) == 3) {
         newUser = {
           ...newUser,
           office_id: null,
@@ -481,9 +484,8 @@ module.exports = {
     try {
       const params = req.body;
       const id = params.id;
-      if (!validateHandler.validateIntegerNumber(parseInt(id)))
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id)))
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
-
       const deleteUser = await User.destroy({
         where: {
           id: id,

@@ -24,11 +24,11 @@ export default function Employee(props) {
     }
   };
   useEffect(() => {
-    const userDate = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userDate)));
+    const userData = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userData)));
     getEmployeeDetail();
   }, []);
-  
+
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
       <Flex

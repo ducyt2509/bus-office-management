@@ -21,10 +21,7 @@ export default function ListEmployee(props) {
     try {
       const deleteUser = await props.axiosJWT.delete(
         `http://localhost:${props.port}/user/delete-user`,
-        { data: { id: userId } },
-        {
-          headers: { token: props.token },
-        }
+        { data: { id: userId }, headers: { token: props.token } }
       );
       if (deleteUser.data.statusCode == 200) {
         toastIdRef.current = toast({

@@ -5,7 +5,8 @@ const middleWare = require('../middleware/permission.middleware');
 router.delete('/route/delete-route', middleWare.verifyTokenForManager, routes.deleteRoute);
 router.post('/route/add-route', middleWare.verifyTokenForManager, routes.addNewRoute);
 router.put('/route/update-route', middleWare.verifyTokenForManager, routes.updateRoute);
-router.get('/route/get-list-route', middleWare.verifyTokenForManager, routes.getListRoute);
+router.post('/route/list-route', middleWare.verifyTokenForManager, routes.getListRoute);
+router.post('/route/route-by-id', middleWare.verifyTokenForManager, routes.getRouteById);
 
 // router.delete('/route/delete-route', routes.deleteRoute);
 // router.post('/route/add-route', routes.addNewRoute);

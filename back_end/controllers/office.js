@@ -106,7 +106,7 @@ module.exports = {
 
       const deleteOffice = await Office.destroy({
         where: {
-          id: params.id,
+          id: id,
         },
       });
       if (deleteOffice) {
@@ -115,6 +115,7 @@ module.exports = {
         return responseHandler.badRequest(res, 'Office not found');
       }
     } catch (error) {
+      console.log
       return responseHandler.error;
     }
   },

@@ -18,10 +18,7 @@ export default function ListTransport(props) {
     try {
       const deleteTransport = await props.axiosJWT.delete(
         `http://localhost:${props.port}/transport/delete-transport`,
-        { data: { id: transportId } },
-        {
-          headers: { token: props.token },
-        }
+        { data: { id: transportId }, headers: { token: props.token } }
       );
       if (deleteTransport.data.statusCode == 200) {
         toastIdRef.current = toast({

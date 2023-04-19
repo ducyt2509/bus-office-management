@@ -72,8 +72,8 @@ export default function ManagementEmployees(props) {
     }
   });
   useEffect(() => {
-    const userDate = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userDate)));
+    const userData = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userData)));
     handleGetListUser();
   }, []);
   return (
@@ -116,6 +116,7 @@ export default function ManagementEmployees(props) {
               handleGetListUser={handleGetListUser}
               port={props.BACK_END_PORT}
               axiosJWT={axiosJWT}
+              token={`Bearer ${state.dataUser.token}`}
             />
             <Pagination
               list_number={numberUser}

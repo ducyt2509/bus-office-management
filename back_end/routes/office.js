@@ -13,7 +13,7 @@ router.delete(
   middleWare.verifyTokenForManager,
   offices.deleteOfficeInformation
 );
-router.get('/office/list-office', middleWare.verifyTokenForManager, offices.getListOffice);
+router.post('/office/list-office', middleWare.verifyTokenForManager, offices.getListOffice);
 router.post('/office/office-by-id', middleWare.verifyTokenForManager, offices.getOfficeInformation);
 
 // router.post('/office/add-office', offices.createNewOffice);

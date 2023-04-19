@@ -5,11 +5,13 @@ import { BsCalendar } from 'react-icons/bs';
 import { MdOutlineSwapHorizontalCircle } from 'react-icons/md';
 import { useState, useCallback } from 'react';
 import ListBusSchedule from '@/components/bus-schedule/bus-schedule-ticket';
+
 export default function BusScheduleAll(props) {
   const [startLocation, setStartLocation] = useState(props.data.departure_location_id);
   const [listBusSchedule, setListBusSchedule] = useState(props.list_bus_schedule);
   const [endLocation, setEndLocation] = useState(props.data.arrive_location_id);
   const [departureDay, setDepartureDay] = useState(props.data.refresh_date);
+  const [action, setAction] = useState('');
   const [error, setError] = useState({
     from: false,
     to: false,
@@ -79,15 +81,20 @@ export default function BusScheduleAll(props) {
     );
     if (listBusSchedule.data.statusCode == 200) {
       setListBusSchedule(listBusSchedule.data.data.list_bus_schedule);
+      setAction('search');
+      setTimeout(() => {
+        setAction('');
+      }, 500);
     }
   }, [startLocation, endLocation, departureDay, error]);
   const cityOption =
     props.list_city &&
     props.list_city.map((city) => <option value={city.id}>{city.city_name}</option>);
+
   const listBusScheduleHTML =
     listBusSchedule &&
     listBusSchedule.map((busSchedule) => {
-      return <ListBusSchedule data={busSchedule} departureDay={departureDay} />;
+      return <ListBusSchedule data={busSchedule} departureDay={departureDay} action={action} />;
     });
   return (
     <>
@@ -121,6 +128,7 @@ export default function BusScheduleAll(props) {
             placeholder="Phone number"
             onChange={handleChangeDepartureDay}
             value={departureDay}
+            min={new Date().toISOString().split('T')[0]}
           />
         </InputGroup>
         <Button

@@ -14,12 +14,9 @@ export default function ListLocation(props) {
   };
   const handleDeleteLocation = async (locationId) => {
     try {
-      const deleteLocation = await props.axiosJWT.post(
+      const deleteLocation = await props.axiosJWT.delete(
         `http://localhost:${props.port}/location/delete-location`,
-        { id: locationId },
-        {
-          headers: { token: props.token },
-        }
+        { data: { id: locationId }, headers: { token: props.token } }
       );
       if (deleteLocation.data.statusCode == 200) {
         toastIdRef.current = toast({

@@ -15,10 +15,7 @@ export default function ListBus(props) {
     try {
       const deleteVehicle = await props.axiosJWT.delete(
         `http://localhost:${props.port}/bus/delete-bus`,
-        { data: { id: busId } },
-        {
-          headers: { token: props.token },
-        }
+        { data: { id: busId }, headers: { token: props.token } }
       );
       if (deleteVehicle.data.statusCode == 200) {
         toastIdRef.current = toast({
