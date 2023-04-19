@@ -19,7 +19,12 @@ router.delete(
 );
 router.put(
   '/transport/update-transport',
-  middleWare.verifyTokenForManager,
+  middleWare.verifyTokenForDriver,
   transports.updateTransport
+);
+router.post(
+  '/transport/get-transport-by-id',
+  middleWare.verifyTokenForDriver,
+  transports.getTransportById
 );
 module.exports = router;

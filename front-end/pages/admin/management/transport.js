@@ -120,6 +120,7 @@ export default function ManagementTransport(props) {
               setTransportId={setTransportId}
               setTransport={setTransport}
               handleGetListTransport={handleGetListTransport}
+              token={`Bearer ${state.dataUser.token}`}
               port={props.BACK_END_PORT}
               axiosJWT={axiosJWT}
             />

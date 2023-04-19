@@ -134,7 +134,7 @@ module.exports = {
       const querySQL = `select office.id, office_name, city_id, office_address from office join city c on office.city_id = c.id 
       where (office_name like '%${querySearch}%') 
       or (office_address like '%${querySearch}%') 
-      or (c.city_name like '%${querySearch}%') limit ${limit} offset ${offset}`;
+      or (c.city_name like '%${querySearch}%') order  by id desc limit ${limit} offset ${offset}`;
       const queryCount = `select count(*) as numberOffice from office join city c on c.id = office.city_id  
       where (office_name like '%${querySearch}%') 
       or (office_address like '%${querySearch}%') 

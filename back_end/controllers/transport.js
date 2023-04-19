@@ -52,8 +52,8 @@ module.exports = {
 			or ( t.departure_date like '%${querySearch}%')
             or  (c.city_name like '%${querySearch}%' )
             or ( cc.city_name like '%${querySearch}%' )
+            order  by id desc
             limit ${limit} offset ${offset}
-			
         ;`;
 
       const queryCount = `SELECT count(*) FROM bom.transport`;
@@ -150,6 +150,22 @@ module.exports = {
       }
     } catch (error) {
       return responseHandler.badRequest(res, error.message);
+    }
+  },
+  async getTransportById(req, res) {
+    const params = req.body;
+    try {
+      const querySQL = `select t.*, bs.schedule_frequency from transport t join bus_schedule bs on t.bus_schedule_id = bs.id where t.id = ${params.id}`;
+
+      const transport = await db.sequelize.query(querySQL, { type: QueryTypes.SELECT });
+
+      if (transport) {
+        return responseHandler.responseWithData(res, 200, transport[0]);
+      } else {
+        return responseHandler.badRequest(res, 'Transport not found');
+      }
+    } catch (err) {
+      return responseHandler.badRequest(res, err.message);
     }
   },
 };

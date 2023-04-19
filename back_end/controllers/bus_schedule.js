@@ -299,6 +299,7 @@ module.exports = {
       where ( (c.city_name like '%%') 
       or (cc.city_name like '%%') )
 			and refresh_date >= "${currentDate}"
+      order by id
       limit ${limit} offset ${offset}
 `;
       const queryCount = `select count(*) from bus_schedule bs

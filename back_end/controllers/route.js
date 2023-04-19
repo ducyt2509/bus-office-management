@@ -150,7 +150,7 @@ module.exports = {
       const querySQL = `select route.id, route.city_from_id, route.city_to_id from route join city c on c.id = route.city_from_id
       join city cc on cc.id = route.city_to_id 
       where (cc.city_name like '%${querySearch}%')
-      or (c.city_name like '%${querySearch}%') limit ${limit} offset ${offset}`;
+      or (c.city_name like '%${querySearch}%') order  by id desc limit ${limit} offset ${offset}`;
       const queryCount = `select count(*) from route join city c on c.id = route.city_from_id
       join city cc on cc.id = route.city_to_id 
       where (cc.city_name like '%${querySearch}%')

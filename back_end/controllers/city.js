@@ -3,17 +3,16 @@ const City = db.cities;
 const Op = db.Sequelize.Op;
 const responseHandler = require('../handlers/response.handler');
 const validateHandler = require('../handlers/validate.handler');
-const messageHandler = require('../handlers/message.handler')
-const regexHandler = require('../handlers/regex.handler')
+const messageHandler = require('../handlers/message.handler');
+const regexHandler = require('../handlers/regex.handler');
 
 module.exports = {
   async getListCity(req, res) {
-
     try {
-      var { limit, offset, city_name } = req.body
+      var { limit, offset, city_name } = req.body;
       // limit = limit ? limit : 7
       // offset = offset ? offset : 0
-      city_name = !city_name ? "" : city_name.toString().trim()
+      city_name = !city_name ? '' : city_name.toString().trim();
       // if (!validateHandler.validatePositiveIntegerNumber(limit) || !validateHandler.validatePositiveIntegerNumber(offset))
       //   return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
 
@@ -26,6 +25,7 @@ module.exports = {
           where: whereCondition,
           limit: limit,
           offset: offset,
+          order: [['id', 'DESC']],
         }),
         City.count({
           where: whereCondition,
@@ -43,8 +43,9 @@ module.exports = {
   async updateCity(req, res) {
     try {
       const params = req.body;
-      const id = params.id
-      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id))) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
+      const id = params.id;
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id)))
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const updateCity = await Bus_type.update(params, {
         where: {
@@ -54,38 +55,40 @@ module.exports = {
       if (updateCity) {
         return responseHandler.ok(res, 'Update city successfully');
       } else {
-        return responseHandler.badRequest(res, "City not found");
+        return responseHandler.badRequest(res, 'City not found');
       }
     } catch (error) {
-      return responseHandler.error
+      return responseHandler.error;
     }
   },
   async addNewCity(req, res) {
     try {
-      var { city_name } = req.body
-      if (!validateHandler.validateString(city_name, regexHandler.regexNormalString)) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
-      city_name = city_name.trim()
-      const checkExists = await City.findOne({ where: { city_name } })
-      if (checkExists) return responseHandler.badRequest(res, "City is already exist")
+      var { city_name } = req.body;
+      if (!validateHandler.validateString(city_name, regexHandler.regexNormalString))
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+      city_name = city_name.trim();
+      const checkExists = await City.findOne({ where: { city_name } });
+      if (checkExists) return responseHandler.badRequest(res, 'City is already exist');
       const createCity = await City.create({ city_name });
       if (createCity) {
         return responseHandler.ok(res, 'Add city successfully');
       } else {
-        return responseHandler.badRequest(res, 'Cant add new city')
+        return responseHandler.badRequest(res, 'Cant add new city');
       }
     } catch (error) {
-      return responseHandler.error
+      return responseHandler.error;
     }
   },
   async deleteCity(req, res) {
     const { id } = req.body;
     try {
-      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id))) return responseHandler.badRequest(res, messageHandler.messageValidateFailed)
-      const checkExists = await City.findOne({ where: { id } })
-      if (!checkExists) return responseHandler.badRequest(res, "City not found")
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id)))
+        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+      const checkExists = await City.findOne({ where: { id } });
+      if (!checkExists) return responseHandler.badRequest(res, 'City not found');
       const destroyCity = await City.destroy({
         where: {
-          id
+          id,
         },
       });
       if (destroyCity) {
@@ -94,7 +97,7 @@ module.exports = {
         return responseHandler.responseWithData(res, 403, { message: "Can't delete city" });
       }
     } catch (error) {
-      return responseHandler.error
+      return responseHandler.error;
     }
   },
 };

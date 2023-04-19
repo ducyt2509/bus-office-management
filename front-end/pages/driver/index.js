@@ -61,7 +61,7 @@ export default function DriverPage(props) {
         .join(' - ');
       router.push({
         pathname: '/driver/[id]',
-        query: { transport_id: id, date_detail: departureDate, location: location },
+        query: { id: id, transport_id: id, date_detail: departureDate, location: location },
       });
     },
     [departureDate, listSchedule]

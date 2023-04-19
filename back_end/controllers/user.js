@@ -336,7 +336,7 @@ module.exports = {
       where (user_name like '%${querySearch}%') 
       or (email like '%${querySearch}%')
       or (r.role_name like '%${querySearch}%') 
-      or (phone like '%${querySearch}%') limit ${limit} offset ${offset}`;
+      or (phone like '%${querySearch}%') order  by id desc limit ${limit} offset ${offset}`;
       let queryCount = `select count(*) from user  
       join role r on user.role_id = r.id
       where (user_name like '%${querySearch}%') 
@@ -353,7 +353,7 @@ module.exports = {
         or (email like '%${querySearch}%')
         or (r.role_name like '%${querySearch}%') 
         or (phone like '%${querySearch}%')) 
-        and user.role_id = ${role_id}`;
+        and user.role_id = ${role_id} order  by id desc`;
 
         queryCount = `select count(*) from user
         join role r on user.role_id = r.id
