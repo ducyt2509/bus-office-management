@@ -25,22 +25,22 @@ import axios from 'axios';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { actions, useStore } from '@/src/store';
 import { validate } from '@/helper';
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import { ViewIcon, ViewOffIcon, ChevronLeftIcon } from '@chakra-ui/icons';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
 
 export default function UserInformation(props) {
+  const router = useRouter();
   const [token, setToken] = useState('');
   const toast = useToast();
   const toastIdRef = useRef();
   const [state, dispatch, axiosJWT] = useStore();
-  const [listOffice, setListOffice] = useState([]);
 
   const [userName, setUserName] = useState(state.dataUser.user_name);
   const [userEmail, setUserEmail] = useState(state.dataUser.email);
   const [userPhone, setUserPhone] = useState(state.dataUser.phone);
   const [userRole, setUserRole] = useState(state.dataUser.role_id);
   const [userOffice, setUserOffice] = useState(state.dataUser?.office_id);
-  const [userAddress, setUserAddress] = useState(state.dataUser?.office?.office_address);
 
   const [error, setError] = useState({
     userName: false,
@@ -81,21 +81,12 @@ export default function UserInformation(props) {
   const handleChangeUserRole = (e) => {
     setUserRole(e.target.value);
   };
-  const handleChangeUserOffice = useCallback(
-    (e) => {
-      setUserOffice(e.target.value);
-      const office = listOffice.filter((office) => office.id == e.target.value);
-      setUserAddress(office[0].office_address);
-    },
-    [listOffice]
-  );
 
   const handleCancelUpdateUser = () => {
     setUserName(state.dataUser.user_name);
     setUserEmail(state.dataUser.email);
     setUserPhone(state.dataUser.phone);
     setUserRole(state.dataUser.role_id);
-    setUserOffice(state.dataUser.office.office_name);
   };
   const handleUpdateUser = useCallback(async () => {
     let oldError = { ...error };
@@ -255,8 +246,15 @@ export default function UserInformation(props) {
 
   return (
     <Box style={{ width: '90%' }} height={'100vh'} padding={'3%'} margin={'0 auto'}>
-      <Heading fontSize={'25px'} marginBottom="10%" marginTop="30%">
-        Thông tin cá nhân
+      <Heading
+        fontSize={'25px'}
+        marginBottom="10%"
+        marginTop="30%"
+        display={'flex'}
+        alignItems={'center'}
+      >
+        <ChevronLeftIcon onClick={() => router.push('/driver')} />
+        &ensp;Thông tin cá nhân
       </Heading>
       <Flex marginBottom={'8%'} alignItems={'center'}>
         <Image
@@ -305,27 +303,10 @@ export default function UserInformation(props) {
               onChange={handleChangeUserRole}
               disabled={state.dataUser.role_id !== 1 ? true : false}
             >
-              <option value={'1'}>Manager</option>
-              <option value={'2'}>Customer Service Staff</option>
-              <option value={'3'}>Driver</option>
+              <option value={'1'}>Quản lí</option>
+              <option value={'2'}>Nhân viên hỗ trợ khách hàng</option>
+              <option value={'3'}>Tài xế</option>
             </Select>
-            {state.dataUser.role_id !== 3 ? (
-              <>
-                <Text marginBottom={'3%'}>Văn phòng</Text>
-                <Select
-                  marginBottom={'4%'}
-                  value={userOffice}
-                  onChange={handleChangeUserOffice}
-                  disabled={state.dataUser.role_id !== 1 ? true : false}
-                >
-                  {listOffice.map((office) => {
-                    return <option value={office?.id}>{office?.office_name}</option>;
-                  })}
-                </Select>
-                <Text marginBottom={'3%'}>Địa chỉ</Text>
-                <Input value={userAddress} disabled />
-              </>
-            ) : null}
 
             <ButtonGroup width={'100%'} justifyContent={'space-evenly'} marginTop={'6%'}>
               <Button

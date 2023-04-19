@@ -229,7 +229,7 @@ module.exports = {
                 db.sequelize.query(
                   `select t.seat, t.passenger_name, t.passenger_phone, t.id, t.pickup_location, t.drop_off_location, t.payment_status, t.date_detail, t.ticket_price from transaction t
 									join transport tr on tr.id = t.transport_id
-									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id} and t.payment_status != 3`,
+									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id} and t.payment_status != 3 and t.date_detail like"${new Date(dateStart).toISOString().split("t")[0]}"`,
                   {
                     type: QueryTypes.SELECT,
                   }
@@ -237,7 +237,7 @@ module.exports = {
                 db.sequelize.query(
                   `select count(*) from transaction t
 									join transport tr on tr.id = t.transport_id
-									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id} and t.payment_status == 1`,
+									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id} and t.payment_status = 1 and t.date_detail like"${new Date(dateStart).toISOString().split("t")[0]}"`,
                   {
                     type: QueryTypes.SELECT,
                   }
@@ -278,6 +278,7 @@ module.exports = {
         });
       }
     } catch (error) {
+      console.log(error)
       return responseHandler.badRequest(res, error.message);
     }
   },

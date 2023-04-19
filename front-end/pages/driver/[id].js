@@ -81,6 +81,7 @@ export default function BusScheduleDriver(props) {
         </Box>
       );
     });
+
   const CustomerInTheCarHTML = data
     .filter((e) => e.payment_status == 2)
     .map((customer) => {
@@ -119,6 +120,7 @@ export default function BusScheduleDriver(props) {
         </Box>
       );
     });
+
   return (
     <>
       <Stack width={'96%'} margin={'0 auto'} spacing="5" className="bom-driver-screen">
@@ -184,8 +186,8 @@ export async function getServerSideProps(context) {
   let data = [];
   let location = context.query.location;
   let getTransportById = await axios.post(`http://localhost:${port}/transaction/list-transaction`, {
-    transport_id: 1,
-    date_detail: '2023-04-16',
+    transport_id: context.query.transport_id,
+    date_detail: context.query.date_detail,
     role_id: 3,
   });
   if (getTransportById.data.statusCode == 200) {

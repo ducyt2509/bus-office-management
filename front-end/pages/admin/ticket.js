@@ -33,7 +33,6 @@ export default function Ticket(props) {
   const toast = useToast();
   const [state, dispatch, axiosJWT] = useStore();
 
-
   const [seatInformation, setSeatInformation] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -254,7 +253,7 @@ export default function Ticket(props) {
         setTransportData();
         setSeatCustomerSelected([]);
       }
-    } catch {
+    } catch (err) {
       console.log(err);
     }
   }, [startLocation, endLocation, departureDay, error]);
@@ -573,7 +572,7 @@ export default function Ticket(props) {
           >
             DS đón trả
           </Button>
-          <Button
+          {/* <Button
             backgroundColor={tabSelected == 3 ? '#F2CAC2' : '#fff'}
             border="1px solid"
             borderRadius={'5px'}
@@ -589,7 +588,7 @@ export default function Ticket(props) {
             onClick={() => setModalStatus(true)}
           >
             Xuất bến
-          </Button>
+          </Button> */}
         </Flex>
       </Flex>
     ) : null;

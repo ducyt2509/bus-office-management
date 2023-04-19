@@ -188,7 +188,7 @@ export default function TransactionDetails(props) {
     setSeat(cloneSeat);
     setStatusAddSeat(false);
   }, [seat, addSeat, props.seatCustomerSelected]);
-
+  
   const getTransactionById = useCallback(async () => {
     try {
       const getTransaction = await props.axiosJWT.post(
@@ -798,14 +798,16 @@ export default function TransactionDetails(props) {
               </Flex>
               <Flex justifyContent={'space-between'}>
                 <Flex>
-                  <Button
-                    backgroundColor={'#fff'}
-                    border="1px solid"
-                    marginRight={'10px'}
-                    onClick={() => updateUserInformation('hủy vé')}
-                  >
-                    Huỷ vé
-                  </Button>
+                  {props.seatInformation?.id && (
+                    <Button
+                      backgroundColor={'#fff'}
+                      border="1px solid"
+                      marginRight={'10px'}
+                      onClick={() => updateUserInformation('hủy vé')}
+                    >
+                      Huỷ vé
+                    </Button>
+                  )}
                 </Flex>
                 <Flex>
                   <Button
@@ -814,7 +816,7 @@ export default function TransactionDetails(props) {
                     marginRight={'10px'}
                     onClick={updateUserInformation}
                   >
-                    Cập nhật
+                    {props.seatInformation?.id ? 'Cập nhật' : 'Thêm'}
                   </Button>
                   <Button backgroundColor={'#fff'} border="1px solid" onClick={props.onClose}>
                     Đóng
