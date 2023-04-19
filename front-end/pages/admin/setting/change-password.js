@@ -21,6 +21,7 @@ import { actions, useStore } from '@/src/store';
 import Cookies from 'js-cookie';
 
 export default function Setting(props) {
+  const [token, setToken] = useState('');
   const toast = useToast();
   const toastIdRef = useRef();
   const [state, dispatch, axiosJWT] = useStore();
@@ -81,7 +82,8 @@ export default function Setting(props) {
     try {
       const changePassword = await axiosJWT.put(
         `http://localhost:${props.BACK_END_PORT}/change-password`,
-        submitData
+        submitData,
+        { headers: { token } }
       );
       if (changePassword.data.statusCode === 200) {
         toastIdRef.current = toast({
@@ -103,12 +105,13 @@ export default function Setting(props) {
         duration: 5000,
       });
     }
-  }, [errorInput, password, confirmPassword, state]);
+  }, [errorInput, password, confirmPassword, state, token]);
 
   useEffect(() => {
     const userData = Cookies.get('dataUser');
     dispatch(actions.setDataUser(JSON.parse(userData)));
-  }, []);
+    setToken(`Bearer ${JSON.parse(userData).token}`);
+  }, [token]);
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
       <Flex

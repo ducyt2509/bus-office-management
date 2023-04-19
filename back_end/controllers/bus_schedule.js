@@ -126,7 +126,7 @@ module.exports = {
           await Location_Bus_Schedule.update(data, {
             where: {
               bus_location_type: params.location_bus_schedule[i].bus_location_type == 1 ? 1 : 0,
-              bus_schedule_id: params.bus_schedule.id,
+              bus_schedule_id: params.id,
             },
           });
         }
@@ -139,6 +139,7 @@ module.exports = {
         });
       }
     } catch (error) {
+      console.log(error);
       return responseHandler.badRequest(res, error.message);
     }
   },
@@ -234,10 +235,9 @@ module.exports = {
                   }
                 ),
                 db.sequelize.query(
-                  `select count(*) from ticket t
-									join transaction tr on tr.id = t.transaction_id
-									join transport tra on tra.id = tr.transport_id
-									where tra.id = ${getTransport[j].id}`,
+                  `select count(*) from transaction t
+									join transport tr on tr.id = t.transport_id
+									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id} and t.payment_status == 1`,
                   {
                     type: QueryTypes.SELECT,
                   }
@@ -476,7 +476,6 @@ module.exports = {
       const busScheduleList = await db.sequelize.query(queryGetBusScheduleList, {
         type: QueryTypes.SELECT,
       });
-      console.log(busScheduleList);
       let renewalList = [];
 
       for (let index = 0; index < busScheduleList.length; index++) {
@@ -498,7 +497,6 @@ module.exports = {
           renewalList.push(getBs[0]);
         }
       }
-      console.log(renewalList);
       renewalList = removeDuplicates(renewalList);
       return responseHandler.responseWithData(res, 200, {
         totalBSNeedRenewal: renewalList.length,

@@ -18,7 +18,7 @@ import { actions, useStore } from '@/src/store';
 import Cookies from 'js-cookie';
 
 export default function ManagementEmployees(props) {
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState('');
   const [state, dispatch, axiosJWT] = useStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -75,7 +75,9 @@ export default function ManagementEmployees(props) {
     const userData = Cookies.get('dataUser');
     dispatch(actions.setDataUser(JSON.parse(userData)));
     setToken(`Bearer ${JSON.parse(userData).token}`);
-    handleGetListUser();
+    if (token) {
+      handleGetListUser();
+    }
   }, [token]);
 
   return (

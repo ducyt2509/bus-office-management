@@ -92,27 +92,32 @@ export default function Sidebar() {
             href={path.ticket}
             component={Ticket}
           />
-          <SideItem
-            navSize={navSize}
-            icon={IoBarChartOutline}
-            title="Báo Cáo Kinh Doanh"
-            handleSetActiveSideBar={handleSetActiveSideBar}
-            active={sideBarActive == 1 ? true : false}
-            value={1}
-            href={path.revenueReport}
-            component={RevenueReport}
-          />
-          <SideItem
-            navSize={navSize}
-            icon={AiOutlineInbox}
-            suffixIcon={sideBarActive == 2 ? IoIosArrowDown : IoIosArrowUp}
-            handleSetActiveSideBar={handleSetActiveSideBar}
-            title="Quản Lí"
-            active={sideBarActive == 2 ? true : false}
-            value={2}
-            sideBarActive={sideBarActive}
-            href={path}
-          />
+          {state.dataUser.role_id == 1 ? (
+            <>
+              <SideItem
+                navSize={navSize}
+                icon={IoBarChartOutline}
+                title="Báo Cáo Kinh Doanh"
+                handleSetActiveSideBar={handleSetActiveSideBar}
+                active={sideBarActive == 1 ? true : false}
+                value={1}
+                href={path.revenueReport}
+                component={RevenueReport}
+              />
+              <SideItem
+                navSize={navSize}
+                icon={AiOutlineInbox}
+                suffixIcon={sideBarActive == 2 ? IoIosArrowDown : IoIosArrowUp}
+                handleSetActiveSideBar={handleSetActiveSideBar}
+                title="Quản Lí"
+                active={sideBarActive == 2 ? true : false}
+                value={2}
+                sideBarActive={sideBarActive}
+                href={path}
+              />
+            </>
+          ) : null}
+
           <SideItem
             navSize={navSize}
             icon={AiOutlineSetting}

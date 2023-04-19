@@ -158,7 +158,6 @@ export default function TransactionDetails(props) {
 
   const handleChangeLocationDrop = useCallback(
     (value) => {
-      console.log(value);
       let oldError = { ...error };
       if (!value) {
         oldError.dropOffLocation = true;
@@ -328,7 +327,6 @@ export default function TransactionDetails(props) {
         cloneData.number_seat_selected = cloneData.number_seat_selected.filter(
           (e) => e.payment_status != 3
         );
-        console.log(2222);
         try {
           const updateTransactionById = await props.axiosJWT.put(
             `http://localhost:${props.port}/transaction/update-transaction`,
@@ -499,43 +497,41 @@ export default function TransactionDetails(props) {
   ) : (
     <Text>Không có điểm đón</Text>
   );
-  const locationDropOffHTML = location_dropOff ? (
-    location_dropOff.map((location, index) => {
-      const information = location.split(': ');
-      const time = information[1];
-      const position = information[0];
-      const date = new Date(props.data.departure_date);
-      const value = time + ' - ' + position;
-      return (
-        <Stack marginBottom={'10px'} marginLeft={'5px'}>
-          <Radio value={value}>
+  const locationDropOffHTML = location_dropOff
+    ? location_dropOff.map((location, index) => {
+        const information = location.split(': ');
+        const time = information[1];
+        const position = information[0];
+        const date = new Date(props.data.departure_date);
+        const value = time + ' - ' + position;
+        return (
+          <Stack marginBottom={'10px'} marginLeft={'5px'}>
+            <Radio value={value}>
+              <Flex
+                marginBottom={'2%!important'}
+                color={value == locationDropOff ? '#F26A4C' : '#363636'}
+              >
+                <Text fontWeight={'500'} fontSize={'16px'}>
+                  {time}
+                </Text>
+                <Text fontWeight={'500'} fontSize={'16px'}>
+                  &emsp;&bull;&ensp;{position}
+                </Text>
+              </Flex>
+            </Radio>
             <Flex
-              marginBottom={'2%!important'}
-              color={value == locationDropOff ? '#F26A4C' : '#363636'}
+              alignItems={'center'}
+              marginLeft="33px!important"
+              marginTop={'0!important'}
+              marginBottom="8px!important"
             >
-              <Text fontWeight={'500'} fontSize={'16px'}>
-                {time}
-              </Text>
-              <Text fontWeight={'500'} fontSize={'16px'}>
-                &emsp;&bull;&ensp;{position}
-              </Text>
+              <GoLocation />
+              <Text marginLeft="3%">{addressDropOff[index]}</Text>
             </Flex>
-          </Radio>
-          <Flex
-            alignItems={'center'}
-            marginLeft="33px!important"
-            marginTop={'0!important'}
-            marginBottom="8px!important"
-          >
-            <GoLocation />
-            <Text marginLeft="3%">{addressDropOff[index]}</Text>
-          </Flex>
-        </Stack>
-      );
-    })
-  ) : (
-    <Text>Không có điểm trả</Text>
-  );
+          </Stack>
+        );
+      })
+    : null;
   useEffect(() => {
     if (props.isOpen) {
       if (props.seatInformation && !props.seatInformation.id) {

@@ -26,7 +26,6 @@ export default function BusScheduleDriver(props) {
           e.id == id ? (e.payment_status = 2) : null;
           return e;
         });
-        console.log(cloneData);
         setData(cloneData);
       }
     },

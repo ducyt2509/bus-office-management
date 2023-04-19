@@ -245,7 +245,6 @@ export default function AddEmployee(props) {
     error,
     props.userId,
   ]);
-  console.log(props.token);
   const handleGetListOffice = async () => {
     try {
       const getListOffice = await props.axiosJWT.post(

@@ -273,7 +273,6 @@ module.exports = {
 				});
 			}
 		} catch (error) {
-			console.log(error);
 			return responseHandler.badRequest(res, error.message);
 		}
 	},

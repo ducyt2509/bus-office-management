@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 
 export default function AdminPage(props) {
   const router = useRouter();
-  const [state, dispatch] = useStore();
   useEffect(() => {
     router.push('/admin/ticket');
   }, []);

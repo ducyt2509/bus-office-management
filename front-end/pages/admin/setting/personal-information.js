@@ -20,6 +20,7 @@ import { validate } from '@/helper';
 import Cookies from 'js-cookie';
 
 export default function Setting(props) {
+  const [token, setToken] = useState('');
   const toast = useToast();
   const toastIdRef = useRef();
   const [state, dispatch, axiosJWT] = useStore();
@@ -79,12 +80,12 @@ export default function Setting(props) {
     },
     [listOffice]
   );
-  const handleGetListOffice = async () => {
+  const handleGetListOffice = useCallback(async () => {
     try {
       const getListOffice = await axiosJWT.post(
         `http://localhost:${props.BACK_END_PORT}/office/list-office`,
         {
-          headers: { token: state.dataUser.accessToken },
+          headers: { token: token },
         }
       );
       if (getListOffice.data.statusCode == 200) {
@@ -93,7 +94,8 @@ export default function Setting(props) {
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [token]);
+
   const handleCancelUpdateUser = () => {
     setUserName(state.dataUser.user_name);
     setUserEmail(state.dataUser.email);
@@ -115,7 +117,7 @@ export default function Setting(props) {
     }
     let phone = userPhone;
     if (userPhone && userPhone[0] == 0) {
-      phone = '+841' + userPhone.substring(1);
+      phone = '+84' + userPhone.substring(1);
     }
     const submitData = {
       id: state.dataUser.id,
@@ -130,11 +132,11 @@ export default function Setting(props) {
       delete submitData.office_id;
     }
     try {
-      const updateUser = await axios.put(
+      const updateUser = await axiosJWT.put(
         `http://localhost:${props.BACK_END_PORT}/user/update-user`,
         submitData,
         {
-          headers: { token: props.token },
+          headers: { token: token },
         }
       );
       if (updateUser.data.statusCode == 200) {
@@ -170,13 +172,16 @@ export default function Setting(props) {
         duration: 5000,
       });
     }
-  }, [userEmail, userPhone, userRole, userOffice, userName, state, error]);
+  }, [userEmail, userPhone, userRole, userOffice, userName, state, error, token]);
 
   useEffect(() => {
     const userData = Cookies.get('dataUser');
     dispatch(actions.setDataUser(JSON.parse(userData)));
-    handleGetListOffice();
-  }, []);
+    setToken(`Bearer ${JSON.parse(userData).token}`);
+    if (token) {
+      handleGetListOffice();
+    }
+  }, [token]);
 
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>

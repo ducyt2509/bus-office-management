@@ -84,8 +84,10 @@ export default function ListRouteOnBusSchedule(props) {
   };
 
   useEffect(() => {
-    handleGetListRoute();
-  }, []);
+    if (props.state.dataUser.token) {
+      handleGetListRoute();
+    }
+  }, [props.state]);
 
   useEffect(() => {
     const filterRoute = listRoute.filter((route) => {

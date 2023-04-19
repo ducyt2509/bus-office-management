@@ -91,7 +91,6 @@ module.exports = {
         return responseHandler.badRequest(res, 'User is already exist');
       }
 
-      console.log(newUser);
       const createUser = await User.create(newUser);
       if (createUser) {
         return responseHandler.ok(res, 'Create user successful!');
@@ -113,7 +112,6 @@ module.exports = {
             id: req.body?.id,
           },
         });
-        console.log(getUser.refresh_access_token);
         if (getUser && getUser.refresh_access_token == refreshAccessToken) {
           jwt.verify(
             refreshAccessToken,
@@ -377,7 +375,6 @@ module.exports = {
                 id: getUser[i].office_id,
               },
             });
-            console.log(getOffice);
             if (getOffice) {
               getUser[i].office = getOffice;
             }
@@ -461,7 +458,7 @@ module.exports = {
       if (password) {
         const salt = await bcrypt.genSalt(10);
         hashPassword = bcrypt.hashSync(password, salt);
-        password = hashPassword;
+        element.password = hashPassword;
       } else {
         delete element.password;
       }

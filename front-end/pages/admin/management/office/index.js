@@ -18,7 +18,7 @@ import Pagination from '@/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function ManagementOffice(props) {
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState('');
   const [state, dispatch, axiosJWT] = useStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -75,7 +75,9 @@ export default function ManagementOffice(props) {
     const userData = Cookies.get('dataUser');
     dispatch(actions.setDataUser(JSON.parse(userData)));
     setToken(`Bearer ${JSON.parse(userData).token}`);
-    handleGetListOffice();
+    if (token) {
+      handleGetListOffice();
+    }
   }, [token]);
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>

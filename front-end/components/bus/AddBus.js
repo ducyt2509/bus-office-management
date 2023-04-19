@@ -92,7 +92,6 @@ export default function AddCar(props) {
     [vehicleStatus]
   );
 
-  console.log(vehicleType);
   const handleAddVehicle = useCallback(async () => {
     let oldError = { ...error };
     if (!vehiclePlate) {

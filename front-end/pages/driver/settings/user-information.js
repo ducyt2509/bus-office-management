@@ -12,14 +12,24 @@ import {
   FormLabel,
   FormErrorMessage,
   useToast,
+  Box,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
+  InputGroup,
+  InputRightElement,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { actions, useStore } from '@/src/store';
 import { validate } from '@/helper';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import Cookies from 'js-cookie';
 
 export default function UserInformation(props) {
+  const [token, setToken] = useState('');
   const toast = useToast();
   const toastIdRef = useRef();
   const [state, dispatch, axiosJWT] = useStore();
@@ -79,21 +89,7 @@ export default function UserInformation(props) {
     },
     [listOffice]
   );
-  const handleGetListOffice = async () => {
-    try {
-      const getListOffice = await axiosJWT.post(
-        `http://localhost:${props.BACK_END_PORT}/office/list-office`,
-        {
-          headers: { token: state.dataUser.accessToken },
-        }
-      );
-      if (getListOffice.data.statusCode == 200) {
-        setListOffice(getListOffice.data.data.list_office);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+
   const handleCancelUpdateUser = () => {
     setUserName(state.dataUser.user_name);
     setUserEmail(state.dataUser.email);
@@ -115,26 +111,23 @@ export default function UserInformation(props) {
     }
     let phone = userPhone;
     if (userPhone && userPhone[0] == 0) {
-      phone = '+841' + userPhone.substring(1);
+      phone = '+84' + userPhone.substring(1);
     }
     const submitData = {
       id: state.dataUser.id,
       user_name: userName,
       email: userEmail,
       phone: phone,
-      role_id: userRole,
+      role_id: 3,
       office_id: userOffice,
     };
-    if (state.dataUser.role_id !== 1) {
-      delete submitData.role_id;
-      delete submitData.office_id;
-    }
+
     try {
-      const updateUser = await axios.put(
+      const updateUser = await axiosJWT.put(
         `http://localhost:${props.BACK_END_PORT}/user/update-user`,
         submitData,
         {
-          headers: { token: props.token },
+          headers: { token: token },
         }
       );
       if (updateUser.data.statusCode == 200) {
@@ -172,95 +165,245 @@ export default function UserInformation(props) {
     }
   }, [userEmail, userPhone, userRole, userOffice, userName, state, error]);
 
+  const [errorInput, setErrorInput] = useState({
+    password: false,
+    confirm_password: false,
+  });
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const handleChangePasswordValue = useCallback(
+    (event) => {
+      let value = event.target.value;
+      setPassword(value);
+      let error = { ...errorInput };
+      let pattern = '^(?=.*?[A-Z]).{8,}$';
+      if (value == '' || !value.match(pattern)) {
+        error.password = true;
+      } else {
+        error.password = false;
+      }
+      setErrorInput(error);
+    },
+    [errorInput]
+  );
+
+  const handleChangeConfirmPasswordValue = useCallback(
+    (event) => {
+      let value = event.target.value;
+      setConfirmPassword(value);
+      let error = { ...errorInput };
+      let pattern = '^(?=.*?[A-Z]).{8,}$';
+      if (value == '' || value != password || !value.match(pattern)) {
+        error.confirm_password = true;
+      } else {
+        error.confirm_password = false;
+      }
+      setErrorInput(error);
+    },
+    [errorInput, password]
+  );
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleShowPassword = () => setShowPassword(!showPassword);
+  const handleChangePassword = useCallback(async () => {
+    if (errorInput.password || errorInput.confirm_password) {
+      return;
+    }
+    var submitData = {
+      password: password,
+      user: state.dataUser?.phone,
+      verifyOTPCode: {
+        success: true,
+        messages: 'Correct OTP Code',
+      },
+      confirm_password: confirmPassword,
+    };
+    try {
+      const changePassword = await axiosJWT.put(
+        `http://localhost:${props.BACK_END_PORT}/change-password`,
+        submitData,
+        { headers: { token } }
+      );
+      if (changePassword.data.statusCode === 200) {
+        toastIdRef.current = toast({
+          title: 'Thay đổi mật khẩu thành công.',
+          description: 'Mật khẩu của bạn đã được thay đổi.',
+          status: 'success',
+          isClosable: true,
+          position: 'top',
+          duration: 5000,
+        });
+      }
+    } catch (err) {
+      toastIdRef.current = toast({
+        title: 'Thay đổi mật khẩu thất bại.',
+        description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 5000,
+      });
+    }
+  }, [errorInput, password, confirmPassword, state, token]);
+
   useEffect(() => {
     const userData = Cookies.get('dataUser');
     dispatch(actions.setDataUser(JSON.parse(userData)));
-    handleGetListOffice();
-  }, []);
+    setToken(`Bearer ${JSON.parse(userData).token}`);
+  }, [token]);
 
   return (
-    <div className={'bom-personal-info'} style={{ height: '130vh' }}>
-      <Flex padding={'3%'} justifyContent="space-between" height={'100vh'}>
-        <div style={{ width: '48%' }}>
-          <Heading fontSize={'25px'} marginBottom="5%">
-            Thông tin cá nhân
-          </Heading>
-          <Flex marginBottom={'3%'} alignItems={'center'}>
-            <Image
-              borderRadius="full"
-              boxSize="40%"
-              height="auto"
-              src={state.dataUser.avatar ? state.dataUser.avatar : 'https://bit.ly/dan-abramov'}
-              alt="Nguyễn Văn A"
-            />
-            <Button marginLeft={'8%'} backgroundColor={'#c2c2c2'}>
-              Thay đổi
-            </Button>
-          </Flex>
-          <FormControl marginBottom={'4%'} isRequired isInvalid={error.userName}>
-            <FormLabel marginBottom={'3%'}>Họ và tên</FormLabel>
-            <Input value={userName} onChange={handleChangeUserName} />
-            <FormErrorMessage>Họ và tên là bắt buộc</FormErrorMessage>
-          </FormControl>
-          <Flex marginBottom={'4%'} justifyContent={'space-between'}>
-            <Stack width={'48%'} justifyContent="flex-end">
+    <Box style={{ width: '90%' }} height={'100vh'} padding={'3%'} margin={'0 auto'}>
+      <Heading fontSize={'25px'} marginBottom="10%" marginTop="30%">
+        Thông tin cá nhân
+      </Heading>
+      <Flex marginBottom={'8%'} alignItems={'center'}>
+        <Image
+          borderRadius="full"
+          boxSize="40%"
+          height="auto"
+          src={state.dataUser.avatar ? state.dataUser.avatar : 'https://bit.ly/dan-abramov'}
+          alt="Nguyễn Văn A"
+        />
+        <Button marginLeft={'8%'} backgroundColor={'#fff'} border="1px solid #000">
+          Thay đổi
+        </Button>
+      </Flex>
+
+      <Tabs variant="soft-rounded" colorScheme="green">
+        <TabList>
+          <Tab>Thông tin</Tab>
+          <Tab>Mật khẩu</Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <FormControl marginBottom={'8%'} isRequired isInvalid={error.userName}>
+              <FormLabel marginBottom={'3%'}>Họ và tên</FormLabel>
+              <Input value={userName} onChange={handleChangeUserName} />
+              <FormErrorMessage>Họ và tên là bắt buộc</FormErrorMessage>
+            </FormControl>
+            <Stack marginBottom={'8%'}>
               <FormControl isRequired isInvalid={error.userPhone}>
-                <FormLabel marginBottom={'6%'}>Số điện thoại</FormLabel>
+                <FormLabel marginBottom={'3%'}>Số điện thoại</FormLabel>
                 <Input value={userPhone} onChange={handleChangeUserPhone} />
                 <FormErrorMessage>
                   {!userPhone ? 'Số điện thoại là bắt buộc' : 'Số điện thoại sai định dạng'}
                 </FormErrorMessage>
               </FormControl>
             </Stack>
-            <Stack width={'48%'}>
-              <Text marginBottom={'3%'}>Email</Text>
+            <Stack marginBottom={'8%'} fontWeight={'500'}>
+              <Text>Email</Text>
               <Input value={userEmail} onChange={handleChangeUserEmail} />
             </Stack>
-          </Flex>
-          <Text marginBottom={'3%'}>Chức vụ</Text>
-          <Select
-            marginBottom={'4%'}
-            value={userRole}
-            onChange={handleChangeUserRole}
-            disabled={state.dataUser.role_id !== 1 ? true : false}
-          >
-            <option value={'1'}>Manager</option>
-            <option value={'2'}>Customer Service Staff</option>
-            <option value={'3'}>Driver</option>
-          </Select>
-          <Text marginBottom={'3%'}>Văn phòng</Text>
-          <Select
-            marginBottom={'4%'}
-            value={userOffice}
-            onChange={handleChangeUserOffice}
-            disabled={state.dataUser.role_id !== 1 ? true : false}
-          >
-            {listOffice.map((office) => {
-              return <option value={office?.id}>{office?.office_name}</option>;
-            })}
-          </Select>
-          <Text marginBottom={'3%'}>Địa chỉ</Text>
-          <Input value={userAddress} disabled />
-          <ButtonGroup width={'100%'} justifyContent={'space-evenly'} marginTop={'6%'}>
-            <Button
-              padding={'20px 40px'}
-              backgroundColor={'#c2c2c2'}
-              onClick={handleCancelUpdateUser}
+            <Text marginBottom={'3%'} fontWeight={'500'}>
+              Chức vụ
+            </Text>
+            <Select
+              marginBottom={'4%'}
+              value={userRole}
+              onChange={handleChangeUserRole}
+              disabled={state.dataUser.role_id !== 1 ? true : false}
             >
-              Huỷ
-            </Button>
-            <Button
-              padding={'20px 40px'}
-              backgroundColor={'#363636'}
-              color={'#fff'}
-              onClick={handleUpdateUser}
-            >
-              Lưu
-            </Button>
-          </ButtonGroup>
-        </div>
-      </Flex>
-    </div>
+              <option value={'1'}>Manager</option>
+              <option value={'2'}>Customer Service Staff</option>
+              <option value={'3'}>Driver</option>
+            </Select>
+            {state.dataUser.role_id !== 3 ? (
+              <>
+                <Text marginBottom={'3%'}>Văn phòng</Text>
+                <Select
+                  marginBottom={'4%'}
+                  value={userOffice}
+                  onChange={handleChangeUserOffice}
+                  disabled={state.dataUser.role_id !== 1 ? true : false}
+                >
+                  {listOffice.map((office) => {
+                    return <option value={office?.id}>{office?.office_name}</option>;
+                  })}
+                </Select>
+                <Text marginBottom={'3%'}>Địa chỉ</Text>
+                <Input value={userAddress} disabled />
+              </>
+            ) : null}
+
+            <ButtonGroup width={'100%'} justifyContent={'space-evenly'} marginTop={'6%'}>
+              <Button
+                padding={'20px 40px'}
+                backgroundColor={'#fff'}
+                border="1px solid #000"
+                onClick={handleCancelUpdateUser}
+              >
+                Huỷ
+              </Button>
+              <Button
+                padding={'20px 40px'}
+                backgroundColor={'#F26A4C'}
+                color={'#fff'}
+                onClick={handleUpdateUser}
+              >
+                Lưu
+              </Button>
+            </ButtonGroup>
+          </TabPanel>
+          <TabPanel>
+            <FormControl isRequired isInvalid={errorInput.password} marginBottom={'8%'}>
+              <FormLabel marginBottom={'3%'}>Mật khẩu mới</FormLabel>
+              <InputGroup size="md">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={handleChangePasswordValue}
+                  placeholder="Mật khẩu"
+                />
+                <InputRightElement width="3.5rem" onClick={handleShowPassword}>
+                  {!showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                </InputRightElement>
+              </InputGroup>
+              <FormErrorMessage>
+                {password == ''
+                  ? 'Mật khẩu là bắt buộc'
+                  : 'Mật khẩu chứa ít nhất tám ký tự và một ký tự viết hoa'}
+              </FormErrorMessage>
+            </FormControl>
+
+            <FormControl isRequired isInvalid={errorInput.confirm_password}>
+              <FormLabel marginBottom={'3%'}>Xác nhận mật khẩu</FormLabel>
+              <InputGroup size="md">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={handleChangeConfirmPasswordValue}
+                  placeholder="Xác nhận mật khẩu"
+                />
+                <InputRightElement width="3.5rem" onClick={handleShowPassword}>
+                  {!showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                </InputRightElement>
+              </InputGroup>
+              <FormErrorMessage>
+                {confirmPassword != password
+                  ? 'Xác nhận mật khẩu không đúng '
+                  : 'Mật khẩu chứa ít nhất tám ký tự và một ký tự viết hoa'}
+              </FormErrorMessage>
+            </FormControl>
+
+            <ButtonGroup width={'100%'} justifyContent={'space-evenly'} marginTop={'10%'}>
+              <Button padding={'20px 40px'} backgroundColor={'#fff'} border="1px solid #000">
+                Huỷ
+              </Button>
+              <Button
+                padding={'20px 40px'}
+                backgroundColor={'#F26A4C'}
+                color={'#fff'}
+                onClick={handleChangePassword}
+              >
+                Lưu
+              </Button>
+            </ButtonGroup>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </Box>
   );
 }
 

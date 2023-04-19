@@ -173,6 +173,7 @@ export default function Login(props) {
             router.push('/admin');
           }
           if (loginAccount.data.data.dataValues.role_id == 2) {
+            Cookies.set('sideBarActive', 0);
             router.push('/staff');
           }
           if (loginAccount.data.data.dataValues.role_id == 3) {

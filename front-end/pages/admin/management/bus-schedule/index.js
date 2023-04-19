@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 
 export default function ManagementBusSchedule(props) {
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState('');
   const router = useRouter();
   const [state, dispatch, axiosJWT] = useStore();
 
@@ -71,7 +71,9 @@ export default function ManagementBusSchedule(props) {
     const userData = Cookies.get('dataUser');
     dispatch(actions.setDataUser(JSON.parse(userData)));
     setToken(`Bearer ${JSON.parse(userData).token}`);
-    handleGetListBusSchedule();
+    if (token) {
+      handleGetListBusSchedule();
+    }
   }, [token]);
 
   return (
