@@ -60,9 +60,14 @@ export default function DriverPage(props) {
         })
         .join(' - ');
       router.push({
-        pathname: '/driver/[id]',
-        query: { id: id, transport_id: id, date_detail: departureDate, location: location },
-      });
+			pathname: "/driver/[id]",
+			query: {
+				id: id,
+				transport_id: id,
+				date_detail: departureDate,
+				location: location,
+			},
+		});
     },
     [departureDate, listSchedule]
   );
@@ -70,7 +75,7 @@ export default function DriverPage(props) {
   const listBusScheduleHTML = listSchedule.map((schedule, index) => {
     return (
       <>
-        <Box w="90%" margin="0 auto" onClick={() => handleGetBusScheduleInformation(1)}>
+        <Box w="90%" margin="0 auto" onClick={() => handleGetBusScheduleInformation(schedule.transport_id)}>
           <Flex>
             <Text color={'#F26A4C'} fontSize={'35px'} fontWeight={'500'} width={'35%'}>
               {convertTime(schedule.time_from, 0)}
@@ -80,7 +85,7 @@ export default function DriverPage(props) {
               <Flex alignItems={'center'}>
                 <IoPersonOutline />
                 <Text marginLeft={'4%'}>
-                  Hành khách: {schedule.number_seat_sold}/{schedule.number_seat}
+                  Số Ghế : {schedule.number_seat_sold}/{schedule.number_seat}
                 </Text>
               </Flex>
             </Stack>

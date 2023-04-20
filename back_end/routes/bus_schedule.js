@@ -3,7 +3,7 @@ var router = require("express").Router();
 const middleWare = require("../middleware/permission.middleware");
 
 router.post(
-	"/bus-schedule/add-bus-schedule",
+	"/bus-schedule/create-bus-schedule",
 	middleWare.verifyTokenForManager,
 	bus_schedules.createNewBusSchedule,
 );

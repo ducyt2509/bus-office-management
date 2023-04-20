@@ -390,6 +390,7 @@ export default function Ticket(props) {
 			<>
 				{schedule && schedule.transport && schedule.transport.length
 					? schedule.transport.map((vehicle, index) => {
+						console.log(vehicle);
 							const number_seat_selected =
 								vehicle.number_seat_selected &&
 								vehicle.number_seat_selected.length &&
@@ -426,7 +427,7 @@ export default function Ticket(props) {
 										<Flex marginTop="0 !important">
 											<Text marginRight={"5px"}>-----</Text>
 											<Text>
-												{number_seat_selected + "/" + vehicle.bus[0].number_seat}
+												{number_seat_selected + "/" + vehicle.bus[0]?.number_seat}
 											</Text>
 										</Flex>
 									</Stack>

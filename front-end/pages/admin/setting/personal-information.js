@@ -83,7 +83,7 @@ export default function Setting(props) {
   const handleGetListOffice = useCallback(async () => {
     try {
       const getListOffice = await axiosJWT.post(
-        `http://localhost:${props.BACK_END_PORT}/office/list-office`,
+        `http://localhost:${props.BACK_END_PORT}/office/list-office`,{},
         {
           headers: { token: token },
         }

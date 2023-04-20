@@ -123,13 +123,27 @@ module.exports = {
 			if (params.location_bus_schedule) {
 				for (let i = 0; i < params.location_bus_schedule.length; i++) {
 					let data = params.location_bus_schedule[i];
-					await Location_Bus_Schedule.update(data, {
+					let checkLocationOnBus = await Location_Bus_Schedule.findOne({
 						where: {
+							id,
+						},
+					});
+					if (checkLocationOnBus) {
+						await Location_Bus_Schedule.update(data, {
+							where: {
+								bus_location_type:
+									params.location_bus_schedule[i].bus_location_type == 1 ? 1 : 0,
+								bus_schedule_id: params.id,
+							},
+						});
+					}
+					{
+						await Location_Bus_Schedule.create({
 							bus_location_type:
 								params.location_bus_schedule[i].bus_location_type == 1 ? 1 : 0,
 							bus_schedule_id: params.id,
-						},
-					});
+						});
+					}
 				}
 			}
 			if (updateBC) {
@@ -172,7 +186,7 @@ module.exports = {
 		const dateStart = params.refresh_date;
 		const dateNow = new Date().toJSON().slice(0, 10);
 		try {
-			const querySQL = `select bs.*, ll.location_name as departure_location,
+			let querySQL = `select bs.*, ll.location_name as departure_location,
       c.city_name as city_from, cc.city_name as city_to
       from bus_schedule bs  
       join location l on bs.arrive_location_id = l.id
@@ -180,18 +194,19 @@ module.exports = {
       join route r on bs.route_id = r.id
       join city c on r.city_from_id = c.id
       join city cc on r.city_to_id = cc.id
-      where r.city_from_id = ${locationStartId} and r.city_to_id = ${locationFinishId}'
+      where r.city_from_id = ${locationStartId} and r.city_to_id = ${locationFinishId} 
       `;
-			const queryCount = `select count(*) from bus_schedule bs
+			let queryCount = `select count(*) from bus_schedule bs
       join route r on bs.route_id = r.id
       where r.city_from_id = ${locationStartId} and r.city_to_id = ${locationFinishId} and '${dateStart}' >= '${dateNow}' and  '${dateStart}' <= bs.refresh_date`;
+			if (params.role_id != 1 || params.role_id != 2) {
+				querySQL += ` and '${dateStart}' >= '${dateNow}'`;
+			}
 			const [listBusSchedule, numberBusSchedule] = await Promise.all([
 				db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
 				db.sequelize.query(queryCount, { type: QueryTypes.SELECT }),
 			]);
-			if (params.role_id == 1 || params.role_id == 2) {
-				querySQL += ` and '${dateStart}' >= '${dateNow}`;
-			}
+
 			if (listBusSchedule) {
 				for (let i = 0; i < listBusSchedule.length; i++) {
 					let condition = {
@@ -235,9 +250,9 @@ module.exports = {
 									join transport tr on tr.id = t.transport_id
 									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${
 										getTransport[j].bus_id
-									} and t.payment_status != 3 and t.date_detail like"${
-										new Date(dateStart).toISOString().split("t")[0]
-									}"`,
+									} and t.payment_status != 3 and t.date_detail like"%${
+										new Date(dateStart).toISOString().split("T")[0]
+									}%"`,
 									{
 										type: QueryTypes.SELECT,
 									},
@@ -248,7 +263,7 @@ module.exports = {
 									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${
 										getTransport[j].bus_id
 									} and t.payment_status = 1 and t.date_detail like"${
-										new Date(dateStart).toISOString().split("t")[0]
+										new Date(dateStart).toISOString().split("T")[0]
 									}"`,
 									{
 										type: QueryTypes.SELECT,
@@ -260,9 +275,17 @@ module.exports = {
 							}
 							if (numberSeatSelected) {
 								getTransport[j].dataValues.number_seat_selected = numberSeatSelected.filter(
-									(e) =>
-										new Date(e.date_detail).toISOString().split("T")[0] ==
-										new Date(dateStart).toISOString().split("T")[0],
+									(e) => {
+										console.log(
+											e.date_detail,
+											new Date(e.date_detail).getDate(),
+											new Date(dateStart).toISOString().split("T")[0],
+										);
+										return (
+											e.date_detail.split(" ")[0] ==
+											new Date(dateStart).toISOString().split("T")[0]
+										);
+									},
 								);
 							}
 							if (numberSeatSold) {
@@ -282,6 +305,7 @@ module.exports = {
 							0
 					);
 				});
+				console.log(filter.transport);
 				return responseHandler.responseWithData(res, 200, {
 					list_bus_schedule: filter,
 					number_bus_schedule: numberBusSchedule[0]["count(*)"],
@@ -312,10 +336,11 @@ module.exports = {
 			join city cc on r.city_to_id = cc.id
       where ( (c.city_name like '%%') 
       or (cc.city_name like '%%') )
-			and refresh_date >= "${currentDate}"
+			
       order by id
       limit ${limit} offset ${offset}
 `;
+			// and refresh_date >= "${currentDate}"
 			const queryCount = `select count(*) from bus_schedule bs
 			join route r on bs.route_id = r.id 
 			join city c on r.city_from_id = c.id
@@ -359,7 +384,9 @@ module.exports = {
 		const departure_date = params.departure_date;
 		const user_id = params.user_id;
 		try {
-			const querySQL = `select bs.time_from, c.city_name as city_from, cc.city_name as city_to, v.number_seat, tr.id as transport_id, tr.departure_date from bus_schedule bs 
+			const querySQL = `select bs.time_from, c.city_name as city_from, cc.city_name as city_to,
+			 v.number_seat, tr.id as transport_id, tr.departure_date, bs.effective_date, bs.schedule_frequency
+			 from bus_schedule bs 
       join transport tr on bs.id = tr.bus_schedule_id
       join bus b on b.id = tr.bus_id
       join vehicle_type v on v.id = b.vehicle_type_id 
@@ -368,14 +395,18 @@ module.exports = {
       join city c on c.id = r.city_from_id
       join city cc on cc.id = r.city_to_id
       left join user uu on uu.id = b.support_driver_id
-      where (b.main_driver_id = ${user_id} or b.support_driver_id = ${user_id}) and tr.departure_date like "%${departure_date}%";`;
+      where (b.main_driver_id = ${user_id} or b.support_driver_id = ${user_id}) 
+	  and bs.effective_date < "${departure_date}" < bs.refresh_date 
+	  `;
 
 			const queryCount = `select count(*) from bus_schedule bs 
       join transport tr on bs.id = tr.bus_schedule_id
       join bus b on b.id = tr.bus_id
       join user u on u.id = b.main_driver_id
       left join user uu on uu.id = b.support_driver_id
-      where (b.main_driver_id = ${user_id} or b.support_driver_id = ${user_id}) and tr.departure_date like "%${departure_date}%";`;
+      where (b.main_driver_id = ${user_id} or b.support_driver_id = ${user_id})
+	 	and bs.effective_date < "${departure_date}" < bs.refresh_date 
+	  `;
 
 			const [listBusSchedule, numberBusSchedule] = await Promise.all([
 				db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
@@ -383,19 +414,26 @@ module.exports = {
 			]);
 			if (listBusSchedule) {
 				for (let i = 0; i < listBusSchedule.length; i++) {
-					const numberSeatSQL = `select count(*) from transaction t 
-          join transport ts on t.transport_id = ts.id where ts.id = ${
-					listBusSchedule[i].transport_id
-				} and t.date_detail like "%${
-						listBusSchedule[i].departure_date.toISOString().split("T")[0]
-					}%" and t.payment_status != 3`;
+					const numberSeatSQL = `select seat from transaction t 
+          			join transport ts on t.transport_id = ts.id where ts.id = ${listBusSchedule[i].transport_id} and t.date_detail like "%${departure_date}%" and t.payment_status != 3`;
 					let count = await db.sequelize.query(numberSeatSQL, { type: QueryTypes.SELECT });
 					if (count) {
-						listBusSchedule[i].number_seat_sold = count[0]["count(*)"];
+						listBusSchedule[i].number_seat_sold = count
+							.map((e) => e.seat)
+							.join(", ")
+							.split(", ").length;
 					}
 				}
+				console.log(listBusSchedule);
+				const filterListBusSchedule = listBusSchedule.filter((e) => {
+					return (
+						DateDiff.inDays(new Date(departure_date), new Date(e.effective_date)) %
+							e.schedule_frequency ==
+						0
+					);
+				});
 				return responseHandler.responseWithData(res, 200, {
-					list_bus_schedule: listBusSchedule,
+					list_bus_schedule: filterListBusSchedule,
 					number_bus_schedule: numberBusSchedule[0]["count(*)"],
 				});
 			} else {

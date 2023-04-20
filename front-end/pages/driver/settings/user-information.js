@@ -89,6 +89,7 @@ export default function UserInformation(props) {
     setUserRole(state.dataUser.role_id);
   };
   const handleUpdateUser = useCallback(async () => {
+    console.log(11111)
     let oldError = { ...error };
     if (!userName) {
       oldError.userName = true;

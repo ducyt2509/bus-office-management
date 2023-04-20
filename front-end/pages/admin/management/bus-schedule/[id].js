@@ -257,19 +257,19 @@ export default function BusScheduleDetail(props) {
                 },
               }
             );
-            if (updateBusSchedule.data.statusCode == 200) {
-              toastIdRef.current = toast({
-                title: 'Lịch trình đã thêm mới.',
-                description: 'Hành trình đã được làm mới thành công.',
-                status: 'success',
-                isClosable: true,
-                position: 'top',
-                duration: 2000,
-              });
-              setTimeout(() => {
-                router.push('/admin/management/bus-schedule');
-              }, 2000);
-            }
+            if (refreshBS.data.statusCode == 200) {
+					toastIdRef.current = toast({
+						title: "Lịch trình đã thêm mới.",
+						description: "Hành trình đã được làm mới thành công.",
+						status: "success",
+						isClosable: true,
+						position: "top",
+						duration: 2000,
+					});
+					setTimeout(() => {
+						router.push("/admin/management/bus-schedule");
+					}, 2000);
+				}
           } catch (error) {
             toastIdRef.current = toast({
               title: 'Lịch trình không thể cập nhật.',
