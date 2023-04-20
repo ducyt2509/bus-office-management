@@ -1,9 +1,13 @@
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import axios from 'axios';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
+import { useRouter } from 'next/router';
+import { useToast } from '@chakra-ui/react';
 
 export default function ListRouteOnBusSchedule(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const [listRoute, setListRoute] = useState([]);
   const [routeName, setRouteName] = useState();
   const [querySearch, setQuerySearch] = useState('');
@@ -32,6 +36,14 @@ export default function ListRouteOnBusSchedule(props) {
           setListRoute(getListRoute.data.data.list_route);
         }
       } catch (err) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
         console.log(err);
       }
     },

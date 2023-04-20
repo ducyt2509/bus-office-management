@@ -7,8 +7,9 @@ import {
   Flex,
   Image,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
 import axios from 'axios';
 import ActionBar from '@/components/transport/ActionBar';
@@ -19,6 +20,9 @@ import Cookies from 'js-cookie';
 
 export default function ManagementTransport(props) {
   const [state, dispatch, axiosJWT] = useStore();
+  const toast = useToast();
+  const toastIdRef = useRef();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [token, setToken] = useState('');
@@ -60,6 +64,14 @@ export default function ManagementTransport(props) {
           setNumberTransport(getListTransport.data.data.number_transport);
         }
       } catch (error) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
         console.log(error);
       }
     },

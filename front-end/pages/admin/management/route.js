@@ -7,8 +7,9 @@ import {
   Flex,
   Image,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
 import axios from 'axios';
 import ActionBar from '@/components/route/ActionBar';
@@ -18,6 +19,8 @@ import Pagination from '@/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function ManagementRoute(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const [token, setToken] = useState('');
   const [state, dispatch, axiosJWT] = useStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -59,6 +62,14 @@ export default function ManagementRoute(props) {
           setNumberRoute(getListRoute.data.data.number_route);
         }
       } catch (error) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
         console.log(error);
       }
     },

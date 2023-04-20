@@ -21,19 +21,23 @@ import {
   TableContainer,
   Select,
   Img,
+  useToast,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Image from 'next/image';
 import DoanhThu from '@/images/icons/DoanhThu.png';
 import TrungBinhNgay from '@/images/icons/TrungBinhNgay.png';
 import VeBan from '@/images/icons/VeBan.png';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
 import Pagination from '@/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function RevenueReport(props) {
   const [token, setToken] = useState('');
+  const toast = useToast();
+  const toastIdRef = useRef();
+
   const [report, setReport] = useState('1');
   const [state, dispatch, axiosJWT] = useStore();
 
@@ -87,6 +91,14 @@ export default function RevenueReport(props) {
           });
         }
       } catch (err) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
         console.log(err);
       }
     },
@@ -212,7 +224,7 @@ export default function RevenueReport(props) {
                 </TabPanel>
               </TabPanels>
             </Tabs>
-            <TableContainer marginBottom={'3%'} backgroundColor={'#f5f5f5'}>
+            {/* <TableContainer marginBottom={'3%'} backgroundColor={'#f5f5f5'}>
               <Table variant="simple">
                 <Thead>
                   <Tr>
@@ -239,7 +251,7 @@ export default function RevenueReport(props) {
                   </Tr>
                 </Tbody>
               </Table>
-            </TableContainer>
+            </TableContainer> */}
           </>
         ) : (
           <>

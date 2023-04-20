@@ -1,16 +1,18 @@
-import { Text, Heading, Card, CardHeader, CardBody, Flex, Image } from '@chakra-ui/react';
+import { Text, Heading, Card, CardHeader, CardBody, Flex, Image, useToast } from '@chakra-ui/react';
 import axios from 'axios';
 import ActionBar from '@/components/bus-schedule/ActionBar';
 import ListBusSchedule from '@/components/bus-schedule/ListBusSchedule';
 import Pagination from '@/components/common/Pagination';
 import { actions, useStore } from '@/src/store';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 
 export default function ManagementBusSchedule(props) {
   const [token, setToken] = useState('');
   const router = useRouter();
+  const toast = useToast();
+  const toastIdRef = useRef();
   const [state, dispatch, axiosJWT] = useStore();
 
   const [listBusSchedule, setListBusSchedule] = useState([]);
@@ -48,6 +50,14 @@ export default function ManagementBusSchedule(props) {
           }
         }
       } catch (err) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
         console.log(err);
       }
     },

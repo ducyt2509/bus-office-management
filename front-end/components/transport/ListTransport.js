@@ -14,7 +14,6 @@ export default function ListTransport(props) {
     props.onOpen();
   };
 
-  console.log(props.token)
   const handleDeleteTransport = useCallback(
     async (transportId) => {
       try {

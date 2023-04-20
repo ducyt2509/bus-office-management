@@ -1,7 +1,17 @@
 import axios from 'axios';
 import { actions, useStore } from '@/src/store';
-import { useCallback, useEffect, useState } from 'react';
-import { Flex, Text, Image, Avatar, Card, CardBody, Box, Heading } from '@chakra-ui/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  Flex,
+  Text,
+  Image,
+  Avatar,
+  Card,
+  CardBody,
+  Box,
+  Heading,
+  useToast,
+} from '@chakra-ui/react';
 import { MdOutlineLocationCity } from 'react-icons/md';
 import { IoIosArrowBack } from 'react-icons/io';
 import { VscPerson } from 'react-icons/vsc';
@@ -9,20 +19,35 @@ import Link from 'next/link';
 import Cookies from 'js-cookie';
 
 export default function Employee(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const [token, setToken] = useState('');
   const [state, dispatch, axiosJWT] = useStore();
   const [officeInformation, setOfficeInformation] = useState({});
 
   const getOfficeDetail = useCallback(async () => {
-    const officeDetail = await axiosJWT.post(
-      `http://localhost:${props.BACK_END_PORT}/office/office-by-id`,
-      { id: props.id },
-      { headers: { token } }
-    );
-    if (officeDetail.data.statusCode == 200) {
-      setOfficeInformation(officeDetail.data.data);
+    try {
+      const officeDetail = await axiosJWT.post(
+        `http://localhost:${props.BACK_END_PORT}/office/office-by-id`,
+        { id: props.id },
+        { headers: { token } }
+      );
+      if (officeDetail.data.statusCode == 200) {
+        setOfficeInformation(officeDetail.data.data);
+      }
+    } catch (err) {
+      toastIdRef.current = toast({
+        title: 'Phiên của bạn đã hết hạn',
+        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
+      console.log(err);
     }
   }, [token]);
+
   const ListEmployee =
     officeInformation.number_employee &&
     officeInformation.number_employee.map((employee) => {

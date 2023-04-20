@@ -1,13 +1,15 @@
 import axios from 'axios';
 import { actions, useStore } from '@/src/store';
-import { useCallback, useEffect, useState } from 'react';
-import { Flex, Text, Image, Stack, Card, IconButton, CardBody, Heading } from '@chakra-ui/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Flex, Text, Image, Stack, Card, IconButton, CardBody, Heading, useToast } from '@chakra-ui/react';
 import { IoIosArrowBack } from 'react-icons/io';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
 
 export default function Employee(props) {
   const [token, setToken] = useState('');
+  const toast = useToast();
+  const toastIdRef = useRef();
   const [state, dispatch, axiosJWT] = useStore();
   const [employeeInformation, setEmployeeInformation] = useState({});
   const getEmployeeDetail = useCallback(async () => {
@@ -21,6 +23,14 @@ export default function Employee(props) {
         setEmployeeInformation(employeeDetail.data.data);
       }
     } catch (err) {
+      toastIdRef.current = toast({
+        title: 'Phiên của bạn đã hết hạn',
+        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
       console.log(err);
     }
   }, [token]);
