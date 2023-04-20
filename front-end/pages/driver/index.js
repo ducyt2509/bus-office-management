@@ -1,4 +1,4 @@
-import { useStore } from '@/src/store';
+import { actions, useStore } from '@/src/store';
 import { Text, Flex, Stack, Box, Input, StackDivider } from '@chakra-ui/react';
 import { InfoIcon } from '@chakra-ui/icons';
 import { IoPersonOutline } from 'react-icons/io5';
@@ -6,40 +6,45 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { convertTime } from '@/helper';
+import Cookies from 'js-cookie';
 
 export default function DriverPage(props) {
-  const [state, dispatch] = useStore();
+  const [token, setToken] = useState('');
+  const [userId, setUserId] = useState();
+  const [state, dispatch, axiosJWT] = useStore();
   const router = useRouter();
   const [listSchedule, setListSchedule] = useState([]);
   const [numberSchedule, setNumberSchedule] = useState(0);
   const [departureDate, setDepartureDate] = useState(new Date().toISOString().split('T')[0]);
 
-  const getBusScheduleList = useCallback(async (date) => {
-    const user_id = window.localStorage.getItem("user_id")
-    const listBusSchedule = await axios.post(
-      `http://localhost:${props.port}/bus-schedule/list-bus-schedule-driver`,
-      {
-        user_id: user_id,
-        departure_date: date,
-      },
-      {
-        headers: {
-          token: state?.dataUser?.token,
+  const getBusScheduleList = useCallback(
+    async (date) => {
+      const listBusSchedule = await axios.post(
+        `http://localhost:${props.port}/bus-schedule/list-bus-schedule-driver`,
+        {
+          user_id: userId,
+          departure_date: date,
         },
+        {
+          headers: {
+            token: token,
+          },
+        }
+      );
+      if (listBusSchedule.data.statusCode === 200) {
+        setListSchedule(listBusSchedule.data.data.list_bus_schedule);
+        setNumberSchedule(listBusSchedule.data.data.number_bus_schedule);
       }
-    );
-    if (listBusSchedule.data.statusCode === 200) {
-      setListSchedule(listBusSchedule.data.data.list_bus_schedule);
-      setNumberSchedule(listBusSchedule.data.data.number_bus_schedule);
-    }
-  });
+    },
+    [token, userId]
+  );
 
   const handleChangeDepartureDate = useCallback(
     (value) => {
       setDepartureDate(value);
       getBusScheduleList(value);
     },
-    [departureDate]
+    [departureDate, token]
   );
 
   const handleGetBusScheduleInformation = useCallback(
@@ -56,7 +61,7 @@ export default function DriverPage(props) {
         .join(' - ');
       router.push({
         pathname: '/driver/[id]',
-        query: { id: id, date_detail: departureDate, location: location },
+        query: { id: id, transport_id: id, date_detail: departureDate, location: location },
       });
     },
     [departureDate, listSchedule]
@@ -89,8 +94,15 @@ export default function DriverPage(props) {
   });
 
   useEffect(() => {
-    getBusScheduleList(new Date().toISOString().split('T')[0]);
-  }, []);
+    const userData = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userData)));
+    setToken(`Bearer ${JSON.parse(userData).token}`);
+    setUserId(JSON.parse(userData).id);
+    if (token && userId) {
+      getBusScheduleList(new Date().toISOString().split('T')[0]);
+    }
+  }, [token, userId]);
+
   return (
     <>
       <Stack

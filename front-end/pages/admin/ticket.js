@@ -31,8 +31,8 @@ import Cookies from 'js-cookie';
 export default function Ticket(props) {
   const toastIdRef = useRef();
   const toast = useToast();
+  const [token, setToken] = useState('');
   const [state, dispatch, axiosJWT] = useStore();
-
 
   const [seatInformation, setSeatInformation] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -89,15 +89,21 @@ export default function Ticket(props) {
   );
 
   const handleTotalRenewal = useCallback(async () => {
+    console.log(token);
     try {
-      const getTotalRenewal = await axios.get(
-        `http://localhost:${process.env.BACK_END_PORT}/bus-schedule/check-renewal-bus-schedule`
+      const getTotalRenewal = await axiosJWT.get(
+        `http://localhost:${props.port}/bus-schedule/check-renewal-bus-schedule`,
+        {
+          headers: {
+            token: `Bearer ${token}`,
+          },
+        }
       );
       if (getTotalRenewal.data.statusCode == 200) {
         let totalRenewal = getTotalRenewal.data.data.totalBSNeedRenewal;
         if (totalRenewal && totalRenewal > 0) {
           let toastRenew = setTimeout(() => {
-            toastRef.current = toast({
+            toastIdRef.current = toast({
               title: 'Lịch trình xe cần được cập nhật.',
               description: `Có ${totalRenewal} lịch trình sắp hết hạn`,
               status: 'warning',
@@ -112,9 +118,17 @@ export default function Ticket(props) {
         }
       }
     } catch (err) {
+      toastIdRef.current = toast({
+        title: 'Phiên của bạn đã hết hạn2.',
+        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
       console.log(err);
     }
-  });
+  }, [token]);
 
   const handleDisembark = useCallback(async () => {
     Date.prototype.addDays = function (days) {
@@ -254,7 +268,15 @@ export default function Ticket(props) {
         setTransportData();
         setSeatCustomerSelected([]);
       }
-    } catch {
+    } catch (err) {
+      toastIdRef.current = toast({
+        title: 'Phiên của bạn đã hết hạn',
+        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
       console.log(err);
     }
   }, [startLocation, endLocation, departureDay, error]);
@@ -350,10 +372,13 @@ export default function Ticket(props) {
   );
 
   useEffect(() => {
-    const userDate = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userDate)));
-    handleTotalRenewal();
-  }, []);
+    const userData = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userData)));
+    setToken(JSON.parse(userData).token);
+    if (token) {
+      handleTotalRenewal();
+    }
+  }, [token]);
 
   const cityOption =
     props.list_city &&
@@ -573,7 +598,7 @@ export default function Ticket(props) {
           >
             DS đón trả
           </Button>
-          <Button
+          {/* <Button
             backgroundColor={tabSelected == 3 ? '#F2CAC2' : '#fff'}
             border="1px solid"
             borderRadius={'5px'}
@@ -589,7 +614,7 @@ export default function Ticket(props) {
             onClick={() => setModalStatus(true)}
           >
             Xuất bến
-          </Button>
+          </Button> */}
         </Flex>
       </Flex>
     ) : null;

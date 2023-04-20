@@ -7,8 +7,9 @@ import {
   Flex,
   Image,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import ActionBar from '@/components/employee/ActionBar';
 import AddEmployee from '@/components/employee/AddEmployee';
@@ -18,7 +19,9 @@ import { actions, useStore } from '@/src/store';
 import Cookies from 'js-cookie';
 
 export default function ManagementEmployees(props) {
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState('');
+  const toast = useToast();
+  const toastIdRef = useRef();
   const [state, dispatch, axiosJWT] = useStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -59,6 +62,14 @@ export default function ManagementEmployees(props) {
           setNumberUser(getListUser.data.data.number_user);
         }
       } catch (err) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
         console.log(err);
       }
     },
@@ -75,7 +86,9 @@ export default function ManagementEmployees(props) {
     const userData = Cookies.get('dataUser');
     dispatch(actions.setDataUser(JSON.parse(userData)));
     setToken(`Bearer ${JSON.parse(userData).token}`);
-    handleGetListUser();
+    if (token) {
+      handleGetListUser();
+    }
   }, [token]);
 
   return (

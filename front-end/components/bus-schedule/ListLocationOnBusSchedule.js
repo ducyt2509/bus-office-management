@@ -1,10 +1,13 @@
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import axios from 'axios';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { FormErrorMessage } from '@chakra-ui/react';
+import { FormErrorMessage, useToast } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 
 export default function ListLocationOnBusSchedule(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const [listLocation, setListLocation] = useState([]);
   const [locationName, setLocationName] = useState();
   const [querySearch, setQuerySearch] = useState('');
@@ -47,6 +50,14 @@ export default function ListLocationOnBusSchedule(props) {
           );
         }
       } catch (err) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
         console.log(err);
       }
     },
@@ -119,6 +130,7 @@ export default function ListLocationOnBusSchedule(props) {
       handleGetListLocation();
     }
   }, [props.route]);
+  
   useEffect(() => {
     if (props.data && props.data.length) {
       setLocationName(

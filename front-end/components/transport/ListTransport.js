@@ -2,7 +2,7 @@ import { SlPencil } from 'react-icons/sl';
 import { IoTrashBinOutline } from 'react-icons/io5';
 import { Stack, IconButton, useToast } from '@chakra-ui/react';
 import axios from 'axios';
-import { useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { convertTime } from '@/helper';
 
 export default function ListTransport(props) {
@@ -13,34 +13,38 @@ export default function ListTransport(props) {
     props.setTransportId(transportId);
     props.onOpen();
   };
-  const handleDeleteTransport = async (transportId) => {
-    try {
-      const deleteTransport = await props.axiosJWT.delete(
-        `http://localhost:${props.port}/transport/delete-transport`,
-        { data: { id: transportId }, headers: { token: props.token } }
-      );
-      if (deleteTransport.data.statusCode == 200) {
+
+  const handleDeleteTransport = useCallback(
+    async (transportId) => {
+      try {
+        const deleteTransport = await props.axiosJWT.delete(
+          `http://localhost:${props.port}/transport/delete-transport`,
+          { data: { id: transportId }, headers: { token: props.token } }
+        );
+        if (deleteTransport.data.statusCode == 200) {
+          toastIdRef.current = toast({
+            title: 'Hành trình xe đã được xoá.',
+            description: 'Chúng tôi đã xoá hành trình xe cho bạn',
+            status: 'success',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+          props.handleGetListTransport();
+        }
+      } catch (err) {
         toastIdRef.current = toast({
-          title: 'Hành trình xe đã được xoá.',
-          description: 'Chúng tôi đã xoá hành trình xe cho bạn',
-          status: 'success',
+          title: 'Hành trình xe không thể xoá',
+          description: 'Xảy ra lỗi khi xoá hành trình xe. Làm ơn hãy thử lại.',
+          status: 'error',
           isClosable: true,
           position: 'top',
           duration: 2000,
         });
-        props.handleGetListTransport();
       }
-    } catch (err) {
-      toastIdRef.current = toast({
-        title: 'Hành trình xe không thể xoá',
-        description: 'Xảy ra lỗi khi xoá hành trình xe. Làm ơn hãy thử lại.',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
-    }
-  };
+    },
+    [props.token]
+  );
 
   const ListTransportHTML = props.list.map((transport, index) => {
     const time_from = convertTime(transport.time_from, 0);

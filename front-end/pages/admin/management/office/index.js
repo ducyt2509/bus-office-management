@@ -7,8 +7,9 @@ import {
   Flex,
   Image,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
 import axios from 'axios';
 import ActionBar from '@/components/office/ActionBar';
@@ -18,7 +19,9 @@ import Pagination from '@/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function ManagementOffice(props) {
-  const [token, setToken] = useState("");
+  const toast = useToast();
+  const toastIdRef = useRef();
+  const [token, setToken] = useState('');
   const [state, dispatch, axiosJWT] = useStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -59,6 +62,14 @@ export default function ManagementOffice(props) {
           setNumberOffice(getListOffice.data.data.number_office);
         }
       } catch (error) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
         console.log(error);
       }
     },
@@ -75,7 +86,9 @@ export default function ManagementOffice(props) {
     const userData = Cookies.get('dataUser');
     dispatch(actions.setDataUser(JSON.parse(userData)));
     setToken(`Bearer ${JSON.parse(userData).token}`);
-    handleGetListOffice();
+    if (token) {
+      handleGetListOffice();
+    }
   }, [token]);
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>

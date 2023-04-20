@@ -30,7 +30,12 @@ export default function ActionBar(props) {
             onChange={props.handleChangeQuerySearch}
           />
         </InputGroup>
-        <IconButton icon={<CiFilter />} backgroundColor={'#D6D6D6'} color={'#686868'} onClick={props.handleGetListUser}/>
+        <IconButton
+          icon={<CiFilter />}
+          backgroundColor={'#D6D6D6'}
+          color={'#686868'}
+          onClick={props.handleGetListUser}
+        />
       </Flex>
       <ButtonGroup>
         <IconButton
@@ -39,8 +44,8 @@ export default function ActionBar(props) {
           color={'#686868'}
           onClick={handleActiveModal}
         />
-        <IconButton icon={<CiExport />} backgroundColor={'#D6D6D6'} color={'#686868'} />
-        <IconButton icon={<CiImport />} backgroundColor={'#D6D6D6'} color={'#686868'} />
+        {/* <IconButton icon={<CiExport />} backgroundColor={'#D6D6D6'} color={'#686868'} />
+        <IconButton icon={<CiImport />} backgroundColor={'#D6D6D6'} color={'#686868'} /> */}
       </ButtonGroup>
     </Flex>
   );

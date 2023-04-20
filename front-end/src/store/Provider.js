@@ -1,12 +1,15 @@
 import Context from './Context';
-import { useReducer } from 'react';
+import { useReducer, useRef } from 'react';
 import reducer, { initState } from './reducer';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import { actions } from '.';
 import Cookies from 'js-cookie';
+import { useToast } from '@chakra-ui/react';
 
 export default function Provider({ children }) {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const [state, dispatch] = useReducer(reducer, initState);
 
   const axiosJWT = axios.create();
@@ -46,11 +49,27 @@ export default function Provider({ children }) {
           }
         }
       } catch (error) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
         console.log(error);
       }
       return config;
     },
     (err) => {
+      toastIdRef.current = toast({
+        title: 'Phiên của bạn đã hết hạn',
+        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
       return Promise.reject(err);
     }
   );

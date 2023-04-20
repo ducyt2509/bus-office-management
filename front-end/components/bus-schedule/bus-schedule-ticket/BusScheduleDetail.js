@@ -15,41 +15,41 @@ import { GoLocation } from 'react-icons/go';
 
 export default function BusScheduleDetail(props) {
   let locationPickup = props.data.location_bus_schedule
-  ? props.data.location_bus_schedule.filter((e) => {
-      return e.bus_location_type == 0;
-    })[0]?.bus_detail
-  : [];
-let addressPickup = props.data.location_bus_schedule
-  ? props.data.location_bus_schedule.filter((e) => {
-      return e.bus_location_type == 0;
-    })[0]?.bus_location_address
-  : [];
-let locationDropOff = props.data.location_bus_schedule
-  ? props.data.location_bus_schedule.filter((e) => {
-      return e.bus_location_type == 1;
-    })[0]?.bus_detail
-  : [];
-let addressDropOff = props.data.location_bus_schedule
-  ? props.data.location_bus_schedule.filter((e) => {
-      return e.bus_location_type == 1;
-    })[0]?.bus_location_address
-  : [];
-locationPickup =
-  locationPickup && locationPickup.length ? JSON.parse(locationPickup) : locationPickup;
-locationDropOff =
-  locationDropOff && locationDropOff.length ? JSON.parse(locationDropOff) : locationDropOff;
+    ? props.data.location_bus_schedule.filter((e) => {
+        return e.bus_location_type == 0;
+      })[0]?.bus_detail
+    : [];
+  let addressPickup = props.data.location_bus_schedule
+    ? props.data.location_bus_schedule.filter((e) => {
+        return e.bus_location_type == 0;
+      })[0]?.bus_location_address
+    : [];
+  let locationDropOff = props.data.location_bus_schedule
+    ? props.data.location_bus_schedule.filter((e) => {
+        return e.bus_location_type == 1;
+      })[0]?.bus_detail
+    : [];
+  let addressDropOff = props.data.location_bus_schedule
+    ? props.data.location_bus_schedule.filter((e) => {
+        return e.bus_location_type == 1;
+      })[0]?.bus_location_address
+    : [];
+  locationPickup =
+    locationPickup && locationPickup.length ? JSON.parse(locationPickup) : locationPickup;
+  locationDropOff =
+    locationDropOff && locationDropOff.length ? JSON.parse(locationDropOff) : locationDropOff;
 
-addressPickup = addressPickup && addressPickup.length ? JSON.parse(addressPickup) : addressPickup;
-addressDropOff =
-  addressDropOff && addressDropOff.length ? JSON.parse(addressDropOff) : addressDropOff;
+  addressPickup = addressPickup && addressPickup.length ? JSON.parse(addressPickup) : addressPickup;
+  addressDropOff =
+    addressDropOff && addressDropOff.length ? JSON.parse(addressDropOff) : addressDropOff;
 
-const locationPickupHTML = locationPickup ? (
-  locationPickup.map((location, index) => {
-    const information = location.split(': ');
-    const time = information[1];
-    const position = information[0];
-    return (
-      <Stack>
+  const locationPickupHTML = locationPickup ? (
+    locationPickup.map((location, index) => {
+      const information = location.split(': ');
+      const time = information[1];
+      const position = information[0];
+      return (
+        <Stack>
           <Flex marginBottom={'2%!important'}>
             <Text fontWeight={'500'} fontSize={'16px'}>
               {time}
@@ -58,51 +58,49 @@ const locationPickupHTML = locationPickup ? (
               &emsp;&bull;&ensp;{position}
             </Text>
           </Flex>
-        <Flex
-          alignItems={'center'}
-          marginLeft="8px!important"
-          marginTop={'0!important'}
-          marginBottom="8px!important"
-        >
-          <GoLocation />
-          <Text marginLeft="3%">{addressPickup[index]}</Text>
-        </Flex>
-      </Stack>
-    );
-  })
-) : (
-  <Text>Không có điểm đón</Text>
-);
-const locationDropOffHTML = locationDropOff ? (
-  locationDropOff.map((location, index) => {
-    const information = location.split(': ');
-    const time = information[1];
-    const position = information[0];
-    return (
-      <Stack>
-          <Flex marginBottom={'2%!important'}>
-            <Text fontWeight={'500'} fontSize={'16px'}>
-              {time}
-            </Text>
-            <Text fontWeight={'500'} fontSize={'16px'}>
-              &emsp;&bull;&ensp;{position}
-            </Text>
+          <Flex
+            alignItems={'center'}
+            marginLeft="8px!important"
+            marginTop={'0!important'}
+            marginBottom="8px!important"
+          >
+            <GoLocation />
+            <Text marginLeft="3%">{addressPickup[index]}</Text>
           </Flex>
-        <Flex
-          alignItems={'center'}
-          marginLeft="8px!important"
-          marginTop={'0!important'}
-          marginBottom="8px!important"
-        >
-          <GoLocation />
-          <Text marginLeft="3%">{addressDropOff[index]}</Text>
-        </Flex>
-      </Stack>
-    );
-  })
-) : (
-  <Text>Không có điểm trả</Text>
-);
+        </Stack>
+      );
+    })
+  ) : (
+    <Text>Không có điểm đón</Text>
+  );
+  const locationDropOffHTML = locationDropOff
+    ? locationDropOff.map((location, index) => {
+        const information = location.split(': ');
+        const time = information[1];
+        const position = information[0];
+        return (
+          <Stack>
+            <Flex marginBottom={'2%!important'}>
+              <Text fontWeight={'500'} fontSize={'16px'}>
+                {time}
+              </Text>
+              <Text fontWeight={'500'} fontSize={'16px'}>
+                &emsp;&bull;&ensp;{position}
+              </Text>
+            </Flex>
+            <Flex
+              alignItems={'center'}
+              marginLeft="8px!important"
+              marginTop={'0!important'}
+              marginBottom="8px!important"
+            >
+              <GoLocation />
+              <Text marginLeft="3%">{addressDropOff[index]}</Text>
+            </Flex>
+          </Stack>
+        );
+      })
+    : null;
 
   return (
     <Box className="details">

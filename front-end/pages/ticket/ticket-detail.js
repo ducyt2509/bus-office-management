@@ -5,7 +5,6 @@ import { useState } from 'react';
 
 export default function TicketDetail(props) {
   const [seatSelected, setSeatSelected] = useState(props.data.seat && props.data.seat.split(', '));
-  console.log(1, props.data?.email ? props.data?.email : props.data?.passenger_email);
   return (
     <>
       <Flex w="80%" margin={'3% auto 2%'} justifyContent="space-between">

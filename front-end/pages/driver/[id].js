@@ -1,23 +1,34 @@
 import axios from 'axios';
 import { ChevronLeftIcon, SearchIcon, InfoIcon, CheckIcon } from '@chakra-ui/icons';
-import { Text, Flex, Stack, Box, Input, IconButton } from '@chakra-ui/react';
+import { Text, Flex, Stack, Box, Input, IconButton, Button, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { actions, useStore } from '@/src/store';
+import Cookies from 'js-cookie';
 
 export default function BusScheduleDriver(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
+  const [state, dispatch, axiosJWT] = useStore();
   const [data, setData] = useState(props.data);
+  const [status, setStatus] = useState(true);
   const router = useRouter();
   const handleBackMainScreen = () => {
     router.push('/driver');
   };
-
   const handleCheckCustomerInTheCar = useCallback(
     async (id) => {
-      let updateTransactionById = await axios.put(
+      let updateTransactionById = await axiosJWT.put(
         `http://localhost:${props.port}/transaction/update-transaction`,
         {
           id: id,
           payment_status: 2,
+          role_id: 3,
+        },
+        {
+          headers: {
+            token: `Bearer ${state.dataUser.token}`,
+          },
         }
       );
       if (updateTransactionById.data.statusCode == 200) {
@@ -26,12 +37,66 @@ export default function BusScheduleDriver(props) {
           e.id == id ? (e.payment_status = 2) : null;
           return e;
         });
-        console.log(cloneData);
         setData(cloneData);
       }
     },
-    [data]
+    [data, state]
   );
+
+  const handleDisembark = useCallback(async () => {
+    Date.prototype.addDays = function (days) {
+      var date = new Date(this.valueOf());
+      date.setDate(date.getDate() + days);
+      return date;
+    };
+    try {
+      const getTransportById = await axiosJWT.post(
+        `http://localhost:${props.port}/transport/get-transport-by-id`,
+        {
+          id: props.id,
+        },
+        { headers: { token: `Bearer ${state.dataUser.token}` } }
+      );
+
+      if (getTransportById.data.statusCode == 200) {
+        let submitData = {
+          id: getTransportById.data.data.id,
+          bus_id: getTransportById.data.data.bus_id,
+          bus_schedule_id: getTransportById.data.data.bus_schedule_id,
+          departure_date: new Date(getTransportById.data.data.departure_date)
+            .addDays(getTransportById.data.data.schedule_frequency)
+            .toISOString(),
+        };
+        const updateDepartureDate = await axiosJWT.put(
+          `http://localhost:${props.port}/transport/update-transport`,
+          submitData,
+          {
+            headers: { token: `Bearer ${state.dataUser.token}` },
+          }
+        );
+        if (updateDepartureDate.data.statusCode == 200) {
+          setStatus(false)
+          toastIdRef.current = toast({
+            title: 'Xe đã xuất bến',
+            description: 'Chúng tôi đã cập nhật hành trình xe cho bạn.',
+            status: 'success',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
+      }
+    } catch (err) {
+      toastIdRef.current = toast({
+        title: 'Lỗi trong quá trình thao tác',
+        description: 'Có lỗi xảy ra trong quá trình thao tác làm ơn hãy thử lại',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
+    }
+  }, [props.id, state]);
 
   const CustomerNotInTheCarHTML = data
     .filter((e) => e.payment_status != 2)
@@ -82,6 +147,7 @@ export default function BusScheduleDriver(props) {
         </Box>
       );
     });
+
   const CustomerInTheCarHTML = data
     .filter((e) => e.payment_status == 2)
     .map((customer) => {
@@ -120,6 +186,12 @@ export default function BusScheduleDriver(props) {
         </Box>
       );
     });
+
+  useEffect(() => {
+    const userData = Cookies.get('dataUser');
+    dispatch(actions.setDataUser(JSON.parse(userData)));
+  }, []);
+
   return (
     <>
       <Stack width={'96%'} margin={'0 auto'} spacing="5" className="bom-driver-screen">
@@ -177,6 +249,22 @@ export default function BusScheduleDriver(props) {
         </Flex>
         {CustomerInTheCarHTML}
       </Box>
+      {status ? (
+        <Button
+          position="fixed"
+          bottom="30px"
+          width="90%"
+          margin="0 auto"
+          left="0"
+          right="0"
+          padding="24px 0"
+          backgroundColor="#F26A4C"
+          color="#fff"
+          onClick={handleDisembark}
+        >
+          Xuất Bến
+        </Button>
+      ) : null}
     </>
   );
 }
@@ -185,8 +273,8 @@ export async function getServerSideProps(context) {
   let data = [];
   let location = context.query.location;
   let getTransportById = await axios.post(`http://localhost:${port}/transaction/list-transaction`, {
-    transport_id: 1,
-    date_detail: '2023-04-16',
+    transport_id: context.query.transport_id,
+    date_detail: context.query.date_detail,
     role_id: 3,
   });
   if (getTransportById.data.statusCode == 200) {
@@ -198,6 +286,7 @@ export async function getServerSideProps(context) {
       port,
       data,
       location,
+      id: context.query.transport_id,
     }, // will be passed to the page component as props
   };
 }

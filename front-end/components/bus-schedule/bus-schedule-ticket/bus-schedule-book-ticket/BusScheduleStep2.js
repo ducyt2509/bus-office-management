@@ -122,40 +122,38 @@ export default function BusScheduleStep2(props) {
   ) : (
     <Text>Không có điểm đón</Text>
   );
-  const locationDropOffHTML = locationDropOff ? (
-    locationDropOff.map((location, index) => {
-      const information = location.split(': ');
-      const time = information[1];
-      const position = information[0];
-      const date = new Date(props.data.departure_date.split('T')[0]);
-      const value = time + ' - ' + position;
-      return (
-        <Stack>
-          <Radio value={value}>
-            <Flex marginBottom={'2%!important'}>
-              <Text fontWeight={'500'} fontSize={'16px'}>
-                {time}
-              </Text>
-              <Text fontWeight={'500'} fontSize={'16px'}>
-                &emsp;&bull;&ensp;{position}
-              </Text>
+  const locationDropOffHTML = locationDropOff
+    ? locationDropOff.map((location, index) => {
+        const information = location.split(': ');
+        const time = information[1];
+        const position = information[0];
+        const date = new Date(props.data.departure_date.split('T')[0]);
+        const value = time + ' - ' + position;
+        return (
+          <Stack>
+            <Radio value={value}>
+              <Flex marginBottom={'2%!important'}>
+                <Text fontWeight={'500'} fontSize={'16px'}>
+                  {time}
+                </Text>
+                <Text fontWeight={'500'} fontSize={'16px'}>
+                  &emsp;&bull;&ensp;{position}
+                </Text>
+              </Flex>
+            </Radio>
+            <Flex
+              alignItems={'center'}
+              marginLeft="33px!important"
+              marginTop={'0!important'}
+              marginBottom="8px!important"
+            >
+              <GoLocation />
+              <Text marginLeft="3%">{addressDropOff[index]}</Text>
             </Flex>
-          </Radio>
-          <Flex
-            alignItems={'center'}
-            marginLeft="33px!important"
-            marginTop={'0!important'}
-            marginBottom="8px!important"
-          >
-            <GoLocation />
-            <Text marginLeft="3%">{addressDropOff[index]}</Text>
-          </Flex>
-        </Stack>
-      );
-    })
-  ) : (
-    <Text>Không có điểm trả</Text>
-  );
+          </Stack>
+        );
+      })
+    : null;
   return (
     <>
       <Box borderTop="1px solid #E2E8F0" borderBottom="1px solid #E2E8F0" margin="3% 0 1%">

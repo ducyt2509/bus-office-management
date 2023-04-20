@@ -20,11 +20,12 @@ export default function App({ Component, pageProps }) {
   return (
     <ChakraProvider>
       <StoreProvider>
-        {router.pathname.includes('/admin') && <Sidebar />}
+        {(router.pathname.includes('/admin') || router.pathname.includes('/staff')) && <Sidebar />}
         {router.pathname.includes('/driver') && <SideBarDriver />}
         {router.pathname != '/contact-us' &&
           router.pathname != '/' &&
           !router.pathname.includes('/admin') &&
+          !router.pathname.includes('/staff') &&
           !router.pathname.includes('/driver') && <NavBar />}
         <Component {...pageProps} />
       </StoreProvider>
