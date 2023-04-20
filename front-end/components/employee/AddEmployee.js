@@ -258,6 +258,14 @@ export default function AddEmployee(props) {
         setListOffice(getListOffice.data.data.list_office);
       }
     } catch (e) {
+      toastIdRef.current = toast({
+        title: 'Phiên của bạn đã hết hạn',
+        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
       console.log(e);
     }
   };

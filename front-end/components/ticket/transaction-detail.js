@@ -225,6 +225,14 @@ export default function TransactionDetails(props) {
       }
     } catch (err) {
       console.log(err);
+      toastIdRef.current = toast({
+        title: 'Phiên của bạn đã hết hạn',
+        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
     }
   }, [props.data, props.seatInformation]);
 

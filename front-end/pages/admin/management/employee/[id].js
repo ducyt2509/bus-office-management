@@ -1,7 +1,17 @@
 import axios from 'axios';
 import { actions, useStore } from '@/src/store';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Flex, Text, Image, Stack, Card, IconButton, CardBody, Heading, useToast } from '@chakra-ui/react';
+import {
+  Flex,
+  Text,
+  Image,
+  Stack,
+  Card,
+  IconButton,
+  CardBody,
+  Heading,
+  useToast,
+} from '@chakra-ui/react';
 import { IoIosArrowBack } from 'react-icons/io';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
@@ -36,9 +46,17 @@ export default function Employee(props) {
   }, [token]);
 
   useEffect(() => {
-    const userData = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userData)));
-    setToken(`Bearer ${JSON.parse(userData).token}`);
+    let userData = Cookies.get('dataUser') ? Cookies.get('dataUser') : '';
+    let accessToken = '';
+    try {
+      userData = JSON.parse(userData);
+      accessToken = `Bearer ${userData?.token}`;
+    } catch (error) {
+      userData = {};
+      accessToken = `Bearer `;
+    }
+    dispatch(actions.setDataUser(userData));
+    setToken(accessToken);
     if (token) {
       getEmployeeDetail();
     }

@@ -84,6 +84,7 @@ export default function Setting(props) {
     try {
       const getListOffice = await axiosJWT.post(
         `http://localhost:${props.BACK_END_PORT}/office/list-office`,
+        {},
         {
           headers: { token: token },
         }
@@ -93,6 +94,14 @@ export default function Setting(props) {
       }
     } catch (err) {
       console.log(err);
+      toastIdRef.current = toast({
+        title: 'Phiên của bạn đã hết hạn',
+        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
     }
   }, [token]);
 
@@ -175,9 +184,17 @@ export default function Setting(props) {
   }, [userEmail, userPhone, userRole, userOffice, userName, state, error, token]);
 
   useEffect(() => {
-    const userData = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userData)));
-    setToken(`Bearer ${JSON.parse(userData).token}`);
+    let userData = Cookies.get('dataUser') ? Cookies.get('dataUser') : '';
+    let accessToken = '';
+    try {
+      userData = JSON.parse(userData);
+      accessToken = `Bearer ${userData?.token}`;
+    } catch (error) {
+      userData = {};
+      accessToken = `Bearer `;
+    }
+    dispatch(actions.setDataUser(userData));
+    setToken(accessToken);
     if (token) {
       handleGetListOffice();
     }

@@ -37,7 +37,7 @@ module.exports = {
       or address like '%${querySearch}%'
       or c.city_name like '%${querySearch}%') 
       and (location.city_id = ${route?.city_from_id} or location.city_id = ${route?.city_to_id})
-      order  by id desc imit ${limit} offset ${offset}`;
+      order  by id desc limit ${limit} offset ${offset}`;
         queryCount = `select count(*) from location l join city c on c.id = l.city_id  
       where (location_name like '%${querySearch}%'
       or address like '%${querySearch}%'

@@ -79,7 +79,7 @@ export default function HomeDestination(props) {
 		<div className="home-destination">
 			<form action="">
 				<FormControl
-					w={"25%"}
+					w={["100%", "100%", "50%", "25%"]}
 					isInvalid={error.from}
 				>
 					<FormLabel
@@ -107,7 +107,7 @@ export default function HomeDestination(props) {
 					{error.from && <FormErrorMessage>Điểm xuất phát là bắt buộc</FormErrorMessage>}
 				</FormControl>
 				<FormControl
-					w={"25%"}
+					w={["100%", "100%", "50%", "25%"]}
 					isInvalid={error.to}
 				>
 					<FormLabel
@@ -135,7 +135,7 @@ export default function HomeDestination(props) {
 					{error.to && <FormErrorMessage>Điểm đến là bắt buộc</FormErrorMessage>}
 				</FormControl>
 				<FormControl
-					w={"25%"}
+					w={["100%", "100%", "50%", "25%"]}
 					isInvalid={error.date}
 				>
 					<FormLabel

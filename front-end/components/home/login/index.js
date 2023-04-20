@@ -59,7 +59,7 @@ export default function Login(props) {
     },
     [errorInput]
   );
-  console.log(props);
+
   const handleChangePasswordValue = useCallback(
     (event) => {
       let value = event.target.value;

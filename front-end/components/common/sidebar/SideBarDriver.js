@@ -1,10 +1,12 @@
-import { Text, Flex, Box } from '@chakra-ui/react';
+import { Text, Flex, Box, useToast } from '@chakra-ui/react';
 import { AiOutlineMenu } from 'react-icons/ai';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useStore } from '@/src/store';
 
 export default function SideBarDriver() {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const [state, dispatch, axiosJWT] = useStore();
   const router = useRouter();
   const [menuStatus, setMenuStatus] = useState(false);
@@ -27,6 +29,14 @@ export default function SideBarDriver() {
       }
     } catch (err) {
       console.log(err);
+      toastIdRef.current = toast({
+        title: 'Phiên của bạn đã hết hạn',
+        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
     }
   }, [state]);
 

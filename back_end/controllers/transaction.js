@@ -247,9 +247,9 @@ module.exports = {
       join city cc on r.city_to_id = cc.id
 			`;
       if (role_id == 3) {
-        querySQL += `where ts.id = ${transport_id} and t.date_detail like "%${date_detail}%" and t.payment_status != 3 order  by id desc`;
+        querySQL += `where ts.id = ${transport_id} and t.date_detail like "%${date_detail}%" and t.payment_status != 3`;
       } else {
-        querySQL += ` where t.passenger_phone = '${phone}' or t.id = '${phone} order  by id desc'
+        querySQL += ` where t.passenger_phone = '${phone}' or t.id = '${phone} order'
         limit ${limit} offset ${offset}`;
       }
       let [listTransaction, numberTransaction] = await Promise.all([
@@ -270,6 +270,7 @@ module.exports = {
         });
       }
     } catch (error) {
+      console.log(error)
       return responseHandler.badRequest(res, error.message);
     }
   },

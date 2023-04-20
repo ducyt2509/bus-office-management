@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Flex, Stack, Text } from '@chakra-ui/react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Flex, Stack, Text, useToast } from '@chakra-ui/react';
 import { CiLogout } from 'react-icons/ci';
 import { IoTicketOutline, IoBarChartOutline } from 'react-icons/io5';
 import { AiOutlineInbox, AiOutlineSetting } from 'react-icons/ai';
@@ -13,6 +13,8 @@ import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 
 export default function Sidebar() {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const router = useRouter();
   const path = {
     busSchedule: '/admin/management/bus-schedule',
@@ -47,6 +49,14 @@ export default function Sidebar() {
           }
         } catch (err) {
           console.log(err);
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
         }
         return;
       }

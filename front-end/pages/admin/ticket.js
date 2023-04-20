@@ -89,7 +89,6 @@ export default function Ticket(props) {
   );
 
   const handleTotalRenewal = useCallback(async () => {
-    console.log(token);
     try {
       const getTotalRenewal = await axiosJWT.get(
         `http://localhost:${props.port}/bus-schedule/check-renewal-bus-schedule`,
@@ -236,6 +235,17 @@ export default function Ticket(props) {
   }, [seatCustomerSelected, transportData, seatSelected, scheduleData]);
 
   const searchBusSchedule = useCallback(async () => {
+    if (!state.dataUser.id) {
+      toastIdRef.current = toast({
+        title: 'Phiên của bạn đã hết hạn',
+        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
+      return;
+    }
     let oldError = { ...error };
     if (!startLocation) {
       oldError.from = true;
@@ -279,7 +289,7 @@ export default function Ticket(props) {
       });
       console.log(err);
     }
-  }, [startLocation, endLocation, departureDay, error]);
+  }, [startLocation, endLocation, departureDay, error, state]);
 
   const handleChangeStartLocation = (e) => {
     let value = e.target.value;
@@ -372,10 +382,14 @@ export default function Ticket(props) {
   );
 
   useEffect(() => {
-    const userData = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userData)));
-    setToken(JSON.parse(userData).token);
-    if (token) {
+    let userData = Cookies.get('dataUser') ? Cookies.get('dataUser') : '';
+    try {
+      userData = JSON.parse(userData);
+    } catch (error) {
+      userData = {};
+    }
+    dispatch(actions.setDataUser(userData));
+    if (token && userData?.role_id == 1) {
       handleTotalRenewal();
     }
   }, [token]);
@@ -420,7 +434,7 @@ export default function Ticket(props) {
                     <Text>{convertTime(schedule.time_from, 0)}</Text>
                     <Flex marginTop="0 !important">
                       <Text marginRight={'5px'}>-----</Text>
-                      <Text>{number_seat_selected + '/' + vehicle.bus[0].number_seat}</Text>
+                      <Text>{number_seat_selected + '/' + vehicle.bus[0]?.number_seat}</Text>
                     </Flex>
                   </Stack>
                 </Box>

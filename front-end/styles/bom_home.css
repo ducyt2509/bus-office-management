@@ -2,37 +2,18 @@ header {
 	position: relative;
 }
 
+/* Styles for mobile screens (under 767px) */
 .home-content {
-	position: absolute;
-	left: 5%;
-	top: 30%;
-	width: 1000px;
-	font-style: normal;
-	font-weight: 500;
-}
-.home-content .home-title {
-	font-size: 50px;
-	line-height: 76px;
-	text-transform: capitalize;
-	color: white;
-	font-weight: 600;
-}
-
-.home-content .home-desc {
-	margin-top: 20px;
-	font-size: 24px;
-	line-height: 20px;
-	text-transform: capitalize;
-	color: #ffffff;
+	display: none;
 }
 
 .home-destination {
 	position: absolute;
 	width: 70%;
-	height: 150px;
+	height: 500px;
 	left: 50%;
 	transform: translateX(-50%);
-	top: 70%;
+	top: 35%;
 	filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
 	background-color: #ffff;
 	border-radius: 20px;
@@ -42,12 +23,13 @@ header {
 	margin: 0 auto;
 	height: inherit;
 	display: flex;
-	justify-content: space-between;
+	justify-content: center;
 	align-items: center;
+	flex-wrap: wrap;
 }
 
-.home-destination .group-input {
-	width: 25%;
+/* .home-destination .group-input {
+	width: 100%;
 }
 .home-destination .group-input label {
 	display: block;
@@ -57,7 +39,7 @@ header {
 	font-size: 20px;
 	line-height: 24px;
 	color: #cd6814;
-}
+} */
 
 .home-destination button {
 	padding: 20px;
@@ -81,7 +63,6 @@ header {
 	text-transform: capitalize;
 	position: relative;
 }
-
 .popular-route__title span::after {
 	content: "";
 	width: 85%;
@@ -92,7 +73,6 @@ header {
 	height: 3px;
 	background-color: #cd6814;
 }
-
 .popular-route__list {
 	margin: 110px auto;
 	padding: 0px 100px;
@@ -130,4 +110,119 @@ header {
 	font-size: 15.7px;
 	line-height: 20px;
 	text-transform: capitalize;
+}
+
+/* Styles for tablet screens (768px - 1023px) */
+@media only screen and (min-width: 768px) {
+	.home-content {
+		display: block;
+		position: absolute;
+		left: 5%;
+		top: 30%;
+		width: 1000px;
+		font-style: normal;
+		font-weight: 500;
+	}
+	.home-content .home-title {
+		font-size: 50px;
+		line-height: 76px;
+		text-transform: capitalize;
+		color: white;
+		font-weight: 600;
+	}
+
+	.home-content .home-desc {
+		margin-top: 20px;
+		font-size: 24px;
+		line-height: 20px;
+		text-transform: capitalize;
+		color: #ffffff;
+	}
+	.home-destination {
+		height: 225px;
+		top: 60%;
+	}
+	.home-destination form {
+		justify-content: space-between;
+	}
+	.home-destination button {
+		padding: 20px;
+		width: 132px;
+		height: 59px;
+		background: #f26a4c;
+		border-radius: 10px;
+	}
+
+	.popular-route {
+		background-color: #ffffff;
+		padding: 100px;
+	}
+	.popular-route__title {
+		text-align: center;
+	}
+	.popular-route__title span {
+		color: #cd6814;
+		font-size: 40px;
+		font-weight: 700;
+		text-transform: capitalize;
+		position: relative;
+	}
+
+	.popular-route__title span::after {
+		content: "";
+		width: 85%;
+		top: 100%;
+		left: 50%;
+		transform: translate(-50%, 150%);
+		position: absolute;
+		height: 3px;
+		background-color: #cd6814;
+	}
+
+	.popular-route__list {
+		margin: 110px auto;
+		padding: 0px 100px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.popular-route__item {
+		width: 20%;
+		height: 450px;
+		background-color: red;
+		border-radius: 20px;
+		background: url(../images/home/login.png);
+		background-size: cover;
+		position: relative;
+	}
+	.popular-route__item-content {
+		position: absolute;
+		top: 80%;
+		left: 10px;
+		padding: 10px 5px;
+	}
+	.popular-route__item-title {
+		font-style: normal;
+		font-weight: 500;
+		font-size: 19.6px;
+		line-height: 25px;
+		text-transform: uppercase;
+		color: #ffffff;
+		display: block;
+		margin-bottom: 10px;
+	}
+	.popular-route__item-desc {
+		color: #ffffff;
+		font-size: 15.7px;
+		line-height: 20px;
+		text-transform: capitalize;
+	}
+}
+
+/* Extra big screen devices (1024px and above) */
+@media only screen and (min-width: 1024px) {
+	.home-destination {
+		height: 150px;
+		top: 70%;
+	}
 }
