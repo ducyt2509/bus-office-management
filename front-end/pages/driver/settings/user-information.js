@@ -89,7 +89,6 @@ export default function UserInformation(props) {
     setUserRole(state.dataUser.role_id);
   };
   const handleUpdateUser = useCallback(async () => {
-    console.log(11111)
     let oldError = { ...error };
     if (!userName) {
       oldError.userName = true;
@@ -240,9 +239,17 @@ export default function UserInformation(props) {
   }, [errorInput, password, confirmPassword, state, token]);
 
   useEffect(() => {
-    const userData = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userData)));
-    setToken(`Bearer ${JSON.parse(userData).token}`);
+    let userData = Cookies.get('dataUser') ? Cookies.get('dataUser') : '';
+    let accessToken = '';
+    try {
+      userData = JSON.parse(userData);
+      accessToken = `Bearer ${userData?.token}`;
+    } catch (error) {
+      userData = {};
+      accessToken = `Bearer `;
+    }
+    dispatch(actions.setDataUser(userData));
+    setToken(accessToken);
   }, [token]);
 
   return (

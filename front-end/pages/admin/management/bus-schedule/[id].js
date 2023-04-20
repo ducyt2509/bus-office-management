@@ -258,18 +258,18 @@ export default function BusScheduleDetail(props) {
               }
             );
             if (refreshBS.data.statusCode == 200) {
-					toastIdRef.current = toast({
-						title: "Lịch trình đã thêm mới.",
-						description: "Hành trình đã được làm mới thành công.",
-						status: "success",
-						isClosable: true,
-						position: "top",
-						duration: 2000,
-					});
-					setTimeout(() => {
-						router.push("/admin/management/bus-schedule");
-					}, 2000);
-				}
+              toastIdRef.current = toast({
+                title: 'Lịch trình đã thêm mới.',
+                description: 'Hành trình đã được làm mới thành công.',
+                status: 'success',
+                isClosable: true,
+                position: 'top',
+                duration: 2000,
+              });
+              setTimeout(() => {
+                router.push('/admin/management/bus-schedule');
+              }, 2000);
+            }
           } catch (error) {
             toastIdRef.current = toast({
               title: 'Lịch trình không thể cập nhật.',
@@ -421,9 +421,17 @@ export default function BusScheduleDetail(props) {
     [state, token]
   );
   useEffect(() => {
-    const userData = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userData)));
-    setToken(`Bearer ${JSON.parse(userData).token}`);
+    let userData = Cookies.get('dataUser') ? Cookies.get('dataUser') : '';
+    let accessToken = '';
+    try {
+      userData = JSON.parse(userData);
+      accessToken = `Bearer ${userData?.token}`;
+    } catch (error) {
+      userData = {};
+      accessToken = `Bearer `;
+    }
+    dispatch(actions.setDataUser(userData));
+    setToken(accessToken);
     const id = router.query.id;
     setMethod(router.query.method);
     if (id != 'add' && token) {

@@ -12,8 +12,6 @@ export default function ListRouteOnBusSchedule(props) {
   const [routeName, setRouteName] = useState();
   const [querySearch, setQuerySearch] = useState('');
 
-  console.log(listRoute)
-
   const handleGetListRoute = useCallback(
     async (page, limit, value) => {
       limit = limit ? limit : 7;
@@ -105,10 +103,8 @@ export default function ListRouteOnBusSchedule(props) {
 
   useEffect(() => {
     const filterRoute = listRoute.filter((route) => {
-      console.log(route)
       return route.id == props.route;
     });
-    console.log(1, filterRoute, props.route);
     let name = `${filterRoute[0]?.city_from?.city_name} - ${filterRoute[0]?.city_to?.city_name}`;
     if (name.indexOf('undefined') != -1) {
       setRouteName('Chọn tuyến đường');

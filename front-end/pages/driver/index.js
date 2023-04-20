@@ -1,14 +1,16 @@
 import { actions, useStore } from '@/src/store';
-import { Text, Flex, Stack, Box, Input, StackDivider } from '@chakra-ui/react';
+import { Text, Flex, Stack, Box, Input, StackDivider, useToast } from '@chakra-ui/react';
 import { InfoIcon } from '@chakra-ui/icons';
 import { IoPersonOutline } from 'react-icons/io5';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { convertTime } from '@/helper';
 import Cookies from 'js-cookie';
 
 export default function DriverPage(props) {
+  const toast = useToast();
+  const toastIdRef = useRef();
   const [token, setToken] = useState('');
   const [userId, setUserId] = useState();
   const [state, dispatch, axiosJWT] = useStore();
@@ -19,21 +21,33 @@ export default function DriverPage(props) {
 
   const getBusScheduleList = useCallback(
     async (date) => {
-      const listBusSchedule = await axios.post(
-        `http://localhost:${props.port}/bus-schedule/list-bus-schedule-driver`,
-        {
-          user_id: userId,
-          departure_date: date,
-        },
-        {
-          headers: {
-            token: token,
+      try {
+        const listBusSchedule = await axios.post(
+          `http://localhost:${props.port}/bus-schedule/list-bus-schedule-driver`,
+          {
+            user_id: userId,
+            departure_date: date,
           },
+          {
+            headers: {
+              token: token,
+            },
+          }
+        );
+        if (listBusSchedule.data.statusCode === 200) {
+          setListSchedule(listBusSchedule.data.data.list_bus_schedule);
+          setNumberSchedule(listBusSchedule.data.data.number_bus_schedule);
         }
-      );
-      if (listBusSchedule.data.statusCode === 200) {
-        setListSchedule(listBusSchedule.data.data.list_bus_schedule);
-        setNumberSchedule(listBusSchedule.data.data.number_bus_schedule);
+      }
+      catch (err) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
       }
     },
     [token, userId]
@@ -60,14 +74,14 @@ export default function DriverPage(props) {
         })
         .join(' - ');
       router.push({
-			pathname: "/driver/[id]",
-			query: {
-				id: id,
-				transport_id: id,
-				date_detail: departureDate,
-				location: location,
-			},
-		});
+        pathname: '/driver/[id]',
+        query: {
+          id: id,
+          transport_id: id,
+          date_detail: departureDate,
+          location: location,
+        },
+      });
     },
     [departureDate, listSchedule]
   );
@@ -75,7 +89,11 @@ export default function DriverPage(props) {
   const listBusScheduleHTML = listSchedule.map((schedule, index) => {
     return (
       <>
-        <Box w="90%" margin="0 auto" onClick={() => handleGetBusScheduleInformation(schedule.transport_id)}>
+        <Box
+          w="90%"
+          margin="0 auto"
+          onClick={() => handleGetBusScheduleInformation(schedule.transport_id)}
+        >
           <Flex>
             <Text color={'#F26A4C'} fontSize={'35px'} fontWeight={'500'} width={'35%'}>
               {convertTime(schedule.time_from, 0)}
@@ -99,10 +117,18 @@ export default function DriverPage(props) {
   });
 
   useEffect(() => {
-    const userData = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userData)));
-    setToken(`Bearer ${JSON.parse(userData).token}`);
-    setUserId(JSON.parse(userData).id);
+    let userData = Cookies.get('dataUser') ? Cookies.get('dataUser') : '';
+    let accessToken = '';
+    try {
+      userData = JSON.parse(userData);
+      accessToken = `Bearer ${userData?.token}`;
+    } catch (error) {
+      userData = {};
+      accessToken = `Bearer `;
+    }
+    dispatch(actions.setDataUser(userData));
+    setToken(accessToken);
+    setUserId(userData?.id);
     if (token && userId) {
       getBusScheduleList(new Date().toISOString().split('T')[0]);
     }

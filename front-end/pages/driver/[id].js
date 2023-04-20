@@ -11,7 +11,7 @@ export default function BusScheduleDriver(props) {
   const toastIdRef = useRef();
   const [state, dispatch, axiosJWT] = useStore();
   const [data, setData] = useState(props.data);
-  const [status, setStatus] = useState(true);
+  const [status, setStatus] = useState(props.status);
   const router = useRouter();
   const handleBackMainScreen = () => {
     router.push('/driver');
@@ -59,6 +59,17 @@ export default function BusScheduleDriver(props) {
       );
 
       if (getTransportById.data.statusCode == 200) {
+        if (getTransportById.data.data.departure_date.split('T')[0] != props.date_detail) {
+          toastIdRef.current = toast({
+            title: 'Xe đã xuất bến',
+            description: 'Xe đã xuất bến và không thể xuất bến lần nữa.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+          return
+        }
         let submitData = {
           id: getTransportById.data.data.id,
           bus_id: getTransportById.data.data.bus_id,
@@ -75,9 +86,9 @@ export default function BusScheduleDriver(props) {
           }
         );
         if (updateDepartureDate.data.statusCode == 200) {
-          setStatus(false)
+          setStatus(false);
           toastIdRef.current = toast({
-            title: 'Xe đã xuất bến',
+            title: 'Xe đã xuất bến thành công',
             description: 'Chúng tôi đã cập nhật hành trình xe cho bạn.',
             status: 'success',
             isClosable: true,
@@ -187,9 +198,23 @@ export default function BusScheduleDriver(props) {
       );
     });
 
+  const now = new Date();
+  const offset = now.getTimezoneOffset();
+  const date = new Date().getDate();
+  const month = new Date().getMonth();
+  const year = new Date().getFullYear();
+  console.log(year + '-' + (month + 1) + '-' + date);
+  console.log(new Date('2023-04-21'));
+  console.log(new Date('2023-4-21'));
+
   useEffect(() => {
-    const userData = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userData)));
+    let userData = Cookies.get('dataUser') ? Cookies.get('dataUser') : '';
+    try {
+      userData = JSON.parse(userData);
+    } catch (error) {
+      userData = {};
+    }
+    dispatch(actions.setDataUser(userData));
   }, []);
 
   return (
@@ -272,13 +297,28 @@ export async function getServerSideProps(context) {
   let port = process.env.BACK_END_PORT;
   let data = [];
   let location = context.query.location;
-  let getTransportById = await axios.post(`http://localhost:${port}/transaction/list-transaction`, {
-    transport_id: context.query.transport_id,
-    date_detail: context.query.date_detail,
-    role_id: 3,
-  });
-  if (getTransportById.data.statusCode == 200) {
-    data = getTransportById.data.data.list_transaction;
+  let status = true;
+  let getListUserByBusSChedule = await axios.post(
+    `http://localhost:${port}/transaction/list-transaction`,
+    {
+      transport_id: context.query.transport_id,
+      date_detail: context.query.date_detail,
+      role_id: 3,
+    }
+  );
+  if (getListUserByBusSChedule.data.statusCode == 200) {
+    data = getListUserByBusSChedule.data.data.list_transaction;
+  }
+
+  const date = new Date().getDate();
+  let month =
+    new Date().getMonth() + 1 < 10 ? '0' + (new Date().getMonth() + 1) : new Date().getMonth() + 1;
+  const year = new Date().getFullYear();
+  if (
+    new Date(context.query.date_detail).toString() !=
+    new Date(year + '-' + month + '-' + date).toString()
+  ) {
+    status = false;
   }
 
   return {
@@ -287,6 +327,8 @@ export async function getServerSideProps(context) {
       data,
       location,
       id: context.query.transport_id,
+      status,
+      date_detail: context.query.date_detail,
     }, // will be passed to the page component as props
   };
 }
