@@ -12,10 +12,10 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
 import axios from 'axios';
-import ActionBar from '@/components/location/ActionBar';
-import AddLocation from '@/components/location/AddLocation';
-import ListLocation from '@/components/location/ListLocation';
-import Pagination from '@/components/common/Pagination';
+import ActionBar from '@/src/components/location/ActionBar';
+import AddLocation from '@/src/components/location/AddLocation';
+import ListLocation from '@/src/components/location/ListLocation';
+import Pagination from '@/src/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function ManagementOffice(props) {

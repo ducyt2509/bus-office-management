@@ -4,7 +4,7 @@ import { GoLocation } from 'react-icons/go';
 import { BsCalendar } from 'react-icons/bs';
 import { MdOutlineSwapHorizontalCircle } from 'react-icons/md';
 import { useState, useCallback } from 'react';
-import ListBusSchedule from '@/components/bus-schedule/bus-schedule-ticket';
+import ListBusSchedule from '@/src/components/bus-schedule/bus-schedule-ticket';
 
 export default function BusScheduleAll(props) {
   const [startLocation, setStartLocation] = useState(props.data.departure_location_id);

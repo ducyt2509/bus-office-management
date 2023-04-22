@@ -23,8 +23,8 @@ import axios from 'axios';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { GoLocation } from 'react-icons/go';
 import { MdOutlineSwapHorizontalCircle } from 'react-icons/md';
-import { Seat12User } from '@/components/vehicle';
-import LocationPickAndDrop from '@/components/ticket/location-pick-and-drop';
+import { Seat12User } from '@/src/components/vehicle';
+import LocationPickAndDrop from '@/src/components/ticket/location-pick-and-drop';
 import { actions, useStore } from '@/src/store';
 import Cookies from 'js-cookie';
 

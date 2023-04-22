@@ -1,6 +1,6 @@
 import { formatMoney } from '@/helper';
 import { Box, Flex, Card, CardBody, Stack, Text, StackDivider } from '@chakra-ui/react';
-import { Seat12 } from '@/components/vehicle';
+import { Seat12 } from '@/src/components/vehicle';
 import { useState } from 'react';
 
 export default function TicketDetail(props) {

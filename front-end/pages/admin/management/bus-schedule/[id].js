@@ -21,10 +21,10 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { actions, useStore } from '@/src/store';
 import axios from 'axios';
-import ListRouteOnBusSchedule from '@/components/bus-schedule/ListRouteOnBusSchedule';
-import ListBusOnBusSchedule from '@/components/bus-schedule/ListBusOnBusSchedule';
-import ListLocationOnBusSchedule from '@/components/bus-schedule/ListLocationOnBusSchedule';
-import ListLocationBusSchedule from '@/components/bus-schedule/ListLocationBusSchedule';
+import ListRouteOnBusSchedule from '@/src/components/bus-schedule/ListRouteOnBusSchedule';
+import ListBusOnBusSchedule from '@/src/components/bus-schedule/ListBusOnBusSchedule';
+import ListLocationOnBusSchedule from '@/src/components/bus-schedule/ListLocationOnBusSchedule';
+import ListLocationBusSchedule from '@/src/components/bus-schedule/ListLocationBusSchedule';
 import { convertInt, convertTime, calcDate, validate } from '@/helper';
 import Cookies from 'js-cookie';
 

@@ -10,10 +10,10 @@ import '@/styles/bom_personal_info.css';
 import '@/styles/bom_toast_position.css';
 import { ChakraProvider } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import Sidebar from '@/components/common/sidebar/SideBar';
-import NavBar from '@/components/home/login';
+import Sidebar from '@/src/components/common/sidebar/SideBar';
+import NavBar from '@/src/components/home/login';
 import { StoreProvider } from '@/src/store';
-import SideBarDriver from '@/components/common/sidebar/SideBarDriver';
+import SideBarDriver from '@/src/components/common/sidebar/SideBarDriver';
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();

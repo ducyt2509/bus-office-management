@@ -17,10 +17,10 @@ import {
 import axios from 'axios';
 import { actions, useStore } from '@/src/store';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import ListBus from '@/components/bus/ListBus';
-import ActionBar from '@/components/bus/ActionBar';
-import Pagination from '@/components/common/Pagination';
-import AddBus from '@/components/bus/AddBus';
+import ListBus from '@/src/components/bus/ListBus';
+import ActionBar from '@/src/components/bus/ActionBar';
+import Pagination from '@/src/components/common/Pagination';
+import AddBus from '@/src/components/bus/AddBus';
 import Cookies from 'js-cookie';
 
 export default function ManagementBus(props) {

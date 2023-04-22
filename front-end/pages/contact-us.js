@@ -1,6 +1,6 @@
-import ContactUs from "@/components/common/ContactUs";
-import ContactUsDecor from "@/components/common/ContactUsDecor";
-import LoginForm from "../components/home/login";
+import ContactUs from "@/src/components/common/ContactUs";
+import ContactUsDecor from "@/src/components/common/ContactUsDecor";
+import LoginForm from "@/src/components/home/login";
 
 export default function ContactUsHTML() {
 	const ContactUsHTML = <ContactUs />;

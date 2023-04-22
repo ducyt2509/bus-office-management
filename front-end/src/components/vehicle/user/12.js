@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AddIcon } from '@chakra-ui/icons';
 import { Text, Card, CardBody, Flex, Box, useDisclosure } from '@chakra-ui/react';
-import TransactionDetails from '@/components/ticket/transaction-detail';
+import TransactionDetails from '@/src/components/ticket/transaction-detail';
 import { formatMoney } from '@/helper';
 
 export default function Seat12User(props) {

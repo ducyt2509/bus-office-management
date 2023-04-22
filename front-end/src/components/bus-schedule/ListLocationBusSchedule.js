@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CloseIcon, AddIcon } from '@chakra-ui/icons';
-import ListLocationOnBusSchedule from '@/components/bus-schedule/ListLocationOnBusSchedule';
+import ListLocationOnBusSchedule from '@/src/components/bus-schedule/ListLocationOnBusSchedule';
 import AddLocation from '../location/AddLocation';
 import {
   Input,

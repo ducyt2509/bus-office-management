@@ -11,10 +11,10 @@ import {
 } from '@chakra-ui/react';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
-import ActionBar from '@/components/employee/ActionBar';
-import AddEmployee from '@/components/employee/AddEmployee';
-import ListEmployee from '@/components/employee/ListEmployee';
-import Pagination from '@/components/common/Pagination';
+import ActionBar from '@/src/components/employee/ActionBar';
+import AddEmployee from '@/src/components/employee/AddEmployee';
+import ListEmployee from '@/src/components/employee/ListEmployee';
+import Pagination from '@/src/components/common/Pagination';
 import { actions, useStore } from '@/src/store';
 import Cookies from 'js-cookie';
 

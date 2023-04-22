@@ -12,10 +12,10 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
 import axios from 'axios';
-import ActionBar from '@/components/route/ActionBar';
-import AddRoute from '@/components/route/AddRoute';
-import ListRoute from '@/components/route/ListRoute';
-import Pagination from '@/components/common/Pagination';
+import ActionBar from '@/src/components/route/ActionBar';
+import AddRoute from '@/src/components/route/AddRoute';
+import ListRoute from '@/src/components/route/ListRoute';
+import Pagination from '@/src/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function ManagementRoute(props) {

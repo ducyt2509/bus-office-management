@@ -12,10 +12,10 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
 import axios from 'axios';
-import ActionBar from '@/components/transport/ActionBar';
-import AddTransport from '@/components/transport/AddTransport';
-import ListTransport from '@/components/transport/ListTransport';
-import Pagination from '@/components/common/Pagination';
+import ActionBar from '@/src/components/transport/ActionBar';
+import AddTransport from '@/src/components/transport/AddTransport';
+import ListTransport from '@/src/components/transport/ListTransport';
+import Pagination from '@/src/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function ManagementTransport(props) {

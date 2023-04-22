@@ -10,7 +10,7 @@ import ForgetPasswordStep4 from './ForgetPassword-step4';
 import StepForgetPassword from './StepForgetPassword';
 import LoginForm from './LoginForm';
 import { validate } from '@/helper';
-import NavBar from '@/components/common/sidebar/NavBar';
+import NavBar from '@/src/components/common/sidebar/NavBar';
 import { useToast } from '@chakra-ui/react';
 import Cookies from 'js-cookie';
 

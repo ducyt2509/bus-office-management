@@ -1,5 +1,5 @@
-import BarChart from '@/components/revenue/BarChart';
-import ListCashier from '@/components/revenue/ListCashier';
+import BarChart from '@/src/components/revenue/BarChart';
+import ListCashier from '@/src/components/revenue/ListCashier';
 import {
   Text,
   Heading,
@@ -30,7 +30,7 @@ import TrungBinhNgay from '@/images/icons/TrungBinhNgay.png';
 import VeBan from '@/images/icons/VeBan.png';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
-import Pagination from '@/components/common/Pagination';
+import Pagination from '@/src/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function RevenueReport(props) {

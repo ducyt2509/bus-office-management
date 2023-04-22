@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useCallback, useState } from "react";
-import Pagination from "@/components/common/Pagination";
+import Pagination from '@/src/components/common/Pagination';
 import { useRouter } from "next/router";
 
 export default function searchTicket(props) {
