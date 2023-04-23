@@ -67,7 +67,7 @@ module.exports = {
         number_transport: numberTransport[0]['count(*)'],
       });
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 
@@ -81,21 +81,21 @@ module.exports = {
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
       const isExist = await checkExistTransport(bus_schedule_id, bus_id, departure_date);
-      if (isExist) return responseHandler.badRequest(res, 'Transport is already exist');
+      if (isExist) return responseHandler.badRequest(res, 'Lịch trình đã tồn tại');
       const newTransport = Transport.create({
         bus_schedule_id,
         bus_id,
         departure_date,
       });
       if (newTransport) {
-        return responseHandler.ok(res, 'Add new transport successfully!');
+        return responseHandler.ok(res, 'Tạo mới lịch trình thành công!');
       } else {
         return responseHandler.responseWithData(res, 403, {
-          message: "Can't create new transport",
+          message: 'Không thể tạo lịch trình',
         });
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 
@@ -111,12 +111,12 @@ module.exports = {
         },
       });
       if (deleteTransport) {
-        return responseHandler.ok(res, 'Delete transport successfully');
+        return responseHandler.ok(res, 'Xoá lịch trình thành công!');
       } else {
-        return responseHandler.badRequest(res, 'Transport not found');
+        return responseHandler.badRequest(res, 'Lịch trình không tồn tại');
       }
     } catch (error) {
-      return responseHandler.error(res);
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async updateTransport(req, res) {
@@ -132,7 +132,7 @@ module.exports = {
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
       const isExist = await checkExistTransport(bus_schedule_id, bus_id, departure_date);
 
-      if (isExist) return responseHandler.badRequest(res, 'Transport is already exist');
+      if (isExist) return responseHandler.badRequest(res, 'Lịch trình đã tồn tại');
       const updateTransport = await Transport.update(
         {
           bus_schedule_id,
@@ -142,14 +142,14 @@ module.exports = {
         { where: { id } }
       );
       if (updateTransport) {
-        return responseHandler.ok(res, 'Update transport successfully!');
+        return responseHandler.ok(res, 'Cập nhật lịch trình thành công!');
       } else {
         return responseHandler.responseWithData(res, 403, {
-          message: 'Transport not found',
+          message: 'Lịch trình không tồn tại',
         });
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async getTransportById(req, res) {
@@ -162,10 +162,10 @@ module.exports = {
       if (transport) {
         return responseHandler.responseWithData(res, 200, transport[0]);
       } else {
-        return responseHandler.badRequest(res, 'Transport not found');
+        return responseHandler.badRequest(res, 'Lịch trình không tồn tại');
       }
     } catch (err) {
-      return responseHandler.badRequest(res, err.message);
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 };

@@ -70,7 +70,10 @@ export default function ManagementBusSchedule(props) {
       handleGetListBusSchedule('search', null, null, '');
     }
   });
-  const handleGetBusScheduleInformation = useCallback((id) => {
+  const handleGetBusScheduleInformation = useCallback((id, conditionEdit) => {
+    if (conditionEdit) {
+      return;
+    }
     router.push({
       pathname: '/admin/management/bus-schedule/[id]',
       query: { id: id },

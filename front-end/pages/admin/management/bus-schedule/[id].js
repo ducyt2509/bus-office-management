@@ -169,6 +169,9 @@ export default function BusScheduleDetail(props) {
     [error]
   );
   const handleSubmitData = useCallback(async () => {
+    if (BusSchedule[0]?.effective_date && new Date(BusSchedule[0]?.effective_date) < new Date()) {
+      return;
+    }
     let oldError = { ...error };
     if (!route) {
       oldError.route = true;
@@ -356,7 +359,6 @@ export default function BusScheduleDetail(props) {
       }
     }
   }, [
-    BusSchedule,
     route,
     price,
     error,
@@ -373,6 +375,7 @@ export default function BusScheduleDetail(props) {
     locationDropOff,
     addressDropOff,
     addressPickup,
+    BusSchedule,
   ]);
 
   const getBusScheduleById = useCallback(
@@ -669,7 +672,7 @@ export default function BusScheduleDetail(props) {
                       (method != 'Refresh') & (router.query.id != 'add') || refreshDate <= today
                     }
                     type={'date'}
-                    // value={ }
+                    value={effectiveDate}
                     min={today}
                     onChange={handleChangeEffectiveDate}
                   />
@@ -681,7 +684,11 @@ export default function BusScheduleDetail(props) {
             </Box>
           </CardBody>
           <CardFooter justifyContent={'center'}>
-            <Button onClick={handleSubmitData} colorScheme="linkedin">
+            <Button
+              onClick={handleSubmitData}
+              colorScheme="linkedin"
+              cursor={new Date(effectiveDate) < new Date() ? 'not-allowed' : 'pointer'}
+            >
               Lưu
             </Button>
           </CardFooter>

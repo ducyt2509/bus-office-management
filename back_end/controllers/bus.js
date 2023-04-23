@@ -41,10 +41,10 @@ module.exports = {
       if (createBus) {
         return responseHandler.ok(res, 'Add bus successful!');
       } else {
-        return responseHandler.responseWithData(res, 403, { message: "Can't create add bus" });
+        return responseHandler.responseWithData(res, 403, { message: "Không thể tại mới chuyến xe" });
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      return responseHandler.badRequest(res, "Có lỗi xảy ra khi thao tác. Vui lòng thử lại");
     }
   },
 
@@ -60,12 +60,12 @@ module.exports = {
         },
       });
       if (deleteBus) {
-        return responseHandler.ok(res, 'Delete bus successful!');
+        return responseHandler.ok(res, 'Xoá chuyến xe thành công!');
       } else {
-        return responseHandler.badRequest(res, 'Bus not found');
+        return responseHandler.badRequest(res, 'Chuyến xe không tồn tại');
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      return responseHandler.badRequest(res, "Có lỗi xảy ra khi thao tác. Vui lòng thử lại");
     }
   },
 
@@ -142,10 +142,10 @@ module.exports = {
           number_bus: numberBus[0]['count(*)'],
         });
       } else {
-        return responseHandler.badRequest(res, 'Cant get list bus');
+        return responseHandler.badRequest(res, 'Không thể lấy danh sách chuyến xe');
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      return responseHandler.badRequest(res, "Có lỗi xảy ra khi thao tác. Vui lòng thử lại");
     }
   },
 
@@ -164,10 +164,10 @@ module.exports = {
       if (getBusById) {
         return responseHandler.responseWithData(res, 200, getBusById);
       } else {
-        return responseHandler.badRequest(res, 'Bus not found');
+        return responseHandler.badRequest(res, 'Chuyến xe không tồn tại');
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      return responseHandler.badRequest(res, "Có lỗi xảy ra khi thao tác. Vui lòng thử lại");
     }
   },
 
@@ -184,12 +184,12 @@ module.exports = {
         },
       });
       if (updateBus) {
-        return responseHandler.ok(res, { message: 'Update bus successful!' });
+        return responseHandler.ok(res, { message: 'Cập nhật chuyến xe thành công!' });
       } else {
-        return responseHandler.badRequest(res, 'Bus not found');
+        return responseHandler.badRequest(res, 'Chuyến xe không tồn tại');
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      return responseHandler.badRequest(res, "Có lỗi xảy ra khi thao tác. Vui lòng thử lại");
     }
   },
 };

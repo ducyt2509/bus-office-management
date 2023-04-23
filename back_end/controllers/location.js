@@ -63,7 +63,7 @@ module.exports = {
         numberLocation: numberLocation[0]['count(*)'],
       });
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      return responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 
@@ -81,7 +81,7 @@ module.exports = {
       const getCity = await City.findOne({ where: { id: city_id } });
 
       if (!getCity) {
-        return responseHandler.badRequest(res, 'City not found');
+        return responseHandler.badRequest(res, 'Thành phố không tồn tại!');
       }
       const location = await Location.findOne({
         where: {
@@ -89,16 +89,16 @@ module.exports = {
         },
       });
       if (location) {
-        return responseHandler.badRequest(res, 'Location is already exist');
+        return responseHandler.badRequest(res, 'Địa điểm đã tồn tại');
       }
       const newLocation = await Location.create({ location_name, address, city_id });
       if (newLocation) {
-        return responseHandler.ok(res, 'Add new location successful');
+        return responseHandler.ok(res, 'Thêm  địa điểm mới thành công!');
       } else {
-        return responseHandler.badRequest(res, 'Cant add new location');
+        return responseHandler.badRequest(res, 'Không thể thêm địa điểm mới');
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      return responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 
@@ -111,7 +111,7 @@ module.exports = {
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
       const getLocation = await Location.findOne({ where: { id } });
       if (!getLocation) {
-        return responseHandler.badRequest(res, 'Location not found');
+        return responseHandler.badRequest(res, 'Địa điểm không tồn tại');
       }
       const destroyLocation = await Location.destroy({
         where: {
@@ -119,20 +119,26 @@ module.exports = {
         },
       });
       if (destroyLocation) {
-        return responseHandler.ok(res, 'Delete location successfully');
+        return responseHandler.ok(res, 'Xoá địa điểm thành công');
       } else {
-        return responseHandler.badRequest(res, "Can't delete location");
+        return responseHandler.badRequest(res, 'Không thể xoá địa điểm');
       }
     } catch (error) {
-      return responseHandler.error;
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async updateLocation(req, res) {
     try {
       const { id, location_name, address, city_id } = req.body;
       if (
-        !validateHandler.validatePositiveIntegerNumber(parseInt(id), regexHandler.regexNormalString) ||
-        !validateHandler.validatePositiveIntegerNumber(parseInt(city_id), regexHandler.regexNormalString) ||
+        !validateHandler.validatePositiveIntegerNumber(
+          parseInt(id),
+          regexHandler.regexNormalString
+        ) ||
+        !validateHandler.validatePositiveIntegerNumber(
+          parseInt(city_id),
+          regexHandler.regexNormalString
+        ) ||
         !validateHandler.validateString(location_name, regexHandler.regexNormalString) ||
         !validateHandler.validateString(address, regexHandler.regexNormalString)
       )
@@ -140,12 +146,12 @@ module.exports = {
 
       const getCity = await City.findOne({ where: { id: city_id } });
       if (!getCity) {
-        return responseHandler.badRequest(res, 'City not found');
+        return responseHandler.badRequest(res, "Thành phố không tồn tại");
       }
 
       const getLocation = await Location.findOne({ where: { id } });
       if (!getLocation) {
-        return responseHandler.badRequest(res, 'Location not found');
+        return responseHandler.badRequest(res, 'Địa điểm không tồn tại');
       }
       const location = await Location.findOne({
         where: {
@@ -153,7 +159,7 @@ module.exports = {
         },
       });
       if (location) {
-        return responseHandler.badRequest(res, 'Location is already exist');
+        return responseHandler.badRequest(res, 'Địa điểm đã tồn tại');
       }
       const updateLocation = await Location.update(
         { location_name, address, city_id },
@@ -164,12 +170,12 @@ module.exports = {
         }
       );
       if (updateLocation) {
-        return responseHandler.ok(res, 'Update location successfully!');
+        return responseHandler.ok(res, 'Cập nhật địa điểm thành công!');
       } else {
-        return responseHandler.badRequest(res, 'Cant update location');
+        return responseHandler.badRequest(res, 'Không thể cập nhật địa điểm');
       }
     } catch (error) {
-      return responseHandler.error;
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 };

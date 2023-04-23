@@ -1,22 +1,46 @@
 import { SlPencil } from 'react-icons/sl';
 import { IoTrashBinOutline } from 'react-icons/io5';
-import { Stack, IconButton, useToast } from '@chakra-ui/react';
+import {
+  Stack,
+  IconButton,
+  useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  Button,
+  Text,
+} from '@chakra-ui/react';
 import axios from 'axios';
-import { useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 export default function ListLocation(props) {
   const toast = useToast();
   const toastIdRef = useRef();
+  const [status, setStatus] = useState(false);
+  const [id, setId] = useState(0);
+
   const handleActiveModal = (locationId, location) => {
     props.setLocation(location);
     props.setLocationId(locationId);
     props.onOpen();
   };
-  const handleDeleteLocation = async (locationId) => {
+
+  const handleOpenModal = useCallback(
+    (statusModal, id) => {
+      setId(statusModal == true ? id : 0);
+      setStatus(statusModal);
+    },
+    [id]
+  );
+
+  const handleDeleteLocation = useCallback(async () => {
     try {
       const deleteLocation = await props.axiosJWT.delete(
         `http://localhost:${props.port}/location/delete-location`,
-        { data: { id: locationId }, headers: { token: props.token } }
+        { data: { id: id }, headers: { token: props.token } }
       );
       if (deleteLocation.data.statusCode == 200) {
         toastIdRef.current = toast({
@@ -39,7 +63,40 @@ export default function ListLocation(props) {
         duration: 2000,
       });
     }
-  };
+    setStatus(false);
+    setId(0);
+  }, [id, props.token]);
+
+  const ModalHTML = (
+    <Modal isOpen={status}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Bạn có chắc chắn muốn xoá ?</ModalHeader>
+        <ModalBody>
+          <Text>
+            Thao tác xóa có thể ảnh hưởng đến dữ liệu của những lịch trình có liên quan đến địa điểm
+            này. Bạn có chắc chắn xóa?
+          </Text>
+        </ModalBody>
+
+        <ModalFooter>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            onClick={() => handleOpenModal(false, 0)}
+            backgroundColor={'#f26a4c'}
+            _hover={{ backgroundColor: '#f26a4c' }}
+          >
+            Đóng
+          </Button>
+          <Button variant="ghost" onClick={handleDeleteLocation}>
+            Xoá
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+
   const ListLocationHTML = props.list.map((location, index) => {
     return (
       <tr>
@@ -55,7 +112,7 @@ export default function ListLocation(props) {
             />
             <IconButton
               icon={<IoTrashBinOutline />}
-              onClick={() => handleDeleteLocation(location?.id)}
+              onClick={() => handleOpenModal(true, location?.id)}
             />
           </Stack>
         </td>
@@ -63,17 +120,20 @@ export default function ListLocation(props) {
     );
   });
   return (
-    <table style={{ width: '100%', textAlign: 'center' }} className="bom-table-bus">
-      <thead>
-        <tr>
-          <td>STT</td>
-          <td>Tên văn phòng</td>
-          <td>Tên thành phố</td>
-          <td>Địa chỉ</td>
-          <td>Thao tác</td>
-        </tr>
-      </thead>
-      <tbody>{ListLocationHTML}</tbody>
-    </table>
+    <>
+      {ModalHTML}
+      <table style={{ width: '100%', textAlign: 'center' }} className="bom-table-bus">
+        <thead>
+          <tr>
+            <td>STT</td>
+            <td>Tên văn phòng</td>
+            <td>Tên thành phố</td>
+            <td>Địa chỉ</td>
+            <td>Thao tác</td>
+          </tr>
+        </thead>
+        <tbody>{ListLocationHTML}</tbody>
+      </table>
+    </>
   );
 }
