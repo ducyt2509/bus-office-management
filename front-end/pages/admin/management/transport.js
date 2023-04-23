@@ -12,10 +12,10 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
 import axios from 'axios';
-import ActionBar from '@/components/transport/ActionBar';
-import AddTransport from '@/components/transport/AddTransport';
-import ListTransport from '@/components/transport/ListTransport';
-import Pagination from '@/components/common/Pagination';
+import ActionBar from '@/src/components/transport/ActionBar';
+import AddTransport from '@/src/components/transport/AddTransport';
+import ListTransport from '@/src/components/transport/ListTransport';
+import Pagination from '@/src/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function ManagementTransport(props) {
@@ -63,16 +63,28 @@ export default function ManagementTransport(props) {
           }
           setNumberTransport(getListTransport.data.data.number_transport);
         }
-      } catch (error) {
-        toastIdRef.current = toast({
-          title: 'Phiên của bạn đã hết hạn',
-          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
-        console.log(error);
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Không thể lấy danh sách lịch trình. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
+
+        console.log(err);
       }
     },
     [state, querySearch, token]

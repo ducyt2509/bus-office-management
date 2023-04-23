@@ -109,17 +109,17 @@ module.exports = {
         if (createTransaction) {
           return responseHandler.responseWithData(res, 200, createTransaction);
         } else {
-          return responseHandler.badRequest(res, "Can't create payment");
+          return responseHandler.badRequest(res, "Không thể tạo giao dịch");
         }
       } else {
         if (createTransaction) {
           return responseHandler.responseWithData(res, 200, { link_payment: vnpUrl });
         } else {
-          return responseHandler.badRequest(res, "Can't create payment");
+          return responseHandler.badRequest(res, "Không thể tạo giao dịch");
         }
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 
@@ -266,12 +266,11 @@ module.exports = {
         });
       } else {
         return responseHandler.responseWithData(res, 403, {
-          message: "Can't get list transaction!",
+          message: "Không thể lấy danh sách giao dịch!",
         });
       }
     } catch (error) {
-      console.log(error)
-      return responseHandler.badRequest(res, error.message);
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async getTransactionInformationById(req, res) {
@@ -289,10 +288,10 @@ module.exports = {
       if (getTransaction) {
         return responseHandler.responseWithData(res, 200, { transaction: getTransaction[0] });
       } else {
-        return responseHandler.badRequest(res, "Can't get transaction information");
+        return responseHandler.badRequest(res, "Không thể lấy thông tin giao dịch");
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async updateTransactionById(req, res) {
@@ -306,13 +305,13 @@ module.exports = {
       });
       if (updateTransaction) {
         return responseHandler.responseWithData(res, 200, {
-          message: 'Transaction update successfully',
+          message: 'Cập nhật giao dịch thành công!',
         });
       } else {
-        return responseHandler.badRequest(res, "Transaction can't update");
+        return responseHandler.badRequest(res, "Không thể cập nhật giao dịch");
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async refundPayment(req, res) {

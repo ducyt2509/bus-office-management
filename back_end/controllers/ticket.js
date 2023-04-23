@@ -70,7 +70,7 @@ module.exports = {
             revenue_report: [],
           });
         } else {
-          return responseHandler.badRequest(res, "Can't get list revenue");
+          return responseHandler.badRequest(res, 'Không thể lấy danh sách thống kê');
         }
       }
       if (querySearch == 2) {
@@ -154,7 +154,7 @@ module.exports = {
             revenue_report: barData,
           });
         } else {
-          return responseHandler.badRequest(res, "Can't get list revenue");
+          return responseHandler.badRequest(res, 'Không thể lấy danh sách thống kê');
         }
       }
       if (querySearch == 3) {
@@ -233,7 +233,7 @@ module.exports = {
             revenue_report: barData,
           });
         } else {
-          return responseHandler.badRequest(res, "Can't get list revenue");
+          return responseHandler.badRequest(res, 'Không thể lấy danh sách thống kê');
         }
       }
       if (querySearch == 4) {
@@ -322,20 +322,17 @@ module.exports = {
             revenue_report: barData,
           });
         } else {
-          return responseHandler.badRequest(res, "Can't get list revenue");
+          return responseHandler.badRequest(res, 'Không thể lấy danh sách thống kê');
         }
       }
     } catch (err) {
-      return responseHandler.badRequest(res, err.message);
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async getRevenueListByRoute(req, res) {
     const params = req.body;
     const querySearch = params.query_search ? params.query_search : 1;
     try {
-		
-    } catch (error) {
-
-	}
+    } catch (error) {}
   },
 };

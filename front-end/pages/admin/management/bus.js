@@ -17,10 +17,10 @@ import {
 import axios from 'axios';
 import { actions, useStore } from '@/src/store';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import ListBus from '@/components/bus/ListBus';
-import ActionBar from '@/components/bus/ActionBar';
-import Pagination from '@/components/common/Pagination';
-import AddBus from '@/components/bus/AddBus';
+import ListBus from '@/src/components/bus/ListBus';
+import ActionBar from '@/src/components/bus/ActionBar';
+import Pagination from '@/src/components/common/Pagination';
+import AddBus from '@/src/components/bus/AddBus';
 import Cookies from 'js-cookie';
 
 export default function ManagementBus(props) {
@@ -67,16 +67,27 @@ export default function ManagementBus(props) {
           }
           setNumberBus(getListBus.data.data.number_bus);
         }
-      } catch (error) {
-        toastIdRef.current = toast({
-          title: 'Phiên của bạn đã hết hạn',
-          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
-        console.log(error);
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Không thể lấy danh sách xe. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
+        console.log(err);
       }
     },
     [state, querySearch, token]

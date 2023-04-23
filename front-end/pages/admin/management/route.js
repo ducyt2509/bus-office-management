@@ -12,10 +12,10 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
 import axios from 'axios';
-import ActionBar from '@/components/route/ActionBar';
-import AddRoute from '@/components/route/AddRoute';
-import ListRoute from '@/components/route/ListRoute';
-import Pagination from '@/components/common/Pagination';
+import ActionBar from '@/src/components/route/ActionBar';
+import AddRoute from '@/src/components/route/AddRoute';
+import ListRoute from '@/src/components/route/ListRoute';
+import Pagination from '@/src/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function ManagementRoute(props) {
@@ -61,16 +61,27 @@ export default function ManagementRoute(props) {
           }
           setNumberRoute(getListRoute.data.data.number_route);
         }
-      } catch (error) {
-        toastIdRef.current = toast({
-          title: 'Phiên của bạn đã hết hạn',
-          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
-        console.log(error);
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Không thể lấy danh sách tuyến đường. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
+        console.log(err);
       }
     },
     [state, querySearch, token]

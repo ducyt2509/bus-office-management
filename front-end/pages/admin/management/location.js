@@ -12,10 +12,10 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
 import axios from 'axios';
-import ActionBar from '@/components/location/ActionBar';
-import AddLocation from '@/components/location/AddLocation';
-import ListLocation from '@/components/location/ListLocation';
-import Pagination from '@/components/common/Pagination';
+import ActionBar from '@/src/components/location/ActionBar';
+import AddLocation from '@/src/components/location/AddLocation';
+import ListLocation from '@/src/components/location/ListLocation';
+import Pagination from '@/src/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function ManagementOffice(props) {
@@ -61,7 +61,27 @@ export default function ManagementOffice(props) {
           }
           setNumberLocation(getListLocation.data.data.numberLocation);
         }
-      } catch (error) {
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Không thể lấy danh sách địa điểm. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
+
         toastIdRef.current = toast({
           title: 'Phiên của bạn đã hết hạn',
           description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
@@ -70,7 +90,7 @@ export default function ManagementOffice(props) {
           position: 'top',
           duration: 2000,
         });
-        console.log(error);
+        console.log(err);
       }
     },
     [state, querySearch, token]

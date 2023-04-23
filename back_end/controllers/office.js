@@ -50,12 +50,12 @@ module.exports = {
       if (isExist) return responseHandler.badRequest(res, 'Office already exists');
       const createOffice = await Office.create({ office_name, city_id, office_address });
       if (createOffice) {
-        return responseHandler.ok(res, { message: 'Create office successful!' });
+        return responseHandler.ok(res, { message: 'Tạo văn phòng thành công!' });
       } else {
-        return responseHandler.badRequest(res, 'Cant create office');
+        return responseHandler.badRequest(res, 'Không thể tạo văn phòng');
       }
     } catch (error) {
-      return responseHandler.error;
+     responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async updateOfficeInformation(req, res) {
@@ -73,9 +73,9 @@ module.exports = {
       const getCity = await City.findOne({
         id: city_id,
       });
-      if (!getCity) return responseHandler.badRequest(res, 'City not found');
+      if (!getCity) return responseHandler.badRequest(res, 'Thành phố không tồn tại');
       const isExist = await checkExistOffice(office_name, city_id, office_address);
-      if (isExist) return responseHandler.badRequest(res, 'Office already exists');
+      if (isExist) return responseHandler.badRequest(res, 'Văn phòng đã tồn tại');
 
       const officeData = {
         id,
@@ -90,12 +90,12 @@ module.exports = {
         },
       });
       if (updateOffice) {
-        return responseHandler.ok(res, { message: 'Update office successful!' });
+        return responseHandler.ok(res, { message: 'Cập nhật văn phòng thành công!' });
       } else {
-        return responseHandler.badRequest(res, 'Cant update office');
+        return responseHandler.badRequest(res, 'Không thể cập nhật văn phòng');
       }
     } catch (error) {
-      return responseHandler.error;
+     responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async deleteOfficeInformation(req, res) {
@@ -110,12 +110,12 @@ module.exports = {
         },
       });
       if (deleteOffice) {
-        return responseHandler.ok(res, { message: 'Delete office successful!' });
+        return responseHandler.ok(res, { message: 'Xoá văn phòng thành công!' });
       } else {
-        return responseHandler.badRequest(res, 'Office not found');
+        return responseHandler.badRequest(res, 'Văn phòng không tồn tại');
       }
     } catch (error) {
-      return responseHandler.error;
+     responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async getListOffice(req, res) {
@@ -170,10 +170,10 @@ module.exports = {
           number_office: numberOffice[0]['numberOffice'],
         });
       } else {
-        return responseHandler.badRequest(res, 'Cant get list office');
+        return responseHandler.badRequest(res, 'Không thể lấy danh sách văn phòng');
       }
     } catch (error) {
-      return responseHandler.error;
+     responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async getOfficeInformation(req, res) {
@@ -210,10 +210,10 @@ module.exports = {
         }
         return responseHandler.responseWithData(res, 200, officeInformation);
       } else {
-        return responseHandler.badRequest(res, 'Office not found');
+        return responseHandler.badRequest(res, 'Văn phòng không tồn tại');
       }
     } catch (error) {
-      return responseHandler.error;
+     responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 };

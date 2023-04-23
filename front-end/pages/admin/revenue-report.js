@@ -1,5 +1,5 @@
-import BarChart from '@/components/revenue/BarChart';
-import ListCashier from '@/components/revenue/ListCashier';
+import BarChart from '@/src/components/revenue/BarChart';
+import ListCashier from '@/src/components/revenue/ListCashier';
 import {
   Text,
   Heading,
@@ -30,7 +30,7 @@ import TrungBinhNgay from '@/images/icons/TrungBinhNgay.png';
 import VeBan from '@/images/icons/VeBan.png';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
-import Pagination from '@/components/common/Pagination';
+import Pagination from '@/src/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function RevenueReport(props) {
@@ -91,14 +91,25 @@ export default function RevenueReport(props) {
           });
         }
       } catch (err) {
-        toastIdRef.current = toast({
-          title: 'Phiên của bạn đã hết hạn',
-          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description:"Xảy ra lỗi khi lấy danh sách thống kê vui lòng thử lại.",
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
         console.log(err);
       }
     },

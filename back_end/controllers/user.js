@@ -1,19 +1,19 @@
-const db = require("../models");
-const crypto = require("crypto");
+const db = require('../models');
+const crypto = require('crypto');
 
 const User = db.users;
 const Role = db.roles;
 const Office = db.offices;
 const Op = db.Sequelize.Op;
-const OTPCode = require("../helper/OTPCode");
-const bcrypt = require("bcrypt");
+const OTPCode = require('../helper/OTPCode');
+const bcrypt = require('bcrypt');
 const QueryTypes = db.Sequelize.QueryTypes;
-const jwt = require("jsonwebtoken");
-const responseHandler = require("../handlers/response.handler");
+const jwt = require('jsonwebtoken');
+const responseHandler = require('../handlers/response.handler');
 
-const regexHandler = require("../handlers/regex.handler");
-const validateHandler = require("../handlers/validate.handler");
-const messageHandler = require("../handlers/message.handler");
+const regexHandler = require('../handlers/regex.handler');
+const validateHandler = require('../handlers/validate.handler');
+const messageHandler = require('../handlers/message.handler');
 
 const generateRefreshToken = (user) => {
   return jwt.sign(
@@ -22,7 +22,7 @@ const generateRefreshToken = (user) => {
       role_id: user.role_id,
     },
     process.env.JWT_REFRESH_SECRET_TOKEN,
-    { expiresIn: "8h" },
+    { expiresIn: '8h' }
   );
 };
 const generateAccessToken = (user) => {
@@ -32,7 +32,7 @@ const generateAccessToken = (user) => {
       role_id: user.role_id,
     },
     process.env.JWT_SECRET_TOKEN,
-    { expiresIn: "4h" },
+    { expiresIn: '4h' }
   );
 };
 
@@ -50,14 +50,13 @@ module.exports = {
           !validateHandler.validateString(phone, regexHandler.regexPhoneNumber) ||
           !validateHandler.validateString(password, regexHandler.regexPassword);
       }
-      if (condition)
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+      if (condition) return responseHandler.badRequest(res, 'Thông tin nhập không đúng yêu cầu');
       const role = await Role.findOne({
         where: {
           id: role_id,
         },
       });
-      if (!role) return responseHandler.badRequest(res, "Role not found");
+      if (!role) return responseHandler.badRequest(res, 'Chức vụ không tồn tại');
       const salt = await bcrypt.genSalt(10);
       const hashPassword = bcrypt.hashSync(password, salt);
       let newUser = {
@@ -77,9 +76,9 @@ module.exports = {
         };
       } else {
         if (!validateHandler.validatePositiveIntegerNumber(parseInt(office_id)))
-          return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+          return responseHandler.badRequest(res, 'Thông tin nhập không đúng yêu cầu');
         const getOffice = await Office.findOne({ where: { id: office_id } });
-        if (!getOffice) return responseHandler.badRequest(res, "Office not found");
+        if (!getOffice) return responseHandler.badRequest(res, 'Văn phòng không tồn tại');
       }
 
       const checkUserExist = await User.findOne({
@@ -89,17 +88,17 @@ module.exports = {
       });
 
       if (checkUserExist) {
-        return responseHandler.badRequest(res, "User is already exist");
+        return responseHandler.badRequest(res, 'Người dùng đã tồn tại');
       }
 
       const createUser = await User.create(newUser);
       if (createUser) {
-        return responseHandler.ok(res, "Create user successful!");
+        return responseHandler.ok(res, 'Tạo mới người dùng thành công!');
       } else {
-        return responseHandler.badRequest(res, "Create user failed");
+        return responseHandler.badRequest(res, 'Thêm người dùng thất bại');
       }
     } catch (error) {
-      return responseHandler.badRequest(res, error.message);
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async requestRefreshToken(req, res) {
@@ -119,28 +118,28 @@ module.exports = {
             process.env.JWT_REFRESH_SECRET_TOKEN,
             async (error, user) => {
               if (error) {
-                return responseHandler.badRequest(res, error.message);
+                responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
               } else {
                 const newAccessToken = generateAccessToken(user);
                 const newRefreshAccessToken = generateRefreshToken(user);
                 await User.update(
                   { refresh_access_token: newRefreshAccessToken },
-                  { where: { id: req.body?.id } },
+                  { where: { id: req.body?.id } }
                 );
-                res.cookie("refreshAccessToken", newRefreshAccessToken, {
+                res.cookie('refreshAccessToken', newRefreshAccessToken, {
                   httpOnly: true,
-                  sameSite: "strict",
+                  sameSite: 'strict',
                   secure: false,
                 });
                 return responseHandler.responseWithData(res, 200, newAccessToken);
               }
-            },
+            }
           );
         } else {
           return responseHandler.unauthorized(res);
         }
       } catch (error) {
-        return responseHandler.error;
+        responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
       }
     }
   },
@@ -154,7 +153,7 @@ module.exports = {
         // password not in range [8+] characters
         !validateHandler.validateString(password, regexHandler.regexPassword)
       )
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+        return responseHandler.badRequest(res, 'Thông tin nhập không đúng yêu cầu');
 
       const getUser = await User.findOne({
         where: {
@@ -164,7 +163,7 @@ module.exports = {
       if (getUser) {
         const validPassword = bcrypt.compareSync(password, getUser.password);
         if (!validPassword) {
-          return responseHandler.badRequest(res, "Password was wrong");
+          return responseHandler.badRequest(res, 'Mật khẩu không đúng');
         } else {
           const accessToken = generateAccessToken(getUser);
           const refreshAccessToken = generateRefreshToken(getUser);
@@ -177,7 +176,7 @@ module.exports = {
                 where: {
                   [Op.or]: [{ email: user }, { phone: user }],
                 },
-              },
+              }
             ),
             Office.findOne({
               where: {
@@ -188,10 +187,10 @@ module.exports = {
           if (getOffice) {
             getUser.dataValues.office = getOffice;
           }
-          res.cookie("refreshAccessToken", refreshAccessToken, {
+          res.cookie('refreshAccessToken', refreshAccessToken, {
             httpOnly: true,
-            path: "/",
-            sameSite: "strict",
+            path: '/',
+            sameSite: 'strict',
             secure: false,
           });
           delete getUser.dataValues.password;
@@ -201,14 +200,14 @@ module.exports = {
           return responseHandler.responseWithData(res, 200, {
             ...getUser,
             accessToken,
-            message: "Login successful!",
+            message: 'Đăng nhập thành công!',
           });
         }
       } else {
-        return responseHandler.badRequest(res, "User not found");
+        return responseHandler.badRequest(res, 'Người dùng không tồn tại');
       }
     } catch (error) {
-      return responseHandler.error;
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 
@@ -217,18 +216,18 @@ module.exports = {
       const params = req.body;
       const user = params.user;
       if (!validateHandler.validateString(user, regexHandler.regexPhoneNumberOrEmail))
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+        return responseHandler.badRequest(res, 'Thông tin nhập không đúng yêu cầu');
       let getUser = await User.findOne({
         where: {
           [Op.or]: [{ email: user }, { phone: user }],
         },
-        attributes: ["phone", "email"],
+        attributes: ['phone', 'email'],
       });
-      if (!getUser) return responseHandler.badRequest(res, "User not found");
+      if (!getUser) return responseHandler.badRequest(res, 'Người dùng không tồn tại');
       let hashData = await OTPCode.sendCodeOTP(getUser.phone);
       return responseHandler.responseWithData(res, 200, hashData);
     } catch (error) {
-      return responseHandler.error;
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 
@@ -243,10 +242,10 @@ module.exports = {
       if (verifyOTPCode.success) {
         return responseHandler.responseWithData(res, 200, { phone, verifyOTPCode });
       } else {
-        return responseHandler.responseWithData(res, 401, "Verify code is not available");
+        return responseHandler.responseWithData(res, 401, 'Mã xác thực không đúng');
       }
     } catch (error) {
-      return responseHandler.error;
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 
@@ -262,14 +261,14 @@ module.exports = {
         !validateHandler.validateStringInRange(password, 8, 16, regexHandler.confirmPassword) ||
         !validateHandler.validateString(user, regexHandler.regexPhoneNumberOrEmail)
       )
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
-      if (verifyOTPCode.success && verifyOTPCode.messages == "Correct OTP Code") {
+        return responseHandler.badRequest(res, 'Thông tin nhập không đúng yêu cầu');
+      if (verifyOTPCode.success && verifyOTPCode.messages == 'Correct OTP Code') {
         if (password === confirmPassword) {
           let getUser = await User.findOne({
             where: {
               [Op.or]: [{ email: user }, { phone: user }],
             },
-            attributes: ["phone", "email"],
+            attributes: ['phone', 'email'],
           });
           const salt = await bcrypt.genSalt(10);
           const hashPassword = bcrypt.hashSync(password, salt);
@@ -281,28 +280,28 @@ module.exports = {
                 where: {
                   [Op.or]: [{ email: user }, { phone: user }],
                 },
-              },
+              }
             );
             if (updateUser) {
-              return responseHandler.ok(res, "Update user successful!");
+              return responseHandler.ok(res, 'Cập nhật thông tin người dùng thành công!');
             } else {
               return responseHandler.error(res);
             }
           } else {
             return responseHandler.badRequest(res, {
-              message: "User not found",
+              message: 'Người dùng không tồn tại',
             });
           }
         } else {
           return responseHandler.responseWithData(res, 403, {
-            message: "Password not equal to confirm password",
+            message: 'Xác nhận mật khẩu không đúng',
           });
         }
       } else {
         return responseHandler.unauthorized(res);
       }
     } catch (error) {
-      return responseHandler.error;
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 
@@ -311,14 +310,14 @@ module.exports = {
       var { limit, offset, query_search, role_id } = req.body;
       limit = limit ? limit : 7;
       offset = offset ? offset : 0;
-      const querySearch = !query_search ? "" : query_search.toString().trim();
+      const querySearch = !query_search ? '' : query_search.toString().trim();
       role_id = role_id ? role_id : 0;
 
       if (
         !validateHandler.validatePositiveIntegerNumber(parseInt(limit)) ||
         !validateHandler.validatePositiveIntegerNumber(parseInt(offset))
       )
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+        return responseHandler.badRequest(res, 'Thông tin nhập không đúng yêu cầu');
 
       if (role_id && role_id !== null) {
         const role = await Role.findOne({
@@ -326,10 +325,9 @@ module.exports = {
             id: role_id,
           },
         });
-        if (!role) return responseHandler.badRequest(res, "Role not found");
+        if (!role) return responseHandler.badRequest(res, 'Chức vụ không tồn tại');
       }
-      let attributes =
-        "user.id, email, phone ,user_name, avatar, role_id, role_name , office_id";
+      let attributes = 'user.id, email, phone ,user_name, avatar, role_id, role_name , office_id';
       let querySQL =
         `select ` +
         attributes +
@@ -386,30 +384,30 @@ module.exports = {
         }
         return responseHandler.responseWithData(res, 200, {
           list_user: getUser,
-          number_user: numberUser[0]["count(*)"],
+          number_user: numberUser[0]['count(*)'],
         });
       } else {
         if (querySearch && querySearch.length > 0) {
-          return responseHandler.badRequest(res, "User not found");
+          return responseHandler.badRequest(res, 'Người dùng không tồn tại');
         }
         //NOTE
-        return responseHandler.badRequest(res, "");
+        return responseHandler.badRequest(res, '');
       }
     } catch (error) {
-      return responseHandler.error;
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async getUserInformation(req, res) {
     try {
       const { id } = req.body;
       if (!validateHandler.validatePositiveIntegerNumber(parseInt(id)))
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+        return responseHandler.badRequest(res, 'Thông tin nhập không đúng yêu cầu');
 
       const getUserById = await User.findOne({
         where: {
           id,
         },
-        attributes: ["id", "email", "phone", "user_name", "avatar", "role_id", "office_id"],
+        attributes: ['id', 'email', 'phone', 'user_name', 'avatar', 'role_id', 'office_id'],
       });
       if (getUserById) {
         const getOffice = await Office.findOne({
@@ -422,10 +420,10 @@ module.exports = {
         }
         return responseHandler.responseWithData(res, 200, getUserById);
       } else {
-        return responseHandler.badRequest(res, "User not found");
+        return responseHandler.badRequest(res, 'Người dùng không tồn tại');
       }
     } catch (error) {
-      return responseHandler.error;
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async updateInformationUser(req, res) {
@@ -450,22 +448,22 @@ module.exports = {
       console.log(2, validateHandler.validateString(user_name, regexHandler.regexNormalString));
       console.log(3, !validateHandler.validateString(phone, regexHandler.regexPhoneNumber));
       console.log(4, !validateHandler.validatePositiveIntegerNumber(parseInt(role_id)));
-      if (condition)
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+
+      if (condition) return responseHandler.badRequest(res, 'Thông tin nhập không đúng yêu cầu');
+
       const role = await Role.findOne({
         where: {
           id: role_id,
         },
       });
-      if (!role) return responseHandler.badRequest(res, "Role not found");
+      if (!role) return responseHandler.badRequest(res, 'Chức vụ không tồn tại');
 
       const getUser = await User.findOne({
-        where:
-          { [Op.or]: [{ email }, { phone }] }
+        where: { [Op.or]: [{ email }, { phone }] },
       });
-      if (getUser) return responseHandler.badRequest(res, "User is already exist")
+      if (getUser) return responseHandler.badRequest(res, 'Người dùng đã tồn tại');
 
-      let hashPassword = "";
+      let hashPassword = '';
       let element = { email, password, user_name, phone, role_id };
 
       if (password) {
@@ -482,13 +480,12 @@ module.exports = {
         },
       });
       if (updateUser) {
-        return responseHandler.ok(res, "Update user successful!");
+        return responseHandler.ok(res, 'Cập nhật thông tin người dùng thành công!');
       } else {
-        return responseHandler.badRequest(res, "Cant update user");
+        return responseHandler.badRequest(res, 'Không thể cập nhật thông tin người dùng');
       }
     } catch (error) {
-      console.log(error)
-      return responseHandler.error;
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async deleteUser(req, res) {
@@ -496,37 +493,37 @@ module.exports = {
       const params = req.body;
       const id = params.id;
       if (!validateHandler.validatePositiveIntegerNumber(parseInt(id)))
-        return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
+        return responseHandler.badRequest(res, 'Thông tin nhập không đúng yêu cầu');
       const deleteUser = await User.destroy({
         where: {
           id: id,
         },
       });
       if (deleteUser) {
-        return responseHandler.ok(res, "Delete user successful!");
+        return responseHandler.ok(res, 'Xoá người dùng thành công!');
       } else {
-        return responseHandler.badRequest(res, "User not found");
+        return responseHandler.badRequest(res, 'Người dùng không tồn tại');
       }
     } catch (error) {
-      return responseHandler.error;
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async logoutAccount(req, res) {
     try {
       const deleteRefreshToken = await User.update(
         { refresh_access_token: null },
-        { where: { id: req.body.id } },
+        { where: { id: req.body.id } }
       );
       if (deleteRefreshToken) {
-        res.clearCookie("dataUser");
-        res.clearCookie("refreshAccessToken");
-        res.clearCookie("sideBarActive");
-        return responseHandler.ok(res, "Log our success!");
+        res.clearCookie('dataUser');
+        res.clearCookie('refreshAccessToken');
+        res.clearCookie('sideBarActive');
+        return responseHandler.ok(res, 'Đăng xuất thành công!');
       } else {
-        return responseHandler.badRequest(res, "Can not log out");
+        return responseHandler.badRequest(res, 'Không thể đăng xuẩt');
       }
     } catch (err) {
-      return responseHandler.error;
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 };

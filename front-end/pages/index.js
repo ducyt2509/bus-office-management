@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-import HomeContent from '../components/home/content/HomeContent';
-import HomeDestination from '@/components/home/book-ticket/HomeDestination';
-import PopularRoute from '@/components/home/content/PopularRoute';
-import LoginForm from '../components/home/login';
+import HomeContent from '@/src/components/home/content/HomeContent';
+import HomeDestination from '@/src/components/home/book-ticket/HomeDestination';
+import PopularRoute from '@/src/components/home/content/PopularRoute';
+import LoginForm from '@/src/components/home/login';
 
 export default function HomePage(props) {
   const LoginFormHTML = <LoginForm BACK_END_PORT={props.BACK_END_PORT}/>;

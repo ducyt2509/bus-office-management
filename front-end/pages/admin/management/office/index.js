@@ -12,10 +12,10 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
 import axios from 'axios';
-import ActionBar from '@/components/office/ActionBar';
-import AddOffice from '@/components/office/AddOffice';
-import ListOffice from '@/components/office/ListOffice';
-import Pagination from '@/components/common/Pagination';
+import ActionBar from '@/src/components/office/ActionBar';
+import AddOffice from '@/src/components/office/AddOffice';
+import ListOffice from '@/src/components/office/ListOffice';
+import Pagination from '@/src/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function ManagementOffice(props) {
@@ -61,16 +61,27 @@ export default function ManagementOffice(props) {
           }
           setNumberOffice(getListOffice.data.data.number_office);
         }
-      } catch (error) {
-        toastIdRef.current = toast({
-          title: 'Phiên của bạn đã hết hạn',
-          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
-        console.log(error);
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Không thể lấy danh sách văn phòng. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
+        console.log(err);
       }
     },
     [state, querySearch, token]
