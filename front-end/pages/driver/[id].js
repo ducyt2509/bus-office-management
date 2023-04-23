@@ -18,26 +18,48 @@ export default function BusScheduleDriver(props) {
   };
   const handleCheckCustomerInTheCar = useCallback(
     async (id) => {
-      let updateTransactionById = await axiosJWT.put(
-        `http://localhost:${props.port}/transaction/update-transaction`,
-        {
-          id: id,
-          payment_status: 2,
-          role_id: 3,
-        },
-        {
-          headers: {
-            token: `Bearer ${state.dataUser.token}`,
+      try {
+        let updateTransactionById = await axiosJWT.put(
+          `http://localhost:${props.port}/transaction/update-transaction`,
+          {
+            id: id,
+            payment_status: 2,
+            role_id: 3,
           },
+          {
+            headers: {
+              token: `Bearer ${state.dataUser.token}`,
+            },
+          }
+        );
+        if (updateTransactionById.data.statusCode == 200) {
+          let cloneData = [...data];
+          cloneData = cloneData.map((e) => {
+            e.id == id ? (e.payment_status = 2) : null;
+            return e;
+          });
+          setData(cloneData);
         }
-      );
-      if (updateTransactionById.data.statusCode == 200) {
-        let cloneData = [...data];
-        cloneData = cloneData.map((e) => {
-          e.id == id ? (e.payment_status = 2) : null;
-          return e;
-        });
-        setData(cloneData);
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Không thể cập nhật thông tin khách hàng. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
       }
     },
     [data, state]
@@ -68,7 +90,7 @@ export default function BusScheduleDriver(props) {
             position: 'top',
             duration: 2000,
           });
-          return
+          return;
         }
         let submitData = {
           id: getTransportById.data.data.id,
@@ -98,14 +120,25 @@ export default function BusScheduleDriver(props) {
         }
       }
     } catch (err) {
-      toastIdRef.current = toast({
-        title: 'Lỗi trong quá trình thao tác',
-        description: 'Có lỗi xảy ra trong quá trình thao tác làm ơn hãy thử lại',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Có lỗi xảy ra trong quá trình thao tác làm ơn hãy thử lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
     }
   }, [props.id, state]);
 

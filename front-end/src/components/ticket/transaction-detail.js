@@ -188,7 +188,7 @@ export default function TransactionDetails(props) {
     setSeat(cloneSeat);
     setStatusAddSeat(false);
   }, [seat, addSeat, props.seatCustomerSelected]);
-  
+
   const getTransactionById = useCallback(async () => {
     try {
       const getTransaction = await props.axiosJWT.post(
@@ -225,14 +225,25 @@ export default function TransactionDetails(props) {
       }
     } catch (err) {
       console.log(err);
-      toastIdRef.current = toast({
-        title: 'Phiên của bạn đã hết hạn',
-        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Không thể lấy thông tin khách hàng. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
     }
   }, [props.data, props.seatInformation]);
 
@@ -357,14 +368,25 @@ export default function TransactionDetails(props) {
             props.onClose();
           }
         } catch (err) {
-          toastIdRef.current = toast({
-            title: 'Thông tin khách hàng chưa được cập nhật',
-            description: 'Có lỗi xảy ra khi cập nhật thông tin khách hàng. Vui lòng thử lại',
-            status: 'error',
-            isClosable: true,
-            position: 'top',
-            duration: 2000,
-          });
+          if (err.response.data.statusCode == 401) {
+            toastIdRef.current = toast({
+              title: 'Phiên của bạn đã hết hạn.',
+              description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+              status: 'error',
+              isClosable: true,
+              position: 'top',
+              duration: 2000,
+            });
+          } else {
+            toastIdRef.current = toast({
+              title: err.response.data.data.message,
+              description: 'Có lỗi xảy ra khi cập nhật thông tin khách hàng. Vui lòng thử lại',
+              status: 'error',
+              isClosable: true,
+              position: 'top',
+              duration: 2000,
+            });
+          }
         }
       } else {
         submitData.ticket_price = props.scheduleData.price * seat.length;
@@ -400,14 +422,25 @@ export default function TransactionDetails(props) {
           }
         } catch (err) {
           console.log(err);
-          toastIdRef.current = toast({
-            title: 'Tạo thông tin khách hàng thất bại',
-            description: 'Có lỗi xảy ra. Vui lòng thử lại',
-            status: 'error',
-            isClosable: true,
-            position: 'top',
-            duration: 2000,
-          });
+          if (err.response.data.statusCode == 401) {
+            toastIdRef.current = toast({
+              title: 'Phiên của bạn đã hết hạn.',
+              description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+              status: 'error',
+              isClosable: true,
+              position: 'top',
+              duration: 2000,
+            });
+          } else {
+            toastIdRef.current = toast({
+              title: err.response.data.data.message,
+              description: 'Có lỗi xảy ra. Vui lòng thử lại',
+              status: 'error',
+              isClosable: true,
+              position: 'top',
+              duration: 2000,
+            });
+          }
         }
       }
     },

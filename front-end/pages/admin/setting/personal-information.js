@@ -94,14 +94,25 @@ export default function Setting(props) {
       }
     } catch (err) {
       console.log(err);
-      toastIdRef.current = toast({
-        title: 'Phiên của bạn đã hết hạn',
-        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Không thể lấy danh sách văn phòng. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
     }
   }, [token]);
 
@@ -172,14 +183,25 @@ export default function Setting(props) {
         });
       }
     } catch (err) {
-      toastIdRef.current = toast({
-        title: 'Chưa thể cập nhât thông tin người dùng.',
-        description: 'Xảy ra lỗi trong quá trình thao tác. Làm ơn hãy thử lại.',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 5000,
-      });
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Không thể cập nhật thông tin người dùng. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
     }
   }, [userEmail, userPhone, userRole, userOffice, userName, state, error, token]);
 

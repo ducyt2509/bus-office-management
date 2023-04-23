@@ -320,13 +320,12 @@ module.exports = {
 			join route r on bs.route_id = r.id 
 			join city c on r.city_from_id = c.id
 			join city cc on r.city_to_id = cc.id
-      where ( (c.city_name like '%%') 
-      or (cc.city_name like '%%') )
-			
+      where ( (c.city_name like '%${querySearch}%') 
+      or (cc.city_name like '%${querySearch}%') )
+	  and refresh_date >= "${currentDate}"
       order by id
       limit ${limit} offset ${offset}
 `;
-      // and refresh_date >= "${currentDate}"
       const queryCount = `select count(*) from bus_schedule bs
 			join route r on bs.route_id = r.id 
 			join city c on r.city_from_id = c.id

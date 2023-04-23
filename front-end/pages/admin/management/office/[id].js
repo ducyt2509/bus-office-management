@@ -36,14 +36,26 @@ export default function Employee(props) {
         setOfficeInformation(officeDetail.data.data);
       }
     } catch (err) {
-      toastIdRef.current = toast({
-        title: 'Phiên của bạn đã hết hạn',
-        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Không thể lấy thông tin văn phòng. Làm ơn hãy thử lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
+
       console.log(err);
     }
   }, [token]);

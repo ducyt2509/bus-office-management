@@ -45,7 +45,7 @@ export default function ListOffice(props) {
       const deleteOffice = await props.axiosJWT.delete(
         `http://localhost:${props.port}/office/delete-office`,
         { data: { id: id }, headers: { token: props.token } }
-        );
+      );
       if (deleteOffice.data.statusCode == 200) {
         toastIdRef.current = toast({
           title: 'Thông tin văn phòng đã được xoá.',
@@ -57,18 +57,29 @@ export default function ListOffice(props) {
         });
         props.handleGetListOffice();
       }
-    } catch (error) {
-      toastIdRef.current = toast({
-        title: 'Thông tin văn phòng không thể xoá',
-        description: 'Xảy ra lỗi khi xoá thông tin văn phòng. Làm ơn hãy thử lại.',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
+    } catch (err) {
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Xảy ra lỗi khi xoá thông tin văn phòng. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
     }
     setStatus(false);
-    setId(0)
+    setId(0);
   }, [id, props.token]);
 
   const handleGetOfficeInformation = (id) => {

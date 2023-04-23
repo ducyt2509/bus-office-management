@@ -194,14 +194,25 @@ export default function AddEmployee(props) {
           props.onClose();
         }
       } catch (err) {
-        toastIdRef.current = toast({
-          title: 'Thông tin nhân viên không thể cập nhật.',
-          description: 'Xảy ra lỗi khi cập nhật thông tin nhân viên. Làm ơn hãy thử lại.',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Xảy ra lỗi khi cập nhật thông tin nhân viên. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
       }
     } else {
       try {
@@ -225,14 +236,25 @@ export default function AddEmployee(props) {
           props.onClose();
         }
       } catch (err) {
-        toastIdRef.current = toast({
-          title: 'Không thể thêm mới Thông tin nhân viên.',
-          description: 'Xảy ra lỗi khi thêm thông tin nhân viên. Làm ơn hãy thử lại.',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Xảy ra lỗi khi thêm thông tin nhân viên. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
       }
     }
   }, [
@@ -257,16 +279,28 @@ export default function AddEmployee(props) {
       if (getListOffice.data.statusCode == 200) {
         setListOffice(getListOffice.data.data.list_office);
       }
-    } catch (e) {
-      toastIdRef.current = toast({
-        title: 'Phiên của bạn đã hết hạn',
-        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
-      console.log(e);
+    } catch (err) {
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Không thể lấy danh sách văn phòng. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
+
+      console.log(err);
     }
   };
 

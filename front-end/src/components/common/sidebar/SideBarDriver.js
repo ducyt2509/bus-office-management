@@ -29,14 +29,25 @@ export default function SideBarDriver() {
       }
     } catch (err) {
       console.log(err);
-      toastIdRef.current = toast({
-        title: 'Phiên của bạn đã hết hạn',
-        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Không thể đăng xuất. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
     }
   }, [state]);
 
@@ -73,7 +84,9 @@ export default function SideBarDriver() {
             >
               Thông tin cá nhân
             </li>
-            <li style={{ padding: '4%' }} onClick={handleLogOut}>Đăng xuất</li>
+            <li style={{ padding: '4%' }} onClick={handleLogOut}>
+              Đăng xuất
+            </li>
           </ul>
         </Box>
       )}

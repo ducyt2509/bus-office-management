@@ -137,15 +137,26 @@ export default function AddCar(props) {
           props.handleGetListBus();
           props.onClose();
         }
-      } catch (error) {
-        toastIdRef.current = toast({
-          title: 'Thông tin xe không thể cập nhật.',
-          description: 'Xảy ra lỗi khi cập nhật thông tin xe. Làm ơn hãy thử lại.',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Xảy ra lỗi khi cập nhật thông tin xe. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
       }
     } else {
       try {
@@ -168,15 +179,26 @@ export default function AddCar(props) {
           props.handleGetListBus();
           props.onClose();
         }
-      } catch (error) {
-        toastIdRef.current = toast({
-          title: 'Không thể thêm mới Thông tin xe.',
-          description: 'Xảy ra lỗi khi thêm thông tin xe. Làm ơn hãy thử lại.',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Xảy ra lỗi khi thêm thông tin xe. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
       }
     }
   }, [vehiclePlate, mainDriver, supportDriver, vehicleType, props.vehicleId, vehicleStatus, error]);
@@ -192,15 +214,25 @@ export default function AddCar(props) {
         setListDriver(getListUser.data.data.list_user);
       }
     } catch (err) {
-      console.log(err);
-      toastIdRef.current = toast({
-        title: 'Phiên của bạn đã hết hạn',
-        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Không thể lấy danh sách tài xế. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
     }
   };
   const handleGetListVehicle = async () => {
@@ -212,18 +244,28 @@ export default function AddCar(props) {
         setListVehicle(getListVehicle.data.data);
       }
     } catch (err) {
-      console.log(err);
-      toastIdRef.current = toast({
-        title: 'Phiên của bạn đã hết hạn',
-        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Không thể lấy danh sách loại xe. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
     }
   };
-  
+
   useEffect(() => {
     if (props.vehicleId) {
       setVehiclePlate(props.vehicle.vehicle_plate);

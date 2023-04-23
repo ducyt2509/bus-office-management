@@ -118,17 +118,31 @@ export default function AddLocation(props) {
             duration: 2000,
           });
           props.handleGetListLocation(props.currentPage);
+          setAddress('');
+          setLocationName('');
+          setCity(0);
           props.onClose();
         }
-      } catch (error) {
-        toastIdRef.current = toast({
-          title: 'Điểm đón trả không thể cập nhật.',
-          description: 'Xảy ra lỗi khi cập nhật điểm đón trả. Làm ơn hãy thử lại.',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Xảy ra lỗi khi cập nhật điểm đón trả. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
       }
     } else {
       try {
@@ -149,30 +163,63 @@ export default function AddLocation(props) {
             duration: 2000,
           });
           props.handleGetListLocation(props.currentPage);
+          setAddress('');
+          setLocationName('');
+          setCity(0);
           props.onClose();
         }
-      } catch (error) {
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Xảy ra lỗi khi thêm điểm đón trả. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
+      }
+    }
+  }, [address, city, locationName, error]);
+
+  const handleGetListCity = async () => {
+    try {
+      const getListCity = await axios.post(`http://localhost:${props.port}/city/list-city`, {
+        headers: { token: props.token },
+      });
+      if (getListCity.data.statusCode == 200) {
+        setListCity(getListCity.data.data?.listCity);
+      }
+    } catch (err) {
+      if (err.response.data.statusCode == 401) {
         toastIdRef.current = toast({
-          title: 'Không thể thêm mới điểm đón trả.',
-          description: 'Xảy ra lỗi khi thêm điểm đón trả. Làm ơn hãy thử lại.',
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Không thể lấy danh sách thành phố. Làm ơn hãy thử lại.',
           status: 'error',
           isClosable: true,
           position: 'top',
           duration: 2000,
         });
       }
-    }
-    setAddress('');
-    setLocationName('');
-    setCity(0);
-  }, [address, city, locationName, error]);
-
-  const handleGetListCity = async () => {
-    const getListCity = await axios.post(`http://localhost:${props.port}/city/list-city`, {
-      headers: { token: props.token },
-    });
-    if (getListCity.data.statusCode == 200) {
-      setListCity(getListCity.data.data?.listCity);
     }
   };
 

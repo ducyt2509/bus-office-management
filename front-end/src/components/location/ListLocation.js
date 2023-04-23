@@ -53,15 +53,26 @@ export default function ListLocation(props) {
         });
         props.handleGetListLocation();
       }
-    } catch (error) {
-      toastIdRef.current = toast({
-        title: 'Điểm đón trả không thể xoá',
-        description: 'Xảy ra lỗi khi xoá điểm đón trả. Làm ơn hãy thử lại.',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
+    } catch (err) {
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Xảy ra lỗi khi xoá điểm đón trả. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
     }
     setStatus(false);
     setId(0);

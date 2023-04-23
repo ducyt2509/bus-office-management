@@ -40,6 +40,7 @@ export default function BusScheduleAll(props) {
     setError(oldError);
     setEndLocation(value);
   };
+
   const handleChangeDepartureDay = (e) => {
     let value = e.target.value;
     let oldError = { ...error };
@@ -51,10 +52,12 @@ export default function BusScheduleAll(props) {
     setError(oldError);
     setDepartureDay(value);
   };
+
   const handleSwapLocation = useCallback(() => {
     setEndLocation(startLocation);
     setStartLocation(endLocation);
   }, [startLocation, endLocation]);
+
   const searchBusSchedule = useCallback(async () => {
     let oldError = { ...error };
     if (!startLocation) {
@@ -75,18 +78,23 @@ export default function BusScheduleAll(props) {
       arrive_location_id: endLocation,
       refresh_date: departureDay,
     };
-    const listBusSchedule = await axios.post(
-      `http://localhost:${props.port}/bus-schedule/list-bus-schedule-all`,
-      submitData
-    );
-    if (listBusSchedule.data.statusCode == 200) {
-      setListBusSchedule(listBusSchedule.data.data.list_bus_schedule);
-      setAction('search');
-      setTimeout(() => {
-        setAction('');
-      }, 500);
+    try {
+      const listBusSchedule = await axios.post(
+        `http://localhost:${props.port}/bus-schedule/list-bus-schedule-all`,
+        submitData
+      );
+      if (listBusSchedule.data.statusCode == 200) {
+        setListBusSchedule(listBusSchedule.data.data.list_bus_schedule);
+        setAction('search');
+        setTimeout(() => {
+          setAction('');
+        }, 500);
+      }
+    } catch (err) {
+      console.log(err);
     }
   }, [startLocation, endLocation, departureDay, error]);
+
   const cityOption =
     props.list_city &&
     props.list_city.map((city) => <option value={city.id}>{city.city_name}</option>);
@@ -96,6 +104,7 @@ export default function BusScheduleAll(props) {
     listBusSchedule.map((busSchedule) => {
       return <ListBusSchedule data={busSchedule} departureDay={departureDay} action={action} />;
     });
+    
   return (
     <>
       <Flex className={'bom-schedule-book-ticket'}>

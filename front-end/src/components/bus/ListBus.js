@@ -53,17 +53,28 @@ export default function ListBus(props) {
         props.handleGetListBus();
       }
     } catch (err) {
-      toastIdRef.current = toast({
-        title: 'Thông tin xe không thể xoá',
-        description: 'Xảy ra lỗi khi xoá thông tin xe. Làm ơn hãy thử lại.',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Không thể lấy danh sách loại xe. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
     }
     setStatus(false);
-    setId(0)
+    setId(0);
   }, [id, props.token]);
 
   const ModalHTML = (

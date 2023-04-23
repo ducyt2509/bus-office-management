@@ -101,15 +101,26 @@ export default function AddRoute(props) {
           props.handleGetListRoute();
           props.onClose();
         }
-      } catch (error) {
-        toastIdRef.current = toast({
-          title: 'Thông tin tuyến đường không thể cập nhật.',
-          description: 'Xảy ra lỗi khi cập nhật thông tin tuyến đường. Làm ơn hãy thử lại.',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Xảy ra lỗi khi cập nhật thông tin tuyến đường. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
       }
     } else {
       try {
@@ -132,25 +143,58 @@ export default function AddRoute(props) {
           props.handleGetListRoute();
           props.onClose();
         }
-      } catch (error) {
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Xảy ra lỗi khi thêm thông tin tuyến đường. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
+      }
+    }
+  }, [cityFrom, cityTo, error]);
+
+  const handleGetListCity = async () => {
+    try {
+      const getListCity = await axios.post(`http://localhost:${props.port}/city/list-city`, {
+        headers: { token: props.token },
+      });
+      if (getListCity.data.statusCode == 200) {
+        setListCity(getListCity.data.data?.listCity);
+      }
+    } catch (err) {
+      if (err.response.data.statusCode == 401) {
         toastIdRef.current = toast({
-          title: 'Không thể thêm mới thông tin tuyến đường.',
-          description: 'Xảy ra lỗi khi thêm thông tin tuyến đường. Làm ơn hãy thử lại.',
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Không thể lấy danh sách thành phố. Làm ơn hãy thử lại.',
           status: 'error',
           isClosable: true,
           position: 'top',
           duration: 2000,
         });
       }
-    }
-  }, [cityFrom, cityTo, error]);
-
-  const handleGetListCity = async () => {
-    const getListCity = await axios.post(`http://localhost:${props.port}/city/list-city`, {
-      headers: { token: props.token },
-    });
-    if (getListCity.data.statusCode == 200) {
-      setListCity(getListCity.data.data?.listCity);
     }
   };
 

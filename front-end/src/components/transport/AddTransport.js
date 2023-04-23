@@ -124,15 +124,26 @@ export default function AddTransport(props) {
           props.handleGetListTransport(props.currentPage);
           props.onClose();
         }
-      } catch (error) {
-        toastIdRef.current = toast({
-          title: 'Hành trình xe không thể cập nhật.',
-          description: 'Xảy ra lỗi khi cập nhật hành trình xe. Làm ơn hãy thử lại.',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Xảy ra lỗi khi cập nhật hành trình xe. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
       }
     } else {
       try {
@@ -155,15 +166,26 @@ export default function AddTransport(props) {
           props.handleGetListTransport(props.currentPage);
           props.onClose();
         }
-      } catch (error) {
-        toastIdRef.current = toast({
-          title: 'Không thể thêm mới Hành trình xe.',
-          description: 'Xảy ra lỗi khi thêm hành trình xe. Làm ơn hãy thử lại.',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
+      } catch (err) {
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Xảy ra lỗi khi thêm hành trình xe. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
       }
     }
     setBusPlate(0);

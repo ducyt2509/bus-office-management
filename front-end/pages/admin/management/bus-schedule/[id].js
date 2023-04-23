@@ -248,7 +248,7 @@ export default function BusScheduleDetail(props) {
     if (BusSchedule && BusSchedule.length && BusSchedule[0].id) {
       switch (method) {
         case 'Refresh':
-          submitData.bus_schedule.refresh_date = calcDate(effectiveDate, scheduleFrequency);
+          submitData.bus_schedule.refresh_date = calcDate(effectiveDate, scheduleExpire);
           submitData.id = BusSchedule[0].id;
           try {
             const refreshBS = await axiosJWT.put(
@@ -273,19 +273,30 @@ export default function BusScheduleDetail(props) {
                 router.push('/admin/management/bus-schedule');
               }, 2000);
             }
-          } catch (error) {
-            toastIdRef.current = toast({
-              title: 'Lịch trình không thể cập nhật.',
-              description: 'Xảy ra lỗi khi cập nhật lịch trình. Làm ơn hãy thử lại.',
-              status: 'error',
-              isClosable: true,
-              position: 'top',
-              duration: 2000,
-            });
+          } catch (err) {
+            if (err.response.data.statusCode == 401) {
+              toastIdRef.current = toast({
+                title: 'Phiên của bạn đã hết hạn.',
+                description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+                status: 'error',
+                isClosable: true,
+                position: 'top',
+                duration: 2000,
+              });
+            } else {
+              toastIdRef.current = toast({
+                title: err.response.data.data.message,
+                description: 'Xảy ra lỗi khi cập nhật lịch trình. Làm ơn hãy thử lại.',
+                status: 'error',
+                isClosable: true,
+                position: 'top',
+                duration: 2000,
+              });
+            }
           }
           break;
         default:
-          submitData.bus_schedule.refresh_date = calcDate(refreshDate, scheduleFrequency);
+          submitData.bus_schedule.refresh_date = calcDate(refreshDate, scheduleExpire);
           submitData.id = BusSchedule[0].id;
           try {
             const updateBusSchedule = await axiosJWT.put(
@@ -311,19 +322,36 @@ export default function BusScheduleDetail(props) {
               }, 2000);
             }
           } catch (err) {
-            toastIdRef.current = toast({
-              title: 'Lịch trình không thể cập nhật.',
-              description: 'Xảy ra lỗi khi cập nhật lịch trình. Làm ơn hãy thử lại.',
-              status: 'error',
-              isClosable: true,
-              position: 'top',
-              duration: 2000,
-            });
+            if (err.response.data.statusCode == 401) {
+              toastIdRef.current = toast({
+                title: 'Phiên của bạn đã hết hạn.',
+                description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+                status: 'error',
+                isClosable: true,
+                position: 'top',
+                duration: 2000,
+              });
+            } else {
+              toastIdRef.current = toast({
+                title: err.response.data.data.message,
+                description: 'Xảy ra lỗi khi cập nhật lịch trình. Làm ơn hãy thử lại.',
+                status: 'error',
+                isClosable: true,
+                position: 'top',
+                duration: 2000,
+              });
+            }
           }
           break;
       }
     } else {
-      submitData.bus_schedule.refresh_date = calcDate(new Date(), scheduleFrequency);
+      console.log(
+        'BEANNNN',
+        calcDate(effectiveDate, scheduleExpire),
+        effectiveDate,
+        scheduleExpire
+      );
+      submitData.bus_schedule.refresh_date = calcDate(effectiveDate, scheduleExpire);
       try {
         const createBusSchedule = await axiosJWT.post(
           `http://localhost:${props.BACK_END_PORT}/bus-schedule/create-bus-schedule`,
@@ -348,14 +376,25 @@ export default function BusScheduleDetail(props) {
           }, 2000);
         }
       } catch (err) {
-        toastIdRef.current = toast({
-          title: 'Không thể thêm mới lịch trình.',
-          description: 'Xảy ra lỗi khi thêm lịch trình. Làm ơn hãy thử lại.',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Xảy ra lỗi khi thêm lịch trình. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
       }
     }
   }, [
@@ -671,8 +710,12 @@ export default function BusScheduleDetail(props) {
                     disabled={
                       (method != 'Refresh') & (router.query.id != 'add') || refreshDate <= today
                     }
+                    value={
+                      (method != 'Refresh') & (router.query.id != 'add')
+                        ? effectiveDate
+                        : new Date().toISOString().split('T')[0]
+                    }
                     type={'date'}
-                    value={effectiveDate}
                     min={today}
                     onChange={handleChangeEffectiveDate}
                   />

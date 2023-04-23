@@ -117,14 +117,25 @@ export default function Ticket(props) {
         }
       }
     } catch (err) {
-      toastIdRef.current = toast({
-        title: 'Phiên của bạn đã hết hạn2.',
-        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Xảy ra lỗi khi thao tác. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
       console.log(err);
     }
   }, [token]);
@@ -163,14 +174,25 @@ export default function Ticket(props) {
       }
       setModalStatus(false);
     } catch (err) {
-      toastIdRef.current = toast({
-        title: 'Lỗi trong quá trình thao tác',
-        description: 'Có lỗi xảy ra trong quá trình thao tác làm ơn hãy thử lại',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Có lỗi xảy ra trong quá trình thao tác làm ơn hãy thử lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
     }
   }, [scheduleData, transportData, scheduleSelected]);
 
@@ -222,14 +244,25 @@ export default function Ticket(props) {
           setTransportData(cloneData);
         }
       } catch (err) {
-        toastIdRef.current = toast({
-          title: 'Cập nhật thôn tin khách hàng thất bại.',
-          description: 'Thông tin khách hàng cập nhật thất bại. Vui lòng thử lại.',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Thông tin khách hàng cập nhật thất bại. Vui lòng thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
       }
     }
   }, [seatCustomerSelected, transportData, seatSelected, scheduleData]);
@@ -279,14 +312,25 @@ export default function Ticket(props) {
         setSeatCustomerSelected([]);
       }
     } catch (err) {
-      toastIdRef.current = toast({
-        title: 'Phiên của bạn đã hết hạn',
-        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-        status: 'error',
-        isClosable: true,
-        position: 'top',
-        duration: 2000,
-      });
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Không thể lấy danh sách hành trình',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
       console.log(err);
     }
   }, [startLocation, endLocation, departureDay, error, state]);

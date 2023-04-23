@@ -458,6 +458,11 @@ module.exports = {
       });
       if (!role) return responseHandler.badRequest(res, 'Chức vụ không tồn tại');
 
+      const getUser = await User.findOne({
+        where: { [Op.or]: [{ email }, { phone }] },
+      });
+      if (getUser) return responseHandler.badRequest(res, 'Người dùng đã tồn tại');
+
       let hashPassword = '';
       let element = { email, password, user_name, phone, role_id };
 
