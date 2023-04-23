@@ -72,7 +72,7 @@ export default function ListLocationOnBusSchedule(props) {
       handleGetListLocation(null, null, value);
     }
   });
-  
+
   const handleSelectLocation = useCallback(
     (id, value, address) => {
       let oldError = { ...props.error };
@@ -130,7 +130,7 @@ export default function ListLocationOnBusSchedule(props) {
       handleGetListLocation();
     }
   }, [props.route]);
-  
+
   useEffect(() => {
     if (props.data && props.data.length) {
       setLocationName(
@@ -149,9 +149,9 @@ export default function ListLocationOnBusSchedule(props) {
         onClick={handleOpenSelect}
         style={
           (props.id == 3 && props.error?.departureLocationId) ||
-          (props.id == 4 && props.error?.arriveLocationId) ||
-          (props.id == 5 && props.error?.location) ||
-          (props.id == 6 && props.error?.location)
+            (props.id == 4 && props.error?.arriveLocationId) ||
+            (props.id == 5 && props.error?.location) ||
+            (props.id == 6 && props.error?.location)
             ? { borderColor: '#E53E3E', boxShadow: '0 0 0 1px #E53E3E' }
             : {}
         }

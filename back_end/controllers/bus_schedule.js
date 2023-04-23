@@ -248,10 +248,8 @@ module.exports = {
 								db.sequelize.query(
 									`select t.seat, t.passenger_name, t.passenger_phone, t.id, t.pickup_location, t.drop_off_location, t.payment_status, t.date_detail, t.ticket_price from transaction t
 									join transport tr on tr.id = t.transport_id
-									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${
-										getTransport[j].bus_id
-									} and t.payment_status != 3 and t.date_detail like"%${
-										new Date(dateStart).toISOString().split("T")[0]
+									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id
+									} and t.payment_status != 3 and t.date_detail like"%${new Date(dateStart).toISOString().split("T")[0]
 									}%"`,
 									{
 										type: QueryTypes.SELECT,
@@ -260,10 +258,8 @@ module.exports = {
 								db.sequelize.query(
 									`select count(*) from transaction t
 									join transport tr on tr.id = t.transport_id
-									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${
-										getTransport[j].bus_id
-									} and t.payment_status = 1 and t.date_detail like"${
-										new Date(dateStart).toISOString().split("T")[0]
+									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id
+									} and t.payment_status = 1 and t.date_detail like"${new Date(dateStart).toISOString().split("T")[0]
 									}"`,
 									{
 										type: QueryTypes.SELECT,
@@ -301,8 +297,8 @@ module.exports = {
 						new Date(bs.refresh_date) >= booking_date &&
 						booking_date >= new Date(bs.effective_date) &&
 						DateDiff.inDays(booking_date, new Date(bs.effective_date)) %
-							bs.schedule_frequency ==
-							0
+						bs.schedule_frequency ==
+						0
 					);
 				});
 				console.log(filter.transport);
@@ -334,13 +330,12 @@ module.exports = {
 			join route r on bs.route_id = r.id 
 			join city c on r.city_from_id = c.id
 			join city cc on r.city_to_id = cc.id
-      where ( (c.city_name like '%%') 
-      or (cc.city_name like '%%') )
-			
+      where ( (c.city_name like '%${querySearch}%') 
+      or (cc.city_name like '%${querySearch}%') )
+	  and refresh_date >= "${currentDate}"
       order by id
       limit ${limit} offset ${offset}
 `;
-			// and refresh_date >= "${currentDate}"
 			const queryCount = `select count(*) from bus_schedule bs
 			join route r on bs.route_id = r.id 
 			join city c on r.city_from_id = c.id
@@ -428,7 +423,7 @@ module.exports = {
 				const filterListBusSchedule = listBusSchedule.filter((e) => {
 					return (
 						DateDiff.inDays(new Date(departure_date), new Date(e.effective_date)) %
-							e.schedule_frequency ==
+						e.schedule_frequency ==
 						0
 					);
 				});

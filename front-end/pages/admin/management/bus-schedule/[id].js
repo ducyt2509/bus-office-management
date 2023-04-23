@@ -245,7 +245,7 @@ export default function BusScheduleDetail(props) {
     if (BusSchedule && BusSchedule.length && BusSchedule[0].id) {
       switch (method) {
         case 'Refresh':
-          submitData.bus_schedule.refresh_date = calcDate(effectiveDate, scheduleFrequency);
+          submitData.bus_schedule.refresh_date = calcDate(effectiveDate, scheduleExpire);
           submitData.id = BusSchedule[0].id;
           try {
             const refreshBS = await axiosJWT.put(
@@ -282,7 +282,8 @@ export default function BusScheduleDetail(props) {
           }
           break;
         default:
-          submitData.bus_schedule.refresh_date = calcDate(refreshDate, scheduleFrequency);
+
+          submitData.bus_schedule.refresh_date = calcDate(refreshDate, scheduleExpire);
           submitData.id = BusSchedule[0].id;
           try {
             const updateBusSchedule = await axiosJWT.put(
@@ -320,7 +321,8 @@ export default function BusScheduleDetail(props) {
           break;
       }
     } else {
-      submitData.bus_schedule.refresh_date = calcDate(new Date(), scheduleFrequency);
+      console.log("BEANNNN", calcDate(effectiveDate, scheduleExpire), effectiveDate, scheduleExpire)
+      submitData.bus_schedule.refresh_date = calcDate(effectiveDate, scheduleExpire);
       try {
         const createBusSchedule = await axiosJWT.post(
           `http://localhost:${props.BACK_END_PORT}/bus-schedule/create-bus-schedule`,
@@ -462,8 +464,8 @@ export default function BusScheduleDetail(props) {
           {method == 'Refresh'
             ? 'Làm mới lịch trình'
             : router.query.id == 'add'
-            ? 'Thêm lịch trình'
-            : 'Chỉnh sửa thông tin lịch trình'}
+              ? 'Thêm lịch trình'
+              : 'Chỉnh sửa thông tin lịch trình'}
         </Heading>
         <Card
           margin={'0 auto'}
@@ -666,10 +668,10 @@ export default function BusScheduleDetail(props) {
                   <FormLabel marginBottom="0">Ngày lịch trình có hiệu lực:</FormLabel>
                   <Input
                     disabled={
-                      (method != 'Refresh') & (router.query.id != 'add') || refreshDate <= today
+                      ((method != 'Refresh') & (router.query.id != 'add')) || refreshDate <= today
                     }
+                    value={((method != 'Refresh') & (router.query.id != 'add')) ? effectiveDate : new Date().toISOString().split("T")[0]}
                     type={'date'}
-                    // value={ }
                     min={today}
                     onChange={handleChangeEffectiveDate}
                   />
