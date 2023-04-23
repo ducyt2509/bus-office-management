@@ -1,0 +1,23 @@
+{
+  "name": "swp_final",
+  "version": "1.0.0",
+  "description": "setup npm",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:server": "cd back_end && npm i && npm run start",
+    "start:client": "cd front_end && npm i && npm run build && npm run start",
+    "start": "concurrently \"npm run start:server\" \"npm run start:client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ducyt2509/bus-office-management.git"
+  },
+  "author": "socquekute",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ducyt2509/bus-office-management/issues"
+  },
+  "homepage": "https://github.com/ducyt2509/bus-office-management#readme"
+
+}
