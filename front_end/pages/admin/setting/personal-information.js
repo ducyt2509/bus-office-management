@@ -125,6 +125,7 @@ export default function Setting(props) {
     setUserRole(state.dataUser.role_id);
     setUserOffice(state.dataUser.office.office_name);
   };
+
   const handleUpdateUser = useCallback(async () => {
     let oldError = { ...error };
     if (!userName) {
@@ -162,9 +163,9 @@ export default function Setting(props) {
         }
       );
       if (updateUser.data.statusCode == 200) {
-        const userDate = Cookies.get('dataUser');
+        const userData = Cookies.get('dataUser');
         let cloneData = {
-          ...JSON.parse(userDate),
+          ...JSON.parse(userData),
           id: state.dataUser.id,
           user_name: userName,
           email: userEmail,
@@ -172,7 +173,7 @@ export default function Setting(props) {
           role_id: userRole,
           office_id: userOffice,
         };
-        Cookies.set('dataUser', cloneData);
+        Cookies.set('dataUser', JSON.stringify(cloneData));
         dispatch(actions.setDataUser(cloneData));
 
         toastIdRef.current = toast({
