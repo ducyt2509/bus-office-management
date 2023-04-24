@@ -360,7 +360,6 @@ module.exports = {
         });
       }
     } catch (error) {
-      console.log(error);
       return responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },

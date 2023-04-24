@@ -207,7 +207,7 @@ export default function AddCar(props) {
     try {
       const getListUser = await props.axiosJWT.post(
         `http://localhost:${props.port}/user/list-user`,
-        { role_id: 3 },
+        { role_id: 3, limit: 1000, offset: 0 },
         { headers: { token: props.token } }
       );
       if (getListUser.data.statusCode == 200) {
@@ -238,7 +238,11 @@ export default function AddCar(props) {
   const handleGetListVehicle = async () => {
     try {
       const getListVehicle = await props.axiosJWT.post(
-        `http://localhost:${props.port}/vehicle-type/list-vehicle-type`
+        `http://localhost:${props.port}/vehicle-type/list-vehicle-type`,
+        {
+          offset: offset,
+          limit: limit,
+        }
       );
       if (getListVehicle.data.statusCode == 200) {
         setListVehicle(getListVehicle.data.data);

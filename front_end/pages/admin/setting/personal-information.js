@@ -84,7 +84,10 @@ export default function Setting(props) {
     try {
       const getListOffice = await axiosJWT.post(
         `http://localhost:${props.BACK_END_PORT}/office/list-office`,
-        {},
+        {
+          limit: 1000,
+          offset: 0,
+        },
         {
           headers: { token: token },
         }
