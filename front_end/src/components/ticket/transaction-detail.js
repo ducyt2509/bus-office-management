@@ -224,7 +224,6 @@ export default function TransactionDetails(props) {
         setLocationDropOff(userInformation.drop_off_location);
       }
     } catch (err) {
-      console.log(err);
       if (err.response.data.statusCode == 401) {
         toastIdRef.current = toast({
           title: 'Phiên của bạn đã hết hạn.',
@@ -421,7 +420,6 @@ export default function TransactionDetails(props) {
             });
           }
         } catch (err) {
-          console.log(err);
           if (err.response.data.statusCode == 401) {
             toastIdRef.current = toast({
               title: 'Phiên của bạn đã hết hạn.',

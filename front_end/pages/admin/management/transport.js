@@ -83,8 +83,6 @@ export default function ManagementTransport(props) {
             duration: 2000,
           });
         }
-
-        console.log(err);
       }
     },
     [state, querySearch, token]

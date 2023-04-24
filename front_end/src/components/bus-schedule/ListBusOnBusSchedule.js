@@ -35,15 +35,25 @@ export default function ListBusOnBusSchedule(props) {
           setListBus(getListBus.data.data.list_bus);
         }
       } catch (err) {
-        toastIdRef.current = toast({
-          title: 'Phiên của bạn đã hết hạn',
-          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
-        console.log(err);
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Không thể lấy danh sách chuyến đi. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
       }
     },
     [props.state, querySearch]
@@ -73,14 +83,14 @@ export default function ListBusOnBusSchedule(props) {
   useEffect(() => {
     handleGetListBus();
   }, []);
-  
+
   useEffect(() => {
     const filterList = listBus.filter((bus) => {
       return bus.id == props.bus;
     });
     setBusPlate(filterList[0]?.vehicle_plate);
   }, [listBus, props.bus]);
-  
+
   return (
     <div className="wrapper wrapper2">
       <div className="select-btn" onClick={handleOpenSelect}>

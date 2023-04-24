@@ -91,7 +91,25 @@ export default function BusScheduleAll(props) {
         }, 500);
       }
     } catch (err) {
-      console.log(err);
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description:"Xảy ra lỗi khi lấy danh sách hành trình. Vui lòng thử lại.",
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
     }
   }, [startLocation, endLocation, departureDay, error]);
 

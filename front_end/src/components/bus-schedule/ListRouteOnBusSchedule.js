@@ -36,15 +36,25 @@ export default function ListRouteOnBusSchedule(props) {
           setListRoute(getListRoute.data.data.list_route);
         }
       } catch (err) {
-        toastIdRef.current = toast({
-          title: 'Phiên của bạn đã hết hạn',
-          description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
-          status: 'error',
-          isClosable: true,
-          position: 'top',
-          duration: 2000,
-        });
-        console.log(err);
+        if (err.response.data.statusCode == 401) {
+          toastIdRef.current = toast({
+            title: 'Phiên của bạn đã hết hạn.',
+            description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        } else {
+          toastIdRef.current = toast({
+            title: err.response.data.data.message,
+            description: 'Không thể lấy danh sách tuyến đường. Làm ơn hãy thử lại.',
+            status: 'error',
+            isClosable: true,
+            position: 'top',
+            duration: 2000,
+          });
+        }
       }
     },
     [props.state, querySearch]

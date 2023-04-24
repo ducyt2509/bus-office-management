@@ -236,9 +236,6 @@ export default function BusScheduleDriver(props) {
   const date = new Date().getDate();
   const month = new Date().getMonth();
   const year = new Date().getFullYear();
-  console.log(year + '-' + (month + 1) + '-' + date);
-  console.log(new Date('2023-04-21'));
-  console.log(new Date('2023-4-21'));
 
   useEffect(() => {
     let userData = Cookies.get('dataUser') ? Cookies.get('dataUser') : '';

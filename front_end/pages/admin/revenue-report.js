@@ -103,14 +103,13 @@ export default function RevenueReport(props) {
         } else {
           toastIdRef.current = toast({
             title: err.response.data.data.message,
-            description:"Xảy ra lỗi khi lấy danh sách thống kê vui lòng thử lại.",
+            description:"Xảy ra lỗi khi lấy danh sách thống kê. Vui lòng thử lại.",
             status: 'error',
             isClosable: true,
             position: 'top',
             duration: 2000,
           });
         }
-        console.log(err);
       }
     },
     [report, state, token]

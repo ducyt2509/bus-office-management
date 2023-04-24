@@ -93,7 +93,6 @@ export default function Setting(props) {
         setListOffice(getListOffice.data.data.list_office);
       }
     } catch (err) {
-      console.log(err);
       if (err.response.data.statusCode == 401) {
         toastIdRef.current = toast({
           title: 'Phiên của bạn đã hết hạn.',

@@ -90,7 +90,6 @@ export default function ManagementOffice(props) {
           position: 'top',
           duration: 2000,
         });
-        console.log(err);
       }
     },
     [state, querySearch, token]
