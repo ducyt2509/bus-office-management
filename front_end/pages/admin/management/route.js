@@ -81,7 +81,6 @@ export default function ManagementRoute(props) {
             duration: 2000,
           });
         }
-        console.log(err);
       }
     },
     [state, querySearch, token]

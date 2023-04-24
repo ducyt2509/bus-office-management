@@ -24,11 +24,9 @@ db.sequelize
   .sync()
   .then(() => {
     // comment line 27 when testing
-    // console.log('Synced db.');
   })
   .catch((err) => {
     // comment line 30 when testing
-    // console.log('Failed to sync db: ' + err.message);
   });
 
 // parse requests of content-type - application/json

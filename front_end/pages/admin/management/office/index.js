@@ -81,7 +81,6 @@ export default function ManagementOffice(props) {
             duration: 2000,
           });
         }
-        console.log(err);
       }
     },
     [state, querySearch, token]

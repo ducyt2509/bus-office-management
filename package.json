@@ -18,6 +18,8 @@
   "bugs": {
     "url": "https://github.com/ducyt2509/bus-office-management/issues"
   },
-  "homepage": "https://github.com/ducyt2509/bus-office-management#readme"
-
+  "homepage": "https://github.com/ducyt2509/bus-office-management#readme",
+  "dependencies": {
+    "concurrently": "^8.0.1"
+  }
 }

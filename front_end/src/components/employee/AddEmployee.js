@@ -93,10 +93,10 @@ export default function AddEmployee(props) {
     (e) => {
       let value = e.target.value;
       let oldError = { ...error };
-      if (!value) {
-        oldError.employeeRole = true;
+      if (value && !value.match(validate.password)) {
+        oldError.employeePassword = true;
       } else {
-        oldError.employeeRole = false;
+        oldError.employeePassword = false;
       }
       setError(oldError);
       setEmployeePassword(value);
@@ -300,7 +300,6 @@ export default function AddEmployee(props) {
         });
       }
 
-      console.log(err);
     }
   };
 
@@ -334,6 +333,8 @@ export default function AddEmployee(props) {
       Promise.all([handleGetListOffice()]);
     }
   }, [props.isOpen]);
+
+  console.log(props.userId);
   return (
     <>
       <Modal isOpen={props.isOpen} onClose={props.onClose} size="md">
@@ -382,7 +383,7 @@ export default function AddEmployee(props) {
 
             <FormControl
               isRequired={!props.userId ? true : false}
-              isInvalid={!props.userId && error.employeePassword}
+              isInvalid={props.userId && error.employeePassword}
               marginBottom={'5%'}
             >
               <Flex>
@@ -395,7 +396,9 @@ export default function AddEmployee(props) {
                   type={showPassword ? 'text' : 'password'}
                 />
               </Flex>
-              <FormErrorMessage justifyContent={'flex-end'}>Mật khẩu là bắt buộc</FormErrorMessage>
+              <FormErrorMessage justifyContent={'flex-end'}>
+                {!employeePassword ? 'Mật khẩu là bắt buộc' : 'Mật khẩu sai định dạng'}
+              </FormErrorMessage>
             </FormControl>
 
             <FormControl marginBottom="5%" isRequired isInvalid={error.employeeRole}>

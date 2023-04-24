@@ -48,7 +48,6 @@ export default function Sidebar() {
             router.push('/');
           }
         } catch (err) {
-          console.log(err);
           if (err.response.data.statusCode == 401) {
             toastIdRef.current = toast({
               title: 'Phiên của bạn đã hết hạn.',

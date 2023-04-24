@@ -136,7 +136,6 @@ export default function Ticket(props) {
           duration: 2000,
         });
       }
-      console.log(err);
     }
   }, [token]);
 
@@ -331,7 +330,6 @@ export default function Ticket(props) {
           duration: 2000,
         });
       }
-      console.log(err);
     }
   }, [startLocation, endLocation, departureDay, error, state]);
 

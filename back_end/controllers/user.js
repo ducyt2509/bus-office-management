@@ -444,10 +444,6 @@ module.exports = {
           !validateHandler.validateString(phone, regexHandler.regexPhoneNumber) ||
           !validateHandler.validatePositiveIntegerNumber(parseInt(role_id));
       }
-      console.log(1, !validateHandler.validateString(email, regexHandler.regexEmail));
-      console.log(2, validateHandler.validateString(user_name, regexHandler.regexNormalString));
-      console.log(3, !validateHandler.validateString(phone, regexHandler.regexPhoneNumber));
-      console.log(4, !validateHandler.validatePositiveIntegerNumber(parseInt(role_id)));
 
       if (condition) return responseHandler.badRequest(res, 'Thông tin nhập không đúng yêu cầu');
 

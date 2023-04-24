@@ -87,7 +87,6 @@ export default function ManagementBus(props) {
             duration: 2000,
           });
         }
-        console.log(err);
       }
     },
     [state, querySearch, token]
