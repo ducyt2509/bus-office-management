@@ -196,7 +196,7 @@ export default function AddTransport(props) {
   const handleGetListBusSchedule = useCallback(
     async (page, limit, value) => {
       page = typeof page == 'number' ? page - 1 : 1;
-      limit = limit ? limit : 7;
+      limit = limit ? limit : 1000;
       const token = `Bearer ${state.dataUser.token}`;
       const offset = limit * (page - 1);
       try {
@@ -243,7 +243,7 @@ export default function AddTransport(props) {
   const handleGetListBus = useCallback(
     async (page, limit, value) => {
       const token = `Bearer ${state.dataUser.token}`;
-      limit = limit ? limit : 7;
+      limit = limit ? limit : 1000;
       page = typeof page == 'number' ? page - 1 : 1;
       const offset = limit * (page - 1);
       try {

@@ -712,12 +712,13 @@ export default function BusScheduleDetail(props) {
                   <FormLabel marginBottom="0">Ngày lịch trình có hiệu lực:</FormLabel>
                   <Input
                     disabled={
-                      (method != 'Refresh') & (router.query.id != 'add') || refreshDate <= today
+                      (method != 'Refresh' && router.query.id != 'add') || refreshDate <= today
                     }
                     value={
-                      (method != 'Refresh') & (router.query.id != 'add')
-                        ? effectiveDate
-                        : new Date().toISOString().split('T')[0]
+                      // (method != 'Refresh') && (router.query.id != 'add')
+                      //   ? effectiveDate
+                      //   : new Date().toISOString().split('T')[0]
+                      effectiveDate
                     }
                     type={'date'}
                     min={today}

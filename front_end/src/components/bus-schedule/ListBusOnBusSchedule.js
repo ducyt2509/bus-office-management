@@ -13,7 +13,7 @@ export default function ListBusOnBusSchedule(props) {
 
   const handleGetListBus = useCallback(
     async (page, limit, value) => {
-      limit = limit ? limit : 7;
+      limit = limit ? limit : 1000;
       page = typeof page == 'number' ? page - 1 : 0;
       const offset = limit * (page - 1);
       const token = `Bearer ${props.state.dataUser.token}`;

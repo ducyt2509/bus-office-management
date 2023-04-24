@@ -271,7 +271,10 @@ export default function AddEmployee(props) {
     try {
       const getListOffice = await props.axiosJWT.post(
         `http://localhost:${props.port}/office/list-office`,
-        {},
+        {
+          limit: 1000,
+          offset: 0,
+        },
         {
           headers: { token: props.token },
         }
@@ -299,7 +302,6 @@ export default function AddEmployee(props) {
           duration: 2000,
         });
       }
-
     }
   };
 

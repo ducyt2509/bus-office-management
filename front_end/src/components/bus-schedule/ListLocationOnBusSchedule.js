@@ -14,7 +14,7 @@ export default function ListLocationOnBusSchedule(props) {
 
   const handleGetListLocation = useCallback(
     async (page, limit, value) => {
-      limit = limit ? limit : 7;
+      limit = limit ? limit : 1000;
       page = typeof page == 'number' ? page - 1 : 1;
       const offset = limit * (page - 1);
       const token = `Bearer ${props.state.dataUser.token}`;
