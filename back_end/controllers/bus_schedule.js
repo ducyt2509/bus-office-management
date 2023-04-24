@@ -322,7 +322,6 @@ module.exports = {
 			join city cc on r.city_to_id = cc.id
       where ( (c.city_name like '%${querySearch}%') 
       or (cc.city_name like '%${querySearch}%') )
-	  and refresh_date >= "${currentDate}"
       order by id
       limit ${limit} offset ${offset}
 `;
@@ -361,6 +360,7 @@ module.exports = {
         });
       }
     } catch (error) {
+      console.log(error);
       return responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
