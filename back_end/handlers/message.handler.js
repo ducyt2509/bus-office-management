@@ -1,4 +1,4 @@
-const messageValidateFailed = "Input validation failed"
+const messageValidateFailed = "Thông tin nhập không đúng yêu cầu"
 
 
 module.exports = { messageValidateFailed }

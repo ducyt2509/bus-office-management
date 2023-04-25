@@ -444,7 +444,6 @@ module.exports = {
           !validateHandler.validateString(phone, regexHandler.regexPhoneNumber) ||
           !validateHandler.validatePositiveIntegerNumber(parseInt(role_id));
       }
-
       if (condition) return responseHandler.badRequest(res, 'Thông tin nhập không đúng yêu cầu');
 
       const role = await Role.findOne({
@@ -453,12 +452,24 @@ module.exports = {
         },
       });
       if (!role) return responseHandler.badRequest(res, 'Chức vụ không tồn tại');
-
       const getUser = await User.findOne({
-        where: { [Op.or]: [{ email }, { phone }] },
+        where: { id },
       });
-      if (getUser) return responseHandler.badRequest(res, 'Người dùng đã tồn tại');
+      if (!getUser) return responseHandler.badRequest(res, 'Người dùng không tồn tại');
 
+      if (getUser.dataValues.phone != phone) {
+        const checkPhoneExist = await User.findOne({
+          where: { phone },
+        });
+        if (checkPhoneExist) return responseHandler.badRequest(res, 'Số điện thoại đã tồn tại');
+
+      }
+      if (getUser.dataValues.email != email) {
+        const checkEmailExist = await User.findOne({
+          where: { email },
+        });
+        if (checkEmailExist) return responseHandler.badRequest(res, 'Email đã tồn tại');
+      }
       let hashPassword = '';
       let element = { email, password, user_name, phone, role_id };
 

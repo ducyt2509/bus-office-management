@@ -173,14 +173,24 @@ module.exports = {
 
   async updateBusInformation(req, res) {
     try {
-      const params = req.body;
-      const bus_id = params.id;
-      if (!validateHandler.validatePositiveIntegerNumber(parseInt(bus_id)))
+      var { id, main_driver_id, support_driver_id, vehicle_plate, vehicle_status, vehicle_type_id } = req.body
+
+      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(support_driver_id)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(main_driver_id)) ||
+        !validateHandler.validatePositiveIntegerNumber(parseInt(vehicle_type_id)) ||
+        !validateHandler.validateString(vehicle_plate, regexHandler.regexVehiclePlate))
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
-      const updateBus = await Bus.update(params, {
+      const getBus = await Bus.findOne({
+        where: { id }
+      })
+
+      if (!getBus) return responseHandler.badRequest(res, "Xe không tồn tại")
+
+      const updateBus = await Bus.update({ main_driver_id, support_driver_id, vehicle_plate, vehicle_status, vehicle_type_id }, {
         where: {
-          id: params.id,
+          id,
         },
       });
       if (updateBus) {

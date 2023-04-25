@@ -153,13 +153,14 @@ module.exports = {
       if (!getLocation) {
         return responseHandler.badRequest(res, 'Địa điểm không tồn tại');
       }
-      const location = await Location.findOne({
-        where: {
-          [Op.or]: [{ location_name }, { address }],
-        },
-      });
-      if (location) {
-        return responseHandler.badRequest(res, 'Địa điểm đã tồn tại');
+      if (getLocation.dataValues.location_name != location_name) {
+        const checkNameExist = await Location.findOne({ where: { location_name } });
+        if (checkNameExist) return responseHandler.badRequest(res, 'Tên địa điểm đã tồn tại');
+      }
+
+      if (getLocation.dataValues.address != address) {
+        const checkAddressExist = await Location.findOne({ where: { address } });
+        if (checkAddressExist) return responseHandler.badRequest(res, 'Địa chỉ địa đã tồn tại');
       }
       const updateLocation = await Location.update(
         { location_name, address, city_id },

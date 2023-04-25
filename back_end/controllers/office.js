@@ -55,7 +55,7 @@ module.exports = {
         return responseHandler.badRequest(res, 'Không thể tạo văn phòng');
       }
     } catch (error) {
-     responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async updateOfficeInformation(req, res) {
@@ -70,12 +70,33 @@ module.exports = {
       )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
-      const getCity = await City.findOne({
-        id: city_id,
-      });
+      // check city
+      const getCity = await City.findOne(
+        {
+          where: {
+            id: city_id,
+          }
+        });
       if (!getCity) return responseHandler.badRequest(res, 'Thành phố không tồn tại');
-      const isExist = await checkExistOffice(office_name, city_id, office_address);
-      if (isExist) return responseHandler.badRequest(res, 'Văn phòng đã tồn tại');
+
+      //check office is exist ? 
+      const getOffice = await Office.findOne({
+        where: { id },
+      });
+      if (!getOffice) return responseHandler.badRequest(res, 'Văn phòng không tồn tại');
+
+      if (getOffice.boffice_address != office_address) {
+        const isAddressExist = await await Office.findOne({
+          where: { office_address },
+        });
+        if (isAddressExist) return responseHandler.badRequest(res, 'Địa chỉ văn phòng đã tồn tại');
+      }
+      if (getOffice.dataValues.office_name != office_name) {
+        const isNameExist = await await Office.findOne({
+          where: { office_name },
+        });
+        if (isNameExist) return responseHandler.badRequest(res, 'Tên văn phòng đã tồn tại');
+      }
 
       const officeData = {
         id,
@@ -95,7 +116,7 @@ module.exports = {
         return responseHandler.badRequest(res, 'Không thể cập nhật văn phòng');
       }
     } catch (error) {
-     responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async deleteOfficeInformation(req, res) {
@@ -115,7 +136,7 @@ module.exports = {
         return responseHandler.badRequest(res, 'Văn phòng không tồn tại');
       }
     } catch (error) {
-     responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async getListOffice(req, res) {
@@ -173,7 +194,7 @@ module.exports = {
         return responseHandler.badRequest(res, 'Không thể lấy danh sách văn phòng');
       }
     } catch (error) {
-     responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
   async getOfficeInformation(req, res) {
@@ -213,7 +234,7 @@ module.exports = {
         return responseHandler.badRequest(res, 'Văn phòng không tồn tại');
       }
     } catch (error) {
-     responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
+      responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 };
