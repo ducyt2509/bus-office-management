@@ -54,7 +54,7 @@ export default function TicketDetail(props) {
                     Số điện thoại
                   </Text>
                   <Text marginBottom={'3%'} fontWeight={'500'}>
-                    +84{props.data?.passenger_phone}
+                    {props.data?.passenger_phone}
                   </Text>
                   <Text fontSize={'14px'} color="#686868" marginBottom={'2%'}>
                     Email
@@ -111,7 +111,7 @@ export default function TicketDetail(props) {
               Phương thức thanh toán:
             </Text>
             <Text fontSize={'16px'} color={'#686868'}>
-              {props.data.payment_status == 2 ? 'Thanh toán khi lên xe' : 'Thanh toán VNPAY - QR'}
+              {props.data.payment_status == 0 ? 'Thanh toán khi lên xe' : 'Thanh toán VNPAY - QR'}
             </Text>
           </Flex>
           <Flex alignItems={'center'} justifyContent={'space-between'} marginTop={'2%'}>
