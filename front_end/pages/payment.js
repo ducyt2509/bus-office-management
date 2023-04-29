@@ -244,7 +244,7 @@ export default function Payment(props) {
 										marginBottom={"6%"}
 										fontWeight={"500"}
 									>
-										+84{props.data?.passenger_phone}
+										{props.data?.passenger_phone}
 									</Text>
 									<Text
 										fontSize={"14px"}
