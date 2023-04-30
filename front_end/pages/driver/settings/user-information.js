@@ -281,7 +281,6 @@ export default function UserInformation(props) {
           boxSize="40%"
           height="auto"
           src={state.dataUser.avatar ? state.dataUser.avatar : 'https://bit.ly/dan-abramov'}
-          alt="Nguyễn Văn A"
         />
         <Button marginLeft={'8%'} backgroundColor={'#fff'} border="1px solid #000">
           Thay đổi

@@ -117,10 +117,15 @@ export default function ListRoute(props) {
 
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
-            <IconButton icon={<SlPencil />} onClick={() => handleActiveModal(route?.id, route)} />
+            <IconButton
+              icon={<SlPencil />}
+              onClick={() => handleActiveModal(route?.id, route)}
+              backgroundColor={'#f5daae'}
+            />
             <IconButton
               icon={<IoTrashBinOutline />}
               onClick={() => handleOpenModal(true, route?.id)}
+              backgroundColor={'#f79292'}
             />
           </Stack>
         </td>
@@ -133,11 +138,11 @@ export default function ListRoute(props) {
       <table style={{ width: '100%', textAlign: 'center' }} className="bom-table-bus">
         <thead>
           <tr>
-            <td>STT</td>
-            <td>Thành phố đi </td>
-            <td>Thành phố đến</td>
-            <td>Số lượng lịch trình</td>
-            <td>Thao tác</td>
+            <th>STT</th>
+            <th>Thành phố đi </th>
+            <th>Thành phố đến</th>
+            <th>Số lượng lịch trình</th>
+            <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>{ListRouteHTML}</tbody>

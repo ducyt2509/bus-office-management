@@ -163,10 +163,15 @@ export default function ListBus(props) {
         <td>{busStatusHTML}</td>
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
-            <IconButton icon={<SlPencil />} onClick={() => handleActiveModal(bus?.id, bus)} />
+            <IconButton
+              icon={<SlPencil />}
+              onClick={() => handleActiveModal(bus?.id, bus)}
+              backgroundColor={'#f5daae'}
+            />
             <IconButton
               icon={<IoTrashBinOutline />}
               onClick={() => handleOpenModal(true, bus?.id)}
+              backgroundColor={'#f79292'}
             />
           </Stack>
         </td>
@@ -179,13 +184,13 @@ export default function ListBus(props) {
       <table style={{ width: '100%', textAlign: 'center' }} className="bom-table-bus">
         <thead>
           <tr>
-            <td>STT</td>
-            <td>Biển số xe</td>
-            <td>Loại xe</td>
-            <td>Tài xế chính</td>
-            <td>Tài xế phụ</td>
-            <td>Tình trạng</td>
-            <td>Thao tác</td>
+            <th>STT</th>
+            <th>Biển số xe</th>
+            <th>Loại xe</th>
+            <th>Tài xế chính</th>
+            <th>Tài xế phụ</th>
+            <th>Tình trạng</th>
+            <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>{ListBusHTML}</tbody>

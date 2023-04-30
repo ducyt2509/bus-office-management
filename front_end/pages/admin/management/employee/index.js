@@ -7,6 +7,7 @@ import {
   Flex,
   Image,
   useDisclosure,
+  Stack,
   useToast,
 } from '@chakra-ui/react';
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -17,6 +18,7 @@ import ListEmployee from '@/src/components/employee/ListEmployee';
 import Pagination from '@/src/components/common/Pagination';
 import { actions, useStore } from '@/src/store';
 import Cookies from 'js-cookie';
+import { HiOutlineDocumentSearch } from 'react-icons/hi';
 
 export default function ManagementEmployees(props) {
   const [token, setToken] = useState('');
@@ -119,20 +121,21 @@ export default function ManagementEmployees(props) {
         marginBottom={'2%'}
         paddingTop="2%"
       >
-        <Text marginRight="1%">{state.dataUser.user_name}</Text>
+        <Text marginRight="1%" fontWeight="500">
+          {state.dataUser.user_name}
+        </Text>
         <Image
           borderRadius="full"
           boxSize="50px"
           src={state.dataUser.avatar ? state.dataUser.avatar : 'https://bit.ly/dan-abramov'}
-          alt="Nguyễn Văn A"
         />
       </Flex>
       <div style={{ width: '90%', margin: '0 auto' }}>
-        <Card backgroundColor={'#F5F5F5'}>
-          <CardHeader>
+        <Card>
+          <CardHeader paddingBottom="0" paddingTop="0">
             <Heading size="lg">Quản lí nhân viên</Heading>
           </CardHeader>
-          <CardBody>
+          <CardBody paddingTop="0">
             <ActionBar
               onOpen={onOpen}
               setUserId={setUserId}
@@ -141,23 +144,37 @@ export default function ManagementEmployees(props) {
               handleGetListUser={handleGetListUser}
               handleChangeQuerySearch={handleChangeQuerySearch}
             />
-            <ListEmployee
-              list={listUser}
-              onOpen={onOpen}
-              setUserId={setUserId}
-              setUser={setUser}
-              handleGetListUser={handleGetListUser}
-              port={props.BACK_END_PORT}
-              axiosJWT={axiosJWT}
-              token={`Bearer ${state.dataUser.token}`}
-            />
-            <Pagination
-              list_number={numberUser}
-              handleGetList={handleGetListUser}
-              setList={setListUser}
-              list={listUser}
-              currentPage={currentPage}
-            />
+            {listUser.length ? (
+              <>
+                <ListEmployee
+                  list={listUser}
+                  onOpen={onOpen}
+                  setUserId={setUserId}
+                  setUser={setUser}
+                  handleGetListUser={handleGetListUser}
+                  port={props.BACK_END_PORT}
+                  axiosJWT={axiosJWT}
+                  token={`Bearer ${state.dataUser.token}`}
+                />
+                <Pagination
+                  list_number={numberUser}
+                  handleGetList={handleGetListUser}
+                  setList={setListUser}
+                  list={listUser}
+                  currentPage={currentPage}
+                />
+              </>
+            ) : (
+              <Stack fontSize={'200px'} color="#F26A4C" alignItems={'center'} marginTop="10%">
+                {<HiOutlineDocumentSearch />}
+                <Text fontSize={'25px'} fontWeight={500}>
+                  Không có dữ liệu
+                </Text>
+                <Text fontSize={'20px'} color="#686868" fontWeight={500}>
+                  Hãy thử tìm bằng từ khoá khác hoặc tạo dữ liệu
+                </Text>
+              </Stack>
+            )}
             <AddEmployee
               isOpen={isOpen}
               onClose={onClose}

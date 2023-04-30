@@ -125,9 +125,9 @@ export default function ListEmployee(props) {
     mainPhone =
       mainPhone.substring(0, 4) + ' ' + mainPhone.substring(4, 7) + ' ' + mainPhone.substring(7);
     let role =
-      user.role_id == 1 ? 'Manager' : user.role_id == 2 ? 'Customer Service Staff' : 'Driver';
+      user.role_id == 1 ? 'Manager' : user.role_id == 2 ? 'Service Staff' : 'Driver';
     return (
-      <tr onClick={() => handleGetEmployeeInformation(user.id)}>
+      <tr onClick={() => handleGetEmployeeInformation(user.id)} style={{cursor:"pointer"}}>
         <td>{index + 1}</td>
         <td>{user.user_name}</td>
         <td
@@ -152,7 +152,7 @@ export default function ListEmployee(props) {
           </Flex>
         </td>
         <td>
-          <Flex alignItems={'center'} justifyContent={'center'}>
+          <Flex alignItems={'center'} textAlign={"start"} justifyContent={'center'}>
             <p style={{ width: '95%' }}>
               {user.office?.office_name ? user.office.office_name : 'Không thuộc văn phòng nào'}
             </p>
@@ -160,10 +160,15 @@ export default function ListEmployee(props) {
         </td>
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
-            <IconButton icon={<SlPencil />} onClick={(e) => handleActiveModal(user?.id, user, e)} />
+            <IconButton
+              icon={<SlPencil />}
+              onClick={(e) => handleActiveModal(user?.id, user, e)}
+              backgroundColor={'#f5daae'}
+            />
             <IconButton
               icon={<IoTrashBinOutline />}
               onClick={(e) => handleOpenModal(true, user?.id, e)}
+              backgroundColor={'#f79292'}
             />
           </Stack>
         </td>
@@ -176,13 +181,13 @@ export default function ListEmployee(props) {
       <table style={{ width: '100%', textAlign: 'center' }} className="bom-table-bus">
         <thead>
           <tr>
-            <td>STT</td>
-            <td>Tên nhân viên</td>
-            <td>Chức vụ</td>
-            <td>Email</td>
-            <td>Số điện thoại</td>
-            <td>Văn phòng</td>
-            <td>Thao tác</td>
+            <th>STT</th>
+            <th>Tên nhân viên</th>
+            <th>Chức vụ</th>
+            <th>Email</th>
+            <th>Số điện thoại</th>
+            <th>Văn phòng</th>
+            <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>{ListUserHTML}</tbody>

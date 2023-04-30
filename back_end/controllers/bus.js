@@ -41,10 +41,12 @@ module.exports = {
       if (createBus) {
         return responseHandler.ok(res, 'Add bus successful!');
       } else {
-        return responseHandler.responseWithData(res, 403, { message: "Không thể tại mới chuyến xe" });
+        return responseHandler.responseWithData(res, 403, {
+          message: 'Không thể tại mới chuyến xe',
+        });
       }
     } catch (error) {
-      return responseHandler.badRequest(res, "Có lỗi xảy ra khi thao tác. Vui lòng thử lại");
+      return responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 
@@ -65,7 +67,7 @@ module.exports = {
         return responseHandler.badRequest(res, 'Chuyến xe không tồn tại');
       }
     } catch (error) {
-      return responseHandler.badRequest(res, "Có lỗi xảy ra khi thao tác. Vui lòng thử lại");
+      return responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 
@@ -145,7 +147,7 @@ module.exports = {
         return responseHandler.badRequest(res, 'Không thể lấy danh sách chuyến xe');
       }
     } catch (error) {
-      return responseHandler.badRequest(res, "Có lỗi xảy ra khi thao tác. Vui lòng thử lại");
+      return responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 
@@ -167,39 +169,51 @@ module.exports = {
         return responseHandler.badRequest(res, 'Chuyến xe không tồn tại');
       }
     } catch (error) {
-      return responseHandler.badRequest(res, "Có lỗi xảy ra khi thao tác. Vui lòng thử lại");
+      return responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 
   async updateBusInformation(req, res) {
     try {
-      var { id, main_driver_id, support_driver_id, vehicle_plate, vehicle_status, vehicle_type_id } = req.body
+      var {
+        id,
+        main_driver_id,
+        support_driver_id,
+        vehicle_plate,
+        vehicle_status,
+        vehicle_type_id,
+      } = req.body;
 
-      if (!validateHandler.validatePositiveIntegerNumber(parseInt(id)) ||
+      if (
+        !validateHandler.validatePositiveIntegerNumber(parseInt(id)) ||
         !validateHandler.validatePositiveIntegerNumber(parseInt(support_driver_id)) ||
         !validateHandler.validatePositiveIntegerNumber(parseInt(main_driver_id)) ||
         !validateHandler.validatePositiveIntegerNumber(parseInt(vehicle_type_id)) ||
-        !validateHandler.validateString(vehicle_plate, regexHandler.regexVehiclePlate))
+        !validateHandler.validateString(vehicle_plate, regexHandler.regexVehiclePlate)
+      )
         return responseHandler.badRequest(res, messageHandler.messageValidateFailed);
 
       const getBus = await Bus.findOne({
-        where: { id }
-      })
-
-      if (!getBus) return responseHandler.badRequest(res, "Xe không tồn tại")
-
-      const updateBus = await Bus.update({ main_driver_id, support_driver_id, vehicle_plate, vehicle_status, vehicle_type_id }, {
-        where: {
-          id,
-        },
+        where: { id },
       });
+
+      if (!getBus) return responseHandler.badRequest(res, 'Xe không tồn tại');
+
+      const updateBus = await Bus.update(
+        { main_driver_id, support_driver_id, vehicle_plate, vehicle_status, vehicle_type_id },
+        {
+          where: {
+            id,
+          },
+        }
+      );
       if (updateBus) {
         return responseHandler.ok(res, { message: 'Cập nhật chuyến xe thành công!' });
       } else {
         return responseHandler.badRequest(res, 'Chuyến xe không tồn tại');
       }
     } catch (error) {
-      return responseHandler.badRequest(res, "Có lỗi xảy ra khi thao tác. Vui lòng thử lại");
+      return responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },
 };
