@@ -32,12 +32,10 @@ export default function AddTransport(props) {
 
   const [busPlate, setBusPlate] = useState();
   const [busSchedule, setBusSchedule] = useState();
-  const [time, setTime] = useState();
-
+  const [departureDate, setDepartureDate] = useState();
   const [error, setError] = useState({
     busPlate: false,
     busSchedule: false,
-    time: false,
   });
 
   const handleChangeBusPlate = useCallback(
@@ -55,53 +53,54 @@ export default function AddTransport(props) {
     [error]
   );
   const handleChangeBusSchedule = useCallback(
-    (e) => {
+    async (e) => {
       let value = e.target.value;
+      const getBS = await props.axiosJWT.post(
+        `http://localhost:${props.port}/bus-schedule/bus-schedule-by-id`,
+        { id: value },
+        {
+          headers: { token: props.token },
+        }
+      );
       let oldError = { ...error };
       if (!value) {
         oldError.busSchedule = true;
       } else {
         oldError.busSchedule = false;
       }
+
       setError(oldError);
       setBusSchedule(value);
-    },
-    [error]
-  );
-  const handleChangeTime = useCallback(
-    (e) => {
-      let value = e.target.value;
-      let oldError = { ...error };
-      if (!value) {
-        oldError.time = true;
-      } else {
-        oldError.time = false;
+
+      // nếu eff date >= current thì departure date = eff  và ngược lại 
+      if (getBS.data.data.bus_schedule[0].effective_date.split('T')[0] <= new Date().toISOString().split('T')[0]) { setDepartureDate(new Date().toISOString().split('T')[0]) }
+      else {
+        setDepartureDate(getBS.data.data.bus_schedule[0].effective_date.split('T')[0])
       }
-      setError(oldError);
-      setTime(value);
+
     },
     [error]
   );
+
   const handleAddTransport = useCallback(async () => {
     let oldError = { ...error };
-    if (!time) {
-      oldError.time = true;
-    }
+
     if (!busPlate) {
       oldError.busPlate = true;
     }
     if (!busSchedule) {
       oldError.busSchedule = true;
     }
-    if (oldError.time || oldError.busPlate || oldError.busSchedule) {
+    if (oldError.busPlate || oldError.busSchedule) {
       setError(oldError);
       return;
     }
     const submitData = {
       bus_schedule_id: busSchedule,
       bus_id: busPlate,
-      departure_date: time,
+      departure_date: departureDate,
     };
+    console.log(submitData)
     if (props.locationId) {
       submitData.id = props.locationId;
       try {
@@ -190,8 +189,7 @@ export default function AddTransport(props) {
     }
     setBusPlate(0);
     setBusSchedule(0);
-    setTime('');
-  }, [time, busPlate, busSchedule, error]);
+  }, [busPlate, busSchedule, error]);
 
   const handleGetListBusSchedule = useCallback(
     async (page, limit, value) => {
@@ -280,18 +278,15 @@ export default function AddTransport(props) {
 
   useEffect(() => {
     if (props.transportId) {
-      setTime(formatDate(props.transport.departure_date));
       setBusPlate(props.transport.bus_id);
       setBusSchedule(props.transport.bus_schedule_id);
       setError({
         busPlate: false,
         busSchedule: false,
-        time: false,
       });
     } else {
       setBusPlate(0);
       setBusSchedule(0);
-      setTime('');
     }
   }, [props.transportId]);
 
@@ -355,22 +350,6 @@ export default function AddTransport(props) {
               </Box>
               <FormErrorMessage justifyContent={'flex-end'}>
                 Biển số xe là bắt buộc
-              </FormErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={error.time} isRequired marginBottom={'5%'}>
-              <Box display={'flex'}>
-                <FormLabel width={'51.5%'} fontWeight={'500'}>
-                  Ngày khởi hành
-                </FormLabel>
-                <Input
-                  value={time}
-                  onChange={handleChangeTime}
-                  type="date"
-                  min={validate.min_date}
-                />
-              </Box>
-              <FormErrorMessage justifyContent={'flex-end'}>
-                Ngày khởi hành là bắt buộc
               </FormErrorMessage>
             </FormControl>
           </ModalBody>
