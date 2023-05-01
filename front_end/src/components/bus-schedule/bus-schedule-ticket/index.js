@@ -68,6 +68,7 @@ export default function BusSchedulesList(props) {
       );
     }
   }, [props.action]);
+  
   const html =
     props.data && props.data.transport && props.data.transport.length
       ? props.data.transport.map((vehicle, index) => {

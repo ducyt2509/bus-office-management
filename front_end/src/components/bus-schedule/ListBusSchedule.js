@@ -1,8 +1,6 @@
 import { SlPencil } from 'react-icons/sl';
-import { IoTrashBinOutline, IoPersonOutline, IoCallOutline } from 'react-icons/io5';
+import { IoTrashBinOutline } from 'react-icons/io5';
 import { MdAutorenew, MdCalendarMonth } from 'react-icons/md';
-import { Icon } from '@chakra-ui/react';
-import { BsDashLg } from 'react-icons/bs';
 import {
   Stack,
   IconButton,
@@ -18,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useCallback, useRef, useState } from 'react';
-import { convertTime, formatDate } from '@/helper';
+import { convertTime, formatDate, formatMoney } from '@/helper';
 
 export default function ListBusSchedule(props) {
   const toast = useToast();
@@ -255,7 +253,7 @@ export default function ListBusSchedule(props) {
         <td>{index + 1}</td>
         <td>{city_from_to}</td>
         <td>{time_from_to}</td>
-        <td>{busSchedule.price}</td>
+        <td>{formatMoney(busSchedule.price)}</td>
         <td>
           {effective_date} / {refresh_date}
         </td>
@@ -263,20 +261,24 @@ export default function ListBusSchedule(props) {
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
             <IconButton
+              backgroundColor={'#f5daae'}
               icon={<SlPencil title="Xem lịch trinh" />}
               onClick={() => props.handleGetBusScheduleInformation(busSchedule.id, conditionEdit)}
               cursor={conditionEdit ? 'not-allowed' : 'pointer'}
             />
             <IconButton
+              backgroundColor={'#f79292'}
               icon={<IoTrashBinOutline title="Xóa lịch trình" />}
               onClick={() => handleOpenModal(true, busSchedule?.id)}
             />
 
             <IconButton
+              backgroundColor={'#cdf7ba'}
               icon={<MdAutorenew title="Gia hạn lịch trình" />}
               onClick={(e) => handleRenewalBusSchedule(busSchedule?.id, e)}
             />
             <IconButton
+              backgroundColor={'#baedf7'}
               icon={<MdCalendarMonth title="Làm mới lịch trình" />}
               onClick={(e) => props.handleRefreshScheduleInformation(busSchedule?.id)}
             />

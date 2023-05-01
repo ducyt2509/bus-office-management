@@ -96,31 +96,40 @@ export default function Employee(props) {
         justifyContent="flex-end"
         width={'84%'}
         margin="0 auto"
-        marginBottom={'2%'}
+        marginBottom={'4%'}
         paddingTop="2%"
       >
-        <Text marginRight="1%">{state.dataUser.user_name}</Text>
+        <Text marginRight="1%" fontWeight="500">
+          {state.dataUser.user_name}
+        </Text>
         <Image
           borderRadius="full"
           boxSize="50px"
           src={state.dataUser.avatar ? state.dataUser.avatar : 'https://bit.ly/dan-abramov'}
-          alt="Nguyễn Văn A"
         />
       </Flex>
       <Link href={'/admin/management/office'}>
-        <Text display={'flex'} alignItems="center" className="bom-back-management">
+        <Text
+          display={'flex'}
+          alignItems="center"
+          className="bom-back-management"
+          marginLeft={'220px'}
+        >
           <IoIosArrowBack boxSize={16} /> Quay lại
         </Text>
       </Link>
 
       <Card
-        backgroundColor={'#f5f5f5'}
         className="bom-office-info-detail"
         width={'96%'}
         direction={{ base: 'column', sm: 'row' }}
         overflow="hidden"
         variant="outline"
         marginTop={'2%'}
+        maxWidth="960px"
+        minHeight={"500px"}
+        margin="2% auto"
+        boxShadow="0px 0px 15px 0px #a7bad3"
       >
         {/* <div style={{ width: "50%", backgroundColor: "#F26A4C" }}> */}
         <Image

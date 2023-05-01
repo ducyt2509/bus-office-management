@@ -1,9 +1,5 @@
 import {
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
+  Stack,
   Text,
   Heading,
   Card,
@@ -22,6 +18,7 @@ import ActionBar from '@/src/components/bus/ActionBar';
 import Pagination from '@/src/components/common/Pagination';
 import AddBus from '@/src/components/bus/AddBus';
 import Cookies from 'js-cookie';
+import { HiOutlineDocumentSearch } from 'react-icons/hi';
 
 export default function ManagementBus(props) {
   const toast = useToast();
@@ -124,7 +121,9 @@ export default function ManagementBus(props) {
         marginBottom={'2%'}
         paddingTop="2%"
       >
-        <Text marginRight="1%">{state.dataUser.user_name}</Text>
+        <Text marginRight="1%" fontWeight="500">
+          {state.dataUser.user_name}
+        </Text>
         <Image
           borderRadius="full"
           boxSize="50px"
@@ -133,11 +132,11 @@ export default function ManagementBus(props) {
         />
       </Flex>
       <div style={{ width: '90%', margin: '0 auto' }}>
-        <Card backgroundColor={'#F5F5F5'}>
-          <CardHeader>
+        <Card>
+          <CardHeader paddingBottom="0" paddingTop="0">
             <Heading size="lg">Quản lí xe</Heading>
           </CardHeader>
-          <CardBody>
+          <CardBody paddingTop="0">
             <ActionBar
               onOpen={onOpen}
               setVehicleId={setVehicleId}
@@ -146,23 +145,37 @@ export default function ManagementBus(props) {
               handleGetListBus={handleGetListBus}
               handleChangeQuerySearch={handleChangeQuerySearch}
             />
-            <ListBus
-              list={listBus}
-              onOpen={onOpen}
-              setVehicleId={setVehicleId}
-              setVehicle={setVehicle}
-              handleGetListBus={handleGetListBus}
-              port={props.BACK_END_PORT}
-              axiosJWT={axiosJWT}
-              token={`Bearer ${state.dataUser.token}`}
-            />
-            <Pagination
-              list_number={numberBus}
-              handleGetList={handleGetListBus}
-              setList={setListBus}
-              list={listBus}
-              currentPage={currentPage}
-            />
+            {listBus.length ? (
+              <>
+                <ListBus
+                  list={listBus}
+                  onOpen={onOpen}
+                  setVehicleId={setVehicleId}
+                  setVehicle={setVehicle}
+                  handleGetListBus={handleGetListBus}
+                  port={props.BACK_END_PORT}
+                  axiosJWT={axiosJWT}
+                  token={`Bearer ${state.dataUser.token}`}
+                />
+                <Pagination
+                  list_number={numberBus}
+                  handleGetList={handleGetListBus}
+                  setList={setListBus}
+                  list={listBus}
+                  currentPage={currentPage}
+                />
+              </>
+            ) : (
+              <Stack fontSize={'200px'} color="#F26A4C" alignItems={'center'} marginTop="10%">
+                {<HiOutlineDocumentSearch />}
+                <Text fontSize={'25px'} fontWeight={500}>
+                  Không có dữ liệu
+                </Text>
+                <Text fontSize={'20px'} color="#686868" fontWeight={500}>
+                  Hãy thử tìm bằng từ khoá khác hoặc tạo dữ liệu
+                </Text>
+              </Stack>
+            )}
             <AddBus
               isOpen={isOpen}
               onClose={onClose}

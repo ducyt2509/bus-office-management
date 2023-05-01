@@ -120,10 +120,12 @@ export default function ListLocation(props) {
             <IconButton
               icon={<SlPencil />}
               onClick={() => handleActiveModal(location?.id, location)}
+              backgroundColor={'#f5daae'}
             />
             <IconButton
               icon={<IoTrashBinOutline />}
               onClick={() => handleOpenModal(true, location?.id)}
+              backgroundColor={'#f79292'}
             />
           </Stack>
         </td>
@@ -136,11 +138,11 @@ export default function ListLocation(props) {
       <table style={{ width: '100%', textAlign: 'center' }} className="bom-table-bus">
         <thead>
           <tr>
-            <td>STT</td>
-            <td>Tên văn phòng</td>
-            <td>Tên thành phố</td>
-            <td>Địa chỉ</td>
-            <td>Thao tác</td>
+            <th>STT</th>
+            <th>Tên văn phòng</th>
+            <th>Tên thành phố</th>
+            <th>Địa chỉ</th>
+            <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>{ListLocationHTML}</tbody>

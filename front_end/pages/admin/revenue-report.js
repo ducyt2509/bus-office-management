@@ -103,7 +103,7 @@ export default function RevenueReport(props) {
         } else {
           toastIdRef.current = toast({
             title: err.response.data.data.message,
-            description:"Xảy ra lỗi khi lấy danh sách thống kê. Vui lòng thử lại.",
+            description: 'Xảy ra lỗi khi lấy danh sách thống kê. Vui lòng thử lại.',
             status: 'error',
             isClosable: true,
             position: 'top',
@@ -161,13 +161,10 @@ export default function RevenueReport(props) {
         marginBottom={'2%'}
         paddingTop="2%"
       >
-        <Text marginRight="1%">{state.dataUser.user_name}</Text>
-        <Img
-          borderRadius="full"
-          boxSize="50px"
-          src="https://bit.ly/dan-abramov"
-          alt="Nguyễn Văn A"
-        />
+        <Text marginRight="1%" fontWeight="500">
+          {state.dataUser.user_name}
+        </Text>
+        <Img borderRadius="full" boxSize="50px" src="https://bit.ly/dan-abramov" />
       </Flex>
       <div style={{ width: '90%', margin: '0 auto' }}>
         <Heading marginBottom="3%" size="lg">
