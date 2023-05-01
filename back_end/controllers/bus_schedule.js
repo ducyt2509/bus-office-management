@@ -246,10 +246,8 @@ module.exports = {
                 db.sequelize.query(
                   `select t.seat, t.passenger_name, t.passenger_phone, t.id, t.pickup_location, t.drop_off_location, t.payment_status, t.date_detail, t.ticket_price from transaction t
 									join transport tr on tr.id = t.transport_id
-									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${
-                    getTransport[j].bus_id
-                  } and t.payment_status != 3 and t.date_detail like"%${
-                    new Date(dateStart).toISOString().split('T')[0]
+									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id
+                  } and t.payment_status != 3 and t.date_detail like"%${new Date(dateStart).toISOString().split('T')[0]
                   }%"`,
                   {
                     type: QueryTypes.SELECT,
@@ -258,10 +256,8 @@ module.exports = {
                 db.sequelize.query(
                   `select count(*) from transaction t
 									join transport tr on tr.id = t.transport_id
-									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${
-                    getTransport[j].bus_id
-                  } and t.payment_status = 1 and t.date_detail like"${
-                    new Date(dateStart).toISOString().split('T')[0]
+									where tr.bus_schedule_id = ${getTransport[j].bus_schedule_id} and tr.bus_id = ${getTransport[j].bus_id
+                  } and t.payment_status = 1 and t.date_detail like"${new Date(dateStart).toISOString().split('T')[0]
                   }"`,
                   {
                     type: QueryTypes.SELECT,
@@ -315,6 +311,7 @@ module.exports = {
     const querySearch = !params.query_search ? '' : params.query_search;
 
     try {
+      const currentDate = validateHandler.validateDate(new Date().toDateString());
       const querySQL = `select bs.id ,bs.route_id, departure_location_id , arrive_location_id , price , time_from , travel_time , effective_date , refresh_date , bus_schedule_status , bus_schedule_expire , city_from_id , city_to_id 
 			from bus_schedule bs
 			join route r on bs.route_id = r.id 
@@ -322,6 +319,7 @@ module.exports = {
 			join city cc on r.city_to_id = cc.id
       where ( (c.city_name like '%${querySearch}%') 
       or (cc.city_name like '%${querySearch}%') )
+      and refresh_date >= '${currentDate}'
       order by id
       limit ${limit} offset ${offset}
 `;
@@ -329,8 +327,12 @@ module.exports = {
 			join route r on bs.route_id = r.id 
 			join city c on r.city_from_id = c.id
 			join city cc on r.city_to_id = cc.id
-			where (c.city_name like '%${querySearch}%') 
-			or (cc.city_name like '%${querySearch}%') `;
+			where ((c.city_name like '%${querySearch}%') 
+			or (cc.city_name like '%${querySearch}%'))
+      and refresh_date >= '${currentDate}'
+      `
+
+        ;
 
       const [listBusSchedule, numberBusSchedule] = await Promise.all([
         db.sequelize.query(querySQL, { type: QueryTypes.SELECT }),
@@ -411,7 +413,7 @@ module.exports = {
         const filterListBusSchedule = listBusSchedule.filter((e) => {
           return (
             DateDiff.inDays(new Date(departure_date), new Date(e.effective_date)) %
-              e.schedule_frequency ==
+            e.schedule_frequency ==
             0
           );
         });
