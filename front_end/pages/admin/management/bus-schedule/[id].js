@@ -508,8 +508,8 @@ export default function BusScheduleDetail(props) {
           {method == 'Refresh'
             ? 'Làm mới lịch trình'
             : router.query.id == 'add'
-            ? 'Thêm lịch trình'
-            : 'Chỉnh sửa thông tin lịch trình'}
+              ? 'Thêm lịch trình'
+              : 'Chỉnh sửa thông tin lịch trình'}
         </Heading>
         <Card
           margin={'0 auto'}
@@ -715,10 +715,9 @@ export default function BusScheduleDetail(props) {
                       (method != 'Refresh' && router.query.id != 'add') || refreshDate <= today
                     }
                     value={
-                      // (method != 'Refresh') && (router.query.id != 'add')
-                      //   ? effectiveDate
-                      //   : new Date().toISOString().split('T')[0]
-                      effectiveDate
+                      (method != 'Refresh') && (router.query.id != 'add')
+                        ? effectiveDate
+                        : new Date().toISOString().split('T')[0]
                     }
                     type={'date'}
                     min={today}

@@ -216,7 +216,7 @@ export default function ListBusSchedule(props) {
     </Modal>
   );
 
-  let styles = { color: 'black' };
+  let isRenewal = false;
   const ListBusScheduleHTML = props.list.map((busSchedule, index) => {
     const city_from_to = busSchedule.route[0]?.city_from + ' - ' + busSchedule.route[0]?.city_to;
     const time_from = convertTime(busSchedule.time_from, 0);
@@ -230,11 +230,11 @@ export default function ListBusSchedule(props) {
     // check nếu ngày hôm nay lớn hơn hoặc bằng thời gian cần gia hạn thì sẽ set style thành màu đỏ
     const checkTime =
       new Date().getTime() >=
-      new Date(busSchedule.refresh_date).getTime() -
+        new Date(busSchedule.refresh_date).getTime() -
         (busSchedule.bus_schedule_expire / 2) * 24 * 60 * 60 * 1000
         ? true
         : false;
-    styles = { color: 'black' };
+    isRenewal = false;
 
     if (checkTime) {
       const getList = props.list.filter(
@@ -246,12 +246,11 @@ export default function ListBusSchedule(props) {
           e.schedule_frequency == busSchedule.schedule_frequency &&
           e.bus_schedule_expire == busSchedule.bus_schedule_expire
       );
-      styles = getList.length == 1 ? { color: 'red' } : { color: 'black' };
+      isRenewal = getList.length == 1 ? true : false;
     }
     return (
       <tr
-        style={styles}
-        // onClick={() => props.handleGetBusScheduleInformation(busSchedule.id)}
+      // onClick={() => props.handleGetBusScheduleInformation(busSchedule.id)}
       >
         <td>{index + 1}</td>
         <td>{city_from_to}</td>
@@ -260,6 +259,7 @@ export default function ListBusSchedule(props) {
         <td>
           {effective_date} / {refresh_date}
         </td>
+        {isRenewal ? <td style={{ color: "red", fontWeight: "bold" }}>Sắp hết hạn</td> : <td style={{ color: "green", fontWeight: "bold" }} > Đang hoạt động</td>}
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
             <IconButton
@@ -296,6 +296,7 @@ export default function ListBusSchedule(props) {
             <td>Giờ đi - giờ đến</td>
             <td>Giá vé</td>
             <td>Thời hạn</td>
+            <td>Trạng thái</td>
             <td>Thao tác</td>
           </tr>
         </thead>
