@@ -66,12 +66,12 @@ export default function ListCashier(props) {
     <table style={{ width: '100%', textAlign: 'center' }} className="bom-table-bus">
       <thead>
         <tr>
-          <td>STT</td>
-          <td>Nhân viên</td>
-          <td>Chức vụ</td>
-          <td>Văn phòng</td>
-          <td>Số vé đã bán</td>
-          <td>Số tiền đã thu</td>
+          <th>STT</th>
+          <th>Nhân viên</th>
+          <th>Chức vụ</th>
+          <th>Văn phòng</th>
+          <th>Số vé đã bán</th>
+          <th>Số tiền đã thu</th>
         </tr>
       </thead>
       <tbody>{listHTML}</tbody>

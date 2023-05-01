@@ -12,11 +12,11 @@ export default function Pagination(props) {
 							props.handleGetList("", props.currentPage - 1);
 						}}
 						backgroundColor={"#fff"}
-						color={"#686868"}
-						border={"1px solid"}
+						color={"#F26A4C"}
+						border={"2px solid #F26A4C"}
 						h={"40px"}
 						w={"30px"}
-						borderRadius="50%"
+						borderRadius="5px"
 						_hover={{ backgroundColor: "#F26A4C", color: "#fff" }}
 					>
 						{props.currentPage - 1}
@@ -25,10 +25,12 @@ export default function Pagination(props) {
 				<Button
 					backgroundColor={"#F26A4C"}
 					color={"#fff"}
-					border={"1px solid"}
-					borderRadius="50%"
+					border={"2px solid #F26A4C"}
+					borderRadius="5px"
+					_hover={{ backgroundColor: "#F26A4C", color: "#fff" }}
 					h={"40px"}
 					w={"30px"}
+					margin="0 20px"
 				>
 					{props.currentPage}
 				</Button>
@@ -38,12 +40,13 @@ export default function Pagination(props) {
 							props.handleGetList("", props.currentPage + 1);
 						}}
 						backgroundColor={"#fff"}
-						color={"#686868"}
-						border={"1px solid"}
+						color={"#F26A4C"}
+						border={"2px solid #F26A4C"}
 						h={"40px"}
 						w={"30px"}
-						borderRadius="50%"
+						borderRadius="5px"
 						_hover={{ backgroundColor: "#F26A4C", color: "#fff" }}
+						marginInlineStart={"0"}
 					>
 						{props.currentPage + 1}
 					</Button>

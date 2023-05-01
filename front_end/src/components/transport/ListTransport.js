@@ -125,10 +125,12 @@ export default function ListTransport(props) {
             <IconButton
               icon={<SlPencil />}
               onClick={() => handleActiveModal(transport?.id, transport)}
+              backgroundColor={'#f5daae'}
             />
             <IconButton
               icon={<IoTrashBinOutline />}
               onClick={() => handleOpenModal(true, transport?.id)}
+              backgroundColor={'#f79292'}
             />
           </Stack>
         </td>
@@ -142,12 +144,12 @@ export default function ListTransport(props) {
       <table style={{ width: '100%', textAlign: 'center' }} className="bom-table-bus">
         <thead>
           <tr>
-            <td>STT</td>
-            <td>Tuyến đường</td>
-            <td>Thời gian khởi hành</td>
-            <td>Biển số xe</td>
-            {/* <td>Ngày khởi hành tiếp theo</td> */}
-            <td>Thao tác</td>
+            <th>STT</th>
+            <th>Tuyến đường</th>
+            <th>Thời gian khởi hành</th>
+            <th>Biển số xe</th>
+            {/* <th>Ngày khởi hành tiếp theo</th> */}
+            <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>{ListTransportHTML}</tbody>

@@ -8,6 +8,7 @@ import {
   Image,
   useDisclosure,
   useToast,
+  Stack,
 } from '@chakra-ui/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
@@ -17,6 +18,7 @@ import AddTransport from '@/src/components/transport/AddTransport';
 import ListTransport from '@/src/components/transport/ListTransport';
 import Pagination from '@/src/components/common/Pagination';
 import Cookies from 'js-cookie';
+import { HiOutlineDocumentSearch } from 'react-icons/hi';
 
 export default function ManagementTransport(props) {
   const [state, dispatch, axiosJWT] = useStore();
@@ -122,20 +124,21 @@ export default function ManagementTransport(props) {
         marginBottom={'2%'}
         paddingTop="2%"
       >
-        <Text marginRight="1%">{state.dataUser.user_name}</Text>
+        <Text marginRight="1%" fontWeight="500">
+          {state.dataUser.user_name}
+        </Text>
         <Image
           borderRadius="full"
           boxSize="50px"
           src={state.dataUser.avatar ? state.dataUser.avatar : 'https://bit.ly/dan-abramov'}
-          alt="Nguyễn Văn A"
         />
       </Flex>
       <div style={{ width: '90%', margin: '0 auto' }}>
-        <Card backgroundColor={'#F5F5F5'}>
-          <CardHeader>
+        <Card>
+          <CardHeader paddingBottom="0" paddingTop="0">
             <Heading size="lg">Quản lí hành trình</Heading>
           </CardHeader>
-          <CardBody>
+          <CardBody paddingTop="0">
             <ActionBar
               onOpen={onOpen}
               setTransportId={setTransportId}
@@ -144,24 +147,39 @@ export default function ManagementTransport(props) {
               handleGetListTransport={handleGetListTransport}
               handleChangeQuerySearch={handleChangeQuerySearch}
             />
-            <ListTransport
-              list={listTransport}
-              onOpen={onOpen}
-              setTransportId={setTransportId}
-              setTransport={setTransport}
-              handleGetListTransport={handleGetListTransport}
-              token={`Bearer ${state.dataUser.token}`}
-              port={props.BACK_END_PORT}
-              axiosJWT={axiosJWT}
-            />
-            <Pagination
-              list_number={numberTransport}
-              handleGetList={handleGetListTransport}
-              setList={setListTransport}
-              list={listTransport}
-              setCurrentPage={setCurrentPage}
-              currentPage={currentPage}
-            />
+            {listTransport.length ? (
+              <>
+                <ListTransport
+                  list={listTransport}
+                  onOpen={onOpen}
+                  setTransportId={setTransportId}
+                  setTransport={setTransport}
+                  handleGetListTransport={handleGetListTransport}
+                  token={`Bearer ${state.dataUser.token}`}
+                  port={props.BACK_END_PORT}
+                  axiosJWT={axiosJWT}
+                />
+                <Pagination
+                  list_number={numberTransport}
+                  handleGetList={handleGetListTransport}
+                  setList={setListTransport}
+                  list={listTransport}
+                  setCurrentPage={setCurrentPage}
+                  currentPage={currentPage}
+                />
+              </>
+            ) : (
+              <Stack fontSize={'200px'} color="#F26A4C" alignItems={'center'} marginTop="10%">
+                {<HiOutlineDocumentSearch />}
+                <Text fontSize={'25px'} fontWeight={500}>
+                  Không có dữ liệu
+                </Text>
+                <Text fontSize={'20px'} color="#686868" fontWeight={500}>
+                  Hãy thử tìm bằng từ khoá khác hoặc tạo dữ liệu
+                </Text>
+              </Stack>
+            )}
+
             <AddTransport
               isOpen={isOpen}
               onClose={onClose}

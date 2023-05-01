@@ -121,21 +121,23 @@ export default function ListOffice(props) {
 
   const ListOfficeHTML = props.list.map((office, index) => {
     return (
-      <tr onClick={() => handleGetOfficeInformation(office.id)}>
+      <tr onClick={() => handleGetOfficeInformation(office.id)} style={{ cursor: 'pointer' }}>
         <td>{index + 1}</td>
-        <td>{office.office_name}</td>
+        <td style={{ textAlign: 'start' }}>{office.office_name}</td>
         <td>{office.city.city_name}</td>
-        <td>{office.office_address}</td>
+        <td style={{ textAlign: 'justify' }}>{office.office_address}</td>
         <td>{office.number_employee ? office.number_employee : 0}</td>
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
             <IconButton
               icon={<SlPencil />}
               onClick={(e) => handleActiveModal(office?.id, office, e)}
+              backgroundColor={'#f5daae'}
             />
             <IconButton
               icon={<IoTrashBinOutline />}
               onClick={(e) => handleOpenModal(true, office?.id, e)}
+              backgroundColor={'#f79292'}
             />
           </Stack>
         </td>
@@ -148,12 +150,12 @@ export default function ListOffice(props) {
       <table style={{ width: '100%', textAlign: 'center' }} className="bom-table-bus">
         <thead>
           <tr>
-            <td>STT</td>
-            <td>Tên</td>
-            <td>Tỉnh/Thành phố</td>
-            <td>Địa chỉ</td>
-            <td>Số nhân viên</td>
-            <td>Thao tác</td>
+            <th>STT</th>
+            <th>Tên</th>
+            <th>Tỉnh/Thành phố</th>
+            <th>Địa chỉ</th>
+            <th>Số nhân viên</th>
+            <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>{ListOfficeHTML}</tbody>

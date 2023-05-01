@@ -1,4 +1,14 @@
-import { Text, Heading, Card, CardHeader, CardBody, Flex, Image, useToast } from '@chakra-ui/react';
+import {
+  Text,
+  Heading,
+  Card,
+  CardHeader,
+  CardBody,
+  Flex,
+  Image,
+  useToast,
+  Stack,
+} from '@chakra-ui/react';
 import axios from 'axios';
 import ActionBar from '@/src/components/bus-schedule/ActionBar';
 import ListBusSchedule from '@/src/components/bus-schedule/ListBusSchedule';
@@ -7,6 +17,7 @@ import { actions, useStore } from '@/src/store';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
+import { HiOutlineDocumentSearch } from 'react-icons/hi';
 
 export default function ManagementBusSchedule(props) {
   const [token, setToken] = useState('');
@@ -115,20 +126,17 @@ export default function ManagementBusSchedule(props) {
         marginBottom={'2%'}
         paddingTop="2%"
       >
-        <Text marginRight="1%">{state.dataUser.user_name}</Text>
-        <Image
-          borderRadius="full"
-          boxSize="50px"
-          src="https://bit.ly/dan-abramov"
-          alt="Nguyễn Văn A"
-        />
+        <Text marginRight="1%" fontWeight={'600'}>
+          {state.dataUser.user_name}
+        </Text>
+        <Image borderRadius="full" boxSize="50px" src="https://bit.ly/dan-abramov" />
       </Flex>
       <div style={{ width: '90%', margin: '0 auto' }}>
-        <Card backgroundColor={'#F5F5F5'}>
-          <CardHeader>
+        <Card>
+          <CardHeader paddingBottom="0" paddingTop="0">
             <Heading size="lg">Quản lí lịch trình</Heading>
           </CardHeader>
-          <CardBody>
+          <CardBody paddingTop="0">
             <ActionBar
               querySearch={querySearch}
               setQuerySearch={setQuerySearch}
@@ -136,22 +144,36 @@ export default function ManagementBusSchedule(props) {
               handleChangeQuerySearch={handleChangeQuerySearch}
               handleGetBusScheduleInformation={handleGetBusScheduleInformation}
             />
-            <ListBusSchedule
-              list={listBusSchedule}
-              handleGetListBusSchedule={handleGetListBusSchedule}
-              port={props.BACK_END_PORT}
-              handleGetBusScheduleInformation={handleGetBusScheduleInformation}
-              token={`Bearer ${state.dataUser.token}`}
-              axiosJWT={axiosJWT}
-              handleRefreshScheduleInformation={handleRefreshScheduleInformation}
-            />
-            <Pagination
-              list_number={numberBusSchedule}
-              handleGetList={handleGetListBusSchedule}
-              setList={setListBusSchedule}
-              list={listBusSchedule}
-              currentPage={currentPage}
-            />
+            {listBusSchedule.length ? (
+              <>
+                <ListBusSchedule
+                  list={listBusSchedule}
+                  handleGetListBusSchedule={handleGetListBusSchedule}
+                  port={props.BACK_END_PORT}
+                  handleGetBusScheduleInformation={handleGetBusScheduleInformation}
+                  token={`Bearer ${state.dataUser.token}`}
+                  axiosJWT={axiosJWT}
+                  handleRefreshScheduleInformation={handleRefreshScheduleInformation}
+                />
+                <Pagination
+                  list_number={numberBusSchedule}
+                  handleGetList={handleGetListBusSchedule}
+                  setList={setListBusSchedule}
+                  list={listBusSchedule}
+                  currentPage={currentPage}
+                />
+              </>
+            ) : (
+              <Stack fontSize={'200px'} color="#F26A4C" alignItems={'center'} marginTop="10%">
+                {<HiOutlineDocumentSearch />}
+                <Text fontSize={'25px'} fontWeight={500}>
+                  Không có dữ liệu
+                </Text>
+                <Text fontSize={'20px'} color="#686868" fontWeight={500}>
+                  Hãy thử tìm bằng từ khoá khác hoặc tạo dữ liệu
+                </Text>
+              </Stack>
+            )}
           </CardBody>
         </Card>
       </div>

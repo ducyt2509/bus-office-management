@@ -81,39 +81,45 @@ export default function Employee(props) {
         justifyContent="flex-end"
         width={'84%'}
         margin="0 auto"
-        marginBottom={'2%'}
+        marginBottom={'5%'}
         paddingTop="2%"
       >
-        <Text marginRight="1%">{state.dataUser.user_name}</Text>
+        <Text marginRight="1%" fontWeight="500">
+          {state.dataUser.user_name}
+        </Text>
         <Image
           borderRadius="full"
           boxSize="50px"
           src={state.dataUser.avatar ? state.dataUser.avatar : 'https://bit.ly/dan-abramov'}
-          alt="Nguyễn Văn A"
         />
       </Flex>
       <Link href={'/admin/management/employee'}>
-        <Text display={'flex'} alignItems="center" className="bom-back-management">
+        <Text
+          display={'flex'}
+          alignItems="center"
+          className="bom-back-management"
+          marginLeft={'220px'}
+        >
           <IoIosArrowBack boxSize={16} /> Quay lại
         </Text>
       </Link>
 
       <Card
-        backgroundColor={'#f5f5f5'}
         className="bom-personal-info-detail"
         direction={{ base: 'column', sm: 'row' }}
         overflow="hidden"
         variant="outline"
         width={'96%'}
         alignItems={'center'}
-        marginTop={'2%'}
+        maxWidth="960px"
+        margin="2% auto"
+        boxShadow="0px 0px 15px 0px #a7bad3"
       >
         <Image
           boxSize={[250, 250]}
           height={[250, 250]}
           borderRadius={'full'}
           src={state.dataUser.avatar ? state.dataUser.avatar : 'https://bit.ly/dan-abramov'}
-          alt="Nguyễn Văn A"
           margin={'0 3% 0 5%'}
         />
         <Stack width={'70%'}>
@@ -144,11 +150,19 @@ export default function Employee(props) {
               </Flex>
               <Flex justifyContent={'flex-start'} marginBottom={'1%'}>
                 <Text className="bom-personal-info-title">Văn phòng:</Text>
-                <Text fontSize={'17px'}>{employeeInformation?.office?.office_name}</Text>
+                <Text fontSize={'17px'}>
+                  {employeeInformation?.office?.office_name
+                    ? employeeInformation?.office?.office_name
+                    : 'Không có văn phòng'}
+                </Text>
               </Flex>
               <Flex justifyContent={'flex-start'} marginBottom={'1%'}>
                 <Text className="bom-personal-info-title">Địa chỉ văn phòng:</Text>
-                <Text fontSize={'17px'}>{employeeInformation?.office?.office_address}</Text>
+                <Text fontSize={'17px'}>
+                  {employeeInformation?.office?.office_address
+                    ? employeeInformation?.office?.office_address
+                    : 'Không có  địa chỉ văn phòng'}
+                </Text>
               </Flex>
             </Stack>
           </CardBody>

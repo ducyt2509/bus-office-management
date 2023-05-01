@@ -236,6 +236,8 @@ export default function AddCar(props) {
     }
   };
   const handleGetListVehicle = async () => {
+    const limit = 1000;
+    const offset = 0;
     try {
       const getListVehicle = await props.axiosJWT.post(
         `http://localhost:${props.port}/vehicle-type/list-vehicle-type`,
@@ -248,6 +250,7 @@ export default function AddCar(props) {
         setListVehicle(getListVehicle.data.data);
       }
     } catch (err) {
+      console.log(err);
       if (err.response.data.statusCode == 401) {
         toastIdRef.current = toast({
           title: 'Phiên của bạn đã hết hạn.',
