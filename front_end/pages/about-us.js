@@ -199,7 +199,7 @@ export default function ContactUsHTML() {
 				<Box>
 					<Box
 						marginBottom={"50px"}
-						marginX={["0", "0", "0", "100px"]}
+						marginX={["0", "0", "0", "200px"]}
 						display={"flex"}
 						alignItems={"center"}
 						flexDirection={["column", "column", "row"]}
