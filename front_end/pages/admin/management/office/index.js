@@ -9,6 +9,7 @@ import {
   useDisclosure,
   useToast,
   Stack,
+  CircularProgress
 } from '@chakra-ui/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
@@ -21,6 +22,7 @@ import Cookies from 'js-cookie';
 import { HiOutlineDocumentSearch } from 'react-icons/hi';
 
 export default function ManagementOffice(props) {
+  const [loading, setLoading] = useState(true);
   const toast = useToast();
   const toastIdRef = useRef();
   const [token, setToken] = useState('');
@@ -42,6 +44,7 @@ export default function ManagementOffice(props) {
       if (typeof page == 'number') {
         setCurrentPage(page);
       }
+      setLoading(true)
       try {
         const getListOffice = await axiosJWT.post(
           `http://localhost:${props.BACK_END_PORT}/office/list-office`,
@@ -84,6 +87,9 @@ export default function ManagementOffice(props) {
           });
         }
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 700);
     },
     [state, querySearch, token]
   );
@@ -143,7 +149,7 @@ export default function ManagementOffice(props) {
               handleGetListOffice={handleGetListOffice}
               handleChangeQuerySearch={handleChangeQuerySearch}
             />
-            {listOffice.length ? (
+            {loading ?  <CircularProgress isIndeterminate color=" #ffbea8" /> : listOffice.length ? (
               <>
                 <ListOffice
                   list={listOffice}

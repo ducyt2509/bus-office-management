@@ -9,6 +9,7 @@ import {
   useDisclosure,
   Stack,
   useToast,
+  CircularProgress,
 } from '@chakra-ui/react';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
@@ -21,6 +22,7 @@ import Cookies from 'js-cookie';
 import { HiOutlineDocumentSearch } from 'react-icons/hi';
 
 export default function ManagementEmployees(props) {
+  const [loading, setLoading] = useState(true);
   const [token, setToken] = useState('');
   const toast = useToast();
   const toastIdRef = useRef();
@@ -42,6 +44,7 @@ export default function ManagementEmployees(props) {
         setCurrentPage(page);
       }
       const offset = limit * (page - 1);
+      setLoading(true)
       try {
         const getListUser = await axiosJWT.post(
           `http://localhost:${props.BACK_END_PORT}/user/list-user`,
@@ -84,6 +87,9 @@ export default function ManagementEmployees(props) {
           });
         }
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 700);
     },
     [state, querySearch, token]
   );
@@ -144,7 +150,9 @@ export default function ManagementEmployees(props) {
               handleGetListUser={handleGetListUser}
               handleChangeQuerySearch={handleChangeQuerySearch}
             />
-            {listUser.length ? (
+            {loading ? (
+              <CircularProgress isIndeterminate color=" #ffbea8" />
+            ) : listUser.length ? (
               <>
                 <ListEmployee
                   list={listUser}

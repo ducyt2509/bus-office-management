@@ -9,6 +9,7 @@ import {
   useDisclosure,
   Image,
   useToast,
+  CircularProgress,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { actions, useStore } from '@/src/store';
@@ -21,6 +22,7 @@ import Cookies from 'js-cookie';
 import { HiOutlineDocumentSearch } from 'react-icons/hi';
 
 export default function ManagementBus(props) {
+  const [loading, setLoading] = useState(true);
   const toast = useToast();
   const toastIdRef = useRef();
   const [token, setToken] = useState('');
@@ -43,6 +45,7 @@ export default function ManagementBus(props) {
       if (typeof page == 'number') {
         setCurrentPage(page);
       }
+      setLoading(true);
       try {
         const getListBus = await axiosJWT.post(
           `http://localhost:${props.BACK_END_PORT}/bus/list-bus`,
@@ -85,6 +88,9 @@ export default function ManagementBus(props) {
           });
         }
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 700);
     },
     [state, querySearch, token]
   );
@@ -145,7 +151,9 @@ export default function ManagementBus(props) {
               handleGetListBus={handleGetListBus}
               handleChangeQuerySearch={handleChangeQuerySearch}
             />
-            {listBus.length ? (
+            {loading ? (
+              <CircularProgress isIndeterminate color=" #ffbea8" />
+            ) : listBus.length ? (
               <>
                 <ListBus
                   list={listBus}

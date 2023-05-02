@@ -9,6 +9,7 @@ import {
   useDisclosure,
   useToast,
   Stack,
+  CircularProgress,
 } from '@chakra-ui/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { actions, useStore } from '@/src/store';
@@ -21,6 +22,7 @@ import Cookies from 'js-cookie';
 import { HiOutlineDocumentSearch } from 'react-icons/hi';
 
 export default function ManagementTransport(props) {
+  const [loading, setLoading] = useState(true);
   const [state, dispatch, axiosJWT] = useStore();
   const toast = useToast();
   const toastIdRef = useRef();
@@ -43,6 +45,7 @@ export default function ManagementTransport(props) {
       if (typeof page == 'number') {
         setCurrentPage(page);
       }
+      setLoading(true);
       // const token = `Bearer ${state.dataUser.token}`;
       try {
         const getListTransport = await axiosJWT.post(
@@ -86,6 +89,9 @@ export default function ManagementTransport(props) {
           });
         }
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 700);
     },
     [state, querySearch, token]
   );
@@ -147,7 +153,9 @@ export default function ManagementTransport(props) {
               handleGetListTransport={handleGetListTransport}
               handleChangeQuerySearch={handleChangeQuerySearch}
             />
-            {listTransport.length ? (
+            {loading ? (
+              <CircularProgress isIndeterminate color=" #ffbea8" />
+            ) : listTransport.length ? (
               <>
                 <ListTransport
                   list={listTransport}

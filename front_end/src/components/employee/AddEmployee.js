@@ -336,7 +336,6 @@ export default function AddEmployee(props) {
     }
   }, [props.isOpen]);
 
-  console.log(props.userId);
   return (
     <>
       <Modal isOpen={props.isOpen} onClose={props.onClose} size="md">

@@ -4,6 +4,8 @@ table.bom-table-bus {
   box-shadow: 6px 8px 20px 0px #a7bad3;
   background-color: white;
   text-align: left;
+  font-weight: 500;
+  color: #686868
 }
 table.bom-table-bus  th {
     background-color:#ffbea8;

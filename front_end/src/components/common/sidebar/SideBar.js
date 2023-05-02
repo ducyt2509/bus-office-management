@@ -34,10 +34,8 @@ export default function Sidebar() {
   const [sideBarActive, setActiveSideBar] = useState(0);
   const handleSetActiveSideBar = useCallback(
     async (value) => {
-      console.log("1")
       if (value == 99) {
         try {
-          console.log("log", axiosJWT)
           const logOut = await axiosJWT.post(
             `http://localhost:5000/logout`,
             { id: state.dataUser.id },
@@ -46,12 +44,10 @@ export default function Sidebar() {
               headers: { token: `Bearer ${state.dataUser.token}` },
             }
           );
-          console.log(2, logOut)
           if (logOut.data.statusCode == 200) {
             router.push('/');
           }
         } catch (err) {
-          console.log("BEAN", err);
           if (err.response.data.statusCode == 401) {
 
             toastIdRef.current = toast({
