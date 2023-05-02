@@ -58,12 +58,22 @@ export default function ContactUsHTML() {
 			{/* Header */}
 			<Box
 				fontSize={"3xl"}
-				fontWeight={"bold"}
-				textAlign={"center"}
+				fontWeight={"semibold"}
+				display={"flex"}
+				flexDirection={"column"}
+				alignItems={"center"}
 				marginY={"7"}
 				marginX={["5", "10"]}
 			>
-				<Text>Dùng chữ "Tâm" để phục vụ - Dùng chữ "Tín" để phát triển</Text>
+				<Text textAlign={"center"}>
+					Dùng chữ "Tâm" để phục vụ - Dùng chữ "Tín" để phát triển
+				</Text>
+				<Box
+					backgroundColor={"#F26A4C"}
+					height={"2px"}
+					width={["100%", "100%", "100%", "60%"]}
+					marginTop={"1"}
+				></Box>
 			</Box>
 			{/* Main */}
 			<Box marginX={["5", "10"]}>
@@ -78,8 +88,8 @@ export default function ContactUsHTML() {
 						marginBottom={["5"]}
 					>
 						<Text
-							fontSize={"2xl"}
-							fontWeight={"semibold"}
+							fontSize={"3xl"}
+							fontWeight={"bold"}
 							color={"#F26A4C"}
 						>
 							Công ty vận tải hành khách BOM
@@ -99,7 +109,7 @@ export default function ContactUsHTML() {
 					<Image
 						src="https://phongnhalocals.com/wp-content/uploads/2020/09/Bus-Phong-Nha-To-Ha-Noi-Phong-Nha-Locals-Travel.jpg"
 						alt="BOM passenger-carrier"
-						width={["auto", "auto", "300px", "500px"]}
+						width={["auto", "auto", "300px", "700px"]}
 						height={"auto"}
 					/>
 				</Box>
