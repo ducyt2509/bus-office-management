@@ -17,7 +17,9 @@ import {
   FormErrorMessage,
   useToast,
 } from '@chakra-ui/react';
+import Link from 'next/link';
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { IoIosArrowBack } from 'react-icons/io';
 import { useRouter } from 'next/router';
 import { actions, useStore } from '@/src/store';
 import axios from 'axios';
@@ -69,6 +71,7 @@ export default function BusScheduleDetail(props) {
   const [locationDropOff, setLocationDropOff] = useState([]);
   const [addressDropOff, setAddressDropOff] = useState([]);
   const today = new Date().toISOString().split('T')[0];
+  const [timeRaw, setTimeRaw] = useState(today);
 
   const handleChangeTimeForm = useCallback(
     (e) => {
@@ -169,7 +172,8 @@ export default function BusScheduleDetail(props) {
     [error]
   );
   const handleSubmitData = useCallback(async () => {
-    if (BusSchedule[0]?.effective_date && new Date(BusSchedule[0]?.effective_date) < new Date()) {
+    if (effectiveDate && new Date(effectiveDate) < new Date()) {
+      console.log("bean")
       return;
     }
     let oldError = { ...error };
@@ -251,8 +255,8 @@ export default function BusScheduleDetail(props) {
           submitData.bus_schedule.refresh_date = calcDate(effectiveDate, scheduleExpire);
           submitData.id = BusSchedule[0].id;
           try {
-            const refreshBS = await axiosJWT.put(
-              `http://localhost:${props.BACK_END_PORT}/bus-schedule/update-bus-schedule`,
+            const refreshBS = await axiosJWT.post(
+              `http://localhost:${props.BACK_END_PORT}/bus-schedule/create-bus-schedule`,
               submitData,
               {
                 headers: {
@@ -286,6 +290,7 @@ export default function BusScheduleDetail(props) {
             } else {
               toastIdRef.current = toast({
                 title: err.response.data.data.message,
+
                 description: 'Xảy ra lỗi khi cập nhật lịch trình. Làm ơn hãy thử lại.',
                 status: 'error',
                 isClosable: true,
@@ -436,7 +441,13 @@ export default function BusScheduleDetail(props) {
           setTravelTime(dataBusSchedule.travel_time);
           setDepartureLocationId(dataBusSchedule.departure_location_id);
           setArriveLocationId(dataBusSchedule.arrive_location_id);
-          setEffectiveDate(date_start);
+          if (method == "Refresh") {
+            //bean
+            setEffectiveDate(new Date(new Date(dataBusSchedule.refresh_date).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+          } else {
+            setEffectiveDate(date_start);
+          }
+
           setScheduleStatus(dataBusSchedule.bus_schedule_status);
           setScheduleExpire(dataBusSchedule.bus_schedule_expire);
           setScheduleFrequency(dataBusSchedule.schedule_frequency);
@@ -486,263 +497,274 @@ export default function BusScheduleDetail(props) {
   }, [token]);
 
   return (
-    <div style={{ position: 'relative', left: '20%', width: '80%' }}>
-      <Flex
-        alignItems={'center'}
-        justifyContent="flex-end"
-        width={'84%'}
-        margin="0 auto"
-        marginBottom={'2%'}
-        paddingTop="2%"
-      >
-        <Text marginRight="1%" fontWeight="500">
-          {state.dataUser.user_name}
-        </Text>
-        <Image
-          borderRadius="full"
-          boxSize="50px"
-          src={state.dataUser.avatar ? state.dataUser.avatar : 'https://bit.ly/dan-abramov'}
-        />
-      </Flex>
-      <div style={{ width: '90%', margin: '0 auto' }}>
-        <Heading size="lg" marginBottom={'3%'} textAlign={'center'}>
-          {method == 'Refresh'
-            ? 'Làm mới lịch trình'
-            : router.query.id == 'add'
-              ? 'Thêm lịch trình'
-              : 'Chỉnh sửa thông tin lịch trình'}
-        </Heading>
-        <Card
-          margin={'0 auto'}
-          border={'1px solid'}
-          borderRadius={'50px'}
-          className={'bom-bus-schedule-detail'}
-          marginBottom={'10%'}
-          width={'80%'}
+    <>
+      <Link href={'/admin/management/bus-schedule'}>
+        <Text
+          display={'flex'}
+          alignItems="center"
+          className="bom-back-management"
+          marginLeft={'500px'}
         >
-          <CardBody>
-            <Box marginTop={'8%'}>
-              <FormControl isInvalid={error.route} isRequired>
-                <Box display={'flex'}>
-                  <FormLabel>Tuyến đường:</FormLabel>
-                  <ListRouteOnBusSchedule
-                    state={state}
-                    BACK_END_PORT={props.BACK_END_PORT}
-                    route={route}
-                    setRoute={setRoute}
-                    error={error}
-                    setError={setError}
-                    setLocationPickup={setLocationPickup}
-                    setAddressPickup={setAddressPickup}
-                    setLocationDropOff={setLocationDropOff}
-                    setAddressDropOff={setAddressDropOff}
-                    setDepartureLocationId={setDepartureLocationId}
-                    setArriveLocationId={setArriveLocationId}
-                    axiosJWT={axiosJWT}
-                  />
-                </Box>
-                <FormErrorMessage justifyContent={'flex-end'}>
-                  Tuyến đường là bắt buộc
-                </FormErrorMessage>
-              </FormControl>
-            </Box>
+          <IoIosArrowBack boxSize={16} /> Quay lại
+        </Text>
+      </Link>
+      <div style={{ position: 'relative', left: '20%', width: '80%' }}>
+        <Flex
+          alignItems={'center'}
+          justifyContent="flex-end"
+          width={'84%'}
+          margin="0 auto"
+          marginBottom={'2%'}
+          paddingTop="2%"
+        >
+          <Text marginRight="1%" fontWeight="500">
+            {state.dataUser.user_name}
+          </Text>
+          <Image
+            borderRadius="full"
+            boxSize="50px"
+            src={state.dataUser.avatar ? state.dataUser.avatar : 'https://bit.ly/dan-abramov'}
+          />
+        </Flex>
+        <div style={{ width: '90%', margin: '0 auto' }}>
+          <Heading size="lg" marginBottom={'3%'} textAlign={'center'}>
+            {method == 'Refresh'
+              ? 'Làm mới lịch trình'
+              : router.query.id == 'add'
+                ? 'Thêm lịch trình'
+                : 'Chỉnh sửa thông tin lịch trình'}
+          </Heading>
+          <Card
+            margin={'0 auto'}
+            border={'1px solid'}
+            borderRadius={'50px'}
+            className={'bom-bus-schedule-detail'}
+            marginBottom={'10%'}
+            width={'80%'}
+          >
+            <CardBody>
+              <Box marginTop={'8%'}>
+                <FormControl isInvalid={error.route} isRequired>
+                  <Box display={'flex'}>
+                    <FormLabel>Tuyến đường:</FormLabel>
+                    <ListRouteOnBusSchedule
+                      state={state}
+                      BACK_END_PORT={props.BACK_END_PORT}
+                      route={route}
+                      setRoute={setRoute}
+                      error={error}
+                      setError={setError}
+                      setLocationPickup={setLocationPickup}
+                      setAddressPickup={setAddressPickup}
+                      setLocationDropOff={setLocationDropOff}
+                      setAddressDropOff={setAddressDropOff}
+                      setDepartureLocationId={setDepartureLocationId}
+                      setArriveLocationId={setArriveLocationId}
+                      axiosJWT={axiosJWT}
+                    />
+                  </Box>
+                  <FormErrorMessage justifyContent={'flex-end'}>
+                    Tuyến đường là bắt buộc
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
 
-            <Box>
-              <FormControl isInvalid={error.timeFrom} isRequired>
-                <Box display={'flex'}>
-                  <FormLabel>Giờ khởi hành:</FormLabel>
-                  <Input type={'time'} value={timeFrom} onChange={handleChangeTimeForm} />
-                </Box>
-                <FormErrorMessage justifyContent={'flex-end'}>
-                  Giờ khởi hành là bắt buộc
-                </FormErrorMessage>
-              </FormControl>
-            </Box>
-            <Box>
-              <FormControl isInvalid={error.travelTime} isRequired>
-                <Box display={'flex'}>
-                  <FormLabel>Thời gian di chuyển:</FormLabel>
-                  <InputGroup>
-                    <Input value={travelTime} onChange={handleChangeTravelTime} />
-                    <InputRightAddon children="giờ" />
-                  </InputGroup>
-                </Box>
-                <FormErrorMessage justifyContent={'flex-end'}>
-                  {travelTime
-                    ? 'Thời gian di chuyển sai định dạng'
-                    : 'Thời gian di chuyển là bắt buộc'}
-                </FormErrorMessage>
-              </FormControl>
-            </Box>
-            <Box>
-              <FormControl isInvalid={error.departureLocationId} isRequired>
-                <Box display={'flex'}>
-                  <FormLabel>Điểm xuất phát:</FormLabel>
-                  <ListLocationOnBusSchedule
-                    state={state}
-                    BACK_END_PORT={props.BACK_END_PORT}
-                    location={departureLocationId}
-                    data={BusSchedule}
-                    error={error}
-                    route={route}
-                    setError={setError}
-                    setLocation={setDepartureLocationId}
-                    id={3}
-                    axiosJWT={axiosJWT}
-                  />
-                </Box>
-                <FormErrorMessage justifyContent={'flex-end'}>
-                  Điểm xuất phát là bắt buộc
-                </FormErrorMessage>
-              </FormControl>
-            </Box>
-            <Box>
-              <FormControl isInvalid={error.arriveLocationId} isRequired>
-                <Box display={'flex'}>
-                  <FormLabel>Điểm kết thúc:</FormLabel>
-                  <ListLocationOnBusSchedule
-                    state={state}
-                    route={route}
-                    data={BusSchedule}
-                    BACK_END_PORT={props.BACK_END_PORT}
-                    error={error}
-                    setError={setError}
-                    location={arriveLocationId}
-                    setLocation={setArriveLocationId}
-                    id={4}
-                    axiosJWT={axiosJWT}
-                  />
-                </Box>
-                <FormErrorMessage justifyContent={'flex-end'}>
-                  Điểm kết thúc là bắt buộc
-                </FormErrorMessage>
-              </FormControl>
-            </Box>
+              <Box>
+                <FormControl isInvalid={error.timeFrom} isRequired>
+                  <Box display={'flex'}>
+                    <FormLabel>Giờ khởi hành:</FormLabel>
+                    <Input type={'time'} value={timeFrom} onChange={handleChangeTimeForm} />
+                  </Box>
+                  <FormErrorMessage justifyContent={'flex-end'}>
+                    Giờ khởi hành là bắt buộc
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+              <Box>
+                <FormControl isInvalid={error.travelTime} isRequired>
+                  <Box display={'flex'}>
+                    <FormLabel>Thời gian di chuyển:</FormLabel>
+                    <InputGroup>
+                      <Input value={travelTime} onChange={handleChangeTravelTime} />
+                      <InputRightAddon children="giờ" />
+                    </InputGroup>
+                  </Box>
+                  <FormErrorMessage justifyContent={'flex-end'}>
+                    {travelTime
+                      ? 'Thời gian di chuyển sai định dạng'
+                      : 'Thời gian di chuyển là bắt buộc'}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+              <Box>
+                <FormControl isInvalid={error.departureLocationId} isRequired>
+                  <Box display={'flex'}>
+                    <FormLabel>Điểm xuất phát:</FormLabel>
+                    <ListLocationOnBusSchedule
+                      state={state}
+                      BACK_END_PORT={props.BACK_END_PORT}
+                      location={departureLocationId}
+                      data={BusSchedule}
+                      error={error}
+                      route={route}
+                      setError={setError}
+                      setLocation={setDepartureLocationId}
+                      id={3}
+                      axiosJWT={axiosJWT}
+                    />
+                  </Box>
+                  <FormErrorMessage justifyContent={'flex-end'}>
+                    Điểm xuất phát là bắt buộc
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+              <Box>
+                <FormControl isInvalid={error.arriveLocationId} isRequired>
+                  <Box display={'flex'}>
+                    <FormLabel>Điểm kết thúc:</FormLabel>
+                    <ListLocationOnBusSchedule
+                      state={state}
+                      route={route}
+                      data={BusSchedule}
+                      BACK_END_PORT={props.BACK_END_PORT}
+                      error={error}
+                      setError={setError}
+                      location={arriveLocationId}
+                      setLocation={setArriveLocationId}
+                      id={4}
+                      axiosJWT={axiosJWT}
+                    />
+                  </Box>
+                  <FormErrorMessage justifyContent={'flex-end'}>
+                    Điểm kết thúc là bắt buộc
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
 
-            <Flex>
-              <FormLabel>Điểm đón:</FormLabel>
-              <ListLocationBusSchedule
-                list={BusSchedule[0]?.location_bus_schedule}
-                listLocation={locationPickup}
-                listAddress={addressPickup}
-                setListAddress={setAddressPickup}
-                setListLocation={setLocationPickup}
-                id={5}
-                route={route}
-                state={state}
-                BACK_END_PORT={props.BACK_END_PORT}
-                axiosJWT={axiosJWT}
-              />
-            </Flex>
-            <Flex>
-              <FormLabel>Điểm trả:</FormLabel>
-              <ListLocationBusSchedule
-                list={BusSchedule[0]?.location_bus_schedule}
-                id={6}
-                route={route}
-                listLocation={locationDropOff}
-                listAddress={addressDropOff}
-                setListAddress={setAddressDropOff}
-                setListLocation={setLocationDropOff}
-                state={state}
-                BACK_END_PORT={props.BACK_END_PORT}
-                axiosJWT={axiosJWT}
-              />
-            </Flex>
+              <Flex>
+                <FormLabel>Điểm đón:</FormLabel>
+                <ListLocationBusSchedule
+                  list={BusSchedule[0]?.location_bus_schedule}
+                  listLocation={locationPickup}
+                  listAddress={addressPickup}
+                  setListAddress={setAddressPickup}
+                  setListLocation={setLocationPickup}
+                  id={5}
+                  route={route}
+                  state={state}
+                  BACK_END_PORT={props.BACK_END_PORT}
+                  axiosJWT={axiosJWT}
+                />
+              </Flex>
+              <Flex>
+                <FormLabel>Điểm trả:</FormLabel>
+                <ListLocationBusSchedule
+                  list={BusSchedule[0]?.location_bus_schedule}
+                  id={6}
+                  route={route}
+                  listLocation={locationDropOff}
+                  listAddress={addressDropOff}
+                  setListAddress={setAddressDropOff}
+                  setListLocation={setLocationDropOff}
+                  state={state}
+                  BACK_END_PORT={props.BACK_END_PORT}
+                  axiosJWT={axiosJWT}
+                />
+              </Flex>
 
-            <Box>
-              <FormControl isInvalid={error.price} isRequired>
-                <Box display={'flex'}>
-                  <FormLabel>Giá vé:</FormLabel>
-                  <Input value={price} onChange={handleChangePrice} />
-                </Box>
-                <FormErrorMessage justifyContent={'flex-end'}>
-                  {price ? 'Giá vé sai định dạng' : 'Giá vé là bắt buộc'}
-                </FormErrorMessage>
-              </FormControl>
-            </Box>
+              <Box>
+                <FormControl isInvalid={error.price} isRequired>
+                  <Box display={'flex'}>
+                    <FormLabel>Giá vé:</FormLabel>
+                    <Input value={price} onChange={handleChangePrice} />
+                  </Box>
+                  <FormErrorMessage justifyContent={'flex-end'}>
+                    {price ? 'Giá vé sai định dạng' : 'Giá vé là bắt buộc'}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
 
-            <Box>
-              <FormControl isRequired>
-                <Box display={'flex'}>
-                  <FormLabel>Tình trạng lịch trình:</FormLabel>
-                  <Select value={scheduleStatus} onChange={handleChangeScheduleStatus}>
-                    <option value={'0'}>Không hoạt động</option>
-                    <option value={'1'}>Hoạt động</option>
-                  </Select>
-                </Box>
-              </FormControl>
-            </Box>
+              <Box>
+                <FormControl isRequired>
+                  <Box display={'flex'}>
+                    <FormLabel>Tình trạng lịch trình:</FormLabel>
+                    <Select value={scheduleStatus} onChange={handleChangeScheduleStatus}>
+                      <option value={'0'}>Không hoạt động</option>
+                      <option value={'1'}>Hoạt động</option>
+                    </Select>
+                  </Box>
+                </FormControl>
+              </Box>
 
-            <Box>
-              <FormControl isInvalid={error.scheduleFrequency} isRequired>
-                <Box display={'flex'}>
-                  <FormLabel marginBottom="0">Tần suất xe hoạt động:</FormLabel>
-                  <InputGroup>
-                    <Input value={scheduleFrequency} onChange={handleChangeScheduleFrequency} />
-                    <InputRightAddon children="ngày mỗi một chuyến" />
-                  </InputGroup>
-                </Box>
-                <FormErrorMessage justifyContent={'flex-end'}>
-                  {scheduleFrequency
-                    ? 'Tần suất xe hoạt động sai định dạng'
-                    : 'Tần suất xe hoạt động là bắt buộc'}
-                </FormErrorMessage>
-              </FormControl>
-            </Box>
+              <Box>
+                <FormControl isInvalid={error.scheduleFrequency} isRequired>
+                  <Box display={'flex'}>
+                    <FormLabel marginBottom="0">Tần suất xe hoạt động:</FormLabel>
+                    <InputGroup>
+                      <Input value={scheduleFrequency} onChange={handleChangeScheduleFrequency} />
+                      <InputRightAddon children="ngày mỗi một chuyến" />
+                    </InputGroup>
+                  </Box>
+                  <FormErrorMessage justifyContent={'flex-end'}>
+                    {scheduleFrequency
+                      ? 'Tần suất xe hoạt động sai định dạng'
+                      : 'Tần suất xe hoạt động là bắt buộc'}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
 
-            <Box>
-              <FormControl isInvalid={error.scheduleExpire} isRequired>
-                <Box display={'flex'}>
-                  <FormLabel marginBottom="0">Kỳ hạn cho phép khách đặt trước:</FormLabel>
-                  <InputGroup>
-                    <Input value={scheduleExpire} onChange={handleChangeScheduleExpire} />
-                    <InputRightAddon children="ngày" />
-                  </InputGroup>
-                </Box>
-                <FormErrorMessage justifyContent={'flex-end'}>
-                  {scheduleExpire
-                    ? 'Kỳ hạn cho phép khách đặt trước sai định dạng'
-                    : 'Kỳ hạn cho phép khách đặt trước là bắt buộc'}
-                </FormErrorMessage>
-              </FormControl>
-            </Box>
-            <Box>
-              <FormControl isInvalid={error.effectiveDate} isRequired>
-                <Box display={'flex'}>
-                  <FormLabel marginBottom="0">Ngày lịch trình có hiệu lực:</FormLabel>
-                  <Input
-                    disabled={
-                      (method != 'Refresh' && router.query.id != 'add') || refreshDate <= today
-                    }
-                    value={
-                      (method != 'Refresh') && (router.query.id != 'add')
-                        ? effectiveDate
-                        : new Date().toISOString().split('T')[0]
-                    }
-                    type={'date'}
-                    min={today}
-                    onChange={handleChangeEffectiveDate}
-                  />
-                </Box>
-                <FormErrorMessage justifyContent={'flex-end'}>
-                  Ngày lịch trình có hiệu lực là bắt buộc
-                </FormErrorMessage>
-              </FormControl>
-            </Box>
-          </CardBody>
-          <CardFooter justifyContent={'center'}>
-            <Button
-              onClick={handleSubmitData}
-              colorScheme="linkedin"
-              cursor={new Date(effectiveDate) < new Date() ? 'not-allowed' : 'pointer'}
-            >
-              Lưu
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    </div>
+              <Box>
+                <FormControl isInvalid={error.scheduleExpire} isRequired>
+                  <Box display={'flex'}>
+                    <FormLabel marginBottom="0">Kỳ hạn cho phép khách đặt trước:</FormLabel>
+                    <InputGroup>
+                      <Input value={scheduleExpire} onChange={handleChangeScheduleExpire} />
+                      <InputRightAddon children="ngày" />
+                    </InputGroup>
+                  </Box>
+                  <FormErrorMessage justifyContent={'flex-end'}>
+                    {scheduleExpire
+                      ? 'Kỳ hạn cho phép khách đặt trước sai định dạng'
+                      : 'Kỳ hạn cho phép khách đặt trước là bắt buộc'}
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+              <Box>
+                <FormControl isInvalid={error.effectiveDate} isRequired>
+                  <Box display={'flex'}>
+                    <FormLabel marginBottom="0">Ngày lịch trình có hiệu lực:</FormLabel>
+                    <Input
+                      disabled={
+                        (method != 'Refresh' && router.query.id != 'add') || refreshDate <= today
+                      }
+                      value={
+                        effectiveDate
+                      }
+                      type={'date'}
+                      min={timeRaw}
+                      onChange={handleChangeEffectiveDate}
+                    />
+                  </Box>
+                  <FormErrorMessage justifyContent={'flex-end'}>
+                    Ngày lịch trình có hiệu lực là bắt buộc
+                  </FormErrorMessage>
+                </FormControl>
+              </Box>
+            </CardBody>
+            <CardFooter justifyContent={'center'}>
+              <Button
+                onClick={handleSubmitData}
+                colorScheme="linkedin"
+                cursor={new Date(effectiveDate) < new Date() ? 'not-allowed' : 'pointer'}
+                title={new Date(effectiveDate) < new Date() ? "Không thể cập nhật vì ngày hiệu lực nhỏ hơn ngày hôm nay" : ""}
+              >
+                Lưu
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </div >
+    </>
   );
 }
 export async function getServerSideProps(context) {

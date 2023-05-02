@@ -16,8 +16,38 @@ module.exports = {
         city_id: 47,
       },
       {
+        office_name: 'Văn Phòng Trần Vỹ',
+        office_address: ' Số 1 Trần Vỹ, Mai Dịch, Cầu Giấy, Hà Nội',
+        city_id: 47,
+      },
+      {
+        office_name: 'Văn Phòng Nguyễn Quý Đức',
+        office_address: ' Số 1 Nguyễn Quý Đức, Thanh Xuân, Hà Nội',
+        city_id: 47,
+      },
+      {
+        office_name: 'Văn Phòng Lê Hữu Trác',
+        office_address: ' Số 1 Lê Hữu Trác, Hà Đông, Hà Nội',
+        city_id: 47,
+      },
+      {
         office_name: 'Văn Phòng Nam Định',
         office_address: '272 Trần Hưng Đạo, Bà Triệu, TP. Nam Định, Nam Định',
+        city_id: 14,
+      },
+      {
+        office_name: 'Văn Phòng Nghĩa Hưng',
+        office_address: 'D1 Nghĩa Thành, Nghĩa Hưng, Nam Định',
+        city_id: 14,
+      },
+      {
+        office_name: 'Văn Phòng Liễu Đề',
+        office_address: 'X1 Liễu Đề, Nghĩa Hưng, Nam Định',
+        city_id: 14,
+      },
+      {
+        office_name: 'Văn Phòng Nam Trực',
+        office_address: 'D1 Nam Giang, Nam Trực, Nam Định',
         city_id: 14,
       },
       {

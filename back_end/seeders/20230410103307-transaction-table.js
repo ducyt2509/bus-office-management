@@ -7,7 +7,7 @@ module.exports = {
     return queryInterface.bulkInsert('transaction', [
       {
         passenger_name: "Lương Việt Thắng",
-        passenger_phone: "+84946946190",
+        passenger_phone: "+84377272595",
         passenger_email: "Customer1@gmail.com",
         note: "Có người già đi cùng",
         cashier: 0,
@@ -24,7 +24,7 @@ module.exports = {
 
       {
         passenger_name: "Nguyễn Ngọc Anh",
-        passenger_phone: "+84946946111",
+        passenger_phone: "+84373854710",
         passenger_email: "Customer2@gmail.com",
         note: "",
         cashier: 0,
@@ -41,7 +41,7 @@ module.exports = {
 
       {
         passenger_name: "Đinh Tri Kiến",
-        passenger_phone: "+84946946222",
+        passenger_phone: "+84846530079",
         passenger_email: "Customer3@gmail.com",
         note: "",
         cashier: 0,
@@ -58,7 +58,7 @@ module.exports = {
 
       {
         passenger_name: "Trần Huy Hoàng",
-        passenger_phone: "+84946946222",
+        passenger_phone: "+84986092375",
         passenger_email: "Customer4@gmail.com",
         note: "Có người già đi cùng",
         cashier: 0,
@@ -75,7 +75,7 @@ module.exports = {
 
       {
         passenger_name: "Nguyễn Thái Hòa",
-        passenger_phone: "+84946946333",
+        passenger_phone: "+84917879189",
         passenger_email: "Customer5@gmail.com",
         note: "",
         cashier: 0,
@@ -92,7 +92,7 @@ module.exports = {
 
       {
         passenger_name: "Nguyễn Trung Đức",
-        passenger_phone: "+84946946444",
+        passenger_phone: "+84914368311",
         passenger_email: "Customer6@gmail.com",
         note: "",
         cashier: 0,
@@ -106,6 +106,24 @@ module.exports = {
         seat: "B3",
         transport_id: 1
       },
+
+      {
+        passenger_name: "Nguyễn Thái Hòa",
+        passenger_phone: "+84988264622",
+        passenger_email: "Customer6@gmail.com",
+        note: "",
+        cashier: 0,
+        pickup_location: "08:10 - Văn Phòng Nam Định",
+        drop_off_location: "10:08 - Văn Phòng Trần Vỹ",
+        date_detail: "2023-04-17  07:30-11:00",
+        ticket_price: 60000,
+        created_at: "2023-04-18",
+        created_by: 0,
+        payment_status: 2,
+        seat: "C1",
+        transport_id: 1
+      },
+
 
 
     ]);

@@ -57,8 +57,13 @@ module.exports = {
       },
 
       {
-        location_name: 'Văn Phòng Nghĩa Hưng',
+        location_name: 'Văn Phòng Liễu Đề',
         address: 'Liễu Đề, Nghĩa Hưng, Nam Định',
+        city_id: 14,
+      },
+      {
+        location_name: 'Văn Phòng Nghĩa Hưng',
+        address: 'Nghĩa Hưng, Nghĩa Hưng, Nam Định',
         city_id: 14,
       },
       {

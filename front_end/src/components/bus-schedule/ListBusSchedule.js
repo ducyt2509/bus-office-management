@@ -257,7 +257,9 @@ export default function ListBusSchedule(props) {
         <td>
           {effective_date} / {refresh_date}
         </td>
-        {isRenewal ? <td style={{ color: "red", fontWeight: "bold" }}>Sắp hết hạn</td> : <td style={{ color: "green", fontWeight: "bold" }} > Đang hoạt động</td>}
+        {isRenewal ? <td  > <div className="bom-bus-status  no-active">Sắp hết hạn</div> </td>
+          : <td> <div className="bom-bus-status active">Đang hoạt động</div> </td>
+        }
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
             <IconButton
@@ -284,7 +286,7 @@ export default function ListBusSchedule(props) {
             />
           </Stack>
         </td>
-      </tr>
+      </tr >
     );
   });
   return (
@@ -293,13 +295,13 @@ export default function ListBusSchedule(props) {
       <table style={{ width: '100%', textAlign: 'center' }} className="bom-table-bus">
         <thead>
           <tr>
-            <td>STT</td>
-            <td>Tuyến đường</td>
-            <td>Giờ đi - giờ đến</td>
-            <td>Giá vé</td>
-            <td>Thời hạn</td>
-            <td>Trạng thái</td>
-            <td>Thao tác</td>
+            <th>STT</th>
+            <th>Tuyến đường</th>
+            <th>Giờ đi - giờ đến</th>
+            <th>Giá vé</th>
+            <th>Thời hạn</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>{ListBusScheduleHTML}</tbody>
