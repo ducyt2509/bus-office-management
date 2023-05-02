@@ -425,12 +425,15 @@ export default function Ticket(props) {
 
   useEffect(() => {
     let userData = Cookies.get('dataUser') ? Cookies.get('dataUser') : '';
+    let accessToken = '';
     try {
       userData = JSON.parse(userData);
+      accessToken = userData?.token;
     } catch (error) {
       userData = {};
     }
     dispatch(actions.setDataUser(userData));
+    setToken(accessToken);
     if (token && userData?.role_id == 1) {
       handleTotalRenewal();
     }

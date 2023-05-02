@@ -100,7 +100,6 @@ export default function AddTransport(props) {
       bus_id: busPlate,
       departure_date: departureDate,
     };
-    console.log(submitData)
     if (props.locationId) {
       submitData.id = props.locationId;
       try {

@@ -173,7 +173,6 @@ export default function BusScheduleDetail(props) {
   );
   const handleSubmitData = useCallback(async () => {
     if (effectiveDate && new Date(effectiveDate) < new Date()) {
-      console.log("bean")
       return;
     }
     let oldError = { ...error };

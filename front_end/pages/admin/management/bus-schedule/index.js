@@ -8,6 +8,7 @@ import {
   Image,
   useToast,
   Stack,
+  CircularProgress,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import ActionBar from '@/src/components/bus-schedule/ActionBar';
@@ -20,6 +21,7 @@ import Cookies from 'js-cookie';
 import { HiOutlineDocumentSearch } from 'react-icons/hi';
 
 export default function ManagementBusSchedule(props) {
+  const [loading, setLoading] = useState(true);
   const [token, setToken] = useState('');
   const router = useRouter();
   const toast = useToast();
@@ -39,6 +41,7 @@ export default function ManagementBusSchedule(props) {
         setCurrentPage(page);
       }
       const offset = limit * (page - 1);
+      setLoading(true);
       try {
         const getListBusSchedule = await axiosJWT.post(
           `http://localhost:${props.BACK_END_PORT}/bus-schedule/list-bus-schedule`,
@@ -81,6 +84,9 @@ export default function ManagementBusSchedule(props) {
           });
         }
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 700);
     },
     [state, querySearch, token]
   );
@@ -107,12 +113,74 @@ export default function ManagementBusSchedule(props) {
     });
   });
 
+  const handleTotalRenewal = useCallback(async () => {
+    try {
+      const getTotalRenewal = await axiosJWT.get(
+        `http://localhost:${props.BACK_END_PORT}/bus-schedule/check-renewal-bus-schedule`,
+        {
+          headers: {
+            token: token,
+          },
+        }
+      );
+      if (getTotalRenewal.data.statusCode == 200) {
+        let totalRenewal = getTotalRenewal.data.data.totalBSNeedRenewal;
+        if (totalRenewal && totalRenewal > 0) {
+          let toastRenew = setTimeout(() => {
+            toastIdRef.current = toast({
+              title: 'Lịch trình xe cần được cập nhật.',
+              description: `Có ${totalRenewal} lịch trình sắp hết hạn`,
+              status: 'warning',
+              isClosable: true,
+              position: 'top',
+              duration: 10000,
+            });
+          }, 3000);
+          return () => {
+            clearTimeout(toastRenew);
+          };
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Xảy ra lỗi khi thao tác. Làm ơn hãy thử lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
+    }
+  }, [token]);
+
   useEffect(() => {
-    const userData = Cookies.get('dataUser');
-    dispatch(actions.setDataUser(JSON.parse(userData)));
-    setToken(`Bearer ${JSON.parse(userData).token}`);
+    let userData = Cookies.get('dataUser') ? Cookies.get('dataUser') : '';
+    let accessToken = '';
+    try {
+      userData = JSON.parse(userData);
+      accessToken = `Bearer ${userData?.token}`;
+    } catch (error) {
+      userData = {};
+    }
+    dispatch(actions.setDataUser(userData));
+    setToken(accessToken);
     if (token) {
       handleGetListBusSchedule();
+      if (userData?.role_id == 1) {
+        handleTotalRenewal();
+      }
     }
   }, [token]);
 
@@ -144,7 +212,9 @@ export default function ManagementBusSchedule(props) {
               handleChangeQuerySearch={handleChangeQuerySearch}
               handleGetBusScheduleInformation={handleGetBusScheduleInformation}
             />
-            {listBusSchedule.length ? (
+            {loading ? (
+              <CircularProgress isIndeterminate color=" #ffbea8" />
+            ) : listBusSchedule.length ? (
               <>
                 <ListBusSchedule
                   list={listBusSchedule}
