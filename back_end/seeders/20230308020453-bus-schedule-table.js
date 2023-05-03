@@ -7,7 +7,7 @@ module.exports = {
     return queryInterface.bulkInsert('bus_schedule', [
       // HÀ NỘI - NAM ĐỊNH
 
-      // BS 1 
+      // BS 1
       {
         route_id: 1,
         price: 100000,
@@ -16,7 +16,7 @@ module.exports = {
         departure_location_id: 2,
         arrive_location_id: 9,
         effective_date: '2023-04-15',
-        refresh_date: "2023-05-14",
+        refresh_date: '2023-05-14',
         bus_schedule_status: 1,
         schedule_frequency: 1,
         bus_schedule_expire: 7,
@@ -30,7 +30,7 @@ module.exports = {
         departure_location_id: 2,
         arrive_location_id: 9,
         effective_date: '2023-04-15',
-        refresh_date: "2023-05-14",
+        refresh_date: '2023-05-14',
         bus_schedule_status: 1,
         schedule_frequency: 1,
         bus_schedule_expire: 7,
@@ -43,23 +43,22 @@ module.exports = {
         departure_location_id: 2,
         arrive_location_id: 9,
         effective_date: '2023-04-15',
-        refresh_date: "2023-05-14",
+        refresh_date: '2023-05-14',
         bus_schedule_status: 1,
         schedule_frequency: 1,
         bus_schedule_expire: 7,
       },
 
-
-      // BS 1 
+      // BS 1
       {
         route_id: 2,
         price: 100000,
-        time_from: 7.5,
+        time_from: 8,
         travel_time: 3,
         departure_location_id: 9,
         arrive_location_id: 2,
         effective_date: '2023-04-15',
-        refresh_date: "2023-05-14",
+        refresh_date: '2023-05-14',
         bus_schedule_status: 1,
         schedule_frequency: 1,
         bus_schedule_expire: 7,
@@ -68,30 +67,29 @@ module.exports = {
       {
         route_id: 2,
         price: 100000,
-        time_from: 12,
+        time_from: 13,
         travel_time: 3,
         departure_location_id: 9,
         arrive_location_id: 2,
         effective_date: '2023-04-15',
-        refresh_date: "2023-05-14",
+        refresh_date: '2023-05-14',
         bus_schedule_status: 1,
         schedule_frequency: 1,
         bus_schedule_expire: 7,
       },
       {
         route_id: 2,
-        price: 100000,
-        time_from: 16.5,
+        price: 170000,
+        time_from: 17,
         travel_time: 3,
         departure_location_id: 9,
         arrive_location_id: 2,
         effective_date: '2023-04-15',
-        refresh_date: "2023-05-14",
+        refresh_date: '2023-05-14',
         bus_schedule_status: 1,
         schedule_frequency: 1,
         bus_schedule_expire: 7,
       },
-   
 
       {
         route_id: 4,
@@ -101,7 +99,7 @@ module.exports = {
         departure_location_id: 10,
         arrive_location_id: 1,
         effective_date: '2023-04-15',
-        refresh_date: "2023-05-14",
+        refresh_date: '2023-05-14',
         bus_schedule_status: 1,
         schedule_frequency: 1,
         bus_schedule_expire: 7,
@@ -115,7 +113,7 @@ module.exports = {
         departure_location_id: 2,
         arrive_location_id: 13,
         effective_date: '2023-04-15',
-        refresh_date: "2023-05-14",
+        refresh_date: '2023-05-14',
         bus_schedule_status: 1,
         schedule_frequency: 1,
         bus_schedule_expire: 7,
@@ -129,7 +127,7 @@ module.exports = {
         departure_location_id: 13,
         arrive_location_id: 2,
         effective_date: '2023-04-15',
-        refresh_date: "2023-05-14",
+        refresh_date: '2023-05-14',
         bus_schedule_status: 1,
         schedule_frequency: 1,
         bus_schedule_expire: 7,
@@ -143,7 +141,7 @@ module.exports = {
         departure_location_id: 1,
         arrive_location_id: 9,
         effective_date: '2023-04-15',
-        refresh_date: "2023-05-14",
+        refresh_date: '2023-05-14',
         bus_schedule_status: 1,
         schedule_frequency: 1,
         bus_schedule_expire: 7,
@@ -157,7 +155,7 @@ module.exports = {
         departure_location_id: 1,
         arrive_location_id: 9,
         effective_date: '2023-04-15',
-        refresh_date: "2023-05-14",
+        refresh_date: '2023-05-14',
         bus_schedule_status: 1,
         schedule_frequency: 1,
         bus_schedule_expire: 7,
@@ -171,7 +169,7 @@ module.exports = {
         departure_location_id: 1,
         arrive_location_id: 9,
         effective_date: '2023-04-20',
-        refresh_date: "2023-05-14",
+        refresh_date: '2023-05-14',
         bus_schedule_status: 1,
         schedule_frequency: 1,
         bus_schedule_expire: 7,
@@ -183,7 +181,6 @@ module.exports = {
   },
 };
 
-
 const hello = () => {
   return 'Hello, world!';
-}
+};

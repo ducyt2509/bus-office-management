@@ -23,6 +23,7 @@ export default function Seat12User(props) {
       departureDay={props.departureDay}
       axiosJWT={props.axiosJWT}
       token={props.token}
+      isEnableEdit={props.isEnableEdit}
     />
   );
   const seatHTML = (id) => {
