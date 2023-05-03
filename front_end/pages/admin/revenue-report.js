@@ -98,6 +98,7 @@ export default function RevenueReport(props) {
 						},
 					),
 				]);
+				console.log(getListRevenue)
 				if (getListRevenue.data.statusCode == 200) {
 					setListRevenue(getListRevenue.data.data.list_revenue);
 					setNumberRevenue(getListRevenue.data.data.number_revenue);

@@ -7,7 +7,7 @@ module.exports = {
     return queryInterface.bulkInsert('vehicle_type', [
       { vehicle_type_name: '12 chỗ', number_seat: 12 },
       { vehicle_type_name: '22 chỗ', number_seat: 22 },
-      { vehicle_type_name: '36 chỗ', number_seat: 36 },
+      { vehicle_type_name: '38 chỗ', number_seat: 38 },
       { vehicle_type_name: '40 chỗ', number_seat: 40 },
       { vehicle_type_name: '44 chỗ', number_seat: 44 },
     ]);

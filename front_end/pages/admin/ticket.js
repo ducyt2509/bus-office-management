@@ -482,6 +482,7 @@ export default function Ticket(props) {
       });
       if (new Date() >= new Date(departureDay)) {
         editStatus = false;
+        addStatus = false;
       }
       setEditButtonStatus(editStatus);
       setDeleteButtonStatus(deleteStatus);
@@ -797,6 +798,7 @@ export default function Ticket(props) {
         departureDay={departureDay}
         axiosJWT={axiosJWT}
         token={`Bearer ${state.dataUser.token}`}
+        isEnableEdit={new Date() >= new Date(departureDay)}
       />
     ) : scheduleData && transportData && transportData.bus[0]?.vehicle_type_id == 2 ? (
       <Seat22User
@@ -817,6 +819,7 @@ export default function Ticket(props) {
         departureDay={departureDay}
         axiosJWT={axiosJWT}
         token={`Bearer ${state.dataUser.token}`}
+        isEnableEdit={new Date() >= new Date(departureDay)}
       />
     ) : scheduleData && transportData && transportData.bus[0]?.vehicle_type_id == 3 ? (
       <Seat38User
@@ -837,6 +840,7 @@ export default function Ticket(props) {
         departureDay={departureDay}
         axiosJWT={axiosJWT}
         token={`Bearer ${state.dataUser.token}`}
+        isEnableEdit={new Date() >= new Date(departureDay)}
       />
     ) : scheduleData && transportData && transportData.bus[0]?.vehicle_type_id == 4 ? (
       <Seat40User
@@ -857,6 +861,7 @@ export default function Ticket(props) {
         departureDay={departureDay}
         axiosJWT={axiosJWT}
         token={`Bearer ${state.dataUser.token}`}
+        isEnableEdit={new Date() >= new Date(departureDay)}
       />
     ) : scheduleData && transportData && transportData.bus[0]?.vehicle_type_id == 5 ? (
       <Seat44User
@@ -877,6 +882,7 @@ export default function Ticket(props) {
         departureDay={departureDay}
         axiosJWT={axiosJWT}
         token={`Bearer ${state.dataUser.token}`}
+        isEnableEdit={new Date() >= new Date(departureDay)}
       />
     ) : null;
 
