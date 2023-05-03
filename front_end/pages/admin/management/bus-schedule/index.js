@@ -64,7 +64,7 @@ export default function ManagementBusSchedule(props) {
           }
         }
       } catch (err) {
-        console.log("BEAN", err)
+        console.log('BEAN', err);
         if (err.response.data.statusCode == 401) {
           toastIdRef.current = toast({
             title: 'Phiên của bạn đã hết hạn.',
@@ -99,12 +99,13 @@ export default function ManagementBusSchedule(props) {
     }
   });
   const handleGetBusScheduleInformation = useCallback((id, conditionEdit, status) => {
-    if (conditionEdit && status != "view") {
+    return;
+    if (conditionEdit && status != 'view') {
       return;
     }
     router.push({
       pathname: '/admin/management/bus-schedule/[id]',
-      query: { id: id, status: "view" },
+      query: { id: id, status: status },
     });
   });
   const handleRefreshScheduleInformation = useCallback((id) => {
