@@ -136,11 +136,13 @@ export default function Payment(props) {
 				w="80%"
 				margin={"3% auto 2%"}
 				justifyContent="space-between"
+				flexWrap="wrap"
 			>
 				<FormControl
 					isInvalid={error}
-					w="66%"
+					flexBasis={{ base: "100%", lg: "66%" }}
 					isRequired
+					marginBottom={"4%"}
 				>
 					<FormLabel
 						fontSize={"20px"}
@@ -202,7 +204,7 @@ export default function Payment(props) {
 						</CardBody>
 					</Card>
 				</FormControl>
-				<Box w={"30%"}>
+				<Box flexBasis={{ base: "100%", lg: "30%" }}>
 					<Text
 						fontSize={"20px"}
 						fontWeight="500"
@@ -311,21 +313,29 @@ export default function Payment(props) {
 					</Flex>
 				</Box>
 			</Flex>
+
 			<Flex
 				borderTop="2px solid rgb(217, 217, 217)"
 				alignItems={"center"}
 				justifyContent="space-evenly"
+				flexDirection={{ base: "column", lg: "row" }}
 			>
 				<Button
 					backgroundColor={"#F26A4C"}
 					color="#fff"
-					padding="2% 10%"
-					margin="2% 0"
+					// padding="2% 10%"
+					padding={{ base: "4% 15%", lg: "2% 10%" }}
+					margin="3%"
 					onClick={handleBookingTicket}
 				>
 					HOÀN THÀNH THANH TOÁN
 				</Button>
-				<Text color={"#686868"}>
+				<Text
+					color={"#686868"}
+					marginTop={{ base: "2%", lg: "0" }}
+					// padding left and right and upper and bottom 5%
+					padding="5%"
+				>
 					Bằng việc nhấn nút "HOÀN THÀNH THANH TOÁN", bạn đồng ý với Chính sách bảo mật thanh
 					toán
 				</Text>
