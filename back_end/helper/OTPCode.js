@@ -26,7 +26,7 @@ const sendCodeOTP = async function (phone) {
       client.messages
         .create({
           body: `Mã xác thực của bạn là: ${otpCode}`,
-          from: '+1 320 391 9731',
+          from: '+15076094750',
           to: phone,
         })
         .then((messages) => console.log(messages))

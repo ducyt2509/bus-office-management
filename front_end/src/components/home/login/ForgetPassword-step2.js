@@ -56,9 +56,10 @@ export default function ForgetPasswordStep2(props) {
   if (phone) {
     phone = phone.replace('+84', '0').substring(0, 5) + '******';
   }
+  console.log(props.otpCode);
   useEffect(() => {
     if (props.showCountdownTime) {
-      setTimeout(() => {
+      let inputOTP = setTimeout(() => {
         const inputs = document.querySelectorAll(
             'div.bom-login > div.bom-login-left > div > div.bom-login-form > .chakra-stack input'
           ),
@@ -107,7 +108,10 @@ export default function ForgetPasswordStep2(props) {
       let countdownTime = setInterval(() => {
         props.setCountdown((prev) => prev - 1);
       }, 1000);
-      return () => clearInterval(countdownTime);
+      return () => {
+        clearInterval(countdownTime);
+        clearTimeout(inputOTP);
+      };
     }
   }, [props.countdown, props.showCountdownTime]);
   return (
@@ -135,7 +139,12 @@ export default function ForgetPasswordStep2(props) {
             </Text>
           )}
         </div>
-        <Button variant="solid" onClick={props.handleForgetPassword} className="bom-button-verify" isLoading={props.loading}>
+        <Button
+          variant="solid"
+          onClick={props.handleForgetPassword}
+          className="bom-button-verify"
+          isLoading={props.loading}
+        >
           Xác thực
         </Button>
         {props.stepForgetPasswordHTML}
