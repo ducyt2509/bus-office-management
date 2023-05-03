@@ -64,6 +64,7 @@ export default function Seat40User(props) {
       departureDay={props.departureDay}
       axiosJWT={props.axiosJWT}
       token={props.token}
+      isEnableEdit={props.isEnableEdit}
     />
   );
   const seatHTML = (id) => {
@@ -86,10 +87,10 @@ export default function Seat40User(props) {
         border={'1px solid'}
         padding="5px 10px"
         fontWeight={600}
-        minW="80px"
-        maxW="80px"
-        minH={'70px'}
-        maxH={'70px'}
+        minW="155px"
+        maxW="155px"
+        minH={'96px'}
+        maxH={'96px'}
         marginRight={'10px'}
         cursor={'pointer'}
         backgroundColor={props.seatSelected.includes(id) ? '#F2CAC2' : '#fff'}
@@ -120,14 +121,14 @@ export default function Seat40User(props) {
             </Flex>
           </>
         ) : (
-          <AddIcon position={'relative'} left="22px" top="18px" />
+          <AddIcon position={'relative'} left="60px" top="30px" />
         )}
       </Box>
     );
   };
 
   return (
-    <Flex justifyContent={'space-around'}>
+    <>
       <Card backgroundColor={'#F5F5F5'} margin="3% 0">
         <Text textAlign={'center'} fontWeight={'500'}>
           Tầng 1
@@ -215,6 +216,6 @@ export default function Seat40User(props) {
         </CardBody>
       </Card>
       {ModalHTML}
-    </Flex>
+    </>
   );
 }

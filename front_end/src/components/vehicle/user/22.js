@@ -46,6 +46,7 @@ export default function Seat22User(props) {
       departureDay={props.departureDay}
       axiosJWT={props.axiosJWT}
       token={props.token}
+      isEnableEdit={props.isEnableEdit}
     />
   );
   const seatHTML = (id) => {
@@ -109,7 +110,7 @@ export default function Seat22User(props) {
   };
 
   return (
-    <Flex justifyContent={"space-around"}>
+    <Flex justifyContent={'space-around'}>
       <Card backgroundColor={'#F5F5F5'} margin="3% 0">
         <Text textAlign={'center'} fontWeight={'500'}>
           Tầng 1

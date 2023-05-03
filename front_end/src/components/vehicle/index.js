@@ -1,7 +1,7 @@
 // khách
 export { default as Seat12 } from './customer/12';
 export { default as Seat22 } from './customer/22';
-export { default as Seat36 } from './customer/38';
+export { default as Seat38 } from './customer/38';
 export { default as Seat40 } from './customer/40';
 export { default as Seat44 } from './customer/44';
 
