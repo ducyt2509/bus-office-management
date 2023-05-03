@@ -228,7 +228,7 @@ export default function ListBusSchedule(props) {
     // check nếu ngày hôm nay lớn hơn hoặc bằng thời gian cần gia hạn thì sẽ set style thành màu đỏ
     const checkTime =
       new Date().getTime() >=
-        new Date(busSchedule.refresh_date).getTime() -
+      new Date(busSchedule.refresh_date).getTime() -
         (busSchedule.bus_schedule_expire / 2) * 24 * 60 * 60 * 1000
         ? true
         : false;
@@ -248,19 +248,28 @@ export default function ListBusSchedule(props) {
     }
     return (
       <tr
-      onClick={() => props.handleGetBusScheduleInformation(busSchedule.id)}
+        onClick={() => props.handleGetBusScheduleInformation(busSchedule.id, conditionEdit, 'view')}
+        style={{ cursor: 'pointer' }}
       >
         <td>{index + 1}</td>
         <td>{city_from_to}</td>
         <td>{time_from_to}</td>
         <td>{formatMoney(busSchedule.price)}</td>
-        <td>
-          {effective_date}
-        </td>
+        <td>{effective_date}</td>
         <td> {refresh_date}</td>
-        {isRenewal ? <td  > <div className="bom-bus-status  no-active">Sắp hết hạn</div> </td>
-          : <td> <div className="bom-bus-status active">Đang hoạt động</div> </td>
-        }
+        {isRenewal ? (
+          <td>
+            {' '}
+            <div className="bom-bus-status  no-active" style={{ fontSize: '12px' }}>
+              Sắp hết hạn
+            </div>{' '}
+          </td>
+        ) : (
+          <td>
+            {' '}
+            <div className="bom-bus-status active" style={{ fontSize: '8px' }}>Đang hoạt động</div>{' '}
+          </td>
+        )}
         <td>
           <Stack spacing={2} direction="row" align="center" justifyContent={'center'}>
             <IconButton
@@ -287,7 +296,7 @@ export default function ListBusSchedule(props) {
             />
           </Stack>
         </td>
-      </tr >
+      </tr>
     );
   });
   return (

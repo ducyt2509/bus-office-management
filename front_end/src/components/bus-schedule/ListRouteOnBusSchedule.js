@@ -101,6 +101,9 @@ export default function ListRouteOnBusSchedule(props) {
   });
 
   const handleOpenSelect = () => {
+    if (props.disabled) {
+      return;
+    }
     const wrapper = document.querySelector('.bom-bus-schedule-detail .wrapper.wrapper1');
     wrapper.classList.toggle('active');
   };
@@ -128,7 +131,13 @@ export default function ListRouteOnBusSchedule(props) {
       <div
         className="select-btn"
         onClick={handleOpenSelect}
-        style={props.error?.route ? { borderColor: '#E53E3E', boxShadow: '0 0 0 1px #E53E3E' } : {}}
+        style={
+          props.disabled
+            ? { cursor: 'not-allowed', opacity: "0.5" }
+            : props.error?.route
+            ? { borderColor: '#E53E3E', boxShadow: '0 0 0 1px #E53E3E' }
+            : {}
+        }
       >
         <p>{routeName ? routeName : 'Chọn tuyến đường'}</p>
         <IoIosArrowDown />
@@ -136,7 +145,7 @@ export default function ListRouteOnBusSchedule(props) {
       <div className="content">
         <div className="search">
           <AiOutlineSearch />
-          <input onChange={handleChangeQuerySearch} value={querySearch} />
+          <input onChange={handleChangeQuerySearch} value={querySearch} disabled={props.disabled} />
         </div>
         <ul className="options">{ListRouteHTML}</ul>
       </div>

@@ -36,7 +36,8 @@ export default function ListLocationBusSchedule(props) {
       ? props.listLocation.map((element, index) => {
           return (
             <div className="bom-location-bus-schedule">
-              {element} <CloseIcon onClick={() => deleteLocationBusSchedule(index)} />
+              {element}{' '}
+              {!props.disabled && <CloseIcon onClick={() => deleteLocationBusSchedule(index)} />}
             </div>
           );
         })
@@ -44,6 +45,9 @@ export default function ListLocationBusSchedule(props) {
 
   const deleteLocationBusSchedule = useCallback(
     (index) => {
+      if (props.disabled) {
+        return;
+      }
       const oldListLocation = [...props.listLocation];
       oldListLocation.splice(index, 1);
       props.setListLocation(oldListLocation);
@@ -113,12 +117,16 @@ export default function ListLocationBusSchedule(props) {
 
   return (
     <div>
-      <div
-        className="bom-location-bus-schedule add-location-bus-schedule"
-        onClick={handleDisplayAddLocation}
-      >
-        Thêm địa điểm
-      </div>
+      {props.disabled ? null : (
+        <div
+          className="bom-location-bus-schedule add-location-bus-schedule"
+          onClick={handleDisplayAddLocation}
+        >
+          {' '}
+          Thêm địa điểm
+        </div>
+      )}
+
       <div className={`bom-add-location-pickup bom-add-location-pickup${props.id}`}>
         <div>
           <FormControl isInvalid={error.location}>

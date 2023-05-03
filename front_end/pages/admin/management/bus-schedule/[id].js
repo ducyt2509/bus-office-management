@@ -172,6 +172,13 @@ export default function BusScheduleDetail(props) {
     [error]
   );
   const handleSubmitData = useCallback(async () => {
+    if (router.query.status == 'view') {
+      router.push({
+        pathname: '/admin/management/bus-schedule/[id]',
+        query: { id: router.query.id },
+      });
+      return;
+    }
     if (effectiveDate && new Date(effectiveDate) < new Date()) {
       return;
     }
@@ -440,9 +447,13 @@ export default function BusScheduleDetail(props) {
           setTravelTime(dataBusSchedule.travel_time);
           setDepartureLocationId(dataBusSchedule.departure_location_id);
           setArriveLocationId(dataBusSchedule.arrive_location_id);
-          if (method == "Refresh") {
+          if (method == 'Refresh') {
             //bean
-            setEffectiveDate(new Date(new Date(dataBusSchedule.refresh_date).getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+            setEffectiveDate(
+              new Date(new Date(dataBusSchedule.refresh_date).getTime() + 24 * 60 * 60 * 1000)
+                .toISOString()
+                .split('T')[0]
+            );
           } else {
             setEffectiveDate(date_start);
           }
@@ -497,16 +508,6 @@ export default function BusScheduleDetail(props) {
 
   return (
     <>
-      <Link href={'/admin/management/bus-schedule'}>
-        <Text
-          display={'flex'}
-          alignItems="center"
-          className="bom-back-management"
-          marginLeft={'500px'}
-        >
-          <IoIosArrowBack boxSize={16} /> Quay lại
-        </Text>
-      </Link>
       <div style={{ position: 'relative', left: '20%', width: '80%' }}>
         <Flex
           alignItems={'center'}
@@ -525,14 +526,32 @@ export default function BusScheduleDetail(props) {
             src={state.dataUser.avatar ? state.dataUser.avatar : 'https://bit.ly/dan-abramov'}
           />
         </Flex>
+
         <div style={{ width: '90%', margin: '0 auto' }}>
-          <Heading size="lg" marginBottom={'3%'} textAlign={'center'}>
-            {method == 'Refresh'
-              ? 'Làm mới lịch trình'
-              : router.query.id == 'add'
+          <Flex justifyContent={"center"}>
+            <Link href={'/admin/management/bus-schedule'} justifyContent="center">
+              <Text
+                display={'flex'}
+                alignItems="center"
+                className="bom-back-management"
+                fontSize="25px"
+                marginTop="7px"
+                position={'relative'}
+                right="140px"
+              >
+                <IoIosArrowBack />
+              </Text>
+            </Link>
+            <Heading size="lg" marginBottom={'3%'} textAlign={'center'}>
+              {method == 'Refresh'
+                ? 'Làm mới lịch trình'
+                : router.query.id == 'add'
                 ? 'Thêm lịch trình'
+                : router.query.status == 'view'
+                ? 'Thông tin lịch trình'
                 : 'Chỉnh sửa thông tin lịch trình'}
-          </Heading>
+            </Heading>
+          </Flex>
           <Card
             margin={'0 auto'}
             border={'1px solid'}
@@ -560,6 +579,7 @@ export default function BusScheduleDetail(props) {
                       setDepartureLocationId={setDepartureLocationId}
                       setArriveLocationId={setArriveLocationId}
                       axiosJWT={axiosJWT}
+                      disabled={router.query.status == 'view' ? true : false}
                     />
                   </Box>
                   <FormErrorMessage justifyContent={'flex-end'}>
@@ -572,7 +592,12 @@ export default function BusScheduleDetail(props) {
                 <FormControl isInvalid={error.timeFrom} isRequired>
                   <Box display={'flex'}>
                     <FormLabel>Giờ khởi hành:</FormLabel>
-                    <Input type={'time'} value={timeFrom} onChange={handleChangeTimeForm} />
+                    <Input
+                      type={'time'}
+                      value={timeFrom}
+                      onChange={handleChangeTimeForm}
+                      disabled={router.query.status == 'view' ? true : false}
+                    />
                   </Box>
                   <FormErrorMessage justifyContent={'flex-end'}>
                     Giờ khởi hành là bắt buộc
@@ -584,7 +609,11 @@ export default function BusScheduleDetail(props) {
                   <Box display={'flex'}>
                     <FormLabel>Thời gian di chuyển:</FormLabel>
                     <InputGroup>
-                      <Input value={travelTime} onChange={handleChangeTravelTime} />
+                      <Input
+                        value={travelTime}
+                        onChange={handleChangeTravelTime}
+                        disabled={router.query.status == 'view' ? true : false}
+                      />
                       <InputRightAddon children="giờ" />
                     </InputGroup>
                   </Box>
@@ -610,6 +639,7 @@ export default function BusScheduleDetail(props) {
                       setLocation={setDepartureLocationId}
                       id={3}
                       axiosJWT={axiosJWT}
+                      disabled={router.query.status == 'view' ? true : false}
                     />
                   </Box>
                   <FormErrorMessage justifyContent={'flex-end'}>
@@ -632,6 +662,7 @@ export default function BusScheduleDetail(props) {
                       setLocation={setArriveLocationId}
                       id={4}
                       axiosJWT={axiosJWT}
+                      disabled={router.query.status == 'view' ? true : false}
                     />
                   </Box>
                   <FormErrorMessage justifyContent={'flex-end'}>
@@ -653,6 +684,7 @@ export default function BusScheduleDetail(props) {
                   state={state}
                   BACK_END_PORT={props.BACK_END_PORT}
                   axiosJWT={axiosJWT}
+                  disabled={router.query.status == 'view' ? true : false}
                 />
               </Flex>
               <Flex>
@@ -668,6 +700,7 @@ export default function BusScheduleDetail(props) {
                   state={state}
                   BACK_END_PORT={props.BACK_END_PORT}
                   axiosJWT={axiosJWT}
+                  disabled={router.query.status == 'view' ? true : false}
                 />
               </Flex>
 
@@ -675,7 +708,11 @@ export default function BusScheduleDetail(props) {
                 <FormControl isInvalid={error.price} isRequired>
                   <Box display={'flex'}>
                     <FormLabel>Giá vé:</FormLabel>
-                    <Input value={price} onChange={handleChangePrice} />
+                    <Input
+                      value={price}
+                      onChange={handleChangePrice}
+                      disabled={router.query.status == 'view' ? true : false}
+                    />
                   </Box>
                   <FormErrorMessage justifyContent={'flex-end'}>
                     {price ? 'Giá vé sai định dạng' : 'Giá vé là bắt buộc'}
@@ -687,7 +724,11 @@ export default function BusScheduleDetail(props) {
                 <FormControl isRequired>
                   <Box display={'flex'}>
                     <FormLabel>Tình trạng lịch trình:</FormLabel>
-                    <Select value={scheduleStatus} onChange={handleChangeScheduleStatus}>
+                    <Select
+                      value={scheduleStatus}
+                      onChange={handleChangeScheduleStatus}
+                      disabled={router.query.status == 'view' ? true : false}
+                    >
                       <option value={'0'}>Không hoạt động</option>
                       <option value={'1'}>Hoạt động</option>
                     </Select>
@@ -700,7 +741,11 @@ export default function BusScheduleDetail(props) {
                   <Box display={'flex'}>
                     <FormLabel marginBottom="0">Tần suất xe hoạt động:</FormLabel>
                     <InputGroup>
-                      <Input value={scheduleFrequency} onChange={handleChangeScheduleFrequency} />
+                      <Input
+                        value={scheduleFrequency}
+                        onChange={handleChangeScheduleFrequency}
+                        disabled={router.query.status == 'view' ? true : false}
+                      />
                       <InputRightAddon children="ngày mỗi một chuyến" />
                     </InputGroup>
                   </Box>
@@ -717,7 +762,11 @@ export default function BusScheduleDetail(props) {
                   <Box display={'flex'}>
                     <FormLabel marginBottom="0">Kỳ hạn cho phép khách đặt trước:</FormLabel>
                     <InputGroup>
-                      <Input value={scheduleExpire} onChange={handleChangeScheduleExpire} />
+                      <Input
+                        value={scheduleExpire}
+                        onChange={handleChangeScheduleExpire}
+                        disabled={router.query.status == 'view' ? true : false}
+                      />
                       <InputRightAddon children="ngày" />
                     </InputGroup>
                   </Box>
@@ -736,9 +785,7 @@ export default function BusScheduleDetail(props) {
                       disabled={
                         (method != 'Refresh' && router.query.id != 'add') || refreshDate <= today
                       }
-                      value={
-                        effectiveDate
-                      }
+                      value={effectiveDate}
                       type={'date'}
                       min={timeRaw}
                       onChange={handleChangeEffectiveDate}
@@ -754,15 +801,23 @@ export default function BusScheduleDetail(props) {
               <Button
                 onClick={handleSubmitData}
                 colorScheme="linkedin"
-                cursor={new Date(effectiveDate) < new Date() ? 'not-allowed' : 'pointer'}
-                title={new Date(effectiveDate) < new Date() ? "Không thể cập nhật vì ngày hiệu lực nhỏ hơn ngày hôm nay" : ""}
+                cursor={
+                  new Date(effectiveDate) < new Date() && router.query.status != 'view'
+                    ? 'not-allowed'
+                    : 'pointer'
+                }
+                title={
+                  new Date(effectiveDate) < new Date()
+                    ? 'Không thể cập nhật vì ngày hiệu lực nhỏ hơn ngày hôm nay'
+                    : ''
+                }
               >
-                Lưu
+                {router.query.status == 'view' ? 'Chuyển đến trang chỉnh sửa' : 'Lưu'}
               </Button>
             </CardFooter>
           </Card>
         </div>
-      </div >
+      </div>
     </>
   );
 }
