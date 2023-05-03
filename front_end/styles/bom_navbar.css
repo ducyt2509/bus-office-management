@@ -1,49 +1,86 @@
 @import url("https://fonts.googleapis.com/css?family=Gugi");
 .bom-navbar-bom-logo {
-        margin-top: 2%;
-    margin-left: 5%;
+	margin-top: 2%;
+	margin-left: 5%;
 }
 .bom-navbar-bom-logo h1 {
-    font-family: 'Gugi';
-    font-size: 35px;
+	font-family: "Gugi";
+	font-size: 35px;
 }
 .bom-navbar-component {
-    list-style-type: none;
-    display: flex;
-    margin-right: 5%;
+	list-style-type: none;
+	display: flex;
+	margin-right: 5%;
 }
 ul.bom-navbar-component li {
-    padding: 4% 0;
-    white-space: nowrap;
-    cursor: pointer;
+	padding: 4% 0;
+	white-space: nowrap;
+	cursor: pointer;
 }
 ul.bom-navbar-component li div {
-    padding: 11px 37px;
+	padding: 11px 37px;
 }
 .bom-navbar {
-    display: flex;
-    justify-content: space-between;
-    color: #fff;
+	display: flex;
+	justify-content: space-between;
+	color: #fff;
 }
-.bom-navbar-component li:nth-child(5) div  {
-    background-color: #F26A4C;
-    border-radius: 5px;
+.bom-navbar-component li:nth-child(5) div {
+	background-color: #f26a4c;
+	border-radius: 5px;
 }
 #bom-side-bar {
-    max-height: 100vh;
-    overflow-y: auto;
+	max-height: 100vh;
+	overflow-y: auto;
 }
 #bom-side-bar::-webkit-scrollbar {
-    width: 6px;
-    background-color: #FFF;
-} 
+	width: 6px;
+	background-color: #fff;
+}
 #bom-side-bar::-webkit-scrollbar-thumb {
-    background-color: #FFF;
+	background-color: #fff;
 }
 #bom-side-bar::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px #FFF;
-    background-color: #FFF;
+	-webkit-box-shadow: inset 0 0 6px #fff;
+	background-color: #fff;
 }
 .bom-driver-screen .chakra-stack__divider {
-  border-color: #000 !important;
+	border-color: #000 !important;
+}
+
+.boxres {
+	display: none;
+}
+
+.bom-navbar-flex {
+	display: flex;
+	justify-content: space-between;
+}
+
+@media screen and (max-width: 992px) {
+	.boxres {
+		display: block;
+		position: absolute;
+		top: 0;
+		right: 0;
+		font-size: 1.8rem;
+		cursor: pointer;
+	}
+	.bom-navbar-component {
+		display: none;
+	}
+	.bom-navbar {
+		display: flex;
+		justify-content: space-between;
+		color: #f26a4c;
+	}
+	.bom-navbar-flex {
+		display: flex;
+		justify-content: space-between;
+		background-color: #f26a4c;
+	}
+	.bom-navbar-bom-logo {
+		margin-top: 2%;
+		margin-left: 5%;
+	}
 }
