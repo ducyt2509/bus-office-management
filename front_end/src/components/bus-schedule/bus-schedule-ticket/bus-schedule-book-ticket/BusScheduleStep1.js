@@ -3,7 +3,7 @@ import Image from 'next/image';
 import EmptyChair from '@/images/icons/empty-chair.png';
 import SoldChair from '@/images/icons/sold-chair.png';
 import SelectChair from '@/images/icons/select-chair.png';
-import { Seat12 } from '@/src/components/vehicle';
+import { Seat12, Seat22 } from '@/src/components/vehicle';
 
 export default function BusScheduleStep1(props) {
   return (
@@ -30,7 +30,7 @@ export default function BusScheduleStep1(props) {
           </Flex>
         </Stack>
         {props.data?.bus[0]?.vehicle_type_id == 1 && (
-          <Seat12
+          <Seat22
             seatSelected={props.seatSelected}
             setSeatSelected={props.setSeatSelected}
             seatCustomerSelected={props.seatCustomerSelected}
