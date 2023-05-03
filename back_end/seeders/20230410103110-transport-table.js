@@ -7,7 +7,7 @@ module.exports = {
       {
         bus_schedule_id: 1,
         bus_id: 1,
-        departure_date: "2023-05-02",
+        departure_date: "2023-05-03",
       },
 
       {

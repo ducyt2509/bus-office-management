@@ -17,6 +17,7 @@ import {
   ModalContent,
   ModalBody,
   useDisclosure,
+  CircularProgress
 } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon, AddIcon } from '@chakra-ui/icons';
 import axios from 'axios';
@@ -27,9 +28,11 @@ import { Seat12User } from '@/src/components/vehicle';
 import LocationPickAndDrop from '@/src/components/ticket/location-pick-and-drop';
 import { actions, useStore } from '@/src/store';
 import Cookies from 'js-cookie';
+import { MdOutlineBusAlert } from 'react-icons/md';
 
 export default function Ticket(props) {
   const toastIdRef = useRef();
+  const [loading, setLoading] = useState(true)
   const toast = useToast();
   const [token, setToken] = useState('');
   const [state, dispatch, axiosJWT] = useStore();
@@ -37,10 +40,10 @@ export default function Ticket(props) {
   const [seatInformation, setSeatInformation] = useState();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [startLocation, setStartLocation] = useState(47);
   const [listBusSchedule, setListBusSchedule] = useState([]);
-  const [endLocation, setEndLocation] = useState(14);
-  const [departureDay, setDepartureDay] = useState();
+  const [startLocation, setStartLocation] = useState(0);
+  const [endLocation, setEndLocation] = useState(0);
+  const [departureDay, setDepartureDay] = useState(new Date().toISOString().split("T")[0]);
   const [scheduleSelected, setScheduleSelected] = useState();
   const [scheduleData, setScheduleData] = useState();
   const [seatSelected, setSeatSelected] = useState([]);
@@ -266,7 +269,7 @@ export default function Ticket(props) {
     }
   }, [seatCustomerSelected, transportData, seatSelected, scheduleData]);
 
-  const searchBusSchedule = useCallback(async () => {
+  const getListBusSchedule = useCallback(async () => {
     if (!state.dataUser.id) {
       toastIdRef.current = toast({
         title: 'Phiên của bạn đã hết hạn',
@@ -278,25 +281,10 @@ export default function Ticket(props) {
       });
       return;
     }
-    let oldError = { ...error };
-    if (!startLocation) {
-      oldError.from = true;
-    }
-    if (!endLocation) {
-      oldError.to = true;
-    }
-    if (!departureDay) {
-      oldError.date = true;
-    }
-    if (oldError.from || oldError.to || oldError.date) {
-      setError(oldError);
-      return;
-    }
     const submitData = {
-      departure_location_id: startLocation,
-      arrive_location_id: endLocation,
-      refresh_date: departureDay,
+      refresh_date: new Date(),
       role_id: 1,
+      type: 'get',
     };
     try {
       const listBusSchedule = await axios.post(
@@ -331,6 +319,77 @@ export default function Ticket(props) {
         });
       }
     }
+    setLoading(false)
+  })
+  const searchBusSchedule = useCallback(async () => {
+    if (!state.dataUser.id) {
+      toastIdRef.current = toast({
+        title: 'Phiên của bạn đã hết hạn',
+        description: 'Phiên đã hết hạn vui lòng đăng nhập lại',
+        status: 'error',
+        isClosable: true,
+        position: 'top',
+        duration: 2000,
+      });
+      return;
+    }
+    let oldError = { ...error };
+    if (!startLocation) {
+      oldError.from = true;
+    }
+    if (!endLocation) {
+      oldError.to = true;
+    }
+    if (!departureDay) {
+      oldError.date = true;
+    }
+    if (oldError.from || oldError.to || oldError.date) {
+      setError(oldError);
+      return;
+    }
+    const submitData = {
+      departure_location_id: startLocation,
+      arrive_location_id: endLocation,
+      refresh_date: departureDay,
+      role_id: 1,
+    };
+    setLoading(true)
+    try {
+      const listBusSchedule = await axios.post(
+        `http://localhost:${props.port}/bus-schedule/list-bus-schedule-all`,
+        submitData
+      );
+      if (listBusSchedule.data.statusCode == 200) {
+        setListBusSchedule(listBusSchedule.data.data.list_bus_schedule);
+        setScheduleSelected(0);
+        setScheduleData();
+        setTransportData();
+        setSeatCustomerSelected([]);
+      }
+    } catch (err) {
+      if (err.response.data.statusCode == 401) {
+        toastIdRef.current = toast({
+          title: 'Phiên của bạn đã hết hạn.',
+          description: 'Phiên đã hết hạn vui lòng đăng nhập lại.',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      } else {
+        toastIdRef.current = toast({
+          title: err.response.data.data.message,
+          description: 'Không thể lấy danh sách hành trình',
+          status: 'error',
+          isClosable: true,
+          position: 'top',
+          duration: 2000,
+        });
+      }
+    }
+    setTimeout(() => {
+      setLoading(false)
+    }, 700)
   }, [startLocation, endLocation, departureDay, error, state]);
 
   const handleChangeStartLocation = (e) => {
@@ -434,29 +493,33 @@ export default function Ticket(props) {
     }
     dispatch(actions.setDataUser(userData));
     setToken(accessToken);
-    if (token && userData?.role_id == 1) {
-      handleTotalRenewal();
+    if (token) {
+      getListBusSchedule()
+      if (userData?.role_id == 1) {
+        handleTotalRenewal();
+      }
     }
   }, [token]);
 
   const cityOption =
     props.list_city &&
-    props.list_city.map((city) => <option value={city.id}>{city.city_name}</option>);
+    props.list_city.map((city) => <option value={city.id} disabled={startLocation == city.id || endLocation == city.id ? true : false}>{city.city_name}</option>);
 
-  const ListBusScheduleHTML = listBusSchedule.map((schedule, position) => {
-    return (
-      <>
-        {schedule && schedule.transport && schedule.transport.length
-          ? schedule.transport.map((vehicle, index) => {
+  const ListBusScheduleHTML = loading ? <CircularProgress isIndeterminate color="#ffbea8" marginTop="15%" />
+    : listBusSchedule.length ? listBusSchedule.map((schedule, position) => {
+      return (
+        <>
+          {schedule && schedule.transport && schedule.transport.length
+            ? schedule.transport.map((vehicle, index) => {
               const number_seat_selected =
                 vehicle.number_seat_selected &&
-                vehicle.number_seat_selected.length &&
-                vehicle.number_seat_selected.filter((e) => e.payment_status != 3).length
+                  vehicle.number_seat_selected.length &&
+                  vehicle.number_seat_selected.filter((e) => e.payment_status != 3).length
                   ? vehicle.number_seat_selected
-                      .filter((e) => e.payment_status != 3)
-                      .map((e) => e.seat)
-                      .join()
-                      .split(',').length
+                    .filter((e) => e.payment_status != 3)
+                    .map((e) => e.seat)
+                    .join()
+                    .split(',').length
                   : 0;
 
               return (
@@ -475,7 +538,7 @@ export default function Ticket(props) {
                   maxH="60px"
                   onClick={() => handleSCheduleSelected(position + '' + index, schedule, vehicle)}
                 >
-                  <Stack>
+                  <Stack whiteSpace={"nowrap"}>
                     <Text>{convertTime(schedule.time_from, 0)}</Text>
                     <Flex marginTop="0 !important">
                       <Text marginRight={'5px'}>-----</Text>
@@ -485,10 +548,18 @@ export default function Ticket(props) {
                 </Box>
               );
             })
-          : null}
-      </>
+            : null}
+        </>
+      );
+    }) : (
+      <Stack fontSize={'200px'} alignItems={"center"} marginTop="7%">
+        <MdOutlineBusAlert />
+        <Text display={'flex'} fontWeight={'700'} fontSize={'20px'} alignItems={'center'} color={'#F26A4C'}>
+          Hiện không có chuyến xe nào hoạt động
+        </Text>
+        <Text fontSize={'18px'} fontWeight="500">Vui lòng thử đổi chuyến xe hoặc đổi ngày xuất phát</Text>
+      </Stack>
     );
-  });
 
   const ModalHTML = (
     <Modal isOpen={modalStatus}>
@@ -569,13 +640,13 @@ export default function Ticket(props) {
                 </Text>
                 <Text fontWeight="600" color={'#363636'}>
                   {transportData.number_seat_selected &&
-                  transportData.number_seat_selected.length &&
-                  transportData.number_seat_selected.filter((e) => e.payment_status != 3).length
+                    transportData.number_seat_selected.length &&
+                    transportData.number_seat_selected.filter((e) => e.payment_status != 3).length
                     ? transportData.number_seat_selected
-                        .filter((e) => e.payment_status != 3)
-                        .map((e) => e.seat)
-                        .join()
-                        .split(',').length
+                      .filter((e) => e.payment_status != 3)
+                      .map((e) => e.seat)
+                      .join()
+                      .split(',').length
                     : 0}
                 </Text>
               </Flex>
@@ -602,7 +673,7 @@ export default function Ticket(props) {
     scheduleData && transportData ? (
       <Flex marginTop="1%" justifyContent={'space-between'}>
         <Flex>
-          {editButtonStatus && (
+          {editButtonStatus && new Date() >= new Date(departureDay)(
             <Button
               leftIcon={<EditIcon />}
               backgroundColor={'#fff'}
@@ -709,6 +780,7 @@ export default function Ticket(props) {
       axiosJWT={axiosJWT}
     />
   );
+  console.log(listBusSchedule.length || loading)
   return (
     <div style={{ position: 'relative', left: '20%', width: '80%' }}>
       <Flex
@@ -741,6 +813,7 @@ export default function Ticket(props) {
                 onChange={handleChangeStartLocation}
                 placeholder="Chọn điểm xuất phát"
               >
+                <option disabled value="0">Chọn địa điểm</option>
                 {cityOption}
               </select>
             </Flex>
@@ -753,6 +826,7 @@ export default function Ticket(props) {
             <Flex className="bom-element admin">
               <GoLocation />
               <select value={endLocation} onChange={handleChangeEndLocation}>
+                <option disabled value="0">Chọn địa điểm</option>
                 {cityOption}
               </select>
             </Flex>
@@ -777,7 +851,7 @@ export default function Ticket(props) {
             Tìm kiếm
           </Button>
         </Flex>
-        <Flex maxW={'100%'} overflowX={'auto'}>
+        <Flex maxW={'100%'} overflowX={'auto'} justifyContent={!listBusSchedule.length || loading ? "center" : ""}>
           {ListBusScheduleHTML}
         </Flex>
         {ScheduleDataHTML}

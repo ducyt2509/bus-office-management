@@ -2,8 +2,8 @@ import { Button, ButtonGroup, Text } from '@chakra-ui/react';
 
 //list_number ,handleGetList ,setList ,list ,currentPage
 export default function Pagination(props) {
-  const page_number = Math.ceil(props.list_number / 7);
-  return (
+	const page_number = Math.ceil(props.list_number / 7);
+	return (
 		<div style={{ marginTop: "3%", textAlign: "center", marginBottom: "3%" }}>
 			<ButtonGroup>
 				{props.currentPage - 1 > 0 && (
@@ -18,6 +18,7 @@ export default function Pagination(props) {
 						w={"30px"}
 						borderRadius="5px"
 						_hover={{ backgroundColor: "#F26A4C", color: "#fff" }}
+						margin="0 15px"
 					>
 						{props.currentPage - 1}
 					</Button>
@@ -30,7 +31,7 @@ export default function Pagination(props) {
 					_hover={{ backgroundColor: "#F26A4C", color: "#fff" }}
 					h={"40px"}
 					w={"30px"}
-					margin="0 20px"
+					margin="0 15px"
 				>
 					{props.currentPage}
 				</Button>
@@ -47,11 +48,12 @@ export default function Pagination(props) {
 						borderRadius="5px"
 						_hover={{ backgroundColor: "#F26A4C", color: "#fff" }}
 						marginInlineStart={"0"}
+						margin="0 15px"
 					>
 						{props.currentPage + 1}
 					</Button>
 				)}
 			</ButtonGroup>
 		</div>
-  );
+	);
 }

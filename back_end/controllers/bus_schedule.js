@@ -182,6 +182,7 @@ module.exports = {
     const locationFinishId = params.arrive_location_id;
     const dateStart = params.refresh_date;
     const dateNow = new Date().toJSON().slice(0, 10);
+    const type = params.type
     try {
       let querySQL = `select bs.*, ll.location_name as departure_location,
       c.city_name as city_from, cc.city_name as city_to
@@ -191,12 +192,15 @@ module.exports = {
       join route r on bs.route_id = r.id
       join city c on r.city_from_id = c.id
       join city cc on r.city_to_id = cc.id
-      where r.city_from_id = ${locationStartId} and r.city_to_id = ${locationFinishId} 
+      
       `;
-
       let queryCount = `select count(*) from bus_schedule bs
       join route r on bs.route_id = r.id
-      where r.city_from_id = ${locationStartId} and r.city_to_id = ${locationFinishId} and '${dateStart}' >= '${dateNow}' and  '${dateStart}' <= bs.refresh_date`;
+      `;
+      if (type != "get") {
+        querySQL += `where r.city_from_id = ${locationStartId} and r.city_to_id = ${locationFinishId} `
+        queryCount += `where r.city_from_id = ${locationStartId} and r.city_to_id = ${locationFinishId} and '${dateStart}' >= '${dateNow}' and  '${dateStart}' <= bs.refresh_date `
+      }
       if (!params.role_id) {
         querySQL += ` and '${dateStart}' >= '${dateNow}'`;
       }
@@ -300,6 +304,7 @@ module.exports = {
         });
       }
     } catch (error) {
+      console.log(error);
       return responseHandler.badRequest(res, 'Có lỗi xảy ra khi thao tác. Vui lòng thử lại');
     }
   },

@@ -109,6 +109,7 @@ export default function ListTransport(props) {
   );
 
   const ListTransportHTML = props.list.map((transport, index) => {
+    console.log(transport.id, transport.time_from)
     const time_from = convertTime(transport.time_from, 0);
     const time_to = convertTime(transport.time_from, transport.travel_time);
     const time_from_to = time_from + ' - ' + time_to;

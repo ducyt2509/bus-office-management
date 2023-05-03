@@ -64,6 +64,7 @@ export default function ManagementBusSchedule(props) {
           }
         }
       } catch (err) {
+        console.log("BEAN", err)
         if (err.response.data.statusCode == 401) {
           toastIdRef.current = toast({
             title: 'Phiên của bạn đã hết hạn.',

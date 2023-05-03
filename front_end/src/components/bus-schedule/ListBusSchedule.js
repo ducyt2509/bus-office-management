@@ -248,15 +248,16 @@ export default function ListBusSchedule(props) {
     }
     return (
       <tr
-      // onClick={() => props.handleGetBusScheduleInformation(busSchedule.id)}
+      onClick={() => props.handleGetBusScheduleInformation(busSchedule.id)}
       >
         <td>{index + 1}</td>
         <td>{city_from_to}</td>
         <td>{time_from_to}</td>
         <td>{formatMoney(busSchedule.price)}</td>
         <td>
-          {effective_date} / {refresh_date}
+          {effective_date}
         </td>
+        <td> {refresh_date}</td>
         {isRenewal ? <td  > <div className="bom-bus-status  no-active">Sắp hết hạn</div> </td>
           : <td> <div className="bom-bus-status active">Đang hoạt động</div> </td>
         }
@@ -299,7 +300,8 @@ export default function ListBusSchedule(props) {
             <th>Tuyến đường</th>
             <th>Giờ đi - giờ đến</th>
             <th>Giá vé</th>
-            <th>Thời hạn</th>
+            <th>Ngày có hiệu lực</th>
+            <th>Ngày hết hạn</th>
             <th>Trạng thái</th>
             <th>Thao tác</th>
           </tr>

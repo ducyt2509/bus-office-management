@@ -17,7 +17,11 @@ module.exports = {
       },
       {
         office_name: 'Văn Phòng Trần Vỹ',
-        office_address: ' Số 1 Trần Vỹ, Mai Dịch, Cầu Giấy, Hà Nội',
+        office_address: 'Số 132 Phố, Trần Vỹ, Mai Dịch, Cầu Giấy, Hà Nội',
+        city_id: 47,
+      }, {
+        office_name: 'Văn Phòng Thanh Xuân',
+        office_address: '231C Đ. Nguyễn Trãi, Thanh Xuân Bắc, Thanh Xuân, Hà Nội',
         city_id: 47,
       },
       {
@@ -38,6 +42,11 @@ module.exports = {
       {
         office_name: 'Văn Phòng Nghĩa Hưng',
         office_address: 'D1 Nghĩa Thành, Nghĩa Hưng, Nam Định',
+        city_id: 14,
+      },
+      {
+        office_name: 'Văn Phòng Lê Hồng Phong',
+        office_address: '76 Vị Xuyên, Vị Xuyên, Tp. Nam Định',
         city_id: 14,
       },
       {
