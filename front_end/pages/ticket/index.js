@@ -17,6 +17,7 @@ import axios from 'axios';
 import { useCallback, useState } from 'react';
 import Pagination from '@/src/components/common/Pagination';
 import { useRouter } from 'next/router';
+import ForgetPasswordStep2 from '@/src/components/home/login/ForgetPassword-step2';
 
 export default function searchTicket(props) {
   const router = useRouter();
@@ -56,6 +57,10 @@ export default function searchTicket(props) {
       const offset = limit * (page - 1);
       if (typeof page == 'number') {
         setCurrentPage(page);
+      }
+      let userPhone = phone
+      if (phone && phone[0] == 0) {
+        userPhone = '+84' + phone.substring(1);
       }
       const searchTicket = await axios.post(
         `http://localhost:${props.port}/transaction/list-transaction`,
@@ -131,7 +136,7 @@ export default function searchTicket(props) {
       </Text>
       <FormControl isRequired isInvalid={error}>
         <Flex alignItems={'center'} width={'60%'} margin={'0 auto'}>
-          <FormLabel w="30%">Số điện thoại/Mã vé</FormLabel>
+          <FormLabel w="30%">Số điện thoại</FormLabel>
           <Input value={phone} onChange={handleChangePhone} marginRight={'3%'} />
 
           <Button
@@ -148,6 +153,7 @@ export default function searchTicket(props) {
         </FormErrorMessage>
       </FormControl>
       {listTicketHTML}
+      {<ForgetPasswordStep2 />}
       {listTicket && listTicket.length ? (
         <Pagination
           list_number={numberTicket}

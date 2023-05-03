@@ -27,6 +27,222 @@ module.exports = {
 			return responseHandler.badRequest(res, "Có lỗi xảy ra trong quá trình thao tác");
 		}
 	},
+	async getRevenueListByRoute(req, res) {
+		const params = req.body;
+		const querySearch = params.query_search ? params.query_search : 2;
+		const limit = !params.limit || !params.limit <= 0 ? 7 : params.limit;
+		const offset = !params.offset || !params.offset <= 0 ? 0 : params.offset;
+
+		try {
+			let querySQL = `select c.city_name as city_from, cc.city_name as city_to, tra.seat, tra.ticket_price, r.id from ticket t 
+			join transaction tra on t.transaction_id = tra.id
+			join transport trans on trans.id = tra.transport_id
+			join bus_schedule bs on bs.id = trans.bus_schedule_id
+			join route r on r.id = bs.route_id
+			join city c on c.id = r.city_from_id
+			join city cc on cc.id = r.city_to_id `;
+
+			let queryCount = `select count(*) from ticket t 
+			join transaction tra on t.transaction_id = tra.id
+			join transport trans on trans.id = tra.transport_id
+			join bus_schedule bs on bs.id = trans.bus_schedule_id
+			join route r on r.id = bs.route_id
+			join city c on c.id = r.city_from_id
+			join city cc on cc.id = r.city_to_id `;
+			if (querySearch == 2) {
+				let day = new Date().getDay();
+				let e;
+				if (day == 0) {
+					e = 6;
+				} else {
+					e = day - 1;
+				}
+				let firstDay = new Date().addDays(-e);
+				let condition = ` where tra.date_detail > "${
+					new Date(firstDay).toISOString().split("T")[0]
+				}" and tra.date_detail < "${
+					new Date(firstDay.addDays(7)).toISOString().split("T")[0]
+				}"`;
+
+				let cloneListRevenueSQL = querySQL + `${condition}`;
+				let cloneQueryCount = queryCount + condition;
+				const [listRevenue, numberRevenue] = await Promise.all([
+					db.sequelize.query(cloneListRevenueSQL, { type: QueryTypes.SELECT }),
+					db.sequelize.query(cloneQueryCount, { type: QueryTypes.SELECT }),
+				]);
+
+				if (listRevenue) {
+					let revenueId = [];
+					listRevenue.forEach((element) => {
+						if (!revenueId.includes(element.id)) {
+							revenueId.push(element.id);
+						}
+					});
+					let revenue = [];
+					revenueId.forEach((e) => {
+						let d = listRevenue.filter((d) => d.id == e);
+						let ticket = d
+							.map((e) => {
+								if (!e.seat) {
+									return 0;
+								} else {
+									return e.seat.split(", ").length;
+								}
+							})
+							.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+						let price = d
+							.map((e) => {
+								if (!e.ticket_price) {
+									return 0;
+								} else {
+									return e.ticket_price;
+								}
+							})
+							.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+						revenue.push({
+							route_name: d[0]?.city_from + " - " + d[0]?.city_to,
+							price: price,
+							ticket: ticket,
+						});
+					});
+					return responseHandler.responseWithData(res, 200, {
+						list_revenue_route: revenue,
+						number_revenue_route: numberRevenue[0]["count(*)"],
+					});
+				} else {
+					return responseHandler.badRequest(
+						res,
+						"Không thể lấy danh sách doanh thu theo chuyến",
+					);
+				}
+			}
+			if (querySearch == 3) {
+				let month = new Date().getMonth() + 1;
+				let year = new Date().getFullYear();
+				let firstDay = new Date(`${year}-${month}-01 07:00:00`);
+				let condition = ` where tra.date_detail >= "${
+					new Date(firstDay).toISOString().split("T")[0]
+				}" and tra.date_detail <= "${
+					new Date(firstDay.addDays(29)).toISOString().split("T")[0]
+				}"`;
+
+				let cloneListRevenueSQL = querySQL + `${condition}`;
+				let cloneQueryCount = queryCount + condition;
+				const [listRevenue, numberRevenue] = await Promise.all([
+					db.sequelize.query(cloneListRevenueSQL, { type: QueryTypes.SELECT }),
+					db.sequelize.query(cloneQueryCount, { type: QueryTypes.SELECT }),
+				]);
+				if (listRevenue) {
+					let revenueId = [];
+					listRevenue.forEach((element) => {
+						if (!revenueId.includes(element.id)) {
+							revenueId.push(element.id);
+						}
+					});
+					let revenue = [];
+					revenueId.forEach((e) => {
+						let d = listRevenue.filter((d) => d.id == e);
+						let ticket = d
+							.map((e) => {
+								if (!e.seat) {
+									return 0;
+								} else {
+									return e.seat.split(", ").length;
+								}
+							})
+							.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+						let price = d
+							.map((e) => {
+								if (!e.ticket_price) {
+									return 0;
+								} else {
+									return e.ticket_price;
+								}
+							})
+							.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+						revenue.push({
+							route_name: d[0]?.city_from + " - " + d[0]?.city_to,
+							price: price,
+							ticket: ticket,
+						});
+					});
+					return responseHandler.responseWithData(res, 200, {
+						list_revenue_route: revenue,
+						number_revenue_route: numberRevenue[0]["count(*)"],
+					});
+				} else {
+					return responseHandler.badRequest(
+						res,
+						"Không thể lấy danh sách doanh thu theo chuyến",
+					);
+				}
+			}
+			if (querySearch == 4) {
+				let month = 1;
+				let year = new Date().getFullYear();
+				let firstDay = new Date(`${year}-${month}-01 07:00:00`);
+				let condition = ` where tra.date_detail > "${
+					new Date(firstDay).toISOString().split("T")[0]
+				}" and tra.date_detail < "${
+					new Date(`${year}-12-31 07:00:00`).toISOString().split("T")[0]
+				}"`;
+
+				let cloneListRevenueSQL = querySQL + `${condition}`;
+				let cloneQueryCount = queryCount + condition;
+				const [listRevenue, numberRevenue] = await Promise.all([
+					db.sequelize.query(cloneListRevenueSQL, { type: QueryTypes.SELECT }),
+					db.sequelize.query(cloneQueryCount, { type: QueryTypes.SELECT }),
+				]);
+				if (listRevenue) {
+					let revenueId = [];
+					listRevenue.forEach((element) => {
+						if (!revenueId.includes(element.id)) {
+							revenueId.push(element.id);
+						}
+					});
+					let revenue = [];
+					revenueId.forEach((e) => {
+						let d = listRevenue.filter((d) => d.id == e);
+						let ticket = d
+							.map((e) => {
+								if (!e.seat) {
+									return 0;
+								} else {
+									return e.seat.split(", ").length;
+								}
+							})
+							.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+						let price = d
+							.map((e) => {
+								if (!e.ticket_price) {
+									return 0;
+								} else {
+									return e.ticket_price;
+								}
+							})
+							.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+						revenue.push({
+							route_name: d[0]?.city_from + " - " + d[0]?.city_to,
+							price: price,
+							ticket: ticket,
+						});
+					});
+					return responseHandler.responseWithData(res, 200, {
+						list_revenue_route: revenue,
+						number_revenue_route: numberRevenue[0]["count(*)"],
+					});
+				} else {
+					return responseHandler.badRequest(
+						res,
+						"Không thể lấy danh sách doanh thu theo chuyến",
+					);
+				}
+			}
+		} catch (error) {
+			console.log(error);
+			return responseHandler.badRequest(res, "Có lỗi xảy ra trong quá trình thao tác");
+		}
+	},
 	async getRevenueList(req, res) {
 		const params = req.body;
 		const limit = !params.limit || !params.limit <= 0 ? 7 : params.limit;
@@ -346,11 +562,5 @@ module.exports = {
 		} catch (err) {
 			responseHandler.badRequest(res, "Có lỗi xảy ra khi thao tác. Vui lòng thử lại");
 		}
-	},
-	async getRevenueListByRoute(req, res) {
-		const params = req.body;
-		const querySearch = params.query_search ? params.query_search : 1;
-		try {
-		} catch (error) {}
 	},
 };
