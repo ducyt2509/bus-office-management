@@ -3,7 +3,7 @@ import Image from 'next/image';
 import EmptyChair from '@/images/icons/empty-chair.png';
 import SoldChair from '@/images/icons/sold-chair.png';
 import SelectChair from '@/images/icons/select-chair.png';
-import { Seat12, Seat22 } from '@/src/components/vehicle';
+import { Seat12, Seat22, Seat38, Seat40, Seat44 } from '@/src/components/vehicle';
 
 export default function BusScheduleStep1(props) {
   return (
@@ -29,13 +29,37 @@ export default function BusScheduleStep1(props) {
             </Text>
           </Flex>
         </Stack>
-        {props.data?.bus[0]?.vehicle_type_id == 1 && (
+        {props.data?.bus[0]?.vehicle_type_id == 1 ? (
+          <Seat12
+            seatSelected={props.seatSelected}
+            setSeatSelected={props.setSeatSelected}
+            seatCustomerSelected={props.seatCustomerSelected}
+          />
+        ) : props.data?.bus[0]?.vehicle_type_id == 2 ? (
           <Seat22
             seatSelected={props.seatSelected}
             setSeatSelected={props.setSeatSelected}
             seatCustomerSelected={props.seatCustomerSelected}
           />
-        )}
+        ) : props.data?.bus[0]?.vehicle_type_id == 3 ? (
+          <Seat38
+            seatSelected={props.seatSelected}
+            setSeatSelected={props.setSeatSelected}
+            seatCustomerSelected={props.seatCustomerSelected}
+          />
+        ) : props.data?.bus[0]?.vehicle_type_id == 4 ? (
+          <Seat40
+            seatSelected={props.seatSelected}
+            setSeatSelected={props.setSeatSelected}
+            seatCustomerSelected={props.seatCustomerSelected}
+          />
+        ) : props.data?.bus[0]?.vehicle_type_id == 5 ? (
+          <Seat44
+            seatSelected={props.seatSelected}
+            setSeatSelected={props.setSeatSelected}
+            seatCustomerSelected={props.seatCustomerSelected}
+          />
+        ) : null}
       </Flex>
     </Box>
   );

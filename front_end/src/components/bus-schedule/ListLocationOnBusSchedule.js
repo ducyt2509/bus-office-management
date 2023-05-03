@@ -121,6 +121,9 @@ export default function ListLocationOnBusSchedule(props) {
   });
 
   const handleOpenSelect = () => {
+    if (props.disabled) {
+      return;
+    }
     const wrapper = document.querySelector(`.bom-bus-schedule-detail .wrapper.wrapper${props.id}`);
     wrapper.classList.toggle('active');
   };
@@ -148,10 +151,12 @@ export default function ListLocationOnBusSchedule(props) {
         className="select-btn"
         onClick={handleOpenSelect}
         style={
-          (props.id == 3 && props.error?.departureLocationId) ||
-            (props.id == 4 && props.error?.arriveLocationId) ||
-            (props.id == 5 && props.error?.location) ||
-            (props.id == 6 && props.error?.location)
+          props.disabled
+            ? { cursor: 'not-allowed', opacity: '0.5' }
+            : (props.id == 3 && props.error?.departureLocationId) ||
+              (props.id == 4 && props.error?.arriveLocationId) ||
+              (props.id == 5 && props.error?.location) ||
+              (props.id == 6 && props.error?.location)
             ? { borderColor: '#E53E3E', boxShadow: '0 0 0 1px #E53E3E' }
             : {}
         }
@@ -165,7 +170,7 @@ export default function ListLocationOnBusSchedule(props) {
       <div className="content">
         <div className="search">
           <AiOutlineSearch />
-          <input onChange={handleChangeQuerySearch} value={querySearch} />
+          <input onChange={handleChangeQuerySearch} value={querySearch} disabled={props.disabled} />
         </div>
         <ul className="options">{ListLocationHTML}</ul>
       </div>

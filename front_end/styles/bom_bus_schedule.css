@@ -76,26 +76,26 @@
 	font-weight: 500;
 	margin-left: 8px;
 }
-div:nth-child(2) > div > div > div:nth-child(6) > span {
+div:nth-child(2) > div > div > div:nth-child(6) > span:not(.bom-admin) {
 	width: 38%;
 }
-div:nth-child(2) > div > div > div:nth-child(6) > div {
+div:nth-child(2) > div > div > div:nth-child(6) > div:not(.bom-admin) {
 	width: 62%;
 	display: flex;
 	justify-content: flex-end;
 	flex-wrap: wrap;
 }
 
-div:nth-child(2) > div > div > div:nth-child(7) > span {
+div:nth-child(2) > div > div > div:nth-child(7) > span:not(.bom-admin) {
 	width: 38%;
 }
-div:nth-child(2) > div > div > div:nth-child(7) > div {
+div:nth-child(2) > div > div > div:nth-child(7) > div:not(.bom-admin) {
 	width: 62%;
 	display: flex;
 	justify-content: flex-end;
 	flex-wrap: wrap;
 }
-div:nth-child(2) > div > div > div:nth-child(7) > div svg {
+div:nth-child(2) > div > div > div:nth-child(7) > div:not(.bom-admin) svg {
 	width: 8px;
 	height: 8px;
 	position: relative;
@@ -103,7 +103,7 @@ div:nth-child(2) > div > div > div:nth-child(7) > div svg {
 	cursor: pointer;
 }
 
-div:nth-child(2) > div > div > div:nth-child(6) > div svg {
+div:nth-child(2) > div > div > div:nth-child(6) > div:not(.bom-admin) svg {
 	width: 8px;
 	height: 8px;
 	position: relative;
