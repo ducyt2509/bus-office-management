@@ -19,9 +19,11 @@ import {
   Tab,
   TabPanel,
   TableContainer,
+  Stack,
   Select,
   Img,
   useToast,
+  CircularProgress,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import Image from 'next/image';
@@ -29,11 +31,13 @@ import DoanhThu from '@/images/icons/DoanhThu.png';
 import TrungBinhNgay from '@/images/icons/TrungBinhNgay.png';
 import VeBan from '@/images/icons/VeBan.png';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { HiOutlineDocumentSearch } from 'react-icons/hi';
 import { actions, useStore } from '@/src/store';
 import Pagination from '@/src/components/common/Pagination';
 import Cookies from 'js-cookie';
 
 export default function RevenueReport(props) {
+  const [loading, setLoading] = useState(true);
   const [token, setToken] = useState('');
   const toast = useToast();
   const toastIdRef = useRef();
@@ -63,6 +67,7 @@ export default function RevenueReport(props) {
       if (typeof page == 'number') {
         setCurrentPage(page);
       }
+      setLoading(true);
       try {
         const getListRevenue = await axiosJWT.post(
           `http://localhost:${props.BACK_END_PORT}/revenue/list-revenue`,
@@ -111,6 +116,9 @@ export default function RevenueReport(props) {
           });
         }
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 700);
     },
     [report, state, token]
   );
@@ -228,47 +236,37 @@ export default function RevenueReport(props) {
                   </div>
                 </TabPanel>
                 <TabPanel>
-                  <ListCashier listRevenue={listRevenue} />
-                  <Pagination
-                    list_number={numberRevenue}
-                    handleGetList={handleListRevenue}
-                    setList={setListRevenue}
-                    list={listRevenue}
-                    currentPage={currentPage}
-                  />
+                  {loading ? (
+                    <CircularProgress isIndeterminate color=" #ffbea8" />
+                  ) : listRevenue.length ? (
+                    <>
+                      <ListCashier listRevenue={listRevenue} />
+                      <Pagination
+                        list_number={numberRevenue}
+                        handleGetList={handleListRevenue}
+                        setList={setListRevenue}
+                        list={listRevenue}
+                        currentPage={currentPage}
+                      />
+                    </>
+                  ) : (
+                    <Stack fontSize={'200px'} color="#F26A4C" alignItems={'center'} marginTop="10%">
+                      {<HiOutlineDocumentSearch />}
+                      <Text fontSize={'25px'} fontWeight={500}>
+                        Không có dữ liệu
+                      </Text>
+                      <Text fontSize={'20px'} color="#686868" fontWeight={500}>
+                        Chưa có báo cáo nào được tạo ra
+                      </Text>
+                    </Stack>
+                  )}
                 </TabPanel>
               </TabPanels>
             </Tabs>
-            {/* <TableContainer marginBottom={'3%'} backgroundColor={'#f5f5f5'}>
-              <Table variant="simple">
-                <Thead>
-                  <Tr>
-                    <Th borderColor="#000">Tuyến đường</Th>
-                    <Th borderColor="#000">Số vé đã bán</Th>
-                    <Th borderColor="#000">Doanh thu</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  <Tr>
-                    <Td borderColor="#000">inches</Td>
-                    <Td borderColor="#000">millimetres (mm)</Td>
-                    <Td borderColor="#000">25.4</Td>
-                  </Tr>
-                  <Tr>
-                    <Td borderColor="#000">feet</Td>
-                    <Td borderColor="#000">centimetres (cm)</Td>
-                    <Td borderColor="#000">30.48</Td>
-                  </Tr>
-                  <Tr>
-                    <Td borderColor="#000">yards</Td>
-                    <Td borderColor="#000">metres (m)</Td>
-                    <Td borderColor="#000">0.91444</Td>
-                  </Tr>
-                </Tbody>
-              </Table>
-            </TableContainer> */}
           </>
-        ) : (
+        ) : loading ? (
+          <CircularProgress isIndeterminate color=" #ffbea8" />
+        ) : listRevenue.length ? (
           <>
             <ListCashier listRevenue={listRevenue} />
             <Pagination
@@ -279,6 +277,16 @@ export default function RevenueReport(props) {
               currentPage={currentPage}
             />
           </>
+        ) : (
+          <Stack fontSize={'200px'} color="#F26A4C" alignItems={'center'} marginTop="10%">
+            {<HiOutlineDocumentSearch />}
+            <Text fontSize={'25px'} fontWeight={500}>
+              Không có dữ liệu
+            </Text>
+            <Text fontSize={'20px'} color="#686868" fontWeight={500}>
+              Chưa có báo cáo nào được tạo ra
+            </Text>
+          </Stack>
         )}
       </div>
     </div>
