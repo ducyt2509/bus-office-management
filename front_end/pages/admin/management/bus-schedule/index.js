@@ -98,14 +98,13 @@ export default function ManagementBusSchedule(props) {
       handleGetListBusSchedule('search', null, null, '');
     }
   });
-  const handleGetBusScheduleInformation = useCallback((id, conditionEdit, status) => {
-    return;
-    if (conditionEdit && status != 'view') {
+  const handleGetBusScheduleInformation = useCallback((id, conditionEdit) => {
+    if (conditionEdit) {
       return;
     }
     router.push({
       pathname: '/admin/management/bus-schedule/[id]',
-      query: { id: id, status: status },
+      query: { id: id },
     });
   });
   const handleRefreshScheduleInformation = useCallback((id) => {
